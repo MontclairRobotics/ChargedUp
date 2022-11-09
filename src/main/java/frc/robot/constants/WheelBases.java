@@ -10,8 +10,9 @@ import org.team555.units.Naming;
 
 public class WheelBases 
 {
-    public static Quantity
-        FrontLeft_X = Quantity.of(1, Unit.from(Naming.of("sus", "sussi", "s"), Quantity.of(69, parsec).value)),
+    public static final Quantity
+
+        FrontLeft_X = Quantity.of(1, foot),
         FrontLeft_Y = Quantity.of(1, foot),
         
         FrontRight_X = Quantity.of(1, foot),
@@ -22,5 +23,6 @@ public class WheelBases
         
         BackRight_X = Quantity.of(1, foot),
         BackRight_Y = Quantity.of(1, foot)
+        
     ;
 }
