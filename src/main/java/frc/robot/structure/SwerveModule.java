@@ -6,9 +6,13 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.team555.math.MathUtils;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import frc.robot.constants.Drivebase;
+
+import static org.team555.units.StandardUnits.*;
 
 public class SwerveModule 
 {
@@ -20,19 +24,27 @@ public class SwerveModule
 
     private final PIDController anglePID;
 
-    public SwerveModule(
-        int rotatorID, MotorType rotatorType, 
-        int driverID, MotorType driverType,
-        double kAngleP, double kAngleI, double kAngleD
-    )
+    public SwerveModule(int rid, MotorType rtype, int did, MotorType dtype)
     {
-        this.rotator = new CANSparkMax(rotatorID, rotatorType);
-        this.driver  = new CANSparkMax(driverID,  driverType );
+        // Setup motors
+        this.rotator = new CANSparkMax(rid, rtype);
+        this.driver  = new CANSparkMax(did, dtype);
 
+
+        // Setup encoder
         rotatorEncoder = rotator.getEncoder();
         driverEncoder  = driver.getEncoder();
 
-        anglePID = new PIDController(kAngleP, kAngleI, kAngleD);
+        driverEncoder.setPositionConversionFactor(Drivebase.CONVERSION_RATE.value(meter));
+
+
+        // Setup PID
+        anglePID = new PIDController(
+            Drivebase.ANGLE_P, 
+            Drivebase.ANGLE_I, 
+            Drivebase.ANGLE_D
+        );
+
         anglePID.enableContinuousInput(0, 1);
     }
 
@@ -43,6 +55,11 @@ public class SwerveModule
         rotator.set(rotatorSpeed);
 
         // Calculate driver value
-        driver.set(MathUtils.clamp(//TODO: finish));
+        driver.set(MathUtil.clamp(
+            state.speedMetersPerSecond / Drivebase.CONVERSION_RATE_FROM_ROTATION.value * Drivebase.MOTOR_RPM.value, 
+            -1, 1
+        ));
+        // TODO: make sure this does not commit war crimes
+
     }
 }
