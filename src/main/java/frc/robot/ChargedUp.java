@@ -48,7 +48,6 @@ public class ChargedUp extends RobotContainer
     {
         // HANDLE FIELDS //
         SmartDashboard.putData("field", drivetrain.dt.getField());
-        SmartDashboard.setDefaultNumber("angular.velocity", 0);
 
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() ->
@@ -67,9 +66,9 @@ public class ChargedUp extends RobotContainer
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
             Commands.print("Starting main auto"),
-            drivetrain.driveForTimeCommand(3, Math.PI, 3, 0),
+            drivetrain.commands.driveForTime(3, Math.PI, 3, 0),
             Commands.print("Ending the main auto"),
-            drivetrain.driveCommand(0, 0, 0)
+            drivetrain.commands.drive(0, 0, 0)
         ));
     }
 }

@@ -94,15 +94,6 @@ public class Drivetrain extends SwerveSubsystem
         ));
     }
 
-    public Command driveCommand(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
-    {
-        return Commands.instant(() -> drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), this);
-    }
-    public Command driveForTimeCommand(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
-    {
-        return Commands.runForTime(time, () -> drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), this);
-    }
-
     @Override
     public void simulationPeriodic()
     {
@@ -110,5 +101,21 @@ public class Drivetrain extends SwerveSubsystem
             DriverStation.isDisabled(), 
             13
         );
+    }
+
+    
+    
+    public final DriveCommands commands = this.new DriveCommands();
+
+    public class DriveCommands 
+    {
+        public Command drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        {
+            return Commands.instant(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this);
+        }
+        public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        {
+            return Commands.runForTime(time, () -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this);
+        }
     }
 }
