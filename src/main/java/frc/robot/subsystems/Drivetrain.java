@@ -1,91 +1,114 @@
 package frc.robot.subsystems;
 
+import org.team555.frc.command.Commands;
 import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
 import org.team555.units.Quantity;
 
 import static org.team555.units.StandardUnits.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.hal.simulation.SimulatorJNI;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.LayoutType;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ChargedUp;
 import frc.robot.constants.Drivebase;
-import frc.robot.constants.WheelBases;
-import frc.robot.structure.SwerveModule;
+import frc.robot.constants.RobotSpec;
+import frc.robot.constants.SwerveConstants555;
+import frc.robot.structure.Logging;
+import frc.robot.structure.SwerveDriveModel555;
+import frc.swervelib.GyroscopeHelper;
+import frc.swervelib.Mk4iSwerveModuleHelper;
+import frc.swervelib.SwerveConstants;
+import frc.swervelib.SwerveDrivetrainModel;
+import frc.swervelib.SwerveInput;
+import frc.swervelib.SwerveModule;
+import frc.swervelib.SwerveSubsystem;
+import frc.swervelib.kauailabs.navXFactoryBuilder;
 
-public class Drivetrain extends ManagerSubsystemBase
+public class Drivetrain extends SwerveSubsystem
 {
-    private SwerveDriveKinematics sdk;
+    public static SwerveDrivetrainModel buildModel()
+    {
+        SwerveDrivetrainModel drivetrain;
+        ArrayList<SwerveModule> modules;
+        
+        SwerveConstants555.build();
 
-    private SwerveModule[] modules;
+        modules = new ArrayList<SwerveModule>();
+
+        for(int i = 0; i < 4; i++)
+        {
+            modules.add(Drivebase.MODULE_SPECS[i].createNeo(
+                Shuffleboard.getTab("Swerve")
+                            .getLayout("Module " + i, BuiltInLayouts.kList)
+            ));
+        }
+        
+        drivetrain = new SwerveDrivetrainModel(
+            modules, 
+            new navXFactoryBuilder().build(ChargedUp.gyro.getAhrs())
+        );
+
+        return drivetrain;
+    }
 
     public Drivetrain()
     {
-        sdk = new SwerveDriveKinematics(
-            new Translation2d( // FRONT LEFT
-                WheelBases.FrontLeft_X.value(meter),
-                WheelBases.FrontLeft_Y.value(meter)
-            ),
-            new Translation2d( // FRONT RIGHT
-                WheelBases.FrontRight_X.value(meter),
-                WheelBases.FrontRight_Y.value(meter)
-            ),
-            new Translation2d( // BACK LEFT
-                WheelBases.BackLeft_X.value(meter),
-                WheelBases.BackLeft_Y.value(meter)
-            ),
-            new Translation2d( // BACK RIGHT
-                WheelBases.BackRight_X.value(meter),
-                WheelBases.BackRight_Y.value(meter)
-            )
-        );
+        super(buildModel());
+    }
 
-        modules = new SwerveModule[Drivebase.PORTS.length];
+    public void driveFromInput(double turn, double xdrive, double ydrive)
+    {
+        dt.setModuleStates(new SwerveInput(turn, xdrive, ydrive));
+    }
 
-        for(int i = 0; i < modules.length; i++)
-        {
-            modules[i] = new SwerveModule(
-                Drivebase.PORTS[i][0],
-                Drivebase.TYPES[i][0],
-                Drivebase.PORTS[i][1],
-                Drivebase.TYPES[i][1]
-            );
-        }
+    public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+    {
+        dt.setModuleStates(ChassisSpeeds.fromFieldRelativeSpeeds(
+            vx_meter_per_second, 
+            vy_meter_per_second, 
+            omega_rad_per_second, 
+            ChargedUp.gyro.getAngle()
+        ));
+    }
+
+    public Command driveCommand(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+    {
+        return Commands.instant(() -> drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), this);
+    }
+    public Command driveForTimeCommand(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+    {
+        return Commands.runForTime(time, () -> drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), this);
     }
 
     @Override
-    public void reset() 
+    public void simulationPeriodic()
     {
-        
-    }
-
-    public void driveFromInput(double turn, double xdrive, double ydrive, double fieldAngle)
-    {
-        drive(
-            Drivebase.TURN_SPEED.mul(turn),
-            Drivebase.DRIVE_SPEED.mul(xdrive),
-            Drivebase.DRIVE_SPEED.mul(ydrive),
-            fieldAngle
+        dt.update(
+            DriverStation.isDisabled(), 
+            13
         );
-    }
-
-    public void drive(Quantity omega, Quantity vx, Quantity vy, double fieldAngle)
-    {
-        var cspeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-            vx.value(meter.per(second)), vy.value(meter.per(second)), 
-            omega.value(radian.per(second)), 
-            new Rotation2d(fieldAngle)
-        );
-
-        var states = sdk.toSwerveModuleStates(cspeeds);
-
-        for(int i = 0; i < modules.length; i++)
-        {
-            modules[i].setState(states[i]);
-        }
     }
 }
