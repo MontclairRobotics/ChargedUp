@@ -1,33 +1,30 @@
 package frc.robot.structure;
-import frc.swervelib.SwerveModule;
 
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import frc.swervelib.Mk4ModuleConfiguration;
-import frc.swervelib.Mk4iSwerveModuleHelper;
-import frc.swervelib.Mk4iSwerveModuleHelper.GearRatio;
+import com.swervedrivespecialties.swervelib.SwerveModule;
+import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper;
+import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
 public class SwerveModuleMk4iSpec extends SwerveModuleSpec
 {
     public final GearRatio ratio;
-    public final Mk4ModuleConfiguration configuration;
 
-    public SwerveModuleMk4iSpec(GearRatio ratio, int driverPort, int steerPort, int steerEncoderPort, double steerOffsetDegrees, String namePrefix)
+    public SwerveModuleMk4iSpec(GearRatio ratio, int driverPort, int steerPort, int steerEncoderPort, double steerOffsetDegrees)
     {
-        super(driverPort, steerPort, steerEncoderPort, steerOffsetDegrees, namePrefix);
+        super(driverPort, steerPort, steerEncoderPort, steerOffsetDegrees);
 
         this.ratio = ratio;
-        this.configuration = new Mk4ModuleConfiguration();
     }
 
     @Override
     public SwerveModule createNeo() 
     {
-        return Mk4iSwerveModuleHelper.createNeo(configuration, ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians, namePrefix);
+        return Mk4iSwerveModuleHelper.createNeo(ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians);
     }
     
     @Override
     public SwerveModule createNeo(ShuffleboardLayout container) 
     {
-        return Mk4iSwerveModuleHelper.createNeo(container, configuration, ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians, namePrefix);
+        return Mk4iSwerveModuleHelper.createNeo(container, ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians);
     }
 }
