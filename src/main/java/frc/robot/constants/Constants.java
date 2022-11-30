@@ -24,10 +24,10 @@ public final class Constants
          * BR - 3
          */
         public static final SwerveModuleSpec[] MODULES = {
-            new SwerveModuleMk4iSpec(GearRatio.L1,  0,  1,  2,  0.0),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  4,  5,  0.0),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  6,  7,  8,  0.0),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  9,  10, 11, 0.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  1,  28, 10,  270.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  271.6),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  270.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  273.2),
         };
 
         public static final int MODULE_COUNT = MODULES.length;

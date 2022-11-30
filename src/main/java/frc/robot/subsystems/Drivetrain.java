@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ChargedUp;
@@ -27,6 +29,13 @@ public class Drivetrain extends SubsystemBase
 
     private boolean useFieldRelative = true;
 
+    private static final String[] moduleNames = {
+        "FL",
+        "FR",
+        "BL",
+        "BR"
+    };
+
     public Drivetrain()
     {
         // Build Modules //
@@ -35,7 +44,9 @@ public class Drivetrain extends SubsystemBase
         int i = 0;
         for(var spec : Drive.MODULES)
         {
-            modules[i] = spec.createNeo();
+            modules[i] = spec.createNeo(
+                Shuffleboard.getTab("Drivetrain").getLayout("Module " + moduleNames[i], BuiltInLayouts.kList)
+            );
             i++;
         }
 
@@ -96,6 +107,8 @@ public class Drivetrain extends SubsystemBase
     @Override
     public void periodic() 
     {
+        if(states == null) return;
+
         var nstates = states.clone();
         SwerveDriveKinematics.desaturateWheelSpeeds(nstates, Drive.MAX_SPEED_MPS);
 
