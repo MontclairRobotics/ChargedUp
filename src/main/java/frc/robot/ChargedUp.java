@@ -49,9 +49,9 @@ public class ChargedUp extends RobotContainer
                 if(!DriverStation.isTeleop()) return;
 
                 drivetrain.driveInput(
-                    driverController.getAxisValue(Axis.LEFT_X),
                     driverController.getAxisValue(Axis.RIGHT_X),
-                    driverController.getAxisValue(Axis.RIGHT_Y)
+                    driverController.getAxisValue(Axis.LEFT_X),
+                    driverController.getAxisValue(Axis.LEFT_Y)
                 );
             },
             drivetrain

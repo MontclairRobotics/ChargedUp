@@ -4,6 +4,7 @@ import org.team555.frc.command.Commands;
 import org.team555.math.MathUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -95,12 +96,19 @@ public class Drivetrain extends SubsystemBase
                 vx_meter_per_second,
                 vy_meter_per_second,
                 omega_rad_per_second, 
-                ChargedUp.gyroscope.getRotation2d()
+                ChargedUp.gyroscope.getRotation2d().plus(Robot.NAVX_OFFSET)
             );
         }
         else
-        {
-            return new ChassisSpeeds(vx_meter_per_second, vy_meter_per_second, omega_rad_per_second);
+        {   
+            vx_meter_per_second = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
+            vy_meter_per_second = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
+
+            return new ChassisSpeeds(
+                vx_meter_per_second, 
+                vy_meter_per_second, 
+                omega_rad_per_second
+            );
         }
     }
 
