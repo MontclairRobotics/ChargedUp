@@ -106,8 +106,8 @@ public class Drivetrain extends SubsystemBase
 
     public void driveInput(JoystickInput turn, JoystickInput drive)
     {
-        ControlScheme.DRIVE_ADJUSTER.adjustX(turn);
-        ControlScheme.TURN_ADJUSTER.adjustMagnitude(drive);
+        ControlScheme.TURN_ADJUSTER.adjustX(turn);
+        ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
         drive(
             turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
