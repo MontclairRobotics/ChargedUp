@@ -45,7 +45,7 @@ public class JoystickAdjuster
     public void adjustY(JoystickInput joystick)
     {
         var m = adjust(joystick.getY());
-        joystick.setX(m);
+        joystick.setY(m);
     }
 
     public void adjustPos(JoystickInput joystick)

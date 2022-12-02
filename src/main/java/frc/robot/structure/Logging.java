@@ -21,7 +21,7 @@ public class Logging
                 logs[i] = logs[i+1];
             }
 
-            logs[LOG_CAPACITY] = s;
+            logs[LOG_CAPACITY-1] = s;
         }
     }
 

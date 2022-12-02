@@ -30,7 +30,7 @@ public class Drivetrain extends SubsystemBase
 {
     public final SwerveModule[] modules;
     public final SwerveDriveKinematics kinematics;
-    public final SwerveDriveOdometry odometry;
+    // public final SwerveDriveOdometry odometry;
 
     private SwerveModuleState[] states;
 
@@ -87,18 +87,18 @@ public class Drivetrain extends SubsystemBase
 
         // Build Kinematics //
         kinematics = new SwerveDriveKinematics(
-            new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //FL
+            new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FL
             new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FR
             new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //BL
-            new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2)  //BR
+            new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
         );
 
         // Build Odometry //
-        odometry = new SwerveDriveOdometry(
-            kinematics, 
-            ChargedUp.gyroscope.getRotation2d(), 
-            new Pose2d(5,5,Rotation2d.fromDegrees(0))
-        );
+        // odometry = new SwerveDriveOdometry(
+        //     kinematics, 
+        //     ChargedUp.gyroscope.getRotation2d(), 
+        //     new Pose2d(5,5,Rotation2d.fromDegrees(0))
+        // );
     }
 
     public void enableFieldRelative()  {useFieldRelative = true;}

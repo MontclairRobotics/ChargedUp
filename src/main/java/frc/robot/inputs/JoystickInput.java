@@ -11,12 +11,12 @@ public class JoystickInput
     private double theta;
 
     // Value Updaters //
-    private void updateFromCartesian()
+    private void updateFromPolar()
     {
         x = r*Math.cos(theta);
         y = r*Math.sin(theta);
     }
-    private void updateFromPolar()
+    private void updateFromCartesian()
     {
         r = Math.sqrt(x*x + y*y);
         theta = Math.atan2(y, x);
