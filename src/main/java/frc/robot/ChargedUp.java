@@ -8,11 +8,11 @@ import org.team555.frc.command.AutoCommands;
 import org.team555.frc.command.Commands;
 import org.team555.frc.command.commandrobot.RobotContainer;
 import org.team555.frc.controllers.GameController;
-import org.team555.frc.controllers.GameController.Axis;
 import org.team555.frc.controllers.GameController.Button;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.inputs.JoystickInput;
 import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
@@ -49,16 +49,17 @@ public class ChargedUp extends RobotContainer
                 if(!DriverStation.isTeleop()) return;
 
                 drivetrain.driveInput(
-                    driverController.getAxisValue(Axis.RIGHT_X),
-                    driverController.getAxisValue(Axis.LEFT_X),
-                    driverController.getAxisValue(Axis.LEFT_Y)
+                    JoystickInput.getRight(driverController),
+                    JoystickInput.getLeft(driverController)
                 );
             },
             drivetrain
         ));
 
-        driverController.getButton(Button.A_CROSS) .toggleWhenActive(drivetrain.commands.enableFieldRelative());
-        driverController.getButton(Button.X_SQUARE).toggleWhenActive(drivetrain.commands.disableFieldRelative());
+        driverController.getButton(Button.A_CROSS)
+            .toggleWhenActive(drivetrain.commands.enableFieldRelative());
+        driverController.getButton(Button.X_SQUARE)
+            .toggleWhenActive(drivetrain.commands.disableFieldRelative());
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(

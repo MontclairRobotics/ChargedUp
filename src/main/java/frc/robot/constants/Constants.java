@@ -7,6 +7,7 @@ import org.team555.frc.controllers.GameController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Units555;
+import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.structure.SwerveModuleMk4iSpec;
 import frc.robot.structure.SwerveModuleSpec;
 
@@ -25,10 +26,10 @@ public final class Constants
          * BR - 3
          */
         public static final SwerveModuleSpec[] MODULES = {
-            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  270.0-0.0),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  271.6-0.0),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  270.0-0.0),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  273.2-0.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  360-270.0+90.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  360-271.6+90.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  360-270.0+90.0),
+            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  360-273.2+90.0),
         };
 
         public static final int MODULE_COUNT = MODULES.length;
@@ -64,7 +65,9 @@ public final class Constants
         public static final int OPERATOR_CONTROLLER_PORT = 1;
         public static final int DRIVER_CONTROLLER_PORT   = 0;
 
-        public static final double DEADBAND    = 0.05;
-        public static final double INPUT_POWER = 2.2;
+        public static final double DEADBAND = 0.05;
+        
+        public static final JoystickAdjuster DRIVE_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);
+        public static final JoystickAdjuster TURN_ADJUSTER  = new JoystickAdjuster(DEADBAND, 1);
     }
 }

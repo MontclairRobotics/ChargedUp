@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ChargedUp;
-import frc.robot.Input;
+import frc.robot.inputs.JoystickInput;
+
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
@@ -70,12 +71,15 @@ public class Drivetrain extends SubsystemBase
     public void enableFieldRelative()  {useFieldRelative = true;}
     public void disableFieldRelative() {useFieldRelative = false;}
 
-    public void driveInput(double turn_axis, double x_axis, double y_axis)
+    public void driveInput(JoystickInput turn, JoystickInput drive)
     {
+        ControlScheme.DRIVE_ADJUSTER.adjustX(turn);
+        ControlScheme.TURN_ADJUSTER.adjustMagnitude(drive);
+
         drive(
-            Input.adjust(turn_axis, ControlScheme.DEADBAND, ControlScheme.INPUT_POWER) * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            Input.adjust(x_axis,    ControlScheme.DEADBAND, ControlScheme.INPUT_POWER) * Drive.MAX_SPEED_MPS,
-            Input.adjust(y_axis,    ControlScheme.DEADBAND, ControlScheme.INPUT_POWER) * Drive.MAX_SPEED_MPS
+            turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
+            drive.getX() * Drive.MAX_SPEED_MPS,
+            drive.getY() * Drive.MAX_SPEED_MPS
         );
     }
     
@@ -96,14 +100,11 @@ public class Drivetrain extends SubsystemBase
                 vx_meter_per_second,
                 vy_meter_per_second,
                 omega_rad_per_second, 
-                ChargedUp.gyroscope.getRotation2d().plus(Robot.NAVX_OFFSET)
+                ChargedUp.gyroscope.getRotation2d()
             );
         }
         else
-        {   
-            vx_meter_per_second = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
-            vy_meter_per_second = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
-
+        {
             return new ChassisSpeeds(
                 vx_meter_per_second, 
                 vy_meter_per_second, 
