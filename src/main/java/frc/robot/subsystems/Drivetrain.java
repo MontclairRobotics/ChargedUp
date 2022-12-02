@@ -4,13 +4,13 @@ import org.team555.frc.command.Commands;
 import org.team555.math.MathUtils;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +20,8 @@ import frc.robot.inputs.JoystickInput;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
+
+import java.util.Map;
 
 public class Drivetrain extends SubsystemBase
 {
@@ -43,11 +45,26 @@ public class Drivetrain extends SubsystemBase
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
 
+        Shuffleboard.getTab("Main")
+            .addBoolean("Field Relative", () -> useFieldRelative)
+            .withSize(2, 1)
+            .withPosition(0, 0);
+
+        Shuffleboard.getTab("Main")
+            .addNumber("Direction", () -> ChargedUp.gyroscope.getCompassHeading())
+            .withWidget(BuiltInWidgets.kDial)
+            .withProperties(Map.of("Min", 0, "Max", 360, "Show value", true))
+            .withSize(2, 2)
+            .withPosition(2, 0);
+
         int i = 0;
         for(var spec : Drive.MODULES)
         {
             modules[i] = spec.createNeo(
-                Shuffleboard.getTab("Drivetrain").getLayout("Module " + moduleNames[i], BuiltInLayouts.kList)
+                Shuffleboard.getTab("Drivetrain")
+                    .getLayout("Module " + moduleNames[i], BuiltInLayouts.kList)
+                    .withSize(2, 5)
+                    .withPosition(2*i, 0)
             );
             i++;
         }
