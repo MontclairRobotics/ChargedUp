@@ -79,7 +79,7 @@ public class Drivetrain extends SubsystemBase
             .withPosition(0, 0);
 
         Shuffleboard.getTab("Main")
-            .addNumber("Direction", () -> ChargedUp.gyroscope.getAngle())
+            .addNumber("Direction", ChargedUp.gyroscope::getAngle)
             .withWidget(BuiltInWidgets.kDial)
             .withProperties(Map.of("Min", 0, "Max", 360, "Show value", true))
             .withSize(2, 2)
