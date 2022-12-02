@@ -9,6 +9,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -16,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.Logging;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -31,6 +34,8 @@ public class Drivetrain extends SubsystemBase
 
     private SwerveModuleState[] states;
 
+    private double currentXVel, currentYVel;
+
     private boolean useFieldRelative = true;
 
     private static final String[] moduleNames = {
@@ -42,20 +47,11 @@ public class Drivetrain extends SubsystemBase
 
     public Drivetrain()
     {
+        currentXVel = 0;
+        currentYVel = 0;
+
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
-
-        Shuffleboard.getTab("Main")
-            .addBoolean("Field Relative", () -> useFieldRelative)
-            .withSize(2, 1)
-            .withPosition(0, 0);
-
-        Shuffleboard.getTab("Main")
-            .addNumber("Direction", () -> ChargedUp.gyroscope.getCompassHeading())
-            .withWidget(BuiltInWidgets.kDial)
-            .withProperties(Map.of("Min", 0, "Max", 360, "Show value", true))
-            .withSize(2, 2)
-            .withPosition(2, 0);
 
         int i = 0;
         for(var spec : Drive.MODULES)
@@ -68,6 +64,26 @@ public class Drivetrain extends SubsystemBase
             );
             i++;
         }
+
+        // Build Shuffleboard //
+        Shuffleboard.getTab("Main")
+            .addString("Log", Logging::logString)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(2, 3)
+            .withPosition(0, 2);
+
+        Shuffleboard.getTab("Main")
+            .addBoolean("Field Relative", () -> useFieldRelative)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(2, 1)
+            .withPosition(0, 0);
+
+        Shuffleboard.getTab("Main")
+            .addNumber("Direction", () -> ChargedUp.gyroscope.getAngle())
+            .withWidget(BuiltInWidgets.kDial)
+            .withProperties(Map.of("Min", 0, "Max", 360, "Show value", true))
+            .withSize(2, 2)
+            .withPosition(2, 0);
 
         // Build Kinematics //
         kinematics = new SwerveDriveKinematics(
@@ -103,6 +119,9 @@ public class Drivetrain extends SubsystemBase
     public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
         states = kinematics.toSwerveModuleStates(getChassisSpeeds(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second));
+
+        currentXVel = vx_meter_per_second;
+        currentYVel = vy_meter_per_second;
     }
 
     private ChassisSpeeds getChassisSpeeds(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
