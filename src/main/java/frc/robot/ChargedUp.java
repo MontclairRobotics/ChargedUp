@@ -64,7 +64,7 @@ public class ChargedUp extends RobotContainer
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
             Commands.print("Starting main auto"),
-            drivetrain.commands.driveForTime(1, 3, 1, 0),
+            drivetrain.commands.driveForTime(2, 1, 0, 1),
             Commands.print("Ending the main auto"),
             drivetrain.commands.drive(0, 0, 0)
         ));

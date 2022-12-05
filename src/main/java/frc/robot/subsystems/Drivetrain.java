@@ -101,8 +101,16 @@ public class Drivetrain extends SubsystemBase
         // );
     }
 
-    public void enableFieldRelative()  {useFieldRelative = true;}
-    public void disableFieldRelative() {useFieldRelative = false;}
+    public void enableFieldRelative()  
+    {
+        useFieldRelative = true;
+        Logging.Info("Field relative enabled");
+    }
+    public void disableFieldRelative() 
+    {
+        useFieldRelative = false;
+        Logging.Info("Field relative disabled");
+    }
 
     public void driveInput(JoystickInput turn, JoystickInput drive)
     {
@@ -122,22 +130,22 @@ public class Drivetrain extends SubsystemBase
         var newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
         var newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
 
-        Logging.Info("x-velocity: " + vx_meter_per_second);
-        Logging.Info("y-velocity: " + vy_meter_per_second);
+        //Logging.Info("x-velocity: " + vx_meter_per_second);
+        //Logging.Info("y-velocity: " + vy_meter_per_second);
 
         // Get the states for the modules
         chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
 
         // Set the current velcocities
         currentXVel = vx_meter_per_second;
-        currentYVel = vy_meter_per_second;
+        currentYVel = -vy_meter_per_second;
     }
 
     private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
     {
         adjusted_vx    = MathUtils.clamp(adjusted_vx,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
-        adjusted_vy    = MathUtils.clamp(adjusted_vy,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
-        adjusted_omega = MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        adjusted_vy    = -MathUtils.clamp(adjusted_vy,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
+        adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
         if(useFieldRelative)
         {
@@ -183,11 +191,12 @@ public class Drivetrain extends SubsystemBase
 
         public Command drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.instant(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this);
+            return Commands.instant(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
         public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.runForTime(time, () -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this);
+            enableFieldRelative();
+            return Commands.runForTime(time, () -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
         public Command enableFieldRelative()
         {
