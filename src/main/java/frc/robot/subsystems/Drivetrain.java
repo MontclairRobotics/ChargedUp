@@ -32,7 +32,7 @@ public class Drivetrain extends SubsystemBase
     public final SwerveDriveKinematics kinematics;
     // public final SwerveDriveOdometry odometry;
 
-    private SwerveModuleState[] states;
+    private ChassisSpeeds chassisSpeeds;
 
     private double currentXVel, currentYVel;
 
@@ -118,33 +118,42 @@ public class Drivetrain extends SubsystemBase
     
     public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
-        states = kinematics.toSwerveModuleStates(getChassisSpeeds(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second));
+        // Rotate so that the front is the real front of the robot
+        var newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
+        var newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
 
+        Logging.Info("x-velocity: " + vx_meter_per_second);
+        Logging.Info("y-velocity: " + vy_meter_per_second);
+
+        // Get the states for the modules
+        chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
+
+        // Set the current velcocities
         currentXVel = vx_meter_per_second;
         currentYVel = vy_meter_per_second;
     }
 
-    private ChassisSpeeds getChassisSpeeds(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+    private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
     {
-        vx_meter_per_second  = MathUtils.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
-        vy_meter_per_second  = MathUtils.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
-        omega_rad_per_second = MathUtils.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        adjusted_vx    = MathUtils.clamp(adjusted_vx,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
+        adjusted_vy    = MathUtils.clamp(adjusted_vy,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
+        adjusted_omega = MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
         if(useFieldRelative)
         {
             return ChassisSpeeds.fromFieldRelativeSpeeds(
-                vx_meter_per_second,
-                vy_meter_per_second,
-                omega_rad_per_second, 
+                adjusted_vx,
+                adjusted_vy,
+                adjusted_omega, 
                 ChargedUp.gyroscope.getRotation2d()
             );
         }
         else
         {
             return new ChassisSpeeds(
-                vx_meter_per_second, 
-                vy_meter_per_second, 
-                omega_rad_per_second
+                adjusted_vx, 
+                adjusted_vy, 
+                adjusted_omega
             );
         }
     }
@@ -152,16 +161,17 @@ public class Drivetrain extends SubsystemBase
     @Override
     public void periodic() 
     {
-        if(states == null) return;
+        if(chassisSpeeds == null) return;
 
-        var nstates = states.clone();
-        SwerveDriveKinematics.desaturateWheelSpeeds(nstates, Drive.MAX_SPEED_MPS);
+        var states = kinematics.toSwerveModuleStates(chassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
 
         for(int i = 0; i < Drive.MODULE_COUNT; i++)
         {
             modules[i].set(
-                nstates[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
-                nstates[i].angle.getRadians()
+                states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
+                states[i].angle.getRadians()
             );
         }
     }
