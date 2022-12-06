@@ -5,25 +5,52 @@ import org.team555.frc.controllers.GameController.Axis;
 
 public class JoystickInput 
 {
+    private final boolean invertX;
+    private final boolean invertY;
+
     private double x;
     private double y;
+
+    private double rawX;
+    private double rawY;
+
     private double r;
+
     private double theta;
+    private double rawTheta;
 
     // Value Updaters //
-    private void updateFromPolar()
+    private void updateXY()
     {
-        x = r*Math.cos(theta);
-        y = r*Math.sin(theta);
+        x = invertX ? -rawX : rawX;
+        y = invertY ? -rawY : rawY;
     }
-    private void updateFromCartesian()
+    private void updateTheta()
     {
-        r = Math.sqrt(x*x + y*y);
-        theta = Math.atan2(y, x);
+        theta = invertX ? 180 - rawTheta : rawTheta;
+        theta = invertY ? -theta         : theta;
     }
 
-    private JoystickInput(double x, double y)
+    private void updateCartesianFromPolar()
     {
+        rawX = r*Math.cos(rawTheta);
+        rawY = r*Math.sin(rawTheta);
+        
+        updateXY();
+    }
+    private void updatePolarFromCartesian()
+    {
+        r = Math.sqrt(rawX*rawX + rawY*rawY);
+        rawTheta = Math.atan2(rawY, rawX);
+
+        updateTheta();
+    }
+
+    private JoystickInput(double x, double y, boolean invertX, boolean invertY)
+    {
+        this.invertX = invertX;
+        this.invertY = invertY;
+
         setXY(x, y);
     }
 
@@ -34,65 +61,74 @@ public class JoystickInput
     public double getMagnitude() {return r;}
     public double getTheta() {return theta;}
 
+    public double getRawX() {return x;}
+    public double getRawY() {return y;}
+    public double getRawTheta() {return rawTheta;}
+
     // Setters //
     public void setXY(double x, double y)
     {
-        this.x = x;
-        this.y = y;
+        rawX = x;
+        rawY = y;
 
-        updateFromCartesian();
+        updateXY();
+        updatePolarFromCartesian();
     }
     public void setPolar(double r, double theta)
     {
         this.r = r;
         this.theta = theta;
 
-        updateFromPolar();
+        updateTheta();
+        updateCartesianFromPolar();
     }
 
     public void setX(double x)
     {
-        this.x = x;
-        updateFromCartesian();
+        rawX = x;
+
+        updateXY();
+        updatePolarFromCartesian();
     }
     public void setY(double y)
     {
-        this.y = y;
-        updateFromCartesian();
+        rawY = y;
+        
+        updateXY();
+        updatePolarFromCartesian();
     }
 
     public void setMagnitude(double magnitude)
     {
         r = magnitude;
-        updateFromPolar();
-    }
-    public void setTheta(double theta)
-    {
-        this.theta = theta;
-        updateFromPolar();
+        updateCartesianFromPolar();
     }
 
-    public void rotate(double angleRadians)
+    public void setTheta(double theta)
     {
-        theta += angleRadians;
-        updateFromPolar();
+        rawTheta = theta;
+
+        updateTheta();
+        updateCartesianFromPolar();
     }
 
     // Static Constructors //
-    public static JoystickInput getInput(GameController controller, Axis x, Axis y)
+    public static JoystickInput getInput(GameController controller, Axis x, Axis y, boolean invertX, boolean invertY)
     {
         return new JoystickInput(
             controller.getAxisValue(x),
-            controller.getAxisValue(y)
+            controller.getAxisValue(y),
+            invertX, 
+            invertY
         );
     }
 
-    public static JoystickInput getLeft(GameController controller)
+    public static JoystickInput getLeft(GameController controller, boolean invertX, boolean invertY)
     {
-        return getInput(controller, Axis.LEFT_X, Axis.LEFT_Y);
+        return getInput(controller, Axis.LEFT_X, Axis.LEFT_Y, invertX, invertY);
     }
-    public static JoystickInput getRight(GameController controller)
+    public static JoystickInput getRight(GameController controller, boolean invertX, boolean invertY)
     {
-        return getInput(controller, Axis.RIGHT_X, Axis.RIGHT_Y);
+        return getInput(controller, Axis.RIGHT_X, Axis.RIGHT_Y, invertX, invertY);
     }
 }

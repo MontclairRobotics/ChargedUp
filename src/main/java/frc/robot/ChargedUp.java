@@ -9,10 +9,16 @@ import org.team555.frc.command.Commands;
 import org.team555.frc.command.commandrobot.RobotContainer;
 import org.team555.frc.controllers.GameController;
 import org.team555.frc.controllers.GameController.Button;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.Trajectories;
 import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
@@ -21,6 +27,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
 {
+    public static final Field2d field = new Field2d();
+
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
         ControlScheme.DRIVER_CONTROLLER_TYPE,
@@ -41,6 +49,8 @@ public class ChargedUp extends RobotContainer
     // INITIALIZER //
     @Override public void initialize() 
     {
+        Shuffleboard.getTab("Field").add(field).withSize(4, 2);
+
         gyroscope.zeroYaw();
 
         // HANDLE DRIVING //
@@ -49,8 +59,8 @@ public class ChargedUp extends RobotContainer
                 if(!DriverStation.isTeleop()) return;
 
                 drivetrain.driveInput(
-                    JoystickInput.getRight(driverController),
-                    JoystickInput.getLeft(driverController)
+                    JoystickInput.getRight(driverController, true,  false),
+                    JoystickInput.getLeft (driverController, false, false)
                 );
             },
             drivetrain
@@ -68,5 +78,17 @@ public class ChargedUp extends RobotContainer
             Commands.print("Ending the main auto"),
             drivetrain.commands.drive(0, 0, 0)
         ));
+        
+        AutoCommands.add("Trajectory Test", () -> drivetrain.commands.followTrajectory(
+            Trajectories.getTrajectory(
+                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+                new Pose2d(2, 0, Rotation2d.fromDegrees(360))
+            )
+        ));
+
+        Shuffleboard.getTab("Main")
+            .add("Auto Commands", AutoCommands.chooser())
+            .withSize(2, 1)
+            .withPosition(5, 0);
     }
 }

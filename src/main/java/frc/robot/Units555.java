@@ -11,6 +11,15 @@ public class Units555
         return value / 0.44704;
     }
 
+    public static double mphpsToMpsps(double value)
+    {
+        return value * 0.44704;
+    }
+    public static double mpspsToMphps(double value)
+    {
+        return value / 0.44704;
+    }
+
     public static double lbFt2ToKgM2(double value)
     {
         return value * 0.0421401101;

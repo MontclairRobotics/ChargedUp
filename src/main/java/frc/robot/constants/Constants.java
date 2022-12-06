@@ -4,7 +4,9 @@ import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
 import org.team555.frc.controllers.GameController;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Units555;
 import frc.robot.inputs.JoystickAdjuster;
@@ -24,6 +26,8 @@ public final class Constants
          * FR - 1
          * BL - 2
          * BR - 3
+         * 
+         * TODO: why do we need to subtract 90deg here?
          */
         public static final SwerveModuleSpec[] MODULES = {
             new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  087.078116 - 90),
@@ -32,13 +36,34 @@ public final class Constants
             new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90),
         };
 
-        public static final int MODULE_COUNT = MODULES.length;
+        public static class XPID
+        {
+            public static final double KP = 0;
+            public static final double KI = 0;
+            public static final double KD = 0;
+        }
+        public static class YPID
+        {
+            public static final double KP = 0;
+            public static final double KI = 0;
+            public static final double KD = 0;
+        }
+        public static class ThetaPID
+        {
+            public static final double KP = 0;
+            public static final double KI = 0;
+            public static final double KD = 0;
+        }
 
+
+        public static final int MODULE_COUNT = MODULES.length;
         
         public static final double MAX_VOLTAGE_V = 12.0;
 
-        public static final double MAX_SPEED_MPS            = Units555.mphToMps(10);
-        public static final double MAX_TURN_SPEED_RAD_PER_S = Math.PI * 2;
+        public static final double MAX_SPEED_MPS             = Units.feetToMeters(11);
+        public static final double MAX_ACCEL_MPS2            = Units555.mphpsToMpsps(10);
+        public static final double MAX_TURN_SPEED_RAD_PER_S  = Math.PI * 2;
+        public static final double MAX_TURN_ACCEL_RAD_PER_S2 = Units.degreesToRadians(360);
 
         public static final double WHEEL_BASE_W_M = Units.inchesToMeters(30);
         public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);

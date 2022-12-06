@@ -2,6 +2,10 @@ package frc.robot.subsystems;
 
 import org.team555.frc.command.Commands;
 import org.team555.math.MathUtils;
+
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -9,28 +13,43 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Logging;
+import frc.robot.structure.Trajectories;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Drivetrain extends SubsystemBase
 {
     public final SwerveModule[] modules;
     public final SwerveDriveKinematics kinematics;
-    // public final SwerveDriveOdometry odometry;
+    public final SwerveDriveOdometry odometry;
+    public final HolonomicDriveController driveController;
+
+    public final PIDController xController;
+    public final PIDController yController;
+    public final ProfiledPIDController thetaController;
+
+    private Trajectory.State currentState;
 
     private ChassisSpeeds chassisSpeeds;
 
@@ -38,7 +57,7 @@ public class Drivetrain extends SubsystemBase
 
     private boolean useFieldRelative = true;
 
-    private static final String[] moduleNames = {
+    private static final String[] MODULE_NAMES = {
         "FL",
         "FR",
         "BL",
@@ -58,7 +77,7 @@ public class Drivetrain extends SubsystemBase
         {
             modules[i] = spec.createNeo(
                 Shuffleboard.getTab("Drivetrain")
-                    .getLayout("Module " + moduleNames[i], BuiltInLayouts.kList)
+                    .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
                     .withSize(2, 5)
                     .withPosition(2*i, 0)
             );
@@ -70,7 +89,7 @@ public class Drivetrain extends SubsystemBase
             .addString("Log", Logging::logString)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(2, 3)
-            .withPosition(0, 2);
+            .withPosition(0, 1);
 
         Shuffleboard.getTab("Main")
             .addBoolean("Field Relative", () -> useFieldRelative)
@@ -79,9 +98,11 @@ public class Drivetrain extends SubsystemBase
             .withPosition(0, 0);
 
         Shuffleboard.getTab("Main")
-            .addNumber("Direction", ChargedUp.gyroscope::getAngle)
-            .withWidget(BuiltInWidgets.kDial)
-            .withProperties(Map.of("Min", 0, "Max", 360, "Show value", true))
+            .addNumber("Direction", () -> {
+                var y = ChargedUp.gyroscope.getYaw();
+                return y > 0 ? y : 360+y; 
+            })
+            .withWidget(BuiltInWidgets.kGyro)
             .withSize(2, 2)
             .withPosition(2, 0);
 
@@ -94,11 +115,39 @@ public class Drivetrain extends SubsystemBase
         );
 
         // Build Odometry //
-        // odometry = new SwerveDriveOdometry(
-        //     kinematics, 
-        //     ChargedUp.gyroscope.getRotation2d(), 
-        //     new Pose2d(5,5,Rotation2d.fromDegrees(0))
-        // );
+        odometry = new SwerveDriveOdometry(
+            kinematics, 
+            ChargedUp.gyroscope.getRotation2d(), 
+            new Pose2d(5,5,Rotation2d.fromDegrees(0))
+        );
+
+        // Build PID Controllers //
+        xController = new PIDController(
+            Drive.XPID.KP,
+            Drive.XPID.KI, 
+            Drive.XPID.KD
+        );
+
+        yController = new PIDController(
+            Drive.YPID.KP,
+            Drive.YPID.KI, 
+            Drive.YPID.KD
+        );
+
+        thetaController = new ProfiledPIDController(
+            Drive.ThetaPID.KP,
+            Drive.ThetaPID.KI, 
+            Drive.ThetaPID.KD, 
+            new TrapezoidProfile.Constraints(
+                Drive.MAX_SPEED_MPS, 
+                Drive.MAX_TURN_ACCEL_RAD_PER_S2
+            )
+        );
+
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        // Build Drive Controller //
+        driveController = new HolonomicDriveController(xController, yController, thetaController);
     }
 
     public void enableFieldRelative()  
@@ -129,22 +178,25 @@ public class Drivetrain extends SubsystemBase
         // Rotate so that the front is the real front of the robot
         var newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
         var newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
-
-        //Logging.Info("x-velocity: " + vx_meter_per_second);
-        //Logging.Info("y-velocity: " + vy_meter_per_second);
+        
+        // TODO: why do we need to negate the y velocity here?
+        // TODO: should this negation be reflected in "currentYVel"?
+        newvy = -newvy;
 
         // Get the states for the modules
         chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
 
         // Set the current velcocities
         currentXVel = vx_meter_per_second;
-        currentYVel = -vy_meter_per_second;
+        currentYVel = vy_meter_per_second;
     }
 
     private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
     {
-        adjusted_vx    = MathUtils.clamp(adjusted_vx,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
-        adjusted_vy    = -MathUtils.clamp(adjusted_vy,  -Drive.MAX_SPEED_MPS, Drive.MAX_SPEED_MPS);
+        // TODO: why do we need to negate the y velocity here?
+        // TODO: unflip omega and fix with input flipping
+        adjusted_vx    = MathUtils.clamp(adjusted_vx,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_vy    = MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
         if(useFieldRelative)
@@ -166,8 +218,7 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
-    @Override
-    public void periodic() 
+    public void driveFromChassisSpeeds() 
     {
         if(chassisSpeeds == null) return;
 
@@ -182,6 +233,30 @@ public class Drivetrain extends SubsystemBase
                 states[i].angle.getRadians()
             );
         }
+        
+        odometry.update(ChargedUp.gyroscope.getRotation2d(), states);
+    }
+
+    public void autoPeriodic()
+    {
+        chassisSpeeds = driveController.calculate(
+            odometry.getPoseMeters(), 
+            currentState,
+            ChargedUp.gyroscope.getRotation2d()
+        );
+        
+        if (driveController.atReference())
+        {
+            currentState = null;
+        }
+    }
+
+    @Override public void periodic()
+    {
+        if(currentState != null) autoPeriodic();
+        driveFromChassisSpeeds();
+
+        ChargedUp.field.setRobotPose(odometry.getPoseMeters());
     }
 
     public final DriveCommands commands = this.new DriveCommands();
@@ -205,6 +280,40 @@ public class Drivetrain extends SubsystemBase
         public Command disableFieldRelative()
         {
             return Commands.instant(Drivetrain.this::disableFieldRelative, Drivetrain.this);
+        }
+        public Command followTrajectory(Trajectory trajectory)
+        {
+            return new Command() 
+            {
+                @Override public Set<Subsystem> getRequirements() {return Set.of(Drivetrain.this);}
+
+                public List<Trajectory.State> states = trajectory.getStates();
+                public int state = 0;
+
+                @Override
+                public void execute() 
+                {
+                    if(state == states.size()) return;
+
+                    Drivetrain.this.currentState = states.get(state);
+                    Drivetrain.this.autoPeriodic();
+
+                    if(Drivetrain.this.currentState == null)
+                    {
+                        state++;
+                    }
+                }
+
+                @Override
+                public void end(boolean interrupted) {
+                    Drivetrain.this.currentState = null;
+                }
+                
+                @Override
+                public boolean isFinished() {
+                    return state == states.size();
+                }
+            };
         }
     }
 }
