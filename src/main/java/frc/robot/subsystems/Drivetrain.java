@@ -23,12 +23,14 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
-import frc.robot.structure.Logging;
-import frc.robot.structure.Trajectories;
+import frc.robot.structure.factories.TrajectoryFactory;
+import frc.robot.structure.helpers.Logging;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -41,17 +43,11 @@ import java.util.Set;
 public class Drivetrain extends SubsystemBase
 {
     public final SwerveModule[] modules;
-    public final SwerveDriveKinematics kinematics;
     public final SwerveDriveOdometry odometry;
-    public final HolonomicDriveController driveController;
 
     public final PIDController xController;
     public final PIDController yController;
     public final ProfiledPIDController thetaController;
-
-    private Trajectory.State currentState;
-
-    private ChassisSpeeds chassisSpeeds;
 
     private double currentXVel, currentYVel;
 
@@ -106,19 +102,11 @@ public class Drivetrain extends SubsystemBase
             .withSize(2, 2)
             .withPosition(2, 0);
 
-        // Build Kinematics //
-        kinematics = new SwerveDriveKinematics(
-            new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FL
-            new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FR
-            new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //BL
-            new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
-        );
-
         // Build Odometry //
         odometry = new SwerveDriveOdometry(
-            kinematics, 
+            Drive.KINEMATICS, 
             ChargedUp.gyroscope.getRotation2d(), 
-            new Pose2d(5,5,Rotation2d.fromDegrees(0))
+            new Pose2d()
         );
 
         // Build PID Controllers //
@@ -145,20 +133,17 @@ public class Drivetrain extends SubsystemBase
         );
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-        // Build Drive Controller //
-        driveController = new HolonomicDriveController(xController, yController, thetaController);
     }
 
     public void enableFieldRelative()  
     {
         useFieldRelative = true;
-        Logging.Info("Field relative enabled");
+        Logging.info("Field relative enabled");
     }
     public void disableFieldRelative() 
     {
         useFieldRelative = false;
-        Logging.Info("Field relative disabled");
+        Logging.info("Field relative disabled");
     }
 
     public void driveInput(JoystickInput turn, JoystickInput drive)
@@ -184,7 +169,10 @@ public class Drivetrain extends SubsystemBase
         newvy = -newvy;
 
         // Get the states for the modules
-        chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
+        var chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
+
+        // Actually drive
+        driveFromChassisSpeeds(chassisSpeeds);
 
         // Set the current velcocities
         currentXVel = vx_meter_per_second;
@@ -218,14 +206,16 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
-    public void driveFromChassisSpeeds() 
+    public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
-        if(chassisSpeeds == null) return;
-
-        var states = kinematics.toSwerveModuleStates(chassisSpeeds);
-
+        var states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
 
+        driveFromStates(states);
+    }
+
+    public void driveFromStates(SwerveModuleState[] states)
+    {
         for(int i = 0; i < Drive.MODULE_COUNT; i++)
         {
             modules[i].set(
@@ -235,44 +225,34 @@ public class Drivetrain extends SubsystemBase
         }
         
         odometry.update(ChargedUp.gyroscope.getRotation2d(), states);
-    }
-
-    public void autoPeriodic()
-    {
-        chassisSpeeds = driveController.calculate(
-            odometry.getPoseMeters(), 
-            currentState,
-            ChargedUp.gyroscope.getRotation2d()
-        );
-        
-        if (driveController.atReference())
-        {
-            currentState = null;
-        }
-    }
-
-    @Override public void periodic()
-    {
-        if(currentState != null) autoPeriodic();
-        driveFromChassisSpeeds();
-
         ChargedUp.field.setRobotPose(odometry.getPoseMeters());
     }
+
+    public void setPose(Pose2d pose)
+    {
+        odometry.resetPosition(pose, ChargedUp.gyroscope.getRotation2d());
+    }
+
 
     public final DriveCommands commands = this.new DriveCommands();
     public class DriveCommands 
     {
         private DriveCommands() {}
 
-        public Command drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        public Command driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.instant(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
         public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            enableFieldRelative();
-            return Commands.runForTime(time, () -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
+            return CommandGroupBase.sequence
+            (
+                enableFieldRelative(),
+                Commands.runForTime(time, () -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this),
+                disableFieldRelative()
+            );
         }
+
         public Command enableFieldRelative()
         {
             return Commands.instant(Drivetrain.this::enableFieldRelative, Drivetrain.this);
@@ -281,39 +261,29 @@ public class Drivetrain extends SubsystemBase
         {
             return Commands.instant(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
+
         public Command followTrajectory(Trajectory trajectory)
         {
-            return new Command() 
-            {
-                @Override public Set<Subsystem> getRequirements() {return Set.of(Drivetrain.this);}
+            return new SwerveControllerCommand
+            (
+                // Trajectory
+                trajectory, 
 
-                public List<Trajectory.State> states = trajectory.getStates();
-                public int state = 0;
+                // Odometry and kinematics
+                odometry::getPoseMeters, 
+                Drive.KINEMATICS, 
 
-                @Override
-                public void execute() 
-                {
-                    if(state == states.size()) return;
+                // PID Controllers
+                xController, 
+                yController, 
+                thetaController, 
 
-                    Drivetrain.this.currentState = states.get(state);
-                    Drivetrain.this.autoPeriodic();
+                // TODO: implement rotation getter
 
-                    if(Drivetrain.this.currentState == null)
-                    {
-                        state++;
-                    }
-                }
-
-                @Override
-                public void end(boolean interrupted) {
-                    Drivetrain.this.currentState = null;
-                }
-                
-                @Override
-                public boolean isFinished() {
-                    return state == states.size();
-                }
-            };
+                // Drivetrain and Driver Method
+                Drivetrain.this::driveFromStates, 
+                Drivetrain.this
+            );
         }
     }
 }

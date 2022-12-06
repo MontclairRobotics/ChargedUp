@@ -1,4 +1,4 @@
-package frc.robot.structure;
+package frc.robot.structure.helpers;
 
 // Thanks to https://stackoverflow.com/a/45444716!
 public class ConsoleColors 

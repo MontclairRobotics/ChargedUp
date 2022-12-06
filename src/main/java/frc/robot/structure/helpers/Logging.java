@@ -1,4 +1,4 @@
-package frc.robot.structure;
+package frc.robot.structure.helpers;
 
 public class Logging 
 {
@@ -38,21 +38,21 @@ public class Logging
         return s.toString();
     }
 
-    public static void Info(String message)
+    public static void info(String message)
     {
         var s = "[INFO]: " + message;
 
         System.out.println(ConsoleColors.WHITE_BRIGHT + s + ConsoleColors.RESET);
         addLog(s);
     }
-    public static void Warning(String message)
+    public static void warning(String message)
     {
         var s = "[WARNING]: " + message;
 
         System.out.println(ConsoleColors.YELLOW_UNDERLINED + s + ConsoleColors.RESET);
         addLog(s);
     }
-    public static void Error(String message)
+    public static void error(String message)
     {
         var s = "[ERROR]: " + message;
 

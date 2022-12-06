@@ -1,4 +1,4 @@
-package frc.robot.structure;
+package frc.robot.structure.swerve;
 
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import com.swervedrivespecialties.swervelib.SwerveModule;

@@ -6,12 +6,14 @@ import org.team555.frc.controllers.GameController;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.Units555;
 import frc.robot.inputs.JoystickAdjuster;
-import frc.robot.structure.SwerveModuleMk4iSpec;
-import frc.robot.structure.SwerveModuleSpec;
+import frc.robot.structure.helpers.Units555;
+import frc.robot.structure.swerve.SwerveModuleMk4iSpec;
+import frc.robot.structure.swerve.SwerveModuleSpec;
 
 public final class Constants 
 {
@@ -67,6 +69,13 @@ public final class Constants
 
         public static final double WHEEL_BASE_W_M = Units.inchesToMeters(30);
         public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
+
+        public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
+            new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FL
+            new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FR
+            new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //BL
+            new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
+        );
     }
 
     public static class Robot 

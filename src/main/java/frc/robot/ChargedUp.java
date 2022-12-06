@@ -18,7 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.inputs.JoystickInput;
-import frc.robot.structure.Trajectories;
+import frc.robot.structure.factories.PoseFactory;
+import frc.robot.structure.factories.TrajectoryFactory;
 import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
@@ -49,14 +50,21 @@ public class ChargedUp extends RobotContainer
     // INITIALIZER //
     @Override public void initialize() 
     {
-        Shuffleboard.getTab("Field").add(field).withSize(4, 2);
+        Shuffleboard.getTab("Field")
+            .add(field)
+            .withSize(4, 2)
+            .withPosition(0, 0);
 
         gyroscope.zeroYaw();
 
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() ->
             {
-                if(!DriverStation.isTeleop()) return;
+                if(!DriverStation.isTeleop())
+                {
+                    drivetrain.drive(0,0,0);
+                    return;
+                }
 
                 drivetrain.driveInput(
                     JoystickInput.getRight(driverController, true,  false),
@@ -76,13 +84,13 @@ public class ChargedUp extends RobotContainer
             Commands.print("Starting main auto"),
             drivetrain.commands.driveForTime(2, 1, 0, 1),
             Commands.print("Ending the main auto"),
-            drivetrain.commands.drive(0, 0, 0)
+            drivetrain.commands.driveInstant(0, 0, 0)
         ));
         
         AutoCommands.add("Trajectory Test", () -> drivetrain.commands.followTrajectory(
-            Trajectories.getTrajectory(
-                new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-                new Pose2d(2, 0, Rotation2d.fromDegrees(360))
+            TrajectoryFactory.getTrajectory(
+                PoseFactory.of(0, 0, 0),
+                PoseFactory.of(2, 0, 0)
             )
         ));
 
