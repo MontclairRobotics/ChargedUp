@@ -1,7 +1,7 @@
 {
   "tabPane": [
     {
-      "title": "Vision",
+      "title": "Tab 1",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -10,93 +10,13 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "titleType": 0,
-        "tiles": {
-          "4,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/MinArea",
-              "_title": "/SmartDashboard/MinArea"
-            }
-          },
-          "5,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/MinCircularity",
-              "_title": "/SmartDashboard/MinCircularity"
-            }
-          },
-          "7,0": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://Camera Vision",
-              "_title": "Camera Vision",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
-            }
-          },
-          "3,2": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://Shooter Vision",
-              "_title": "Shooter Vision",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
-            }
-          },
-          "7,2": {
-            "size": [
-              3,
-              2
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://Vision Output",
-              "_title": "Vision Output",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
-          }
-        }
+        "tiles": {}
       }
     }
   ],
   "windowGeometry": {
-    "x": -5.599999904632568,
-    "y": 75.19999694824219,
+    "x": -4.0,
+    "y": 6.400000095367432,
     "width": 1547.199951171875,
     "height": 754.4000244140625
   }

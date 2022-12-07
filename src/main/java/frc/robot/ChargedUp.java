@@ -27,16 +27,15 @@ import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.swing.TransferHandler;
 
 import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
-    public static final Map<String, Trajectory> trajectories = Map.of();
+    public static final Map<String, Trajectory> trajectories = new HashMap<String, Trajectory>();
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -58,10 +57,10 @@ public class ChargedUp extends RobotContainer
     // INITIALIZER //
     @Override public void initialize() 
     {
-        Shuffleboard.getTab("Field")
-            .add(field)
+        Shuffleboard.getTab("Main")
+            .add("Field", field)
             .withSize(4, 2)
-            .withPosition(0, 0);
+            .withPosition(0, 2);
 
         gyroscope.zeroYaw();
 
@@ -121,6 +120,16 @@ public class ChargedUp extends RobotContainer
         addTrajectory("Test Line", TrajectoryFactory.getTrajectory(
             PoseFactory.meter(0, 0, 0),
             PoseFactory.meter(1, 0, 0)
+        ));
+
+        addTrajectory("Test Diagonal", TrajectoryFactory.getTrajectory(
+            PoseFactory.meter(0, 0, 0),
+            PoseFactory.meter(2, 2, 0)
+        ));
+
+        addTrajectory("Test Line+Turn Long", TrajectoryFactory.getTrajectory(
+            PoseFactory.meter(0, 0, 0),
+            PoseFactory.meter(5, 5, 180)
         ));
 
         addTrajectory("Test Line+Turn", TrajectoryFactory.getTrajectory(

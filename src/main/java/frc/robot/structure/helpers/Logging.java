@@ -59,9 +59,9 @@ public class Logging
         System.out.println(ConsoleColors.RED_UNDERLINED + s + ConsoleColors.RESET);
         addLog(s);
     }
-    public static void fuck(String message)
+    public static void fatal(String message)
     {
-        var s = "[FUCK]: " + message;
+        var s = "[FATAL]: " + message;
 
         System.out.println(ConsoleColors.GREEN_BOLD_BRIGHT + s + ConsoleColors.RESET);
         addLog(s);

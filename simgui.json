@@ -32,13 +32,19 @@
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/Shuffleboard/Main/Auto Commands": "String Chooser",
       "/Shuffleboard/Main/Field": "Field2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
-      "/SmartDashboard/Field": {
+      "/Shuffleboard/Main/Auto Commands": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Main/Field": {
         "window": {
           "visible": true
         }
@@ -92,7 +98,8 @@
         }
       ],
       "window": {
-        "name": "Angular Velocity"
+        "name": "Angular Velocity",
+        "visible": false
       }
     }
   }

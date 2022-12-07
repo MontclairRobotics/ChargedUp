@@ -19,6 +19,10 @@ import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.IterativeRobotBase;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -29,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.factories.TrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.swerve.SwerveTrajectoryCommand;
@@ -43,16 +48,18 @@ import java.util.Set;
 
 public class Drivetrain extends SubsystemBase
 {
-    public final SwerveModule[] modules;
-    public final SwerveDriveOdometry odometry;
+    private final SwerveModule[] modules;
+    private final SwerveDriveOdometry odometry;
 
     public final PIDController xController;
     public final PIDController yController;
     public final ProfiledPIDController thetaController;
 
     public final HolonomicDriveController driveController;
-
-    private double currentXVel, currentYVel;
+    
+    private Pose2d estimatedPose;
+    private double currentRelativeXVel, currentRelativeYVel, currentOmega;
+    private double currentSimulationX, currentSimulationY, currentSimulationTheta;
 
     private boolean useFieldRelative = true;
 
@@ -65,8 +72,13 @@ public class Drivetrain extends SubsystemBase
 
     public Drivetrain()
     {
-        currentXVel = 0;
-        currentYVel = 0;
+        currentRelativeXVel = 0;
+        currentRelativeYVel = 0;
+        currentOmega = 0;
+
+        currentSimulationX = 0;
+        currentSimulationY = 0;
+        currentSimulationTheta = 0;
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
@@ -85,19 +97,13 @@ public class Drivetrain extends SubsystemBase
 
         // Build Shuffleboard //
         Shuffleboard.getTab("Main")
-            .addString("Log", Logging::logString)
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(2, 3)
-            .withPosition(0, 1);
-
-        Shuffleboard.getTab("Main")
             .addBoolean("Field Relative", () -> useFieldRelative)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withSize(2, 1)
             .withPosition(0, 0);
 
         Shuffleboard.getTab("Main")
-            .addNumber("Direction", () -> {
+            .addNumber("Gyroscope", () -> {
                 var y = ChargedUp.gyroscope.getYaw();
                 return y > 0 ? y : 360+y; 
             })
@@ -108,7 +114,7 @@ public class Drivetrain extends SubsystemBase
         // Build Odometry //
         odometry = new SwerveDriveOdometry(
             Drive.KINEMATICS, 
-            ChargedUp.gyroscope.getRotation2d(), 
+            getRobotRotation(), 
             new Pose2d()
         );
 
@@ -172,17 +178,12 @@ public class Drivetrain extends SubsystemBase
         
         // TODO: why do we need to negate the y velocity here?
         // TODO: should this negation be reflected in "currentYVel"?
-        newvy = -newvy;
 
         // Get the states for the modules
         var chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
 
         // Actually drive
         driveFromChassisSpeeds(chassisSpeeds);
-
-        // Set the current velcocities
-        currentXVel = vx_meter_per_second;
-        currentYVel = vy_meter_per_second;
     }
 
     private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
@@ -190,7 +191,7 @@ public class Drivetrain extends SubsystemBase
         // TODO: why do we need to negate the y velocity here?
         // TODO: unflip omega and fix with input flipping
         adjusted_vx    = MathUtils.clamp(adjusted_vx,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        adjusted_vy    = MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
         if(useFieldRelative)
@@ -199,7 +200,7 @@ public class Drivetrain extends SubsystemBase
                 adjusted_vx,
                 adjusted_vy,
                 adjusted_omega, 
-                ChargedUp.gyroscope.getRotation2d()
+                getRobotRotation()
             );
         }
         else
@@ -214,29 +215,81 @@ public class Drivetrain extends SubsystemBase
 
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
-        var states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+        currentRelativeXVel = speeds.vxMetersPerSecond;
+        currentRelativeYVel = speeds.vyMetersPerSecond;
+        currentOmega = speeds.omegaRadiansPerSecond;
 
-        driveFromStates(states);
+        if(RobotBase.isReal())
+        {
+            var states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
+            driveFromStates(states);
+        }
+        else
+        {
+            var s = new Translation2d(currentRelativeXVel, currentRelativeYVel);
+            s = s.rotateBy(new Rotation2d(-currentSimulationTheta));
+
+            currentSimulationX += s.getX() * TimedRobot.kDefaultPeriod;
+            currentSimulationY += s.getY() * TimedRobot.kDefaultPeriod;
+            currentSimulationTheta += currentOmega * TimedRobot.kDefaultPeriod;
+        }
     }
 
-    public void driveFromStates(SwerveModuleState[] states)
+    private void driveFromStates(SwerveModuleState[] states)
     {
-        for(int i = 0; i < Drive.MODULE_COUNT; i++)
+        // Only run this code if in real mode
+        if(RobotBase.isReal())
         {
-            modules[i].set(
-                states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
-                states[i].angle.getRadians()
-            );
+            SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+
+            for(int i = 0; i < Drive.MODULE_COUNT; i++)
+            {
+                modules[i].set(
+                    states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
+                    states[i].angle.getRadians()
+                );
+            }
+            
+            odometry.update(ChargedUp.gyroscope.getRotation2d(), states);
         }
-        
-        odometry.update(ChargedUp.gyroscope.getRotation2d(), states);
-        ChargedUp.field.setRobotPose(odometry.getPoseMeters());
+    }
+
+    @Override public void periodic() 
+    {
+        ChargedUp.field.setRobotPose(getRobotPose());
     }
 
     public void setPose(Pose2d pose)
     {
-        odometry.resetPosition(pose, ChargedUp.gyroscope.getRotation2d());
+        odometry.resetPosition(pose, getRobotRotation());
+
+        currentSimulationX = pose.getX();
+        currentSimulationY = pose.getY();
+        currentSimulationTheta = pose.getRotation().getRadians();
+    }
+
+    public Rotation2d getRobotRotation()
+    {
+        if(RobotBase.isReal())
+        {
+            return ChargedUp.gyroscope.getRotation2d();
+        }
+        else 
+        {
+            return new Rotation2d(currentSimulationTheta);
+        }
+    }
+
+    public Pose2d getRobotPose()
+    {
+        if(RobotBase.isReal())
+        {
+            return odometry.getPoseMeters();
+        }
+        else 
+        {
+            return new Pose2d(currentSimulationX, currentSimulationY, getRobotRotation());
+        }
     }
 
 
