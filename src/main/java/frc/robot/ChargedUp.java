@@ -12,6 +12,9 @@ import org.team555.frc.controllers.GameController.Button;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
+import edu.wpi.first.math.trajectory.TrajectoryParameterizer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -24,11 +27,16 @@ import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
 
+import java.util.Map;
+
+import javax.swing.TransferHandler;
+
 import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
+    public static final Map<String, Trajectory> trajectories = Map.of();
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -86,17 +94,44 @@ public class ChargedUp extends RobotContainer
             Commands.print("Ending the main auto"),
             drivetrain.commands.driveInstant(0, 0, 0)
         ));
-        
-        AutoCommands.add("Trajectory Test", () -> drivetrain.commands.followTrajectory(
-            TrajectoryFactory.getTrajectory(
-                PoseFactory.of(0, 0, 0),
-                PoseFactory.of(2, 0, 0)
-            )
-        ));
+
+        initTrajectories();
+
+        for(var e : trajectories.entrySet())
+        {
+            AutoCommands.add(
+                "(Trajectory) " + e.getKey(), 
+                () -> drivetrain.commands.trajectory(e.getValue())
+            );
+        }
 
         Shuffleboard.getTab("Main")
             .add("Auto Commands", AutoCommands.chooser())
             .withSize(2, 1)
             .withPosition(5, 0);
+    }
+
+    private void addTrajectory(String name, Trajectory trajectory)
+    {
+        trajectories.put(name, trajectory);
+    }
+
+    private void initTrajectories()
+    {
+        addTrajectory("Test Line", TrajectoryFactory.getTrajectory(
+            PoseFactory.meter(0, 0, 0),
+            PoseFactory.meter(1, 0, 0)
+        ));
+
+        addTrajectory("Test Line+Turn", TrajectoryFactory.getTrajectory(
+            PoseFactory.meter(0, 0, 0),
+            PoseFactory.meter(1, 1, 180)
+        ));
+
+        addTrajectory("Test Line+Turn & Return", TrajectoryFactory.getTrajectory(
+            PoseFactory.meter(0, 0, 0),
+            PoseFactory.meter(1, 1, 180),
+            PoseFactory.meter(0, 0, 360)
+        ));
     }
 }

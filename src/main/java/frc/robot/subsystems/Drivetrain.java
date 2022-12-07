@@ -31,6 +31,7 @@ import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.factories.TrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
+import frc.robot.structure.swerve.SwerveTrajectoryCommand;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -48,6 +49,8 @@ public class Drivetrain extends SubsystemBase
     public final PIDController xController;
     public final PIDController yController;
     public final ProfiledPIDController thetaController;
+
+    public final HolonomicDriveController driveController;
 
     private double currentXVel, currentYVel;
 
@@ -133,6 +136,9 @@ public class Drivetrain extends SubsystemBase
         );
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        // Drive Controller //
+        driveController = new HolonomicDriveController(xController, yController, thetaController);
     }
 
     public void enableFieldRelative()  
@@ -262,28 +268,9 @@ public class Drivetrain extends SubsystemBase
             return Commands.instant(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
-        public Command followTrajectory(Trajectory trajectory)
+        public Command trajectory(Trajectory trajectory)
         {
-            return new SwerveControllerCommand
-            (
-                // Trajectory
-                trajectory, 
-
-                // Odometry and kinematics
-                odometry::getPoseMeters, 
-                Drive.KINEMATICS, 
-
-                // PID Controllers
-                xController, 
-                yController, 
-                thetaController, 
-
-                // TODO: implement rotation getter
-
-                // Drivetrain and Driver Method
-                Drivetrain.this::driveFromStates, 
-                Drivetrain.this
-            );
+            return new SwerveTrajectoryCommand(trajectory);
         }
     }
 }
