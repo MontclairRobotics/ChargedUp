@@ -18,24 +18,26 @@ import edu.wpi.first.math.trajectory.TrajectoryParameterizer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.PoseFactory;
-import frc.robot.structure.factories.TrajectoryFactory;
+import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
-    public static final Map<String, Trajectory> trajectories = new HashMap<String, Trajectory>();
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -94,15 +96,7 @@ public class ChargedUp extends RobotContainer
             drivetrain.commands.driveInstant(0, 0, 0)
         ));
 
-        initTrajectories();
-
-        for(var e : trajectories.entrySet())
-        {
-            AutoCommands.add(
-                "(Trajectory) " + e.getKey(), 
-                () -> drivetrain.commands.trajectory(e.getValue())
-            );
-        }
+        initAuto();
 
         Shuffleboard.getTab("Main")
             .add("Auto Commands", AutoCommands.chooser())
@@ -110,37 +104,49 @@ public class ChargedUp extends RobotContainer
             .withPosition(5, 0);
     }
 
-    private void addTrajectory(String name, Trajectory trajectory)
+    private void initAuto()
     {
-        trajectories.put(name, trajectory);
-    }
+        AutoCommands.setDefaultCommand("Trajectory::rel Test Line");
 
-    private void initTrajectories()
-    {
-        addTrajectory("Test Line", TrajectoryFactory.getTrajectory(
-            PoseFactory.meter(0, 0, 0),
-            PoseFactory.meter(1, 0, 0)
-        ));
+        Trajectories.add(
+            "Test Line",
+            Rotation2d.fromDegrees(90),
+            PoseFactory.meter(0, 0, 90),
+            PoseFactory.meter(0, 1, 90)
+        );
+        Trajectories.makeRelativeAuto("Test Line");
 
-        addTrajectory("Test Diagonal", TrajectoryFactory.getTrajectory(
-            PoseFactory.meter(0, 0, 0),
-            PoseFactory.meter(2, 2, 0)
-        ));
+        Trajectories.add(
+            "Test Diagonal",
+            Rotation2d.fromDegrees(90),
+            PoseFactory.meter(0, 0, 90),
+            PoseFactory.meter(2, 2, 90)
+        );
+        Trajectories.makeRelativeAuto("Test Diagonal");
 
-        addTrajectory("Test Line+Turn Long", TrajectoryFactory.getTrajectory(
-            PoseFactory.meter(0, 0, 0),
-            PoseFactory.meter(5, 5, 180)
-        ));
+        Trajectories.add(
+            "Test Line+Turn Long",
+            Rotation2d.fromDegrees(90),
+            PoseFactory.meter(0, 0, 90),
+            PoseFactory.meter(5, 5, 90)
+        );
+        Trajectories.makeRelativeAuto("Test Line+Turn Long");
 
-        addTrajectory("Test Line+Turn", TrajectoryFactory.getTrajectory(
-            PoseFactory.meter(0, 0, 0),
-            PoseFactory.meter(1, 1, 180)
-        ));
+        Trajectories.add(
+            "Test Line+Turn", 
+            Rotation2d.fromDegrees(90+180),
+            PoseFactory.meter(0, 0, 90),
+            PoseFactory.meter(1, 1, 90)
+        );
+        Trajectories.makeRelativeAuto("Test Line+Turn");
 
-        addTrajectory("Test Line+Turn & Return", TrajectoryFactory.getTrajectory(
-            PoseFactory.meter(0, 0, 0),
-            PoseFactory.meter(1, 1, 180),
-            PoseFactory.meter(0, 0, 360)
-        ));
+        Trajectories.add(
+            "Test Line+Turn & Return",
+            Rotation2d.fromDegrees(90+180),
+            PoseFactory.meter(0, 0, 90),
+            PoseFactory.meter(1, 1, 90),
+            PoseFactory.meter(0, 0, 90)
+        );
+        Trajectories.makeRelativeAuto("Test Line+Turn & Return");
     }
 }

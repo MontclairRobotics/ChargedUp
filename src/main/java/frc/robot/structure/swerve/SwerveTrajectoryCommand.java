@@ -5,57 +5,58 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.helpers.Logging;
 
 import static frc.robot.ChargedUp.*;
 
 public class SwerveTrajectoryCommand extends CommandBase
 {
-    public final Trajectory trajectory;
-    private Trajectory realTrajectory;
-    private Timer timer;
+    private final Timer m_timer = new Timer();
+  private final Trajectory m_trajectory;
+  private final Rotation2d m_desiredRotation;
+  private final boolean isAbsolute;
 
-    public SwerveTrajectoryCommand(Trajectory trajectory)
+  public SwerveTrajectoryCommand(
+      SwerveTrajectory trajectory, boolean isAbsolute) {
+
+        addRequirements(drivetrain);
+          
+        m_trajectory = trajectory.innerTrajectory;
+        m_desiredRotation = trajectory.targetRotation;
+
+        this.isAbsolute = isAbsolute;
+  }
+
+  @Override
+  public void initialize() {
+    m_timer.reset();
+    m_timer.start();
+
+    if(isAbsolute)
     {
-        this.trajectory = trajectory;
+        drivetrain.setPose(m_trajectory.getInitialPose());
     }
+  }
 
-    @Override public void initialize() 
-    {
-        timer = new Timer();
-        timer.start();
+  @Override
+  public void execute() {
+    double curTime = m_timer.get();
+    var desiredState = m_trajectory.sample(curTime);
 
-        realTrajectory = trajectory.transformBy(
-            new Transform2d(
-                drivetrain.getRobotPose().getTranslation()
-                    .minus(trajectory.getInitialPose().getTranslation()), 
-                new Rotation2d()
-            )
-        );
+    var targetChassisSpeeds =
+        drivetrain.driveController.calculate(drivetrain.getRobotPose(), desiredState, m_desiredRotation);
 
-        Logging.info("Trajectory command started");
-    }
+    drivetrain.driveFromChassisSpeeds(targetChassisSpeeds);
+  }
 
-    @Override public void execute() 
-    {
-        var time = timer.get();
+  @Override
+  public void end(boolean interrupted) {
+    m_timer.stop();
+  }
 
-        var pose = drivetrain.getRobotPose();
-        var target = realTrajectory.sample(time);
-
-        var speeds = drivetrain.driveController.calculate(pose, target, target.poseMeters.getRotation());
-
-        drivetrain.driveFromChassisSpeeds(speeds);
-    }
-
-    @Override public void end(boolean interrupted) 
-    {
-        timer.stop();
-        Logging.info("Trajectory command ended");
-    }
-
-    @Override public boolean isFinished() 
-    {
-        return timer.hasElapsed(realTrajectory.getTotalTimeSeconds());
-    }
+  @Override
+  public boolean isFinished() {
+    return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
+  }
 }

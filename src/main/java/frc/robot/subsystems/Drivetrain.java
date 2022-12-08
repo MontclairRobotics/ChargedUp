@@ -33,8 +33,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.factories.PoseFactory;
-import frc.robot.structure.factories.TrajectoryFactory;
+import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.swerve.SwerveTrajectoryCommand;
 
@@ -226,12 +227,14 @@ public class Drivetrain extends SubsystemBase
         }
         else
         {
+            /*
             var s = new Translation2d(currentRelativeXVel, currentRelativeYVel);
             s = s.rotateBy(new Rotation2d(-currentSimulationTheta));
 
             currentSimulationX += s.getX() * TimedRobot.kDefaultPeriod;
             currentSimulationY += s.getY() * TimedRobot.kDefaultPeriod;
             currentSimulationTheta += currentOmega * TimedRobot.kDefaultPeriod;
+            */
         }
     }
 
@@ -250,7 +253,7 @@ public class Drivetrain extends SubsystemBase
                 );
             }
             
-            odometry.update(ChargedUp.gyroscope.getRotation2d(), states);
+            odometry.update(getRobotRotation(), states);
         }
     }
 
@@ -321,9 +324,49 @@ public class Drivetrain extends SubsystemBase
             return Commands.instant(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
-        public Command trajectory(Trajectory trajectory)
+        /**
+         * WARNING: do not use absolute mode yet! undefined behaviour may arise since robot positioning logic
+         * has not yet been fully implemented.
+         */
+        @Deprecated public Command trajectory(SwerveTrajectory trajectory, boolean isAbsolute)
         {
-            return new SwerveTrajectoryCommand(trajectory);
+            if(isAbsolute)
+            {
+                Logging.warning("undefined behaviour may arise since robot positioning logic has not yet been fully implemented");
+                return absoluteTrajectory(trajectory);
+            }
+
+            return relativeTrajectory(trajectory);
+        }
+        /**
+         * WARNING: do not use this yet! undefined behaviour may arise since robot positioning logic
+         * has not yet been fully implemented.
+         */
+        @Deprecated public Command absoluteTrajectory(SwerveTrajectory trajectory)
+        {
+            Logging.warning("undefined behaviour may arise since robot positioning logic has not yet been fully implemented");
+            return new SwerveControllerCommand(
+                trajectory.innerTrajectory, 
+                Drivetrain.this::getRobotPose, 
+                Drive.KINEMATICS, 
+                xController, 
+                yController, 
+                thetaController, 
+                Drivetrain.this::driveFromStates, 
+                Drivetrain.this
+            );
+        }
+        public Command relativeTrajectory(SwerveTrajectory trajectory)
+        {
+            return CommandGroupBase.sequence(
+                Commands.instant(() -> Drivetrain.this.setPose(
+                    new Pose2d(
+                        trajectory.innerTrajectory.getInitialPose().getTranslation(), 
+                        Drivetrain.this.getRobotRotation()
+                    )
+                )),
+                absoluteTrajectory(trajectory)
+            );
         }
     }
 }
