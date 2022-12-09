@@ -37,7 +37,6 @@ import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.structure.swerve.SwerveTrajectoryCommand;
 
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -325,56 +324,21 @@ public class Drivetrain extends SubsystemBase
         }
 
         /**
-         * WARNING: do not use absolute mode yet! undefined behaviour may arise since robot positioning logic
-         * has not yet been fully implemented.
-         */
-        @Deprecated public Command trajectory(SwerveTrajectory trajectory, boolean isAbsolute)
-        {
-            if(isAbsolute)
-            {
-                Logging.warning("undefined behaviour may arise since robot positioning logic has not yet been fully implemented");
-                return absoluteTrajectory(trajectory);
-            }
-
-            return relativeTrajectory(trajectory);
-        }
-        /**
          * WARNING: do not use this yet! undefined behaviour may arise since robot positioning logic
          * has not yet been fully implemented.
          */
-        @Deprecated public Command absoluteTrajectory(SwerveTrajectory trajectory)
+        public Command trajectory(SwerveTrajectory trajectory)
         {
-            Logging.warning("undefined behaviour may arise since robot positioning logic has not yet been fully implemented");
             return new SwerveControllerCommand(
                 trajectory.innerTrajectory, 
                 Drivetrain.this::getRobotPose, 
                 Drive.KINEMATICS, 
                 xController, 
                 yController, 
-                thetaController, 
+                thetaController,
+                () -> trajectory.targetRotation, 
                 Drivetrain.this::driveFromStates, 
                 Drivetrain.this
-            );
-        }
-
-        /**
-         * Makes the robots current pose the same as the inital pose of the trajectory, then uses
-         * the <code>absoluteTrajectory</code> method of the drivetrain to follow the provided trajectory 
-         * (when the comman is executed)
-         * 
-         * @param trajectory
-         * @return
-         */
-        public Command relativeTrajectory(SwerveTrajectory trajectory)
-        {
-            return CommandGroupBase.sequence(
-                Commands.instant(() -> Drivetrain.this.setPose(
-                    new Pose2d(
-                        trajectory.innerTrajectory.getInitialPose().getTranslation(), 
-                        Drivetrain.this.getRobotRotation()
-                    ) 
-                )),
-                absoluteTrajectory(trajectory)
             );
         }
     }

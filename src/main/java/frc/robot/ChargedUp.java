@@ -106,15 +106,15 @@ public class ChargedUp extends RobotContainer
 
     private void initAuto()
     {
-        AutoCommands.setDefaultCommand("Trajectory::rel Test Line");
-
         Trajectories.add(
             "Test Line",
             Rotation2d.fromDegrees(90),
             PoseFactory.meter(0, 0, 90),
             PoseFactory.meter(0, 1, 90)
         );
-        Trajectories.makeRelativeAuto("Test Line");
+        var cmdName = Trajectories.makeFollowAuto("Test Line");
+
+        AutoCommands.setDefaultCommand(cmdName);
 
         Trajectories.add(
             "Test Diagonal",
@@ -122,7 +122,7 @@ public class ChargedUp extends RobotContainer
             PoseFactory.meter(0, 0, 90),
             PoseFactory.meter(2, 2, 90)
         );
-        Trajectories.makeRelativeAuto("Test Diagonal");
+        Trajectories.makeFollowAuto("Test Diagonal");
 
         Trajectories.add(
             "Test Line+Turn Long",
@@ -130,7 +130,7 @@ public class ChargedUp extends RobotContainer
             PoseFactory.meter(0, 0, 90),
             PoseFactory.meter(5, 5, 90)
         );
-        Trajectories.makeRelativeAuto("Test Line+Turn Long");
+        Trajectories.makeFollowAuto("Test Line+Turn Long");
 
         Trajectories.add(
             "Test Line+Turn", 
@@ -138,7 +138,7 @@ public class ChargedUp extends RobotContainer
             PoseFactory.meter(0, 0, 90),
             PoseFactory.meter(1, 1, 90)
         );
-        Trajectories.makeRelativeAuto("Test Line+Turn");
+        Trajectories.makeFollowAuto("Test Line+Turn");
 
         Trajectories.add(
             "Test Line+Turn & Return",
@@ -147,6 +147,6 @@ public class ChargedUp extends RobotContainer
             PoseFactory.meter(1, 1, 90),
             PoseFactory.meter(0, 0, 90)
         );
-        Trajectories.makeRelativeAuto("Test Line+Turn & Return");
+        Trajectories.makeFollowAuto("Test Line+Turn & Return");
     }
 }

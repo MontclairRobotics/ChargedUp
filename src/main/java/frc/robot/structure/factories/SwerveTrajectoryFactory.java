@@ -33,17 +33,9 @@ public class SwerveTrajectoryFactory
             .setKinematics(Drive.KINEMATICS)
             .setEndVelocity(endVel);
 
-        var translations = new ArrayList<Translation2d>();
-        for(int i = 1; i < waypoints.length - 1; i++)
-        {
-            translations.add(waypoints[i].getTranslation());
-        }
-
         return new SwerveTrajectory(
             TrajectoryGenerator.generateTrajectory(
-                waypoints[0], 
-                translations,
-                waypoints[waypoints.length-1],
+                List.of(waypoints),
                 config
             ), 
             targetRotation
