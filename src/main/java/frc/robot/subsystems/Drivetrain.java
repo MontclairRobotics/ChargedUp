@@ -356,6 +356,15 @@ public class Drivetrain extends SubsystemBase
                 Drivetrain.this
             );
         }
+
+        /**
+         * Makes the robots current pose the same as the inital pose of the trajectory, then uses
+         * the <code>absoluteTrajectory</code> method of the drivetrain to follow the provided trajectory 
+         * (when the comman is executed)
+         * 
+         * @param trajectory
+         * @return
+         */
         public Command relativeTrajectory(SwerveTrajectory trajectory)
         {
             return CommandGroupBase.sequence(
@@ -363,7 +372,7 @@ public class Drivetrain extends SubsystemBase
                     new Pose2d(
                         trajectory.innerTrajectory.getInitialPose().getTranslation(), 
                         Drivetrain.this.getRobotRotation()
-                    )
+                    ) 
                 )),
                 absoluteTrajectory(trajectory)
             );
