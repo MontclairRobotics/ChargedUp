@@ -38,6 +38,8 @@ import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
 
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
@@ -53,9 +55,7 @@ public class Drivetrain extends SubsystemBase
 
     public final PIDController xController;
     public final PIDController yController;
-    public final ProfiledPIDController thetaController;
-
-    public final HolonomicDriveController driveController;
+    public final PIDController thetaController;
     
     private Pose2d estimatedPose;
     private double currentRelativeXVel, currentRelativeYVel, currentOmega;
@@ -131,20 +131,13 @@ public class Drivetrain extends SubsystemBase
             Drive.YPID.KD
         );
 
-        thetaController = new ProfiledPIDController(
+        thetaController = new PIDController(
             Drive.ThetaPID.KP,
             Drive.ThetaPID.KI, 
-            Drive.ThetaPID.KD, 
-            new TrapezoidProfile.Constraints(
-                Drive.MAX_SPEED_MPS, 
-                Drive.MAX_TURN_ACCEL_RAD_PER_S2
-            )
+            Drive.ThetaPID.KD
         );
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
-
-        // Drive Controller //
-        driveController = new HolonomicDriveController(xController, yController, thetaController);
     }
 
     public void enableFieldRelative()  
@@ -327,16 +320,15 @@ public class Drivetrain extends SubsystemBase
          * WARNING: do not use this yet! undefined behaviour may arise since robot positioning logic
          * has not yet been fully implemented.
          */
-        public Command trajectory(SwerveTrajectory trajectory)
+        public Command trajectory(PathPlannerTrajectory trajectory)
         {
-            return new SwerveControllerCommand(
-                trajectory.innerTrajectory, 
-                Drivetrain.this::getRobotPose, 
+            return new PPSwerveControllerCommand(
+                trajectory, 
+                Drivetrain.this::getRobotPose,
                 Drive.KINEMATICS, 
                 xController, 
                 yController, 
                 thetaController,
-                () -> trajectory.targetRotation, 
                 Drivetrain.this::driveFromStates, 
                 Drivetrain.this
             );

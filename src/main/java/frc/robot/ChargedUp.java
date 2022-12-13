@@ -106,47 +106,7 @@ public class ChargedUp extends RobotContainer
 
     private void initAuto()
     {
-        Trajectories.add(
-            "Test Line",
-            Rotation2d.fromDegrees(90),
-            PoseFactory.meter(0, 0, 90),
-            PoseFactory.meter(0, 1, 90)
-        );
-        var cmdName = Trajectories.makeFollowAuto("Test Line");
-
+        var cmdName = Trajectories.makeFollowAuto("Test Line", Drive.MAX_SPEED_MPS / 2, Drive.MAX_ACCEL_MPS2);
         AutoCommands.setDefaultCommand(cmdName);
-
-        Trajectories.add(
-            "Test Diagonal",
-            Rotation2d.fromDegrees(90),
-            PoseFactory.meter(0, 0, 90),
-            PoseFactory.meter(2, 2, 90)
-        );
-        Trajectories.makeFollowAuto("Test Diagonal");
-
-        Trajectories.add(
-            "Test Line+Turn Long",
-            Rotation2d.fromDegrees(90),
-            PoseFactory.meter(0, 0, 90),
-            PoseFactory.meter(5, 5, 90)
-        );
-        Trajectories.makeFollowAuto("Test Line+Turn Long");
-
-        Trajectories.add(
-            "Test Line+Turn", 
-            Rotation2d.fromDegrees(90+180),
-            PoseFactory.meter(0, 0, 90),
-            PoseFactory.meter(1, 1, 90)
-        );
-        Trajectories.makeFollowAuto("Test Line+Turn");
-
-        Trajectories.add(
-            "Test Line+Turn & Return",
-            Rotation2d.fromDegrees(90+180),
-            PoseFactory.meter(0, 0, 90),
-            PoseFactory.meter(1, 1, 90),
-            PoseFactory.meter(0, 0, 90)
-        );
-        Trajectories.makeFollowAuto("Test Line+Turn & Return");
     }
 }
