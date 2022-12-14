@@ -25,6 +25,7 @@ import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
+import frc.robot.structure.helpers.Logging;
 import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
@@ -64,8 +65,6 @@ public class ChargedUp extends RobotContainer
             .withSize(4, 2)
             .withPosition(0, 2);
 
-        gyroscope.zeroYaw();
-
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() ->
             {
@@ -87,6 +86,20 @@ public class ChargedUp extends RobotContainer
             .toggleWhenActive(drivetrain.commands.enableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
+
+        driverController.getButton(Button.START_TOUCHPAD)
+            .whenActive(Commands.instant(() -> {
+
+                if(DriverStation.isEnabled()) 
+                {
+                    Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
+                    return;
+                }
+
+                gyroscope.zeroYaw();
+                Logging.info("Zeroed NavX!");
+
+            }));
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
