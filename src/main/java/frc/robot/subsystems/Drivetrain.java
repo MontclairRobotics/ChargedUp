@@ -47,6 +47,7 @@ import static frc.robot.constants.Constants.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.OptionalDouble;
 import java.util.Set;
 
 public class Drivetrain extends SubsystemBase
@@ -63,6 +64,21 @@ public class Drivetrain extends SubsystemBase
     private double currentSimulationX, currentSimulationY, currentSimulationTheta;
 
     private boolean useFieldRelative = true;
+
+    private OptionalDouble targetAngle = OptionalDouble.empty();
+
+    public OptionalDouble getTargetAngle() {return targetAngle;}
+    public boolean hasTargetAngle() {return targetAngle.isPresent();}
+
+    public void setTargetAngle(double dbl) 
+    {
+        thetaController.setSetpoint(dbl);
+        targetAngle = OptionalDouble.of(dbl);
+    }
+    public void clearTargetAngle() 
+    {
+        targetAngle = OptionalDouble.empty();
+    }
 
     private static final String[] MODULE_NAMES = {
         "FL",
@@ -188,6 +204,8 @@ public class Drivetrain extends SubsystemBase
         adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
+        adjusted_omega = adjustOmegaForPID(adjusted_omega);
+
         if(useFieldRelative)
         {
             return ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -204,6 +222,18 @@ public class Drivetrain extends SubsystemBase
                 adjusted_vy, 
                 adjusted_omega
             );
+        }
+    }
+
+    public double adjustOmegaForPID(double input)
+    {
+        if(hasTargetAngle() && input != 0)
+        {
+            return thetaController.calculate(getRobotRotation().getRadians());
+        }
+        else
+        {
+            return input;
         }
     }
 

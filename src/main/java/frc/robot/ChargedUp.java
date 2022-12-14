@@ -101,6 +101,14 @@ public class ChargedUp extends RobotContainer
 
             }));
 
+        driverController.getPOV().when(x -> x != 0)
+            .whenActive(() -> drivetrain.setTargetAngle(driverController.getPOVValue()))
+            .whenInactive(drivetrain::clearTargetAngle);
+
+        driverController.getButton(Button.RIGHT_BUMPER)
+            .whenActive(() -> drivetrain.setTargetAngle(drivetrain.getRobotRotation().getRadians()))
+            .whenInactive(drivetrain::clearTargetAngle);
+
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
             Commands.print("Starting main auto"),
