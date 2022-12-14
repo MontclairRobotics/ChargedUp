@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.commands.DisabledActionCommand;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
@@ -88,7 +89,7 @@ public class ChargedUp extends RobotContainer
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
 
         driverController.getButton(Button.START_TOUCHPAD)
-            .whenActive(Commands.instant(() -> {
+            .whenActive(DisabledActionCommand.of(() -> {
 
                 if(DriverStation.isEnabled()) 
                 {
@@ -101,6 +102,7 @@ public class ChargedUp extends RobotContainer
 
             }));
 
+        // THETA PIDDERS //
         driverController.getPOV().when(x -> x != 0)
             .whenActive(() -> drivetrain.setTargetAngle(driverController.getPOVValue()))
             .whenInactive(drivetrain::clearTargetAngle);
