@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
 import org.team555.frc.controllers.GameController;
@@ -38,23 +39,21 @@ public final class Constants
             new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90),
         };
 
-        public static class XPID
+        public static class PosPID
         {
             public static final double KP = 1;
             public static final double KI = 0;
             public static final double KD = 0;
-        }
-        public static class YPID
-        {
-            public static final double KP = 1;
-            public static final double KI = 0;
-            public static final double KD = 0;
+
+            public static final PIDConstants KConsts = new PIDConstants(KP, KI, KD);
         }
         public static class ThetaPID
         {
             public static final double KP = 1;
             public static final double KI = 0;
             public static final double KD = 0;
+            
+            public static final PIDConstants KConsts = new PIDConstants(KP, KI, KD);
         }
 
 

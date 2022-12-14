@@ -23,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
+import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
-import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
@@ -106,7 +106,14 @@ public class ChargedUp extends RobotContainer
 
     private void initAuto()
     {
-        var cmdName = Trajectories.makeFollowAuto("Test Line", Drive.MAX_SPEED_MPS / 2, Drive.MAX_ACCEL_MPS2);
-        AutoCommands.setDefaultCommand(cmdName);
+        var cmd = Trajectories.auto(
+            "Test Line", 
+            Drive.MAX_SPEED_MPS / 2, 
+            Drive.MAX_ACCEL_MPS2, 
+            HashMaps.of()
+        );
+        
+        AutoCommands.add("Test Line", () -> cmd);
+        AutoCommands.setDefaultCommand("Test Line");
     }
 }

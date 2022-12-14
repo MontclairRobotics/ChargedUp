@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import org.team555.frc.command.AutoCommands;
 import org.team555.frc.command.Commands;
@@ -16,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.ChargedUp;
 import frc.robot.structure.factories.PoseFactory;
-import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
 /**
  * Class which holds the trajectories which may be used by the robot
@@ -30,13 +30,11 @@ public class Trajectories
 
     public static Command follow(String name, double maxVel, double maxAccel)
     {
-        return ChargedUp.drivetrain.commands.trajectory(get(name, maxVel, maxAccel));
+        return ChargedUp.drivetrain.commands.follow(get(name, maxVel, maxAccel));
     }
-    
-    public static String makeFollowAuto(String name, double maxVel, double maxAccel)
+
+    public static Command auto(String name, double maxVel, double maxAccel, HashMap<String, Command> commands)
     {
-        var aname = "Trajectory " + name;
-        AutoCommands.add(aname, () -> follow(name, maxVel, maxAccel));
-        return aname;
+        return ChargedUp.drivetrain.commands.auto(get(name, maxVel, maxAccel), commands);
     }
 }

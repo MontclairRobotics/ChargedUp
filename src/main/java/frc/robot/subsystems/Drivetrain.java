@@ -35,15 +35,16 @@ import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.factories.PoseFactory;
-import frc.robot.structure.factories.SwerveTrajectoryFactory;
 import frc.robot.structure.helpers.Logging;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,15 +121,15 @@ public class Drivetrain extends SubsystemBase
 
         // Build PID Controllers //
         xController = new PIDController(
-            Drive.XPID.KP,
-            Drive.XPID.KI, 
-            Drive.XPID.KD
+            Drive.PosPID.KP,
+            Drive.PosPID.KI, 
+            Drive.PosPID.KD
         );
 
         yController = new PIDController(
-            Drive.YPID.KP,
-            Drive.YPID.KI, 
-            Drive.YPID.KD
+            Drive.PosPID.KP,
+            Drive.PosPID.KI, 
+            Drive.PosPID.KD
         );
 
         thetaController = new PIDController(
@@ -254,7 +255,7 @@ public class Drivetrain extends SubsystemBase
         ChargedUp.field.setRobotPose(getRobotPose());
     }
 
-    public void setPose(Pose2d pose)
+    public void setRobotPose(Pose2d pose)
     {
         odometry.resetPosition(pose, getRobotRotation());
 
@@ -316,11 +317,7 @@ public class Drivetrain extends SubsystemBase
             return Commands.instant(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
-        /**
-         * WARNING: do not use this yet! undefined behaviour may arise since robot positioning logic
-         * has not yet been fully implemented.
-         */
-        public Command trajectory(PathPlannerTrajectory trajectory)
+        public Command follow(PathPlannerTrajectory trajectory)
         {
             return new PPSwerveControllerCommand(
                 trajectory, 
@@ -332,6 +329,25 @@ public class Drivetrain extends SubsystemBase
                 Drivetrain.this::driveFromStates, 
                 Drivetrain.this
             );
+        }
+
+        public SwerveAutoBuilder autoBuilder(HashMap<String, Command> markers)
+        {
+            return new SwerveAutoBuilder(
+                Drivetrain.this::getRobotPose,
+                Drivetrain.this::setRobotPose,
+                Drive.KINEMATICS,
+                Drive.PosPID.KConsts, 
+                Drive.ThetaPID.KConsts,
+                Drivetrain.this::driveFromStates,
+                markers
+            );
+        }
+
+        public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
+        {
+            var b = autoBuilder(markers);
+            return b.fullAuto(trajectory);
         }
     }
 }
