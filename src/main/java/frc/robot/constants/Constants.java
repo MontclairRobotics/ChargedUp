@@ -18,6 +18,12 @@ import frc.robot.structure.swerve.SwerveModuleSpec;
 
 public final class Constants 
 {
+    // Intake Constants
+    public static final int INTAKE_PORT = 0;
+    public static final int INTAKE_SPEED = 0.5;
+    public static final boolean INTAKE_INVERSION = false;
+
+
     private Constants() {}
 
     public static class Drive
