@@ -8,6 +8,7 @@ import org.team555.frc.command.AutoCommands;
 import org.team555.frc.command.Commands;
 import org.team555.frc.command.commandrobot.RobotContainer;
 import org.team555.frc.controllers.GameController;
+import org.team555.frc.controllers.GameController.Axis;
 import org.team555.frc.controllers.GameController.Button;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Shwooper;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
@@ -40,6 +42,7 @@ public class ChargedUp extends RobotContainer
 {
     public static final Field2d field = new Field2d();
 
+
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
         ControlScheme.DRIVER_CONTROLLER_TYPE,
@@ -54,6 +57,7 @@ public class ChargedUp extends RobotContainer
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();
+    public static final Shwooper shwooper = new Shwooper();
 
     // MANAGERS //
     public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -87,6 +91,16 @@ public class ChargedUp extends RobotContainer
             .toggleWhenActive(drivetrain.commands.enableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
+        
+        operatorController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.suck())
+            .whenInactive(() -> shwooper.stop());
+        
+        operatorController.getAxis(Axis.RIGHT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.spit())
+            .whenInactive(() -> shwooper.stop());
 
         driverController.getButton(Button.START_TOUCHPAD)
             .whenActive(Commands.instant(() -> {
