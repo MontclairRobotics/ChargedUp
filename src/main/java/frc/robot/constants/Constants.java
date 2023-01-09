@@ -18,11 +18,6 @@ import frc.robot.structure.swerve.SwerveModuleSpec;
 
 public final class Constants 
 {
-    // Intake Constants
-    public static final int INTAKE_PORT = 0;
-    public static final double INTAKE_SPEED = 0.5;
-    public static final boolean INTAKE_INVERSION = false;
-
 
     private Constants() {}
 
@@ -99,6 +94,12 @@ public final class Constants
         public static final double ELEVATOR_SPEED = 0.1;  //TODO: Tweak these values
         public static final int ELEVATOR_MOTOR_PORT = 4;
         public static final boolean ELEVATOR_INVERTED = false;
+
+        // Shwooper Constants
+        public static final int INTAKE_PORT = 0;
+        public static final double INTAKE_SPEED = 0.5;
+        public static final boolean INTAKE_INVERSION = false;
+
     }
 
     public static class ControlScheme
