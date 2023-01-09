@@ -20,7 +20,7 @@ public final class Constants
 {
     // Intake Constants
     public static final int INTAKE_PORT = 0;
-    public static final int INTAKE_SPEED = 0.5;
+    public static final double INTAKE_SPEED = 0.5;
     public static final boolean INTAKE_INVERSION = false;
 
 
