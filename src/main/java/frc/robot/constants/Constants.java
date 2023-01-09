@@ -88,6 +88,11 @@ public final class Constants
         public static final double NORMAL_FORCE_ON_MODULE_N = Units.lbsToKilograms(45) * 9.81 / 4;
 
         public static final Rotation2d NAVX_OFFSET = Rotation2d.fromDegrees(0);
+
+        //Elevator Constants
+        public static final double ELEVATOR_SPEED = 0.1;  //TODO: Tweak these values
+        public static final int ELEVATOR_MOTOR_PORT = 4;
+        public static final boolean ELEVATOR_INVERTED = false;
     }
 
     public static class ControlScheme
