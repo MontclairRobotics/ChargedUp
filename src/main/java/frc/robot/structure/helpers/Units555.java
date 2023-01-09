@@ -2,20 +2,20 @@ package frc.robot.structure.helpers;
 
 public class Units555
 {
-    public static double mphToMps(double value)
+    public static double miphToMps(double value)
     {
         return value * 0.44704;
     }
-    public static double mpsToMph(double value)
+    public static double mpsToMiph(double value)
     {
         return value / 0.44704;
     }
 
-    public static double mphpsToMpsps(double value)
+    public static double miphpsToMpsps(double value)
     {
         return value * 0.44704;
     }
-    public static double mpspsToMphps(double value)
+    public static double mpspsToMiphps(double value)
     {
         return value / 0.44704;
     }
