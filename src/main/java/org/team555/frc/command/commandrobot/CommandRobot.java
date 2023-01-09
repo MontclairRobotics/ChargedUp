@@ -9,6 +9,7 @@ import org.team555.frc.command.AutoCommands;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -39,6 +40,11 @@ public class CommandRobot extends TimedRobot
     public static void unregisterManager(Manager manager)
     {
         managers.remove(manager);
+    }
+
+    public static Command autoCommand()
+    {
+        return autoCommand;
     }
 
     public static double deltaTime()
@@ -149,5 +155,10 @@ public class CommandRobot extends TimedRobot
     public static Supplier<CommandRobot> of(Supplier<RobotContainer> containerSupplier)
     {
         return () -> new CommandRobot(containerSupplier.get());
+    }
+
+    public static void startCmdRobot(Supplier<RobotContainer> containerSupplier)
+    {
+        RobotBase.startRobot(of(containerSupplier));
     }
 }

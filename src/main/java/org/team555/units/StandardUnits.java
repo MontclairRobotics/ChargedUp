@@ -51,7 +51,7 @@ public final class StandardUnits
     public static final Unit lightYear = Unit.from("light year", "light years", "ly", 9.4607e15, length);
     public static final Unit parsec = Unit.from("parsec", "parsecs", "pc", 3.08567758e16, length);
 
-    public static final Unit gram = Unit.from("gram", "grams", "g", 1e-3, mass);
+    public static final Unit gram = Unit.from("gram", "grams", "g", 0.001, mass);
     public static final Unit kilogram = kilo.of(gram);
     public static final Unit pound = Unit.from("pound", "pounds", "lb", 0.45359237, mass);
     public static final Unit ounce = Unit.from("ounce", "ounces", "oz", 0.028349523125, mass);

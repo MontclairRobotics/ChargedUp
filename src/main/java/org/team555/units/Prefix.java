@@ -23,7 +23,7 @@ public class Prefix
             name + unit.name(),
             name + unit.pluralName(), 
             prefix + unit.symbol(),
-            unit.value / modifier, 
+            unit.value * modifier, 
             unit.dim
         );
         return u;

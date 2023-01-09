@@ -1,0 +1,23 @@
+{
+  "tabPane": [
+    {
+      "title": "Tab 1",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": -4.0,
+    "y": 6.400000095367432,
+    "width": 1547.199951171875,
+    "height": 754.4000244140625
+  }
+}

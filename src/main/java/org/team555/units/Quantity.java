@@ -2,12 +2,12 @@ package org.team555.units;
 
 public class Quantity
 {
-    public final double value;
+    public final double rawValue;
     public final Unit unit;
 
     private Quantity(double value, Unit unit)
     {
-        this.value = value;
+        this.rawValue = value;
         this.unit = unit;
     }
 
@@ -30,11 +30,11 @@ public class Quantity
         {
             throw new IllegalArgumentException("Cannot convert from " + this.unit.pluralName() + " to " + unit.pluralName() + ".");
         }
-        return new Quantity(value / this.unit.value * unit.value, unit);
+        return new Quantity(rawValue / this.unit.value * unit.value, unit);
     }
     public Quantity asIf(Unit unit)
     {
-        return new Quantity(value, unit);
+        return new Quantity(rawValue, unit);
     }
 
     public Quantity plus(Quantity other)
@@ -43,7 +43,7 @@ public class Quantity
         {
             throw new IllegalArgumentException("Cannot add " + other.unit.pluralName() + " to " + unit.pluralName() + ".");
         }
-        return new Quantity(value + other.value(unit), unit);
+        return new Quantity(rawValue + other.value(unit), unit);
     }
     public Quantity plus(double other, Unit otherUnit)
     {
@@ -55,7 +55,7 @@ public class Quantity
         {
             throw new IllegalArgumentException("Cannot subtract " + other.unit.pluralName() + " from " + unit.pluralName() + ".");
         }
-        return new Quantity(value - other.value(unit), unit);
+        return new Quantity(rawValue - other.value(unit), unit);
     }
     public Quantity minus(double other, Unit otherUnit)
     {
@@ -64,11 +64,11 @@ public class Quantity
 
     public Quantity mul(Quantity other)
     {
-        return new Quantity(value * other.value, unit.mul(other.unit));
+        return new Quantity(rawValue * other.rawValue, unit.mul(other.unit));
     }
     public Quantity mul(double other)
     {
-        return new Quantity(value * other, unit);
+        return new Quantity(rawValue * other, unit);
     }
     public Quantity mul(double other, Unit otherUnit)
     {
@@ -77,11 +77,11 @@ public class Quantity
 
     public Quantity div(Quantity other)
     {
-        return new Quantity(value / other.value, unit.per(other.unit));
+        return new Quantity(rawValue / other.rawValue, unit.per(other.unit));
     }
     public Quantity div(double other)
     {
-        return new Quantity(value / other, unit);
+        return new Quantity(rawValue / other, unit);
     }
     public Quantity div(double other, Unit otherUnit)
     {
@@ -90,7 +90,7 @@ public class Quantity
 
     public Quantity pow(int n)
     {
-        return new Quantity(Math.pow(value, n), unit.pow(n));
+        return new Quantity(Math.pow(rawValue, n), unit.pow(n));
     }
     public Quantity squared()
     {
@@ -140,19 +140,19 @@ public class Quantity
 
     public double value(Unit unit)
     {
-        return as(unit).value;
+        return as(unit).rawValue;
     }
 
     @Override
     public String toString() 
     {
-        if(value == 1 || value == -1)
+        if(rawValue == 1 || rawValue == -1)
         {
-            return value + " " + unit.name();
+            return rawValue + " " + unit.name();
         }
         else
         {
-            return value + " " + unit.pluralName();
+            return rawValue + " " + unit.pluralName();
         }
     }
 }
