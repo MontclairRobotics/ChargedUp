@@ -12,6 +12,8 @@ import org.team555.frc.command.Commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
@@ -25,7 +27,8 @@ public class Trajectories
 {
     public static PathPlannerTrajectory get(String name, double maxVel, double maxAccel)
     {
-        return PathPlanner.loadPath(name, maxVel, maxAccel);
+        var t = PathPlanner.loadPath(name, maxVel, maxAccel);
+        return t;
     }
 
     public static Command follow(String name, double maxVel, double maxAccel)

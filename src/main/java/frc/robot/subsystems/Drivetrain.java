@@ -174,12 +174,17 @@ public class Drivetrain extends SubsystemBase
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
         drive(
-            turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            drive.getX() * Drive.MAX_SPEED_MPS,
-            drive.getY() * Drive.MAX_SPEED_MPS
+            turn.getX()  * -Drive.MAX_TURN_SPEED_RAD_PER_S,
+            drive.getX() * +Drive.MAX_SPEED_MPS,
+            drive.getY() * -Drive.MAX_SPEED_MPS
         );
     }
     
+    public void driveAuto(ChassisSpeeds speeds)
+    {
+        drive(speeds.vyMetersPerSecond, speeds.vxMetersPerSecond, speeds.omegaRadiansPerSecond);
+    }
+
     public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
         // Rotate so that the front is the real front of the robot
@@ -188,6 +193,11 @@ public class Drivetrain extends SubsystemBase
         
         // TODO: why do we need to negate the y velocity here?
         // TODO: should this negation be reflected in "currentYVel"?
+
+        if(hasTargetAngle() && omega_rad_per_second == 0)
+        {
+            omega_rad_per_second = thetaController.calculate(getRobotRotation().getRadians());
+        }
 
         // Get the states for the modules
         var chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
@@ -201,10 +211,8 @@ public class Drivetrain extends SubsystemBase
         // TODO: why do we need to negate the y velocity here?
         // TODO: unflip omega and fix with input flipping
         adjusted_vx    = MathUtils.clamp(adjusted_vx,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
-
-        adjusted_omega = adjustOmegaForPID(adjusted_omega);
+        adjusted_vy    = MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_omega = MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
         if(useFieldRelative)
         {
@@ -222,18 +230,6 @@ public class Drivetrain extends SubsystemBase
                 adjusted_vy, 
                 adjusted_omega
             );
-        }
-    }
-
-    public double adjustOmegaForPID(double input)
-    {
-        if(hasTargetAngle() && input != 0)
-        {
-            return thetaController.calculate(getRobotRotation().getRadians());
-        }
-        else
-        {
-            return input;
         }
     }
 
@@ -289,9 +285,9 @@ public class Drivetrain extends SubsystemBase
     {
         odometry.resetPosition(pose, getRobotRotation());
 
-        currentSimulationX = pose.getX();
+        /*currentSimulationX = pose.getX();
         currentSimulationY = pose.getY();
-        currentSimulationTheta = pose.getRotation().getRadians();
+        currentSimulationTheta = pose.getRotation().getRadians();*/
     }
 
     public Rotation2d getRobotRotation()
@@ -352,11 +348,10 @@ public class Drivetrain extends SubsystemBase
             return new PPSwerveControllerCommand(
                 trajectory, 
                 Drivetrain.this::getRobotPose,
-                Drive.KINEMATICS, 
                 xController, 
                 yController, 
                 thetaController,
-                Drivetrain.this::driveFromStates, 
+                Drivetrain.this::driveAuto, 
                 Drivetrain.this
             );
         }
@@ -366,18 +361,18 @@ public class Drivetrain extends SubsystemBase
             return new SwerveAutoBuilder(
                 Drivetrain.this::getRobotPose,
                 Drivetrain.this::setRobotPose,
-                Drive.KINEMATICS,
                 Drive.PosPID.KConsts, 
                 Drive.ThetaPID.KConsts,
-                Drivetrain.this::driveFromStates,
-                markers
+                Drivetrain.this::driveAuto,
+                markers,
+                Drivetrain.this
             );
         }
 
         public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
             var b = autoBuilder(markers);
-            return b.fullAuto(trajectory);
+            return b.resetPose(trajectory).andThen(b.fullAuto(trajectory));
         }
     }
 }

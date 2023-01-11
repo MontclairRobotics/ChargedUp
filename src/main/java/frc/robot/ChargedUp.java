@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 public class ChargedUp extends RobotContainer 
 {
@@ -61,6 +62,8 @@ public class ChargedUp extends RobotContainer
     // INITIALIZER //
     @Override public void initialize() 
     {
+        PathPlannerServer.startServer(5811);
+        
         Shuffleboard.getTab("Main")
             .add("Field", field)
             .withSize(4, 2)
@@ -103,13 +106,15 @@ public class ChargedUp extends RobotContainer
             }));
 
         // THETA PIDDERS //
-        driverController.getPOV().when(x -> x != 0)
-            .whenActive(() -> drivetrain.setTargetAngle(driverController.getPOVValue()))
+        /*
+        driverController.getPOV().when(x -> x != -1)
+            .whenActive(() -> drivetrain.setTargetAngle(Math.toRadians(driverController.getPOVValue())))
             .whenInactive(drivetrain::clearTargetAngle);
 
         driverController.getButton(Button.RIGHT_BUMPER)
             .whenActive(() -> drivetrain.setTargetAngle(drivetrain.getRobotRotation().getRadians()))
             .whenInactive(drivetrain::clearTargetAngle);
+        //*/
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
@@ -136,7 +141,7 @@ public class ChargedUp extends RobotContainer
             HashMaps.of()
         );
         
-        AutoCommands.add("Test Line", () -> cmd);
+        AutoCommands.add("Test Line", () -> cmd.andThen(() -> System.out.println("AUTO DONE")));
         AutoCommands.setDefaultCommand("Test Line");
     }
 }
