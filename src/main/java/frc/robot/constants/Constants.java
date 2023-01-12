@@ -105,6 +105,7 @@ public final class Constants
         public static final int INTAKE_PORT = 0;
         public static final double INTAKE_SPEED = 0.5;
         public static final boolean INTAKE_INVERSION = false;
+        public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
     }
 
     public static class ControlScheme
