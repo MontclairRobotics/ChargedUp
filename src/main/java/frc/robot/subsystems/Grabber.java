@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 public class Grabber extends ManagerSubsystemBase {
 
-    Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.SOLENOID_PORT);
+    Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.COMPRESSOR_PORT);
     //Grabber.grab()
     public void grab() {
         solenoid.set(true);
