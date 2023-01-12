@@ -84,7 +84,6 @@ public final class Constants
             new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
         );
     }
-
     public static class Robot 
     {
         public static final double ROBOT_MASS_KG      = Units.lbsToKilograms(60);
@@ -110,6 +109,13 @@ public final class Constants
         // Stinger Constants :)
         public static final int STINGER_PORT = 0;
 
+        //Arm Constants
+        public static final double ARM_SPEED = 0.5;
+        public static final double ARM_UP_DOWN_PORT = -1;
+        public static final double ARM_IN_OUT_PORT = -1;
+        public static final double ARM_IN_OUT_SPEED = 0.5;
+
+        public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
     }
 
     public static class ControlScheme
