@@ -77,7 +77,9 @@ public final class Constants
             new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
         );
     }
-
+    public static class Pneu {
+        public static final int SOLENOID_PORT = 0;
+    }
     public static class Robot 
     {
         public static final double ROBOT_MASS_KG      = Units.lbsToKilograms(60);
