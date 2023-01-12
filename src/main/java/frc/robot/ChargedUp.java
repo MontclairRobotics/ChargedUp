@@ -16,6 +16,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.CompressorConfigType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -42,7 +44,7 @@ import com.kauailabs.navx.frc.AHRS;
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
-
+    public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(

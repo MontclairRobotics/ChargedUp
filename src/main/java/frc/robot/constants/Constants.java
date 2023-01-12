@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.structure.helpers.Units555;
 import frc.robot.structure.swerve.SwerveModuleMk4iSpec;
@@ -20,6 +21,12 @@ public final class Constants
 {
 
     private Constants() {}
+
+    public static class Pneu
+    {
+        public static final int COMPRESSOR_PORT = 0;
+        public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
+    }
 
     public static class Drive
     {
@@ -101,7 +108,6 @@ public final class Constants
         public static final int INTAKE_PORT = 0;
         public static final double INTAKE_SPEED = 0.5;
         public static final boolean INTAKE_INVERSION = false;
-
     }
 
     public static class ControlScheme
