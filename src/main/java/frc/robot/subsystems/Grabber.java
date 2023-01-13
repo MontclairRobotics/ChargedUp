@@ -12,11 +12,11 @@ public class Grabber extends ManagerSubsystemBase {
     Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.COMPRESSOR_PORT);
     //Grabber.grab()
     public void grab() {
-        solenoid.set(true);
+        solenoid.set(Pneu.EXTENDED);
     }
 
     public void release() {
-        solenoid.set(false);
+        solenoid.set(!Pneu.EXTENDED);
     }
     //Grabber.release()
 }
