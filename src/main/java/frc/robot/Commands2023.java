@@ -4,6 +4,7 @@ import org.team555.frc.command.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Grabber;
+import frc.robot.subsystems.Shwooper;
 
 public class Commands2023 
 {
@@ -26,6 +27,18 @@ public class Commands2023
     public static Command closeGrabber() {
         return Commands.instant(() -> {
             Grabber.release();
+        });
+    }
+    //commands to operate the shwooper
+    public static Command extendShwooper() {
+        return Commands.instant(() -> {
+            Shwooper.extend();
+        });
+    }
+
+    public static Command retractShwooper() {
+        return Commands.instant(() -> {
+            Shwooper.retract();
         });
     }
 }

@@ -105,6 +105,11 @@ public final class Constants
         public static final int INTAKE_PORT = 0;
         public static final double INTAKE_SPEED = 0.5;
         public static final boolean INTAKE_INVERSION = false;
+        public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
+
+        //Grabber Constants
+        public static final boolean GRABBER_SOLENOID_DEFAULT_STATE = false;
+
         
         // Stinger Constants :)
         public static final int STINGER_PORT = 0;
@@ -115,7 +120,6 @@ public final class Constants
         public static final double ARM_IN_OUT_PORT = -1;
         public static final double ARM_IN_OUT_SPEED = 0.5;
 
-        public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
     }
 
     public static class ControlScheme
