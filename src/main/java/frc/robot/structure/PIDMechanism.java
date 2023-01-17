@@ -1,10 +1,7 @@
 package frc.robot.structure;
 
-<<<<<<< HEAD
 import edu.wpi.first.math.controller.PIDController;
 
-=======
->>>>>>> main
 /*
 TODO: 1/17
 class PIDMechanism 
@@ -27,7 +24,6 @@ class PIDMechanism
     void setTimeout(double) - set the maximum time which pidding will occur
 }
 
-<<<<<<< HEAD
 */
 
 public class PIDMechanism
@@ -99,11 +95,6 @@ public class PIDMechanism
 TODO: 1/18
 class MultiPIDMechanism
 {w
-=======
-TODO: 1/18
-class MultiPIDMechanism
-{
->>>>>>> main
     PIDMechanism(Map<String, PIDController>) - constructor
     PIDController controller(String name)    - get the controller with the specified name
 
