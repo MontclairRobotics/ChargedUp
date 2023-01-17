@@ -11,13 +11,16 @@ import frc.robot.constants.Constants.Robot;
 
 public class Stinger extends ManagerSubsystemBase{
     public final CANSparkMax stingerMotor = new CANSparkMax (Robot.STINGER_PORT, MotorType.kBrushless);
-    public void startExtending(){
-        
+    public void startExtending()
+    {
+        stingerMotor.set(Constants.STINGER_SPEED);
     }
-    public void startRetracting(){
+    public void startRetracting()
+    {
 
     }
-    public void stop(){
+    public void stop()
+    {
 
     }
     
