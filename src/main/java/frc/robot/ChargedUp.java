@@ -59,7 +59,7 @@ public class ChargedUp extends RobotContainer
 
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
-    // public static final Elevator elevator = new Elevator();
+    public static final Elevator elevator = new Elevator();
     // public static final Shwooper shwooper = new Shwooper();
 
     // MANAGERS //
@@ -122,13 +122,13 @@ public class ChargedUp extends RobotContainer
         // OPERATOR CONTROLS //
 
         //Elevator 
-        // operatorController.getButton(Button.X_SQUARE)
-        //     .whenActive(() -> elevator.elevate()) 
-        //     .whenInactive(() -> elevator.stop());
+        operatorController.getButton(Button.X_SQUARE)
+            .whenActive(() -> elevator.elevate()) 
+            .whenInactive(() -> elevator.stop());
 
-        // operatorController.getButton(Button.A_CROSS)
-        //     .whenActive(() -> elevator.delevate()) 
-        //     .whenInactive(() -> elevator.stop());
+        operatorController.getButton(Button.A_CROSS)
+            .whenActive(() -> elevator.delevate()) 
+            .whenInactive(() -> elevator.stop());
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
