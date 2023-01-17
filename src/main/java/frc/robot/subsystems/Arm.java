@@ -14,19 +14,32 @@ public class Arm extends ManagerSubsystemBase{
     
     CANSparkMax armUpDown = new CANSparkMax(Robot.ARM_UP_DOWN_PORT, MotorType.kBrushless);
     CANSparkMax armInOut = new CANSparkMax(Robot.ARM_IN_OUT_PORT, MotorType.kBrushless);
+    
     PIDMechanism armInOutPID = new PIDMechanism(Robot.armInOut());
     RelativeEncoder armInOutEncoder = armInOut.getEncoder();
+    
+    PIDMechanism armUpDownPID = new PIDMechanism(Robot.armUpDown());
+    RelativeEncoder armUpDownEncoder = armUpDown.getEncoder();
 
     public Arm(){
         armInOutEncoder.setPositionConversionFactor(Robot.ARM_IN_OUT_POSITION_CONVERSION_FACTOR);
+        armUpDownEncoder.setPositionConversionFactor(Robot.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
     }
 
 
     //rotates the arm using armUpDown motor
     public void rotateWithSpeed(double speed){
-        armUpDown.set(speed * Robot.ARM_SPEED);
+        armUpDownPID.setSpeed(speed * Robot.ARM_SPEED);
     }
     
+    public void rotateTo(double angle){
+        armUpDownPID.setTarget(angle);
+    }
+
+    public boolean isUpDownPIDFree(){
+        return !armUpDownPID.active();
+    }
+
     //extends the arm out using armInOut motor
     public void startExtending(){
         armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
@@ -58,5 +71,9 @@ public class Arm extends ManagerSubsystemBase{
         armInOutPID.setMeasurement(armInOutEncoder.getPosition());
         armInOutPID.update();
         armInOut.set(armInOutPID.getSpeed());
+
+        armUpDownPID.setMeasurement(armUpDownEncoder.getPosition());
+        armUpDownPID.update();
+        armUpDown.set(armUpDownPID.getSpeed());
     }
 }

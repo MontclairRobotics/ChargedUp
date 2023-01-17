@@ -133,6 +133,20 @@ public final class Constants
         {
             return new PIDController(ARM_IN_OUT_KP, ARM_IN_OUT_KI, ARM_IN_OUT_KD);
         }
+
+        public static final double 
+            ARM_UP_DOWN_KP = 1,
+            ARM_UP_DOWN_KI = 0,
+            ARM_UP_DOWN_KD = 0
+        ;
+
+        public static final double ARM_UP_DOWN_POSITION_CONVERSION_FACTOR = -1;
+
+        public static PIDController armUpDown(){//I AM RIGHT
+            PIDController pid = new PIDController(ARM_UP_DOWN_KP, ARM_UP_DOWN_KI, ARM_UP_DOWN_KD);
+            pid.enableContinuousInput(-Math.PI, Math.PI);
+            return pid;
+        }
     }
 
     public static class ControlScheme
