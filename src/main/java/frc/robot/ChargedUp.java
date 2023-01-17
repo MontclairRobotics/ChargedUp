@@ -60,7 +60,7 @@ public class ChargedUp extends RobotContainer
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
     // public static final Elevator elevator = new Elevator();
-    // public static final Shwooper shwooper = new Shwooper();
+    public static final Shwooper shwooper = new Shwooper();
 
     // MANAGERS //
     public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -95,15 +95,15 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.X_SQUARE)
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
         
-        // operatorController.getAxis(Axis.LEFT_TRIGGER)
-        //     .whenGreaterThan(0.5)
-        //     .whenActive(() -> shwooper.suck())
-        //     .whenInactive(() -> shwooper.stop());
+        operatorController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.suck())
+            .whenInactive(() -> shwooper.stop());
         
-        // operatorController.getAxis(Axis.RIGHT_TRIGGER)
-        //     .whenGreaterThan(0.5)
-        //     .whenActive(() -> shwooper.spit())
-        //     .whenInactive(() -> shwooper.stop());
+        operatorController.getAxis(Axis.RIGHT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.spit())
+            .whenInactive(() -> shwooper.stop());
 
         driverController.getButton(Button.START_TOUCHPAD)
             .whenActive(Commands.instant(() -> {
