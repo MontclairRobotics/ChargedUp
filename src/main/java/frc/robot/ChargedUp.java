@@ -16,6 +16,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CompressorConfigType;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,6 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.LED;
 // import frc.robot.subsystems.Shwooper;
 // import frc.robot.subsystems.Elevator;
 import frc.robot.inputs.JoystickInput;
@@ -58,7 +60,9 @@ public class ChargedUp extends RobotContainer
     public static final AHRS gyroscope = new AHRS();
 
     // SUBSYSTEMS //
+
     public static final Drivetrain drivetrain = new Drivetrain();
+    public static final LED led = new LED();
     // public static final Elevator elevator = new Elevator();
     // public static final Shwooper shwooper = new Shwooper();
 
@@ -144,6 +148,7 @@ public class ChargedUp extends RobotContainer
             .add("Auto Commands", AutoCommands.chooser())
             .withSize(2, 1)
             .withPosition(5, 0);
+
     }
 
     private void initAuto()

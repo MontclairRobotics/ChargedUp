@@ -110,6 +110,8 @@ public final class Constants
         //Grabber Constants
         public static final boolean GRABBER_SOLENOID_DEFAULT_STATE = false;
 
+        //LED Constants
+        public static final int LED_PWM_PORT = 0;
         
         // Stinger Constants :)
         public static final int STINGER_PORT = 0;
