@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Shwooper;
-import frc.robot.subsystems.Elevator;
+// import frc.robot.subsystems.Shwooper;
+// import frc.robot.subsystems.Elevator;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
@@ -59,8 +59,8 @@ public class ChargedUp extends RobotContainer
 
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Elevator elevator = new Elevator();
-    public static final Shwooper shwooper = new Shwooper();
+    // public static final Elevator elevator = new Elevator();
+    // public static final Shwooper shwooper = new Shwooper();
 
     // MANAGERS //
     public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -95,15 +95,15 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.X_SQUARE)
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
         
-        operatorController.getAxis(Axis.LEFT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .whenActive(() -> shwooper.suck())
-            .whenInactive(() -> shwooper.stop());
+        // operatorController.getAxis(Axis.LEFT_TRIGGER)
+        //     .whenGreaterThan(0.5)
+        //     .whenActive(() -> shwooper.suck())
+        //     .whenInactive(() -> shwooper.stop());
         
-        operatorController.getAxis(Axis.RIGHT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .whenActive(() -> shwooper.spit())
-            .whenInactive(() -> shwooper.stop());
+        // operatorController.getAxis(Axis.RIGHT_TRIGGER)
+        //     .whenGreaterThan(0.5)
+        //     .whenActive(() -> shwooper.spit())
+        //     .whenInactive(() -> shwooper.stop());
 
         driverController.getButton(Button.START_TOUCHPAD)
             .whenActive(Commands.instant(() -> {
@@ -122,13 +122,13 @@ public class ChargedUp extends RobotContainer
         // OPERATOR CONTROLS //
 
         //Elevator 
-        operatorController.getButton(Button.X_SQUARE)
-            .whenActive(() -> elevator.elevate()) 
-            .whenInactive(() -> elevator.stop());
+        // operatorController.getButton(Button.X_SQUARE)
+        //     .whenActive(() -> elevator.elevate()) 
+        //     .whenInactive(() -> elevator.stop());
 
-        operatorController.getButton(Button.A_CROSS)
-            .whenActive(() -> elevator.delevate()) 
-            .whenInactive(() -> elevator.stop());
+        // operatorController.getButton(Button.A_CROSS)
+        //     .whenActive(() -> elevator.delevate()) 
+        //     .whenInactive(() -> elevator.stop());
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
