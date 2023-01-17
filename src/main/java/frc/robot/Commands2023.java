@@ -26,7 +26,7 @@ public class Commands2023
 
     public static Command closeGrabber() {
         return Commands.instant(() -> {
-            Grabber.release();
+            Grabber.release(); 
         });
     }
     //commands to operate the shwooper
