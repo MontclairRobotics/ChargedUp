@@ -24,8 +24,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
-// import frc.robot.subsystems.Shwooper;
-// import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
@@ -61,6 +62,7 @@ public class ChargedUp extends RobotContainer
     public static final Drivetrain drivetrain = new Drivetrain();
     // public static final Elevator elevator = new Elevator();
     public static final Shwooper shwooper = new Shwooper();
+    public static final Grabber grabber = new Grabber();
 
     // MANAGERS //
     public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
