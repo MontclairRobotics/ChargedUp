@@ -116,8 +116,8 @@ public final class Constants
 
         //Arm Constants
         public static final double ARM_SPEED = 0.5;
-        public static final double ARM_UP_DOWN_PORT = -1;
-        public static final double ARM_IN_OUT_PORT = -1;
+        public static final int ARM_UP_DOWN_PORT = 4;
+        public static final int ARM_IN_OUT_PORT = -1;
         public static final double ARM_IN_OUT_SPEED = 0.5;
 
     }
