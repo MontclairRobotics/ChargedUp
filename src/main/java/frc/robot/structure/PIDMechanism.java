@@ -30,7 +30,6 @@ public class PIDMechanism
 {
     private PIDController pidController;
     private boolean usingPID;
-    private double target;
     private double measurement;
     private double speed;
 
@@ -46,7 +45,7 @@ public class PIDMechanism
 
     public void setTarget(double target)
     {
-        this.target = target;
+        pidController.setSetpoint(target);
         usingPID = true;
     }
 
@@ -66,7 +65,12 @@ public class PIDMechanism
 
     public void update()
     {
-        speed = usingPID ? pidController.calculate(measurement, target) : speed;
+        speed = usingPID ? pidController.calculate(measurement) : speed;
+
+        if(pidController.atSetpoint())
+        {
+            cancel();
+        }
         //value = boolean ? if true set to this : else set to this
     }
 

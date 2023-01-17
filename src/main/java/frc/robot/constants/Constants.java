@@ -5,6 +5,7 @@ import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
 import org.team555.frc.controllers.GameController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -120,6 +121,18 @@ public final class Constants
         public static final int ARM_IN_OUT_PORT = -1;
         public static final double ARM_IN_OUT_SPEED = 0.5;
 
+        public static final double 
+            ARM_IN_OUT_KP = 1,
+            ARM_IN_OUT_KI = 0,
+            ARM_IN_OUT_KD = 0
+        ;
+        
+        public static final double ARM_IN_OUT_POSITION_CONVERSION_FACTOR = -1;
+
+        public static PIDController armInOut()
+        {
+            return new PIDController(ARM_IN_OUT_KP, ARM_IN_OUT_KI, ARM_IN_OUT_KD);
+        }
     }
 
     public static class ControlScheme

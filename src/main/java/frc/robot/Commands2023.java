@@ -16,6 +16,12 @@ public class Commands2023
         return Commands.instant(() -> {});
     }
 
+    public static Command armGoToLength(double length)
+    {
+        final var arm = ChargedUp.arm;
+        return Commands.runUntil(arm::isInOutPIDFree, () -> arm.goToLength(length));
+    }
+
     //Commands to operate the grabber
     // public static Command openGrabber() {
     //     return Commands.instant(() -> {
