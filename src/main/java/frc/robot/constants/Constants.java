@@ -27,6 +27,7 @@ public final class Constants
     {
         public static final int COMPRESSOR_PORT = 0;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
+        public static final int GRABBER_SOLENOID_PORT = 0;
     }
 
     public static class Drive
@@ -114,6 +115,24 @@ public final class Constants
         
         // Stinger Constants :)
         public static final int STINGER_PORT = 0;
+        public static final double
+            STINGER_IN_OUT_KP = 1,
+            STINGER_IN_OUT_KI = 0,
+            STINGER_IN_OUT_KD = 0
+            ;
+        public static final double STINGER_IN_OUT_CONVERSION_FACTOR = -1;
+
+        public static final double STINGER_MID_LENGTH = 0.5;
+        public static final double STINGER_HIGH_LENGTH = 1;
+
+        public static final double STINGER_EXTENSION_LENGTH = Units.feetToMeters(52.0/12); // 52 inches
+        
+        public static PIDController stingerInOut()
+        {
+            return new PIDController(STINGER_IN_OUT_KP,STINGER_IN_OUT_KI,STINGER_IN_OUT_KD);
+        }
+
+        public static final double STINGER_SPEED = 1;
 
         //Arm Constants
         public static final double ARM_SPEED = 0.5;
