@@ -136,9 +136,47 @@ public final class Constants
 
         //Arm Constants
         public static final double ARM_SPEED = 0.5;
-        public static final double ARM_UP_DOWN_PORT = -1;
-        public static final double ARM_IN_OUT_PORT = -1;
+        public static final int ARM_UP_DOWN_PORT = 4;
+        public static final int ARM_IN_OUT_PORT = -1;
         public static final double ARM_IN_OUT_SPEED = 0.5;
+
+        public static final double 
+            ARM_IN_OUT_KP = 1,
+            ARM_IN_OUT_KI = 0,
+            ARM_IN_OUT_KD = 0
+        ;
+        
+        public static final double ARM_IN_OUT_POSITION_CONVERSION_FACTOR = -1;
+
+        public static PIDController armInOut()
+        {
+            return new PIDController(ARM_IN_OUT_KP, ARM_IN_OUT_KI, ARM_IN_OUT_KD);
+        }
+
+        public static final double 
+            ARM_UP_DOWN_KP = 1,
+            ARM_UP_DOWN_KI = 0,
+            ARM_UP_DOWN_KD = 0
+        ;
+
+        public static final double ARM_UP_DOWN_POSITION_CONVERSION_FACTOR = -1;
+
+        public static PIDController armUpDown(){//I AM RIGHT
+            PIDController pid = new PIDController(ARM_UP_DOWN_KP, ARM_UP_DOWN_KI, ARM_UP_DOWN_KD);
+            pid.enableContinuousInput(-Math.PI, Math.PI);
+            return pid;
+        }
+
+        //arm commands angles and lengths 
+        public static final double ARM_RETURN_POSITION = 0;
+        //in theory the length extension should be the same for pegs and shelves
+        public static final double ARM_MID_LENGTH = 0.5; //to be changed when arm is constructed (currently in m)
+        public static final double ARM_HIGH_LENGTH = 1; // ^^^^
+        
+        public static final double ARM_MID_PEG_ANGLE = Rotation2d.fromDegrees(90).getRadians();
+        public static final double ARM_HIGH_PEG_ANGLE = Rotation2d.fromDegrees(120).getRadians();
+        public static final double ARM_MID_SHELF_ANGLE = Rotation2d.fromDegrees(95).getRadians();
+        public static final double ARM_HIGH_SHELF_ANGLE = Rotation2d.fromDegrees(125).getRadians();
 
     }
 

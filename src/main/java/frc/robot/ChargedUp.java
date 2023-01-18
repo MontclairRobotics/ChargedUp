@@ -33,6 +33,7 @@ import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.subsystems.AngularVelocityManager;
+import frc.robot.subsystems.Arm;
 
 import static frc.robot.constants.Constants.*;
 
@@ -60,6 +61,7 @@ public class ChargedUp extends RobotContainer
 
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
+    public static final Arm arm = new Arm();
     // public static final Elevator elevator = new Elevator();
     public static final Shwooper shwooper = new Shwooper();
     public static final Grabber grabber = new Grabber();
