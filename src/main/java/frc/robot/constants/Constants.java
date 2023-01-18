@@ -102,6 +102,8 @@ public final class Constants
         public static final boolean ELEVATOR_INVERTED = false;
 
         public static final double ELEVATOR_MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
+        public static final double ELEVATOR_MID_HEIGHT = 0.5;
+        public static final double ELEVATOR_HIGH_HEIGHT = 1;
 
         public static final double ELEVATOR_UP_DOWN_CONVERSION_FACTOR = -1;
 

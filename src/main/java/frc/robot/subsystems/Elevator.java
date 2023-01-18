@@ -22,17 +22,19 @@ public class Elevator extends ManagerSubsystemBase {
     }
 
     /**
-     * Set elevator to HIGH position
-     * ELEVATOR_MAX_HEIGHT is defined in constants.java
+     * Set elevator to a desired height
+     * @param height (double) the desired height
      */
-    public void makeHigh(){
-        elevatorPID.setTarget(Robot.ELEVATOR_MAX_HEIGHT);
+    public void setHeight(double height){
+        if (height > Robot.ELEVATOR_MAX_HEIGHT)
+            height = Robot.ELEVATOR_MAX_HEIGHT;
+        elevatorPID.setTarget(height);
     }
 
     /**
      * Set elevator to LOW position
      */
-    public void makeLow() {
+    public void setLow() {
         elevatorPID.setTarget(0);
     }
 

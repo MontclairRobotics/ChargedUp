@@ -3,17 +3,54 @@ package frc.robot;
 import org.team555.frc.command.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.Constants.Robot;
 // import frc.robot.subsystems.Grabber;
 // import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.Elevator;
 
 public class Commands2023 
 {
+    private static Elevator elevator = new Elevator();
+
     // put commands here
 
     
     public static Command doNothing() 
     {
         return Commands.instant(() -> {});
+    }
+
+    /**
+     * Sets the elevator its lowest high
+     * @return the command
+     */
+    public static Command elevatorToLow()
+    {
+        return Commands.instant(() -> {
+            elevator.setLow();
+        });
+    }
+
+    /**
+     * Sets the elevator to the height of the middle section
+     * @return the command
+     */
+    public static Command elevatorToMid()
+    {
+        return Commands.instant(() -> {
+            elevator.setHeight(Robot.ELEVATOR_MID_HEIGHT);
+        });
+    }
+
+    /**
+     * Sets the elevator to the height of the high section
+     * @return the command
+     */
+    public static Command elevatorToHigh()
+    {
+        return Commands.instant(() -> {
+            elevator.setHeight(Robot.ELEVATOR_HIGH_HEIGHT);
+        });
     }
 
     //Commands to operate the grabber
