@@ -3,12 +3,46 @@ package frc.robot;
 import org.team555.frc.command.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.constants.Constants.*;
 // import frc.robot.subsystems.Grabber;
 // import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.Stinger;
 
 public class Commands2023 
 {
     // put commands here
+
+    private static Stinger stinger = new Stinger();
+
+    /**
+     * fully retracts the stinger 
+     */
+    public static Command retractStinger()
+    {
+        return Commands.instant(() -> {
+            stinger.fullyRetract();
+        });
+    }
+    /**
+     * extends the stinger to the length of the midlle pole
+     * @return
+     */
+    public static Command stingerToMid()
+    {
+        return Commands.instant(() -> {
+            stinger.extendToLength(Robot.STINGER_MID_LENGTH);
+        });
+    }
+    /**
+     * extends the stinger to the high pole
+     * @return
+     */
+    public static Command stingerToHigh()
+    {
+        return Commands.instant(() -> {
+            stinger.extendToLength(Robot.STINGER_HIGH_LENGTH);
+        });
+    }
 
     
     public static Command doNothing() 

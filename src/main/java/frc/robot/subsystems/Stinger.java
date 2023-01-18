@@ -21,11 +21,14 @@ public class Stinger extends ManagerSubsystemBase{
         StingerEncoder.setPositionConversionFactor(Robot.STINGER_IN_OUT_CONVERSION_FACTOR);
     }
     /**
-     * Fully Extends Stinger 
+     * Extends Stinger to a desired length
+     * @param length (double) the desired length 
      */
-    public void fullyExtend()
+    public void extendToLength(double length)
     {
-        StingerPID.setTarget(Robot.STINGER_EXTENSION_LENGTH);
+        if (length > Robot.STINGER_EXTENSION_LENGTH)
+            length = Robot.STINGER_EXTENSION_LENGTH;
+        StingerPID.setTarget(length);
     }
     /**
      *  Fully Retracts Stinger
