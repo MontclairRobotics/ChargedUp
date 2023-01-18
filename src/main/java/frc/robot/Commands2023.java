@@ -2,6 +2,7 @@ package frc.robot;
 
 import org.team555.frc.command.Commands;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.subsystems.Grabber;
 // import frc.robot.subsystems.Shwooper;
@@ -41,4 +42,10 @@ public class Commands2023
     //         Shwooper.retract();
     //     });
     // }
+
+    public static Command setLEDColor(Color color) {
+        return Commands.instant(() -> {
+            ChargedUp.led.setColor(color);
+        });
+    }
 }
