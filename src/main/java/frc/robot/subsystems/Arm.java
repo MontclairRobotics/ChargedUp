@@ -14,7 +14,7 @@ public class Arm extends ManagerSubsystemBase{
     
     CANSparkMax armUpDown = new CANSparkMax(Robot.ARM_UP_DOWN_PORT, MotorType.kBrushless);
     CANSparkMax armInOut = new CANSparkMax(Robot.ARM_IN_OUT_PORT, MotorType.kBrushless);
-    
+
     PIDMechanism armInOutPID = new PIDMechanism(Robot.armInOut());
     RelativeEncoder armInOutEncoder = armInOut.getEncoder();
     
@@ -55,7 +55,7 @@ public class Arm extends ManagerSubsystemBase{
         armInOutPID.setSpeed(0);
     }
 
-    public void goToLength(double length)
+    public void extendTo(double length)
     {
         armInOutPID.setTarget(length);
     }
