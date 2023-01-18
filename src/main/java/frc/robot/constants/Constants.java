@@ -124,7 +124,7 @@ public final class Constants
         public static final double STINGER_MID_LENGTH = 0.5;
         public static final double STINGER_HIGH_LENGTH = 1;
 
-        public static final double STINGER_EXTENSION_LENGTH = Units.feetToMeters(52/12); // 52 inches
+        public static final double STINGER_EXTENSION_LENGTH = Units.feetToMeters(52.0/12); // 52 inches
         
         public static PIDController stingerInOut()
         {
