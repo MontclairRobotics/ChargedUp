@@ -5,6 +5,7 @@ import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
 import org.team555.frc.controllers.GameController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -120,6 +121,8 @@ public final class Constants
             ;
         public static final double STINGER_IN_OUT_CONVERSION_FACTOR = -1;
 
+        public static final double STINGER_EXTENSION_LENGTH = Units.feetToMeters(52/12); // 52 inches
+        
         public static PIDController stingerInOut()
         {
             return new PIDController(STINGER_IN_OUT_KP,STINGER_IN_OUT_KI,STINGER_IN_OUT_KD);
