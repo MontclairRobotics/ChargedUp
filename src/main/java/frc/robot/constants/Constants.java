@@ -101,17 +101,17 @@ public final class Constants
         public static final int ELEVATOR_MOTOR_PORT = 4;
         public static final boolean ELEVATOR_INVERTED = false;
 
-        public static final double ELEVATOR_MAX_HEIGHT = Units.feetToMeters(73/12);  // 73 inches
+        public static final double ELEVATOR_MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
 
         public static final double ELEVATOR_UP_DOWN_CONVERSION_FACTOR = -1;
 
-        public static double 
+        public static final double 
             ELEVATOR_UP_DOWN_KP = 1,
             ELEVATOR_UP_DOWN_KI = 1,
             ELEVATOR_UP_DOWN_KD = 1
         ;
 
-        public static PIDController elevatorUpDown() {
+        public static final PIDController elevatorUpDown() {
             return new PIDController(ELEVATOR_UP_DOWN_KP, ELEVATOR_UP_DOWN_KI, ELEVATOR_UP_DOWN_KD);
         }
 
