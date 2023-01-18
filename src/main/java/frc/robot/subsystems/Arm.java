@@ -26,46 +26,68 @@ public class Arm extends ManagerSubsystemBase{
         armUpDownEncoder.setPositionConversionFactor(Robot.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
     }
 
-
-    //rotates the arm using armUpDown motor
+    /*
+     * rotates the arm with the armUpDown motor at speed ARM_Speed
+     */
     public void rotateWithSpeed(double speed){
         armUpDownPID.setSpeed(speed * Robot.ARM_SPEED);
     }
-    
+
+    /*
+     * takes an angle as a double and targets that angle with PID
+     */
     public void rotateTo(double angle){
         armUpDownPID.setTarget(angle);
     }
 
+    /*
+     * returns a boolean of whether or not armUpDown is currently free, true is yes and false is no
+     */
     public boolean isUpDownPIDFree(){
         return !armUpDownPID.active();
     }
 
-    //extends the arm out using armInOut motor
+    /*
+     * extends the arm out using armInOut motor at ARM_IN_OUT_SPEED 
+     */
     public void startExtending(){
         armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
     }
 
-    //starts retracting the arm using armInOut motor
+    /*
+     * retracts the arm using armInOut motor at ARM_IN_OUT_SPEED
+     */
     public void startRetracting(){
         armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
     }
 
-    //stops arm in out movement
+    /*
+     * stops arm in out movement
+     */
     public void stop(){
         armInOutPID.setSpeed(0);
     }
 
+    /*
+     * takes in a target length as a double and extends the arm to that length (meters)
+     */
     public void extendTo(double length)
     {
         armInOutPID.setTarget(length);
     }
 
+    /*
+     * returns a boolean of whether or not armInOut is currently free, true is yes false is no
+     */
     public boolean isInOutPIDFree()
     {
         return !armInOutPID.active();
     }
     
-
+    /*
+     * continuously sets the position of armInOut and armUpDown motors using armInOutEncoder and armUpDownEncoder. 
+     * This updates the PID and the motors are set to new speeds using new PID calculation
+     */
     @Override
     public void always() {
         armInOutPID.setMeasurement(armInOutEncoder.getPosition());
