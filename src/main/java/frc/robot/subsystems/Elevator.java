@@ -55,14 +55,24 @@ public class Elevator extends ManagerSubsystemBase {
     /** 
      * Set elevator speed to zero
      */
-    public void stop(){
+    public void stop()
+    {
         elevatorPID.setSpeed(0);
     }
 
+    /**
+     * returns if the elevator is currently not using pid
+     * @return boolean
+     */
+    public boolean isPIDFree()
+    {
+        return !elevatorPID.active();
+    }
 
     // run PID
     @Override
-    public void always() {
+    public void always() 
+    {
         elevatorPID.setMeasurement(elevatorEncoder.getPosition());
         elevatorPID.update();
         motor.set(elevatorPID.getSpeed());

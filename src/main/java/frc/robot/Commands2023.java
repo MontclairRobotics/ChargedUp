@@ -21,14 +21,12 @@ public class Commands2023
     }
 
     /**
-     * Sets the elevator its lowest high
+     * Sets the elevator its lowest height
      * @return the command
      */
     public static Command elevatorToLow()
     {
-        return Commands.instant(() -> {
-            elevator.setLow();
-        });
+        return Commands.runUntil(elevator::isPIDFree, elevator::setLow, elevator);
     }
 
     /**
