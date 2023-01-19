@@ -61,13 +61,9 @@ public class LED extends ManagerBase
         //     case Red  -> Color.kRed,
         //     case Invalid -> Color.kWhite
         // };
-        if (alliance == Alliance.Blue) { 
-            color = Color.kBlue;
-        } else if (alliance == Alliance.Red) {
-            color = Color.kRed;
-        } else if (alliance == Alliance.Invalid) {
-            color = Color.kWhite;
-        }
+        if (alliance == Alliance.Blue) color = Color.kBlue; 
+        else if (alliance == Alliance.Red) color = Color.kRed;
+        else if (alliance == Alliance.Invalid) color = Color.kWhite;
         setColor(color);
     }
 
