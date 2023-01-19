@@ -26,7 +26,7 @@ public class Commands2023 {
         });
     }
     /**
-     * extends the stinger to the length of the midlle pole
+     * extends the stinger to the length of the middle pole
      * @return
      */
     public static Command stingerToMid()
