@@ -47,70 +47,77 @@ public class Commands2023 {
         });
     }
 
+    // ARM COMMANDS
+
     /*
      * takes a length in meters as a double and moves the arm to that length
      */
     public static Command armGoToLength(double length)
     {
-        final var arm = ChargedUp.arm;
-        return runUntil(arm::isInOutPIDFree, () -> arm.extendTo(length));
+        return runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(length), ChargedUp.arm);
     }
     
     /** 
      * takes an angle as a double and moves the arm to that angle
      */
-    public static Command armGoToAngle(double angle){
-        return runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(angle));
+    public static Command armGoToAngle(double angle)
+    {
+        return runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm);
     }
     
     /**
      * arm returns to origin position in fully retracted and lowered position
      */
-    public static Command returnArm(){
+    public static Command returnArm()
+    {
         return CommandGroupBase.parallel (
             runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_RETURN_POSITION)),
             runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(0))
-        );
+        ).deadlineWith(block(ChargedUp.arm));
     }
     /**
      * moves the arm to be above the mid peg so cones can drop and score
      */
-    public static Command armToMidPeg(){
+    public static Command armToMidPeg()
+    {
         return CommandGroupBase.parallel (
             runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_MID_PEG_ANGLE)),
             runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_MID_LENGTH))
-        );
+        ).deadlineWith(block(ChargedUp.arm));
     }
 
     /**
      * moves the arm so the end of the arm is directly over the high peg and game pieces can be scored
      */
-    public static Command armToHighPeg(){
+    public static Command armToHighPeg()
+    {
         return CommandGroupBase.parallel (
             runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_PEG_ANGLE)),
             runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
-        );
+        ).deadlineWith(block(ChargedUp.arm));
     }
 
     /**
      * moves the arm so the end is over the middle shelf and game pieces can be scored on that level
      */
-    public static Command armToMidShelf(){
+    public static Command armToMidShelf()
+    {
         return CommandGroupBase.parallel (
             runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_PEG_ANGLE)),
             runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
-        );
+        ).deadlineWith(block(ChargedUp.arm));
     }
 
     /**
      * moves the arm so that the end is directly over the high shelf and game pieces can be scored there
      * @return
      */
-    public static Command armToHighShelf(){
+    public static Command armToHighShelf()
+    {
         return CommandGroupBase.parallel (
             runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_SHELF_ANGLE)),
             runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
-        );
+        ).deadlineWith(block(ChargedUp.arm));
     }
 
     // Commands to operate the grabber

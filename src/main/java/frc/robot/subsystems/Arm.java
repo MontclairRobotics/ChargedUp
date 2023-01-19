@@ -21,7 +21,8 @@ public class Arm extends ManagerSubsystemBase{
     PIDMechanism armUpDownPID = new PIDMechanism(Robot.armUpDown());
     RelativeEncoder armUpDownEncoder = armUpDown.getEncoder();
 
-    public Arm(){
+    public Arm()
+    {
         armInOutEncoder.setPositionConversionFactor(Robot.ARM_IN_OUT_POSITION_CONVERSION_FACTOR);
         armUpDownEncoder.setPositionConversionFactor(Robot.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
     }
@@ -29,42 +30,48 @@ public class Arm extends ManagerSubsystemBase{
     /*
      * rotates the arm with the armUpDown motor at speed ARM_Speed
      */
-    public void rotateWithSpeed(double speed){
+    public void rotateWithSpeed(double speed)
+    {
         armUpDownPID.setSpeed(speed * Robot.ARM_SPEED);
     }
 
     /*
      * takes an angle as a double and targets that angle with PID
      */
-    public void rotateTo(double angle){
+    public void rotateTo(double angle)
+    {
         armUpDownPID.setTarget(angle);
     }
 
     /*
      * returns a boolean of whether or not armUpDown is currently free, true is yes and false is no
      */
-    public boolean isUpDownPIDFree(){
+    public boolean isUpDownPIDFree()
+    {
         return !armUpDownPID.active();
     }
 
     /*
      * extends the arm out using armInOut motor at ARM_IN_OUT_SPEED 
      */
-    public void startExtending(){
+    public void startExtending()
+    {
         armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
     }
 
     /*
      * retracts the arm using armInOut motor at ARM_IN_OUT_SPEED
      */
-    public void startRetracting(){
+    public void startRetracting()
+    {
         armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
     }
 
     /*
      * stops arm in out movement
      */
-    public void stop(){
+    public void stop()
+    {
         armInOutPID.setSpeed(0);
     }
 
