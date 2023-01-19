@@ -64,12 +64,20 @@ public class LED extends ManagerBase {
 
     public void setHolding(Holding object) {
         holding = object;
+        Color color = Color.kGray;
         switch (holding) {
             case Cube:
-                break;
+                color = Color.kViolet;
+                setColor(color);
             case Cone:
+                color = Color.kYellow;
+                setColor(color);
                 break;
             case None:
+                setAllianceColor();
+                break;
+            default:
+                //panic!!!!!!!!
                 break;
         }
     }
