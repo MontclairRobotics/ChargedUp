@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.subsystems.Grabber;
 // import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.GamePiece;
 
 public class Commands2023 
 {
@@ -48,4 +49,11 @@ public class Commands2023
             ChargedUp.led.setColor(color);
         });
     }
+    public static Command setObjectHolding(GamePiece object) 
+    {
+        return Commands.instant(() -> {
+            ChargedUp.led.setHolding(object);
+        });
+    }
 }
+

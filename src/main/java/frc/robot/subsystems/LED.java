@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.ChargedUp;
 import frc.robot.constants.Constants;
+import frc.robot.structure.GamePiece;
 
-public class LED extends ManagerBase {
+public class LED extends ManagerBase 
+{
     private AddressableLED led = new AddressableLED(Constants.Robot.LED_PWM_PORT);
     private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(150);
     private RainbowAnimation rainbow = new RainbowAnimation();
@@ -26,24 +28,31 @@ public class LED extends ManagerBase {
     // }
 
 
-    public LED() {
+    public LED()
+    {
         led.setLength(ledBuffer.getLength());
     }
 
    
     @Override
-    public void always() {
+    public void always()
+    {
         setAllianceColor();
         led.setData(ledBuffer);
     }
 
-    public void setColor(Color color) {
+    public void setColor(Color color)
+    {
         for (int i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setLED(i,color);
         }
     }
 
-    public void setAllianceColor() {
+    /**
+    * This method takes the current alliance color and sets the LEDs to the correct color.
+    */
+    public void setAllianceColor() 
+    {
         Alliance alliance = DriverStation.getAlliance();
         Color color = Color.kGray;
         // var color = switch(DriverStation.getAlliance()) //Todo uncomment when java 17
@@ -62,8 +71,13 @@ public class LED extends ManagerBase {
         setColor(color);
     }
 
-    public void setHolding(GamePiece object) {
-        gamePiece = object;
+    /**
+    * This method takes in the currently held game piece and changes the LEDS to the correct color.
+    * @param piece the game piece currently being held by the robot
+    */
+    public void setHolding(GamePiece piece) 
+    {
+        gamePiece = piece;
         Color color = Color.kGray;
         switch (gamePiece) {
             case CUBE:
@@ -78,8 +92,7 @@ public class LED extends ManagerBase {
                 setAllianceColor();
                 break;
             default:
-                //panic!!!!!!!!
-                break;
+                throw new Error("Don't pass null to the LEDs, stupid!");
         }
     }
 
