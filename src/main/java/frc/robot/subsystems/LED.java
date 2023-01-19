@@ -16,7 +16,7 @@ public class LED extends ManagerBase {
     private AddressableLED led = new AddressableLED(Constants.Robot.LED_PWM_PORT);
     private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(150);
     private RainbowAnimation rainbow = new RainbowAnimation();
-    private Holding holding = Holding.None;
+    private GamePiece gamePiece = GamePiece.NONE;
 
     // States:
     // Holding Cone -> yeller
@@ -62,18 +62,19 @@ public class LED extends ManagerBase {
         setColor(color);
     }
 
-    public void setHolding(Holding object) {
-        holding = object;
+    public void setHolding(GamePiece object) {
+        gamePiece = object;
         Color color = Color.kGray;
-        switch (holding) {
-            case Cube:
+        switch (gamePiece) {
+            case CUBE:
                 color = Color.kViolet;
                 setColor(color);
-            case Cone:
+                break;
+            case CONE:
                 color = Color.kYellow;
                 setColor(color);
                 break;
-            case None:
+            case NONE:
                 setAllianceColor();
                 break;
             default:
