@@ -37,7 +37,7 @@ public class LED extends ManagerBase
     @Override
     public void always()
     {
-        setAllianceColor();
+        // setAllianceColor();
         led.setData(ledBuffer);
     }
 

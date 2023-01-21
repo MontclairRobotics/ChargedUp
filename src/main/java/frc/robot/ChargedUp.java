@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.CompressorConfigType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
@@ -133,6 +134,15 @@ public class ChargedUp extends RobotContainer
         // operatorController.getButton(Button.A_CROSS)
         //     .whenActive(() -> elevator.delevate()) 
         //     .whenInactive(() -> elevator.stop());
+        operatorController.getButton(Button.A_CROSS)
+            .toggleWhenActive(Commands2023.setLEDColor(Color.kBlue));
+
+        operatorController.getButton(Button.B_CIRCLE)
+            .toggleWhenActive(Commands2023.setLEDColor(Color.kRed));
+
+        operatorController.getButton(Button.Y_TRIANGLE)
+            .toggleWhenActive(Commands2023.setLEDColor(Color.kGreen));
+        
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(

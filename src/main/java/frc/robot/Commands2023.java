@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 // import frc.robot.subsystems.Grabber;
 // import frc.robot.subsystems.Shwooper;
-import frc.robot.subsystems.GamePiece;
+import frc.robot.structure.GamePiece;
 
 public class Commands2023 
 {
