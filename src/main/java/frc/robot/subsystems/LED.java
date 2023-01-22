@@ -31,13 +31,16 @@ public class LED extends ManagerBase
     public LED()
     {
         led.setLength(ledBuffer.getLength());
+        setColor(Color.kBlue);
+        led.setData(ledBuffer);
+        led.start();
     }
 
    
     @Override
     public void always()
     {
-        // setAllianceColor();
+        updateColor();
         led.setData(ledBuffer);
     }
 
@@ -67,13 +70,16 @@ public class LED extends ManagerBase
         setColor(color);
     }
 
+    public void setHolding(GamePiece piece) {
+        gamePiece = piece;
+    }
+
     /**
     * This method takes in the currently held game piece and changes the LEDS to the correct color.
     * @param piece the game piece currently being held by the robot
     */
-    public void setHolding(GamePiece piece) 
+    public void updateColor() 
     {
-        gamePiece = piece;
         Color color = Color.kGray;
         switch (gamePiece) {
             case CUBE:
