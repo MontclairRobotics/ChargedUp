@@ -134,15 +134,6 @@ public class ChargedUp extends RobotContainer
         // operatorController.getButton(Button.A_CROSS)
         //     .whenActive(() -> elevator.delevate()) 
         //     .whenInactive(() -> elevator.stop());
-        operatorController.getButton(Button.A_CROSS)
-            .toggleWhenActive(Commands2023.setLEDColor(Color.kBlue));
-
-        operatorController.getButton(Button.B_CIRCLE)
-            .toggleWhenActive(Commands2023.setLEDColor(Color.kRed));
-
-        operatorController.getButton(Button.Y_TRIANGLE)
-            .toggleWhenActive(Commands2023.setLEDColor(Color.kGreen));
-        
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
