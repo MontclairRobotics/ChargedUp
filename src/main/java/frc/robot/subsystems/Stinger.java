@@ -38,14 +38,14 @@ public class Stinger extends ManagerSubsystemBase{
         StingerPID.setTarget(0);
     }
     /**
-     * Manually extends Stinger at Stinger Speed 
+     * Manually extends Stinger at {@link Robot#STINGER_SPEED the Stinger Speed} 
      */
     public void startExtending()
     {
         StingerPID.setSpeed(Robot.STINGER_SPEED);
     }
     /**
-     * Manually retracts Stinger at Singer Speed 
+     * Manually retracts Stinger at the negative of {@link Robot#STINGER_SPEED the Stinger Speed}
      */
     public void startRetracting()
     {
