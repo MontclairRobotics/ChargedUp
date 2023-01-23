@@ -141,17 +141,29 @@ public class Drivetrain extends SubsystemBase
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
+    /**
+     * Enables field relative
+     */
     public void enableFieldRelative()  
     {
         useFieldRelative = true;
         Logging.info("Field relative enabled");
     }
+    /**
+     * Disables field relative
+     */
     public void disableFieldRelative() 
     {
         useFieldRelative = false;
         Logging.info("Field relative disabled");
     }
-
+    /**
+     * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
+     * Should be called in order to manually control the robot.
+     * Sets the speeds of the motors directly
+     * @param turn the turn axis of the joystick
+     * @param drive the driving axis of the joystick
+     */
     public void driveInput(JoystickInput turn, JoystickInput drive)
     {
         ControlScheme.TURN_ADJUSTER.adjustX(turn);
@@ -164,27 +176,40 @@ public class Drivetrain extends SubsystemBase
         );
     }
     
+    /**
+     * Driving with the given velocities 
+     * @param omega_rad_per_second rotational velocity in radians per second
+     * @param vx_meter_per_second x direction velocity 
+     * @param vy_meter_per_second y direction velocity
+     */
     public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
         // Rotate so that the front is the real front of the robot
-        var newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
-        var newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
+        double newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
+        double newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
         
         // TODO: why do we need to negate the y velocity here?
         // TODO: should this negation be reflected in "currentYVel"?
 
         // Get the states for the modules
-        var chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
+        ChassisSpeeds chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
 
         // Actually drive
         driveFromChassisSpeeds(chassisSpeeds);
     }
 
+    /**
+     * Gets the final chassis speeds relative to its forward
+     * @param adjusted_omega rotational velocity
+     * @param adjusted_vx x direction velocity
+     * @param adjusted_vy y direction velocity
+     * @return Chassis speeds
+     */
     private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
     {
         // TODO: why do we need to negate the y velocity here?
         // TODO: unflip omega and fix with input flipping
-        adjusted_vx    = MathUtils.clamp(adjusted_vx,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_vx    = MathUtils.clamp(adjusted_vx,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
@@ -206,7 +231,11 @@ public class Drivetrain extends SubsystemBase
             );
         }
     }
-
+    /**
+     * Uses the chassis speeds to drive. 
+     * Only works when the robot is real currently
+     * @param speeds ChassisSpeeds object
+     */
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
         currentRelativeXVel = speeds.vxMetersPerSecond;
@@ -250,7 +279,8 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
-    @Override public void periodic() 
+    @Override 
+    public void periodic() 
     {
         ChargedUp.field.setRobotPose(getRobotPose());
     }
@@ -346,7 +376,7 @@ public class Drivetrain extends SubsystemBase
 
         public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
-            var b = autoBuilder(markers);
+            SwerveAutoBuilder b = autoBuilder(markers);
             return b.fullAuto(trajectory);
         }
     }

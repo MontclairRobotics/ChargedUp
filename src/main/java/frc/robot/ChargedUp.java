@@ -25,14 +25,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
-// import frc.robot.subsystems.Shwooper;
-// import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.subsystems.AngularVelocityManager;
+import frc.robot.subsystems.Arm;
 
 import static frc.robot.constants.Constants.*;
 
@@ -61,7 +62,9 @@ public class ChargedUp extends RobotContainer
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();
-    // public static final Shwooper shwooper = new Shwooper();
+    public static final Arm arm = new Arm();
+    public static final Shwooper shwooper = new Shwooper();
+    public static final Grabber grabber = new Grabber();
 
     // MANAGERS //
     public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -96,15 +99,15 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.X_SQUARE)
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
         
-        // operatorController.getAxis(Axis.LEFT_TRIGGER)
-        //     .whenGreaterThan(0.5)
-        //     .whenActive(() -> shwooper.suck())
-        //     .whenInactive(() -> shwooper.stop());
+        operatorController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.suck())
+            .whenInactive(() -> shwooper.stop());
         
-        // operatorController.getAxis(Axis.RIGHT_TRIGGER)
-        //     .whenGreaterThan(0.5)
-        //     .whenActive(() -> shwooper.spit())
-        //     .whenInactive(() -> shwooper.stop());
+        operatorController.getAxis(Axis.RIGHT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.spit())
+            .whenInactive(() -> shwooper.stop());
 
         driverController.getButton(Button.START_TOUCHPAD)
             .whenActive(Commands.instant(() -> {
