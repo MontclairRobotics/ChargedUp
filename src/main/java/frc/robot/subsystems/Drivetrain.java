@@ -36,6 +36,7 @@ import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
+import frc.robot.structure.swerve.SwerveModuleSpec;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
@@ -64,6 +65,9 @@ public class Drivetrain extends SubsystemBase
 
     private boolean useFieldRelative = true;
 
+    //sets the speedIndex to speeds length
+    private static int speedIndex = Drive.speeds.length-1;
+
     private static final String[] MODULE_NAMES = {
         "FL",
         "FR",
@@ -85,7 +89,7 @@ public class Drivetrain extends SubsystemBase
         modules = new SwerveModule[Drive.MODULE_COUNT];
 
         int i = 0;
-        for(var spec : Drive.MODULES)
+        for(SwerveModuleSpec spec : Drive.MODULES)
         {
             modules[i] = spec.createNeo(
                 Shuffleboard.getTab("Drivetrain")
@@ -111,6 +115,18 @@ public class Drivetrain extends SubsystemBase
             .withWidget(BuiltInWidgets.kGyro)
             .withSize(2, 2)
             .withPosition(2, 0);
+        
+        Shuffleboard.getTab("Main")
+            .addNumber("Max linear speed: ", () -> Drive.speeds[speedIndex][0])
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(2, 2)
+            .withPosition(4, 0);
+        
+        Shuffleboard.getTab("Main")
+            .addNumber("Max angular speed: ", () -> Drive.speeds[speedIndex][1])
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(2, 2)
+            .withPosition(4, 2);
 
         // Build Odometry //
         odometry = new SwerveDriveOdometry(
@@ -212,6 +228,9 @@ public class Drivetrain extends SubsystemBase
         adjusted_vx    = MathUtils.clamp(adjusted_vx,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        adjusted_vx *= Drive.speeds[speedIndex][0];
+        adjusted_vy *= Drive.speeds[speedIndex][0];
+        adjusted_omega *= Drive.speeds[speedIndex][1];
 
         if(useFieldRelative)
         {
@@ -244,7 +263,7 @@ public class Drivetrain extends SubsystemBase
 
         if(RobotBase.isReal())
         {
-            var states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
+            SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
             driveFromStates(states);
         }
         else
@@ -318,11 +337,31 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
+    public void increaseMaxSpeed()
+    {
+        speedIndex = (speedIndex == Drive.speeds.length-1) ? speedIndex : speedIndex + 1;
+    }
+    public void decreaseMaxSpeed() 
+    {
+        speedIndex = (speedIndex == 0) ? 0 : speedIndex - 1;
+    }
+
+    
+
 
     public final DriveCommands commands = this.new DriveCommands();
     public class DriveCommands 
     {
         private DriveCommands() {}
+
+        public Command increaseSpeed()
+        {
+            return Commands.instant(() -> Drivetrain.this.increaseMaxSpeed());
+        }
+        public Command decreaseSpeed()
+        {
+            return Commands.instant(() -> Drivetrain.this.decreaseMaxSpeed());
+        }
 
         public Command driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
