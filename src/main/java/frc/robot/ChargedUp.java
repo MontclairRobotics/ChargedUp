@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
-// import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
@@ -61,8 +61,8 @@ public class ChargedUp extends RobotContainer
 
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
+    public static final Elevator elevator = new Elevator();
     public static final Arm arm = new Arm();
-    // public static final Elevator elevator = new Elevator();
     public static final Shwooper shwooper = new Shwooper();
     public static final Grabber grabber = new Grabber();
 
@@ -126,13 +126,13 @@ public class ChargedUp extends RobotContainer
         // OPERATOR CONTROLS //
 
         //Elevator 
-        // operatorController.getButton(Button.X_SQUARE)
-        //     .whenActive(() -> elevator.elevate()) 
-        //     .whenInactive(() -> elevator.stop());
+        operatorController.getButton(Button.X_SQUARE)
+            .whenActive(() -> elevator.elevate()) 
+            .whenInactive(() -> elevator.stop());
 
-        // operatorController.getButton(Button.A_CROSS)
-        //     .whenActive(() -> elevator.delevate()) 
-        //     .whenInactive(() -> elevator.stop());
+        operatorController.getButton(Button.A_CROSS)
+            .whenActive(() -> elevator.delevate()) 
+            .whenInactive(() -> elevator.stop());
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(

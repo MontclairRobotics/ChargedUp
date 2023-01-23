@@ -5,16 +5,16 @@ import static org.team555.frc.command.Commands.*;
 import org.team555.frc.command.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
-// import frc.robot.subsystems.Grabber;
-// import frc.robot.subsystems.Shwooper;
 import frc.robot.constants.Constants.Robot;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Stinger;
 
-public class Commands2023 {
-    // put commands here
-    
+public class Commands2023 
+{
+    private static Elevator elevator = new Elevator();
     private static Stinger stinger = new Stinger();
+    
+    // put commands here
 
     /**
      * fully retracts the stinger 
@@ -64,7 +64,36 @@ public class Commands2023 {
     {
         return runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm);
     }
-    
+   
+
+    /**
+     * Sets the elevator its lowest height
+     * @return the command
+     */
+    public static Command elevatorToLow()
+    {
+        return Commands.runUntil(elevator::isPIDFree, elevator::setLow, elevator);
+    }
+    //
+
+    /**
+     * Sets the elevator to the height of the middle section
+     * @return the command
+     */
+    public static Command elevatorToMid()
+    {
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHeight(Robot.ELEVATOR_MID_HEIGHT), elevator);
+    }
+
+    /**
+     * Sets the elevator to the height of the high section
+     * @return the command
+     */
+    public static Command elevatorToHigh()
+    {
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHeight(Robot.ELEVATOR_MAX_HEIGHT), elevator);
+    }
+
     /**
      * arm returns to origin position in fully retracted and lowered position
      */
