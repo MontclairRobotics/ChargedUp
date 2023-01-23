@@ -107,6 +107,22 @@ public final class Constants
         public static final int ELEVATOR_MOTOR_PORT = 4;
         public static final boolean ELEVATOR_INVERTED = false;
 
+        public static final double ELEVATOR_MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
+        public static final double ELEVATOR_MID_HEIGHT = 0.5;
+        public static final double ELEVATOR_HIGH_HEIGHT = 1;
+
+        public static final double ELEVATOR_UP_DOWN_CONVERSION_FACTOR = -1;
+
+        public static final double 
+            ELEVATOR_UP_DOWN_KP = 1,
+            ELEVATOR_UP_DOWN_KI = 1,
+            ELEVATOR_UP_DOWN_KD = 1
+        ;
+
+        public static final PIDController elevatorUpDown() {
+            return new PIDController(ELEVATOR_UP_DOWN_KP, ELEVATOR_UP_DOWN_KI, ELEVATOR_UP_DOWN_KD);
+        }
+
         // Shwooper Constants
         public static final int INTAKE_PORT = 0;
         public static final double INTAKE_SPEED = 0.5;
