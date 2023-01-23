@@ -185,14 +185,14 @@ public class Drivetrain extends SubsystemBase
     public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
         // Rotate so that the front is the real front of the robot
-        var newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
-        var newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
+        double newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
+        double newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
         
         // TODO: why do we need to negate the y velocity here?
         // TODO: should this negation be reflected in "currentYVel"?
 
         // Get the states for the modules
-        var chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
+        ChassisSpeeds chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
 
         // Actually drive
         driveFromChassisSpeeds(chassisSpeeds);
@@ -209,7 +209,7 @@ public class Drivetrain extends SubsystemBase
     {
         // TODO: why do we need to negate the y velocity here?
         // TODO: unflip omega and fix with input flipping
-        adjusted_vx    = MathUtils.clamp(adjusted_vx,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_vx    = MathUtils.clamp(adjusted_vx,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
 
@@ -279,7 +279,8 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
-    @Override public void periodic() 
+    @Override 
+    public void periodic() 
     {
         ChargedUp.field.setRobotPose(getRobotPose());
     }
@@ -375,7 +376,7 @@ public class Drivetrain extends SubsystemBase
 
         public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
-            var b = autoBuilder(markers);
+            SwerveAutoBuilder b = autoBuilder(markers);
             return b.fullAuto(trajectory);
         }
     }
