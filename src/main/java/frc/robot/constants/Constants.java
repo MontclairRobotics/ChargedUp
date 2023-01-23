@@ -3,6 +3,8 @@ package frc.robot.constants;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
+import java.util.ArrayList;
+
 import org.team555.frc.controllers.GameController;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -85,6 +87,8 @@ public final class Constants
             new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //BL
             new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
         );
+        public static final double[][] speeds  = {{0.25, 0.25}, {0.5, 0.5}, {0.75, 0.75}, {1.0, 1.0}};  
+        // 1st element is drive speed, 2nd is angular speed
     }
     public static class Robot 
     {

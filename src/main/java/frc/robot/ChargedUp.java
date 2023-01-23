@@ -98,6 +98,10 @@ public class ChargedUp extends RobotContainer
             .toggleWhenActive(drivetrain.commands.enableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
             .toggleWhenActive(drivetrain.commands.disableFieldRelative());
+        driverController.getButton(Button.RIGHT_BUMPER)
+            .toggleWhenActive(drivetrain.commands.increaseSpeed());
+        driverController.getButton(Button.LEFT_BUMPER)
+            .toggleWhenActive(drivetrain.commands.decreaseSpeed());
         
         operatorController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
