@@ -22,10 +22,10 @@ public class JoystickAdjuster
         if(Math.abs(x) < deadband) return 0;
 
         // Otherwise remap the rest of the values from [0, 1]
-        var input_remap /*[0, 1]*/ = (Math.abs(x) - deadband) / (1 - deadband);
+        double input_remap /*[0, 1]*/ = (Math.abs(x) - deadband) / (1 - deadband);
 
         // Raise input to a given power, to allow for more room in the lower band range
-        var input_raised /*[0, 1]*/ = Math.pow(Math.abs(input_remap), power);
+        double input_raised /*[0, 1]*/ = Math.pow(Math.abs(input_remap), power);
         
         // Re-introduce signed-ness
         return input_raised * Math.signum(x);
@@ -33,18 +33,18 @@ public class JoystickAdjuster
 
     public void adjustMagnitude(JoystickInput joystick)
     {
-        var m = adjust(joystick.getMagnitude());
+        double m = adjust(joystick.getMagnitude());
         joystick.setMagnitude(m);
     }
 
     public void adjustX(JoystickInput joystick)
     {
-        var m = adjust(joystick.getX());
+        double m = adjust(joystick.getX());
         joystick.setX(m);
     }
     public void adjustY(JoystickInput joystick)
     {
-        var m = adjust(joystick.getY());
+        double m = adjust(joystick.getY());
         joystick.setY(m);
     }
 

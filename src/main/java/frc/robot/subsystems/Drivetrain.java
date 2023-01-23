@@ -105,7 +105,7 @@ public class Drivetrain extends SubsystemBase
 
         Shuffleboard.getTab("Main")
             .addNumber("Gyroscope", () -> {
-                var y = ChargedUp.gyroscope.getYaw();
+                double y = ChargedUp.gyroscope.getYaw();
                 return y > 0 ? y : 360+y; 
             })
             .withWidget(BuiltInWidgets.kGyro)

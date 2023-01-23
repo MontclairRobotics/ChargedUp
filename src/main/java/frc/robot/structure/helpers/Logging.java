@@ -27,9 +27,9 @@ public class Logging
 
     public static String logString()
     {
-        var s = new StringBuilder();
+        StringBuilder s = new StringBuilder();
 
-        for(var line : logs)
+        for(String line : logs)
         {
             if(line == null) break;
             s.append(line).append("\n\r");
@@ -40,28 +40,28 @@ public class Logging
 
     public static void info(String message)
     {
-        var s = "[INFO]: " + message;
+        String s = "[INFO]: " + message;
 
         System.out.println(ConsoleColors.WHITE_BRIGHT + s + ConsoleColors.RESET);
         addLog(s);
     }
     public static void warning(String message)
     {
-        var s = "[WARNING]: " + message;
+        String s = "[WARNING]: " + message;
 
         System.out.println(ConsoleColors.YELLOW_UNDERLINED + s + ConsoleColors.RESET);
         addLog(s);
     }
     public static void error(String message)
     {
-        var s = "[ERROR]: " + message;
+        String s = "[ERROR]: " + message;
 
         System.out.println(ConsoleColors.RED_UNDERLINED + s + ConsoleColors.RESET);
         addLog(s);
     }
     public static void fatal(String message)
     {
-        var s = "[FATAL]: " + message;
+        String s = "[FATAL]: " + message;
 
         System.out.println(ConsoleColors.GREEN_BOLD_BRIGHT + s + ConsoleColors.RESET);
         addLog(s);

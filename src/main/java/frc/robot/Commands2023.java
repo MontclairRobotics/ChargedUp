@@ -9,11 +9,11 @@ import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Stinger;
 
+import static frc.robot.ChargedUp.elevator;
+import static frc.robot.ChargedUp.stinger;
+
 public class Commands2023 
-{
-    private static Elevator elevator = new Elevator();
-    private static Stinger stinger = new Stinger();
-    
+{   
     // put commands here
 
     /**

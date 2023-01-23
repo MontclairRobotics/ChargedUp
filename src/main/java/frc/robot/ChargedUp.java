@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.Stinger;
 import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
@@ -61,10 +62,11 @@ public class ChargedUp extends RobotContainer
 
     // SUBSYSTEMS //
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Elevator elevator = new Elevator();
-    public static final Arm arm = new Arm();
-    public static final Shwooper shwooper = new Shwooper();
-    public static final Grabber grabber = new Grabber();
+    public static final Elevator   elevator   = new Elevator();
+    public static final Arm        arm        = new Arm();
+    public static final Shwooper   shwooper   = new Shwooper();
+    public static final Grabber    grabber    = new Grabber();
+    public static final Stinger    stinger    = new Stinger();
 
     // MANAGERS //
     public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -152,7 +154,7 @@ public class ChargedUp extends RobotContainer
 
     private void initAuto()
     {
-        var cmd = Trajectories.auto(
+        Command cmd = Trajectories.auto(
             "Test Line", 
             Drive.MAX_SPEED_MPS / 2, 
             Drive.MAX_ACCEL_MPS2, 
