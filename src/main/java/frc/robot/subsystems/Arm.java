@@ -27,47 +27,50 @@ public class Arm extends ManagerSubsystemBase{
         armUpDownEncoder.setPositionConversionFactor(Robot.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
     }
 
-    /*
-     * rotates the arm with the armUpDown motor at speed ARM_Speed
+    /**
+     * rotates the arm with the armUpDown motor at {@link Robot#ARM_SPEED arm speed constant}
      */
     public void rotateWithSpeed(double speed)
     {
         armUpDownPID.setSpeed(speed * Robot.ARM_SPEED);
     }
 
-    /*
+    /**
      * takes an angle as a double and targets that angle with PID
+     * 
+     * @param angle target angle to rotate to
      */
     public void rotateTo(double angle)
     {
         armUpDownPID.setTarget(angle);
     }
 
-    /*
-     * returns a boolean of whether or not armUpDown is currently free, true is yes and false is no
+    /**
+     * whether or not armUpDown is currently free (if it is not currently pidding)
+     * @return boolean, true is yes and false is no
      */
     public boolean isUpDownPIDFree()
     {
         return !armUpDownPID.active();
     }
 
-    /*
-     * extends the arm out using armInOut motor at ARM_IN_OUT_SPEED 
+    /**
+     * extends the arm out using armInOut motor at {@link Robot#ARM_IN_OUT_SPEED arm speed constant} 
      */
     public void startExtending()
     {
         armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
     }
 
-    /*
-     * retracts the arm using armInOut motor at ARM_IN_OUT_SPEED
+    /**
+     * retracts the arm using armInOut motor at -{@link Robot#ARM_IN_OUT_SPEED arm speed constant}
      */
     public void startRetracting()
     {
-        armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
+        armInOutPID.setSpeed(-Robot.ARM_IN_OUT_SPEED);
     }
 
-    /*
+    /**
      * stops arm in out movement
      */
     public void stop()
@@ -75,7 +78,7 @@ public class Arm extends ManagerSubsystemBase{
         armInOutPID.setSpeed(0);
     }
 
-    /*
+    /**
      * takes in a target length as a double and extends the arm to that length (meters)
      */
     public void extendTo(double length)
@@ -83,8 +86,9 @@ public class Arm extends ManagerSubsystemBase{
         armInOutPID.setTarget(length);
     }
 
-    /*
-     * returns a boolean of whether or not armInOut is currently free, true is yes false is no
+    /**
+     * whether or not armInOut is currently free (if not currently pidding)
+     * @return boolean, true is yes false is no
      */
     public boolean isInOutPIDFree()
     {
