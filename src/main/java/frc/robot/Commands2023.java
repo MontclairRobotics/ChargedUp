@@ -28,6 +28,7 @@ public class Commands2023
     {
         return Commands.runUntil(elevator::isPIDFree, elevator::setLow, elevator);
     }
+    //
 
     /**
      * Sets the elevator to the height of the middle section
@@ -35,9 +36,7 @@ public class Commands2023
      */
     public static Command elevatorToMid()
     {
-        return Commands.instant(() -> {
-            elevator.setHeight(Robot.ELEVATOR_MID_HEIGHT);
-        });
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHeight(Robot.ELEVATOR_MID_HEIGHT), elevator);
     }
 
     /**
@@ -46,9 +45,7 @@ public class Commands2023
      */
     public static Command elevatorToHigh()
     {
-        return Commands.instant(() -> {
-            elevator.setHeight(Robot.ELEVATOR_HIGH_HEIGHT);
-        });
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHeight(Robot.ELEVATOR_MAX_HEIGHT), elevator);
     }
 
     //Commands to operate the grabber

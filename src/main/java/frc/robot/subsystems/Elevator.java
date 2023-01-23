@@ -16,7 +16,8 @@ public class Elevator extends ManagerSubsystemBase {
     PIDMechanism elevatorPID = new PIDMechanism(Robot.elevatorUpDown());
     RelativeEncoder elevatorEncoder = motor.getEncoder();
     
-    public Elevator(){
+    public Elevator()
+    {
         motor.setInverted(Robot.ELEVATOR_INVERTED);
         elevatorEncoder.setPositionConversionFactor(Robot.ELEVATOR_UP_DOWN_CONVERSION_FACTOR);
     }
@@ -25,31 +26,36 @@ public class Elevator extends ManagerSubsystemBase {
      * Set elevator to a desired height
      * @param height (double) the desired height
      */
-    public void setHeight(double height){
-        if (height > Robot.ELEVATOR_MAX_HEIGHT)
+    public void setHeight(double height)
+    {
+        if (height > Robot.ELEVATOR_MAX_HEIGHT) {
             height = Robot.ELEVATOR_MAX_HEIGHT;
+        }
         elevatorPID.setTarget(height);
     }
 
     /**
      * Set elevator to LOW position
      */
-    public void setLow() {
+    public void setLow() 
+    {
         elevatorPID.setTarget(0);
     }
 
     /**
      * Raise elevator height manually at ELEVATOR_SPEED (constants.java)
      */
-    public void lower(){
-        elevatorPID.setSpeed(Robot.ELEVATOR_SPEED);
+    public void lower()
+    {
+        elevatorPID.setSpeed(-Robot.ELEVATOR_SPEED);
     }
 
     /**
      * Lower elevator height manually at ELEVATOR_SPEED (constants.java)
      */
-    public void raise(){
-        elevatorPID.setSpeed(-Robot.ELEVATOR_SPEED);
+    public void raise()
+    {
+        elevatorPID.setSpeed(Robot.ELEVATOR_SPEED);
     }
 
     /** 
