@@ -25,16 +25,17 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
-import frc.robot.subsystems.Drivetrain;
+// import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LED;
 // import frc.robot.subsystems.Shwooper;
 // import frc.robot.subsystems.Elevator;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
+import frc.robot.structure.animation.AnimationTimer;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.subsystems.AngularVelocityManager;
+// import frc.robot.subsystems.AngularVelocityManager;
 
 import static frc.robot.constants.Constants.*;
 
@@ -47,7 +48,7 @@ import com.kauailabs.navx.frc.AHRS;
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
-    public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
+    // public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -62,43 +63,45 @@ public class ChargedUp extends RobotContainer
 
     // SUBSYSTEMS //
 
-    public static final Drivetrain drivetrain = new Drivetrain();
+    // public static final Drivetrain drivetrain = new Drivetrain();
     public static final LED led = new LED();
+    public static final AnimationTimer animationTimer = new AnimationTimer();
     // public static final Elevator elevator = new Elevator();
     // public static final Shwooper shwooper = new Shwooper();
 
     // MANAGERS //
-    public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
+    // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
 
     // INITIALIZER //
     @Override public void initialize() 
     {
-        Shuffleboard.getTab("Main")
-            .add("Field", field)
-            .withSize(4, 2)
-            .withPosition(0, 2);
+        // Shuffleboard.getTab("Main")
+        //     .add("Field", field)
+        //     .withSize(4, 2)
+        //     .withPosition(0, 2);
 
+      
         // HANDLE DRIVING //
-        drivetrain.setDefaultCommand(Commands.run(() ->
-            {
-                if(!DriverStation.isTeleop())
-                {
-                    drivetrain.drive(0,0,0);
-                    return;
-                }
+        // drivetrain.setDefaultCommand(Commands.run(() ->
+        //     {
+        //         if(!DriverStation.isTeleop())
+        //         {
+        //             drivetrain.drive(0,0,0);
+        //             return;
+        //         }
 
-                drivetrain.driveInput(
-                    JoystickInput.getRight(driverController, true,  false),
-                    JoystickInput.getLeft (driverController, false, false)
-                );
-            },
-            drivetrain
-        ));
+        //         drivetrain.driveInput(
+        //             JoystickInput.getRight(driverController, true,  false),
+        //             JoystickInput.getLeft (driverController, false, false)
+        //         );
+        //     },
+        //     drivetrain
+        // ));
 
-        driverController.getButton(Button.A_CROSS)
-            .toggleWhenActive(drivetrain.commands.enableFieldRelative());
-        driverController.getButton(Button.X_SQUARE)
-            .toggleWhenActive(drivetrain.commands.disableFieldRelative());
+        // driverController.getButton(Button.A_CROSS)
+        //     .toggleWhenActive(drivetrain.commands.enableFieldRelative());
+        // driverController.getButton(Button.X_SQUARE)
+        //     .toggleWhenActive(drivetrain.commands.disableFieldRelative());
         
         // operatorController.getAxis(Axis.LEFT_TRIGGER)
         //     .whenGreaterThan(0.5)
@@ -110,19 +113,19 @@ public class ChargedUp extends RobotContainer
         //     .whenActive(() -> shwooper.spit())
         //     .whenInactive(() -> shwooper.stop());
 
-        driverController.getButton(Button.START_TOUCHPAD)
-            .whenActive(Commands.instant(() -> {
+        // driverController.getButton(Button.START_TOUCHPAD)
+        //     .whenActive(Commands.instant(() -> {
 
-                if(DriverStation.isEnabled()) 
-                {
-                    Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
-                    return;
-                }
+        //         if(DriverStation.isEnabled()) 
+        //         {
+        //             Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
+        //             return;
+        //         }
 
-                gyroscope.zeroYaw();
-                Logging.info("Zeroed NavX!");
+        //         gyroscope.zeroYaw();
+        //         Logging.info("Zeroed NavX!");
 
-            }));
+        //     }));
         
         // OPERATOR CONTROLS //
 
@@ -136,32 +139,33 @@ public class ChargedUp extends RobotContainer
         //     .whenInactive(() -> elevator.stop());
 
         // HANDLE AUTO //
-        AutoCommands.add("Main", () -> CommandGroupBase.sequence(
-            Commands.print("Starting main auto"),
-            drivetrain.commands.driveForTime(2, 1, 0, 1),
-            Commands.print("Ending the main auto"),
-            drivetrain.commands.driveInstant(0, 0, 0)
-        ));
+        // AutoCommands.add("Main", () -> CommandGroupBase.sequence(
+        //     Commands.print("Starting main auto"),
+        //     drivetrain.commands.driveForTime(2, 1, 0, 1),
+        //     Commands.print("Ending the main auto"),
+        //     drivetrain.commands.driveInstant(0, 0, 0)
+        // ));
 
         initAuto();
 
-        Shuffleboard.getTab("Main")
-            .add("Auto Commands", AutoCommands.chooser())
-            .withSize(2, 1)
-            .withPosition(5, 0);
+        // Shuffleboard.getTab("Main")
+        //     .add("Auto Commands", AutoCommands.chooser())
+        //     .withSize(2, 1)
+        //     .withPosition(5, 0);
 
     }
 
     private void initAuto()
     {
-        var cmd = Trajectories.auto(
-            "Test Line", 
-            Drive.MAX_SPEED_MPS / 2, 
-            Drive.MAX_ACCEL_MPS2, 
-            HashMaps.of()
-        );
+        // var cmd = Trajectories.auto(
+        //     "Test Line", 
+        //     Drive.MAX_SPEED_MPS / 2, 
+        //     Drive.MAX_ACCEL_MPS2, 
+        //     HashMaps.of()
+        // );
         
-        AutoCommands.add("Test Line", () -> cmd);
-        AutoCommands.setDefaultCommand("Test Line");
+        // AutoCommands.add("Test Line", () -> cmd);.
+        AutoCommands.add("Main", () -> Commands.instant( () -> {}));
+        AutoCommands.setDefaultCommand("Main");
     }
 }

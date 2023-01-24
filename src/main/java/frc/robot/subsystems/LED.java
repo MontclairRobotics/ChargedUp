@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import org.team555.frc.command.commandrobot.ManagerBase;
+import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
 
 import com.ctre.phoenix.led.RainbowAnimation;
 
@@ -12,6 +13,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.ChargedUp;
 import frc.robot.constants.Constants;
 import frc.robot.structure.GamePiece;
+import frc.robot.structure.Animations;
 
 public class LED extends ManagerBase 
 {
@@ -35,13 +37,13 @@ public class LED extends ManagerBase
         led.setData(ledBuffer);
         led.start();
     }
-
    
     @Override
     public void always()
     {
-        updateColor();
+        setAllianceColor();
         led.setData(ledBuffer);
+        // System.out.println("We set the coloooorooroor");
     }
 
     public void setColor(Color color)
@@ -52,7 +54,7 @@ public class LED extends ManagerBase
     }
 
     /**
-    * This method takes the current alliance color and sets the LEDs to the correct color.
+    * This method takes the current alliance color from the driver station and sets the LEDs to the correct color.
     */
     public void setAllianceColor() 
     {
