@@ -5,6 +5,7 @@ import static org.team555.frc.command.Commands.*;
 import org.team555.frc.command.Commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Stinger;
@@ -31,20 +32,16 @@ public class Commands2023
      */
     public static Command stingerToMid()
     {
-        return Commands.instant(() -> {
-            stinger.extendToLength(Robot.STINGER_MID_LENGTH);
-        });
+        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid());
     }
     
     /**
      * extends the stinger to the high pole
-     * @return
+     * @return command
      */
     public static Command stingerToHigh()
     {
-        return Commands.instant(() -> {
-            stinger.extendToLength(Robot.STINGER_HIGH_LENGTH);
-        });
+        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh());
     }
 
     // ARM COMMANDS
@@ -82,16 +79,46 @@ public class Commands2023
      */
     public static Command elevatorToMid()
     {
-        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHeight(Robot.ELEVATOR_MID_HEIGHT), elevator);
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setMid(), elevator);
     }
 
+    public static Command stopPIDing()
+    {
+        return Commands.instant(()->{
+            ChargedUp.stinger.stopPIDing();
+            ChargedUp.stinger.stopPIDing();
+        },
+        ChargedUp.stinger,ChargedUp.elevator);
+    }
     /**
      * Sets the elevator to the height of the high section
      * @return the command
      */
     public static Command elevatorToHigh()
     {
-        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHeight(Robot.ELEVATOR_MAX_HEIGHT), elevator);
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHigh(), elevator);
+    }
+
+    public static Command elevatorStingerToHigh()
+    {
+        return CommandGroupBase.parallel(
+            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setHigh()),
+            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh())
+        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+    }
+    public static Command elevatorStingerToMid()
+    {
+        return CommandGroupBase.parallel(
+            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setMid()),
+            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid())
+        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+    }
+    public static Command elevatorStingerToLow()
+    {
+        return CommandGroupBase.parallel(
+            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setLow()),
+            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract())
+        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
     }
 
     /**
@@ -150,29 +177,39 @@ public class Commands2023
     }
 
     // Commands to operate the grabber
-    public static Command openGrabber() {
-        return Commands.instant(() -> {
-            ChargedUp.grabber.grab();
+    //public static Command openGrabber() {
+    //     return Commands.instant(() -> {
+    //         ChargedUp.grabber.grab();
+    //     });
+
+    // }
+
+    // public static Command closeGrabber() {
+    //     return Commands.instant(() -> {
+    //         ChargedUp.grabber.release();
+    //     });
+    // }
+    public static Command toggleGrabber(){
+        return Commands.instant(() ->{
+            ChargedUp.grabber.toggle();
         });
-
     }
-
-    public static Command closeGrabber() {
-        return Commands.instant(() -> {
-            ChargedUp.grabber.release();
-        });
-    }
-
     //Commands to operate shwooper
-    public static Command extendShwooper() {
-        return Commands.instant(() -> {
-            ChargedUp.shwooper.extend();
-        });
-    }
+    // public static Command extendShwooper() {
+    //     return Commands.instant(() -> {
+    //         ChargedUp.shwooper.extend();
+    //     });
+    // }
 
-    public static Command retractShwooper() {
-        return Commands.instant(() -> {
-            ChargedUp.shwooper.retract();
+    // public static Command retractShwooper() {
+    //     return Commands.instant(() -> {
+    //         ChargedUp.shwooper.retract();
+    //     });
+    // }
+
+    public static Command toggleShwooper() {
+        return Commands.instant( () -> {
+            ChargedUp.shwooper.toggle();
         });
     }
 

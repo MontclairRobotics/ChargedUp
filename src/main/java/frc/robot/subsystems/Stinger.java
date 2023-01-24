@@ -24,11 +24,19 @@ public class Stinger extends ManagerSubsystemBase{
      * Extends Stinger to a desired length
      * @param length (double) the desired length 
      */
-    public void extendToLength(double length)
+    private void extendToLength(double length)
     {
         if (length > Robot.STINGER_EXTENSION_LENGTH)
             length = Robot.STINGER_EXTENSION_LENGTH;
         StingerPID.setTarget(length);
+    }
+    public void toHigh()
+    {
+        extendToLength(Robot.STINGER_HIGH_LENGTH);
+    }
+    public void toMid()
+    {
+        extendToLength(Robot.STINGER_MID_LENGTH);
     }
     /**
      *  Fully Retracts Stinger
@@ -57,6 +65,19 @@ public class Stinger extends ManagerSubsystemBase{
     public void stop()
     {
         StingerPID.setSpeed(0);
+    }
+
+    public void setSpeed(double speed) {
+        StingerPID.setSpeed(speed);
+    }
+
+    public boolean isPIDFree()
+    {
+        return !StingerPID.active();
+    }
+    public void stopPIDing()
+    {
+        StingerPID.cancel();
     }
     @Override
     public void always() {

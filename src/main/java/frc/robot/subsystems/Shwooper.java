@@ -16,6 +16,7 @@ import frc.robot.constants.Constants.*;
 public class Shwooper extends ManagerSubsystemBase {
 
     private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, 1);
+    private boolean isExtended = false;
 
     private final CANSparkMax intakeMotor = new CANSparkMax(Robot.INTAKE_PORT, MotorType.kBrushless);
         // INTAKE PORT HAS NO VALUE
@@ -32,11 +33,21 @@ public class Shwooper extends ManagerSubsystemBase {
     public void stop() {
         intakeMotor.set(0);
     }
-    public void extend() {
+    private void extend() {
         shwooperSolenoid.set(!Constants.Robot.SHWOOPER_SOLENOID_DEFAULT_STATE);
     }
-    public void retract() {
+    private void retract() {
         shwooperSolenoid.set(Constants.Robot.SHWOOPER_SOLENOID_DEFAULT_STATE);
+    }
+    public void toggle() {
+        if (isExtended) {
+            retract();
+        }
+        else
+        {
+            extend();
+        }
+        isExtended = !isExtended;
     }
     
 

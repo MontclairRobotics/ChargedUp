@@ -43,17 +43,17 @@ public class Elevator extends ManagerSubsystemBase {
     }
 
     /**
-     * Raise elevator height manually at ELEVATOR_SPEED (constants.java)
+     * Raise elevator height manually at the negative {@link Robot#ELEVATOR_SPEED elevator speed constant}
      */
-    public void lower()
+    public void delevate()
     {
         elevatorPID.setSpeed(-Robot.ELEVATOR_SPEED);
     }
 
     /**
-     * Lower elevator height manually at ELEVATOR_SPEED (constants.java)
+     * Lower elevator height manually at the {@link Robot#ELEVATOR_SPEED elevator speed constant}
      */
-    public void raise()
+    public void elevate()
     {
         elevatorPID.setSpeed(Robot.ELEVATOR_SPEED);
     }

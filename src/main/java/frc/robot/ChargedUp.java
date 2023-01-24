@@ -10,6 +10,7 @@ import org.team555.frc.command.commandrobot.RobotContainer;
 import org.team555.frc.controllers.GameController;
 import org.team555.frc.controllers.GameController.Axis;
 import org.team555.frc.controllers.GameController.Button;
+import org.team555.frc.controllers.GameController.DPad;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -104,16 +105,6 @@ public class ChargedUp extends RobotContainer
             .toggleWhenActive(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
             .toggleWhenActive(drivetrain.commands.decreaseSpeed());
-        
-        operatorController.getAxis(Axis.LEFT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .whenActive(() -> shwooper.suck())
-            .whenInactive(() -> shwooper.stop());
-        
-        operatorController.getAxis(Axis.RIGHT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .whenActive(() -> shwooper.spit())
-            .whenInactive(() -> shwooper.stop());
 
         driverController.getButton(Button.START_TOUCHPAD)
             .whenActive(Commands.instant(() -> {
@@ -128,8 +119,45 @@ public class ChargedUp extends RobotContainer
                 Logging.info("Zeroed NavX!");
 
             }));
-        
+
         // OPERATOR CONTROLS //
+
+
+        //D-Pad Controls
+        operatorController.getDPad(DPad.UP)
+            .whenActive(Commands2023.elevatorStingerToHigh());
+        operatorController.getDPad(DPad.LEFT)
+            .whenActive(Commands2023.elevatorStingerToMid());
+        operatorController.getDPad(DPad.DOWN)
+            .whenActive(Commands2023.elevatorStingerToLow());
+
+        // Stinger
+        stinger.setDefaultCommand(Commands.run(() -> {
+            JoystickInput right = JoystickInput.getRight(
+                operatorController, 
+                false, 
+                false);
+            Robot.STINGER_JOYSTICK_ADJUSTER.adjustX(right);
+            stinger.setSpeed(right.getX());
+        }));
+
+        // Grabber
+        operatorController.getButton(Button.A_CROSS)
+            .toggleWhenActive(Commands2023.toggleGrabber());
+
+        // Schwooper 
+        operatorController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.suck())
+            .whenInactive(() -> shwooper.stop());
+        
+        operatorController.getAxis(Axis.RIGHT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.spit())
+            .whenInactive(() -> shwooper.stop());
+
+        operatorController.getButton(Button.X_SQUARE)
+            .toggleWhenActive(Commands2023.toggleShwooper());
 
         //Elevator 
         operatorController.getButton(Button.X_SQUARE)
@@ -139,6 +167,16 @@ public class ChargedUp extends RobotContainer
         operatorController.getButton(Button.A_CROSS)
             .whenActive(() -> elevator.delevate()) 
             .whenInactive(() -> elevator.stop());
+
+        // using dylan's code base: v complicated
+        elevator.setDefaultCommand(Commands.run(() -> {
+            JoystickInput left = JoystickInput.getLeft(
+                operatorController, 
+                false, 
+                false);
+            Robot.ELEVATOR_JOY_ADJUSTER.adjustY(left);
+            elevator.setSpeed(left.getY());
+        }));
 
         // HANDLE AUTO //
         AutoCommands.add("Main", () -> CommandGroupBase.sequence(
