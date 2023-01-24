@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Stack;
+
 import org.team555.frc.command.commandrobot.ManagerBase;
 import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
 
@@ -10,10 +12,10 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.ChargedUp;
+import frc.robot.ChargedUp; 
 import frc.robot.constants.Constants;
 import frc.robot.structure.GamePiece;
-import frc.robot.structure.Animations;
+import frc.robot.structure.animation.*;
 
 public class LED extends ManagerBase 
 {
@@ -28,7 +30,16 @@ public class LED extends ManagerBase
     // Holding None -> {
     //      AllianceColor or Rainbow
     // }
+    private Stack<Animation> animationStack;
 
+    public boolean hasCurrent()
+    {
+        return !animationStack.empty();
+    }
+    public Animation current() 
+    {
+        return animationStack.peek();
+    }
 
     public LED()
     {
@@ -36,44 +47,67 @@ public class LED extends ManagerBase
         setColor(Color.kBlue);
         led.setData(ledBuffer);
         led.start();
+        
+        animationStack = new Stack<Animation>();
     }
    
     @Override
     public void always()
     {
-        setAllianceColor();
-        led.setData(ledBuffer);
-        // System.out.println("We set the coloooorooroor");
+        // While the top is finished, cancel it
+        while(hasCurrent() && current().isFinished()) cancel();
+
+        // After this, if the top still exists, run it
+        if(hasCurrent()) current().run(ledBuffer);
+
+        //setAllianceColor();
+        //led.setData(ledBuffer);
+        //System.out.println("We set the coloooorooroor");
     }
 
+    /**
+     * Add a command to the stack, interrupting the previous command
+     */
+    public void add(Animation animation) 
+    {
+        if(hasCurrent())
+        {
+            current().pause();
+        }
+
+        animationStack.add(animation);
+        animation.begin();
+    }
+
+    /**
+     * Cancel the top command and return to the previous
+     */
+    public Animation cancel() 
+    {
+        Animation animPop = animationStack.pop();
+
+        if(hasCurrent())
+        {
+            current().resume();
+        }
+
+        return animPop;
+    }
+
+    /**
+     * Replace the current command with the given command.
+     */
+    public void replace(Animation animation)
+    {
+        animationStack.pop();
+        add(animation);
+    }
+    
     public void setColor(Color color)
     {
         for (int i = 0; i < ledBuffer.getLength(); i++) {
             ledBuffer.setLED(i,color);
         }
-    }
-
-    /**
-    * This method takes the current alliance color from the driver station and sets the LEDs to the correct color.
-    */
-    public void setAllianceColor() 
-    {
-        Alliance alliance = DriverStation.getAlliance();
-        Color color = Color.kGray;
-        // var color = switch(DriverStation.getAlliance()) //Todo uncomment when java 17
-        // {
-        //     case Blue -> Color.kBlue,
-        //     case Red  -> Color.kRed,
-        //     case Invalid -> Color.kWhite
-        // };
-        if (alliance == Alliance.Blue) color = Color.kBlue; 
-        else if (alliance == Alliance.Red) color = Color.kRed;
-        else if (alliance == Alliance.Invalid) color = Color.kWhite;
-        setColor(color);
-    }
-
-    public void setHolding(GamePiece piece) {
-        gamePiece = piece;
     }
 
     /**
@@ -86,14 +120,14 @@ public class LED extends ManagerBase
         switch (gamePiece) {
             case CUBE:
                 color = Color.kViolet;
-                setColor(color);
+                replace(new SolidAnimation(Double.POSITIVE_INFINITY, color));
                 break;
             case CONE:
                 color = Color.kYellow;
-                setColor(color);
+                replace(new SolidAnimation(Double.POSITIVE_INFINITY, color));
                 break;
             case NONE:
-                setAllianceColor();
+                replace(new DefaultAnimation());
                 break;
             default:
                 throw new Error("Don't pass null to the LEDs, stupid!");
