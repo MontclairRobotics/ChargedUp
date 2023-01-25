@@ -123,7 +123,7 @@ public class ChargedUp extends RobotContainer
         // OPERATOR CONTROLS //
 
 
-        //D-Pad Controls
+        // D-Pad Controls
         operatorController.getDPad(DPad.UP)
             .whenActive(Commands2023.elevatorStingerToHigh());
         operatorController.getDPad(DPad.LEFT)

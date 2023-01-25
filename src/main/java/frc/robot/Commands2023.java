@@ -17,33 +17,6 @@ public class Commands2023
 {   
     // put commands here
 
-    /**
-     * fully retracts the stinger 
-     */
-    public static Command retractStinger()
-    {
-        return Commands.instant(() -> {
-            stinger.fullyRetract();
-        });
-    }
-    /**
-     * extends the stinger to the length of the middle pole
-     * @return
-     */
-    public static Command stingerToMid()
-    {
-        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid());
-    }
-    
-    /**
-     * extends the stinger to the high pole
-     * @return command
-     */
-    public static Command stingerToHigh()
-    {
-        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh());
-    }
-
     // ARM COMMANDS
 
     /*
@@ -61,66 +34,6 @@ public class Commands2023
     {
         return runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm);
     }
-   
-
-    /**
-     * Sets the elevator its lowest height
-     * @return the command
-     */
-    public static Command elevatorToLow()
-    {
-        return Commands.runUntil(elevator::isPIDFree, elevator::setLow, elevator);
-    }
-    //
-
-    /**
-     * Sets the elevator to the height of the middle section
-     * @return the command
-     */
-    public static Command elevatorToMid()
-    {
-        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setMid(), elevator);
-    }
-
-    public static Command stopPIDing()
-    {
-        return Commands.instant(()->{
-            ChargedUp.stinger.stopPIDing();
-            ChargedUp.stinger.stopPIDing();
-        },
-        ChargedUp.stinger,ChargedUp.elevator);
-    }
-    /**
-     * Sets the elevator to the height of the high section
-     * @return the command
-     */
-    public static Command elevatorToHigh()
-    {
-        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHigh(), elevator);
-    }
-
-    public static Command elevatorStingerToHigh()
-    {
-        return CommandGroupBase.parallel(
-            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setHigh()),
-            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh())
-        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
-    }
-    public static Command elevatorStingerToMid()
-    {
-        return CommandGroupBase.parallel(
-            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setMid()),
-            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid())
-        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
-    }
-    public static Command elevatorStingerToLow()
-    {
-        return CommandGroupBase.parallel(
-            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setLow()),
-            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract())
-        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
-    }
-
     /**
      * arm returns to origin position in fully retracted and lowered position
      */
@@ -175,8 +88,103 @@ public class Commands2023
             runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
         ).deadlineWith(block(ChargedUp.arm));
     }
+   
+    // STINGER COMMMANDS
 
-    // Commands to operate the grabber
+    /**
+     * fully retracts the stinger 
+     * @return Command
+     */
+    public static Command retractStinger()
+    {
+        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract());
+    }
+    /**
+     * extends the stinger to the length of the middle pole
+     * @return Command
+     */
+    public static Command stingerToMid()
+    {
+        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid());
+    }
+    /**
+     * extends the stinger to the high pole
+     * @return Command
+     */
+    public static Command stingerToHigh()
+    {
+        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh());
+    }
+
+    // ELEVATOR COMMANDS
+
+    /**
+     * Sets the elevator its lowest height
+     * @return Command
+     */
+    public static Command elevatorToLow()
+    {
+        return Commands.runUntil(elevator::isPIDFree, elevator::setLow, elevator);
+    }
+
+    /**
+     * Sets the elevator to the height of the middle section
+     * @return the command
+     */
+    public static Command elevatorToMid()
+    {
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setMid(), elevator);
+    }
+
+    /**
+     * Sets the elevator to the height of the high section
+     * @return the command
+     */
+    public static Command elevatorToHigh()
+    {
+        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHigh(), elevator);
+    }
+
+    // ELEVATOR + STINGER COMMANDS 
+
+    /**
+     * Moves the Elevator and Stinger to High position simultaneously
+     * @return Command
+     */
+    public static Command elevatorStingerToHigh()
+    {
+        return CommandGroupBase.parallel(
+            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setHigh()),
+            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh())
+        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+    }
+    public static Command elevatorStingerToMid()
+    {
+        return CommandGroupBase.parallel(
+            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setMid()),
+            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid())
+        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+    }
+    public static Command elevatorStingerToLow()
+    {
+        return CommandGroupBase.parallel(
+            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setLow()),
+            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract())
+        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+    }
+    public static Command stopPIDing()
+    {
+        return Commands.instant(()->{
+            ChargedUp.stinger.stopPIDing();
+            ChargedUp.stinger.stopPIDing();
+        },
+        ChargedUp.stinger,ChargedUp.elevator);
+    }
+
+    
+
+    // GRABBER COMMANDS
+    
     //public static Command openGrabber() {
     //     return Commands.instant(() -> {
     //         ChargedUp.grabber.grab();
@@ -194,7 +202,9 @@ public class Commands2023
             ChargedUp.grabber.toggle();
         });
     }
-    //Commands to operate shwooper
+
+    // SHWOOPER COMMMANDS
+
     // public static Command extendShwooper() {
     //     return Commands.instant(() -> {
     //         ChargedUp.shwooper.extend();
@@ -206,7 +216,6 @@ public class Commands2023
     //         ChargedUp.shwooper.retract();
     //     });
     // }
-
     public static Command toggleShwooper() {
         return Commands.instant( () -> {
             ChargedUp.shwooper.toggle();
@@ -218,7 +227,7 @@ public class Commands2023
             ChargedUp.shwooper.suck();
         });
     }
-
+ 
     public static Command shwooperSpit() {
         return Commands.instant(() -> {
             ChargedUp.shwooper.spit();
