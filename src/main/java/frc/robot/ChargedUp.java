@@ -31,6 +31,7 @@ import frc.robot.subsystems.LED;
 // import frc.robot.subsystems.Elevator;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
+import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
@@ -58,7 +59,7 @@ public class ChargedUp extends RobotContainer
         ControlScheme.OPERATOR_CONTROLLER_PORT);
 
     // COMPONENTS //
-    public static final AHRS gyroscope = new AHRS();
+    // public static final AHRS gyroscope = new AHRS();
 
     // SUBSYSTEMS //
 
@@ -73,6 +74,11 @@ public class ChargedUp extends RobotContainer
     // INITIALIZER //
     @Override public void initialize() 
     {
+        driverController.getButton(Button.X_SQUARE)
+            .toggleOnTrue(Commands.instant(() -> {
+                led.add(new RainbowAnimation(2));
+                Logging.info("bruh");
+            }));
         // Shuffleboard.getTab("Main")
         //     .add("Field", field)
         //     .withSize(4, 2)

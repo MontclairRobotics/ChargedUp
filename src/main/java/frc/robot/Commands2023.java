@@ -44,7 +44,7 @@ public class Commands2023
     //     });
     // }
 
-    public static Command setLEDColor(Color color) {
+    /*public static Command setLEDColor(Color color) {
         return Commands.instant(() -> {
             ChargedUp.led.setColor(color);
         });
@@ -54,6 +54,6 @@ public class Commands2023
         return Commands.instant(() -> {
             ChargedUp.led.setHolding(object);
         });
-    }
+    }*/
 }
 

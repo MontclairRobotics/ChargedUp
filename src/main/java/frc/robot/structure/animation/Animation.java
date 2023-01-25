@@ -40,6 +40,7 @@ public abstract class Animation
     public void begin()
     {
         timer.reset();
+        timer.start();
     }
     /**
      * Pauses execution of this animation

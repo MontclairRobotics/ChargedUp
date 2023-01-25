@@ -2,6 +2,7 @@ package frc.robot.structure.animation;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import frc.robot.ChargedUp;
+import frc.robot.structure.helpers.Logging;
 
 public class RainbowAnimation extends Animation
 {
@@ -14,6 +15,8 @@ public class RainbowAnimation extends Animation
     
     public void run(AddressableLEDBuffer ledBuffer) 
     {
+        //Logging.fatal("WHYYYYYYYYY");
+
         // For every pixel
         for (int i = 0; i < ledBuffer.getLength(); i++)
         {

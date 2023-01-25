@@ -48,6 +48,7 @@ public class LED extends ManagerBase
         led.start();
         
         animationStack = new Stack<Animation>();
+        animationStack.add(new DefaultAnimation());
     }
    
     @Override
@@ -60,8 +61,22 @@ public class LED extends ManagerBase
         if(hasCurrent()) current().run(ledBuffer);
 
         //setAllianceColor();
-        //led.setData(ledBuffer);
+        led.setData(ledBuffer);
         //System.out.println("We set the coloooorooroor");
+    }
+
+    /**
+     * Add a command to the stack, interrupting the previous command
+     */
+    public void add(Animation animation, boolean shouldPause) 
+    {
+        if(hasCurrent() && shouldPause)
+        {
+            current().pause();
+        }
+
+        animationStack.add(animation);
+        animation.begin();
     }
 
     /**
@@ -69,13 +84,7 @@ public class LED extends ManagerBase
      */
     public void add(Animation animation) 
     {
-        if(hasCurrent())
-        {
-            current().pause();
-        }
-
-        animationStack.add(animation);
-        animation.begin();
+        add(animation, true);
     }
 
     /**
