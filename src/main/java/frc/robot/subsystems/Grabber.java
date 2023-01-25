@@ -11,15 +11,26 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 public class Grabber extends ManagerSubsystemBase {
     Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_SOLENOID_PORT);
-    //Grabber.grab()
-    private void grab() {
+    
+    private void grab() 
+    {
         solenoid.set(!Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
     }
 
-    private void release() {
+    private void release() 
+    {
         solenoid.set(Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
     }
-    public void toggle(){
+
+    /**
+     * Toggle the Grabber
+     * <p>
+     * - if it is grabbed something, then <b>release</b>
+     * <p>
+     * - if it is released, <b>grab</b> 
+     */
+    public void toggle()
+    {
         solenoid.set(!solenoid.get());
     }
 }

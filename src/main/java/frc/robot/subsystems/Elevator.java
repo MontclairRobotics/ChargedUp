@@ -33,10 +33,16 @@ public class Elevator extends ManagerSubsystemBase {
         }
         elevatorPID.setTarget(height);
     }
+    /**
+     * Set the elevator to {@link Robot#ELEVATOR_HIGH_HEIGHT the high height}
+     */
     public void setHigh()
     {
         setHeight(Robot.ELEVATOR_HIGH_HEIGHT);
     }
+    /**
+     * Set the elevator to {@link Robot#ELEVATOR_MID_HEIGHT the middle height}
+     */
     public void setMid()
     {
         setHeight(Robot.ELEVATOR_MID_HEIGHT);
@@ -48,6 +54,7 @@ public class Elevator extends ManagerSubsystemBase {
     {
         elevatorPID.setTarget(0);
     }
+
 
     /**
      * Raise elevator height manually at the negative {@link Robot#ELEVATOR_SPEED elevator speed constant}
@@ -65,7 +72,12 @@ public class Elevator extends ManagerSubsystemBase {
         elevatorPID.setSpeed(Robot.ELEVATOR_SPEED);
     }
 
-    public void setSpeed(double speed) {
+    /**
+     * Set the speed of the Elevator motor
+     * @param speed desired speed
+     */
+    public void setSpeed(double speed) 
+    {
         elevatorPID.setSpeed(speed);
     }
 
@@ -85,6 +97,9 @@ public class Elevator extends ManagerSubsystemBase {
     {
         return !elevatorPID.active();
     }
+    /**
+     * Cancel the elevator PIDing 
+     */
     public void stopPIDing()
     {
         elevatorPID.cancel();

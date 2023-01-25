@@ -149,6 +149,10 @@ public class Commands2023
 
     /**
      * Moves the Elevator and Stinger to High position simultaneously
+     * <p>
+     * Elevator goes to {@link Robot#ELEVATOR_HIGH_HEIGHT High Height Constant}
+     * <p>
+     * Stinger goes to {@link Robot#STINGER_HIGH_LENGTH High Length Constant}
      * @return Command
      */
     public static Command elevatorStingerToHigh()
@@ -158,6 +162,14 @@ public class Commands2023
             runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh())
         ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
     }
+    /**
+     * Moves the Elevator and Stinger to MID position simultaneously
+     * <p>
+     * Elevator goes to {@link Robot#ELEVATOR_MID_HEIGHT High Height Constant}
+     * <p>
+     * Stinger goes to {@link Robot#STINGER_MID_LENGTH High Length Constant}
+     * @return Command
+     */
     public static Command elevatorStingerToMid()
     {
         return CommandGroupBase.parallel(
@@ -165,6 +177,14 @@ public class Commands2023
             runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid())
         ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
     }
+    /**
+     * Moves the Elevator and Stinger to LOW position simultaneously
+     * <p>
+     * Elevator goes to 0
+     * <p>
+     * Stinger goes to 0
+     * @return Command
+     */
     public static Command elevatorStingerToLow()
     {
         return CommandGroupBase.parallel(
@@ -172,6 +192,10 @@ public class Commands2023
             runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract())
         ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
     }
+
+    /**
+     * Cancel the PID of the elevator and the stinger, so no longer targeting a value
+     */
     public static Command stopPIDing()
     {
         return Commands.instant(()->{
@@ -197,6 +221,15 @@ public class Commands2023
     //         ChargedUp.grabber.release();
     //     });
     // }
+
+    /**
+     * Toggle the Grabber
+     * <p>
+     * - if it is grabbed something, then release
+     * <p>
+     * - if it is released, grab
+     * @return Command
+     */
     public static Command toggleGrabber(){
         return Commands.instant(() ->{
             ChargedUp.grabber.toggle();
@@ -216,24 +249,44 @@ public class Commands2023
     //         ChargedUp.shwooper.retract();
     //     });
     // }
+    /**
+     * toggle the Shwooper
+     * <p>
+     * - if it is extended, <b>retract</b>
+     * <p>
+     * - if it is retracted, <b>extend</b>
+     * @return Command
+     */
     public static Command toggleShwooper() {
         return Commands.instant( () -> {
             ChargedUp.shwooper.toggle();
         });
     }
 
+    /**
+     * intake suck
+     * @return Command
+     */
     public static Command shwooperSuck() {
         return Commands.instant(() -> {
             ChargedUp.shwooper.suck();
         });
     }
  
+    /**
+     * intake spit
+     * @return Command
+     */
     public static Command shwooperSpit() {
         return Commands.instant(() -> {
             ChargedUp.shwooper.spit();
         });
     }
 
+    /**
+     * Stop intake
+     * @return Command
+     */
     public static Command stopShwooper() {
         return Commands.instant(() -> {
             ChargedUp.shwooper.stop();

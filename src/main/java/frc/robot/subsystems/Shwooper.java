@@ -20,34 +20,50 @@ public class Shwooper extends ManagerSubsystemBase {
 
     private final CANSparkMax intakeMotor = new CANSparkMax(Robot.INTAKE_PORT, MotorType.kBrushless);
         // INTAKE PORT HAS NO VALUE
-    public Shwooper() {
+    public Shwooper() 
+    {
         intakeMotor.setInverted(Robot.INTAKE_INVERSION);
     }
 
-    public void suck() {
+    /**
+     * intake starts sucking
+     */
+    public void suck() 
+    {
         intakeMotor.set(Robot.INTAKE_SPEED);
     }
-    public void spit() {
+    /**
+     * intake start spitting
+     */
+    public void spit() 
+    {
         intakeMotor.set(-Robot.INTAKE_SPEED);
     }
-    public void stop() {
+    /**
+     * stop the intake
+     */
+    public void stop() 
+    {
         intakeMotor.set(0);
     }
-    private void extend() {
+    private void extend() 
+    {
         shwooperSolenoid.set(!Constants.Robot.SHWOOPER_SOLENOID_DEFAULT_STATE);
     }
-    private void retract() {
+    private void retract() 
+    {
         shwooperSolenoid.set(Constants.Robot.SHWOOPER_SOLENOID_DEFAULT_STATE);
     }
-    public void toggle() {
-        if (isExtended) {
-            retract();
-        }
-        else
-        {
-            extend();
-        }
-        isExtended = !isExtended;
+    /**
+     * toggle the Shwooper
+     * <p>
+     * - if it is extended, <b>retract</b>
+     * <p>
+     * - if it is retracted, <b>extend</b>
+     */
+    public void toggle() 
+    {
+        shwooperSolenoid.set(!shwooperSolenoid.get());
     }
     
 
