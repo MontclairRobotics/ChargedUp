@@ -225,8 +225,8 @@ public class Drivetrain extends SubsystemBase
     {
         // TODO: why do we need to negate the y velocity here?
         // TODO: unflip omega and fix with input flipping
-        adjusted_vx    = MathUtils.clamp(adjusted_vx,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        adjusted_vy    = -MathUtils.clamp(adjusted_vy,    -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_vy    = MathUtils.clamp(adjusted_vx,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        adjusted_vx    = MathUtils.clamp(adjusted_vy,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
         adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
         adjusted_vx *= Drive.speeds[speedIndex][0];
         adjusted_vy *= Drive.speeds[speedIndex][0];

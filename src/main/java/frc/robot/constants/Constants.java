@@ -34,6 +34,14 @@ public final class Constants
 
     public static class Drive
     {
+        private static final SwerveModuleSpec FRONT_LEFT = 
+            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  358.651157 - 90);
+        private static final SwerveModuleSpec FRONT_RIGHT = 
+            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  087.078116 - 90);
+        private static final SwerveModuleSpec BACK_LEFT = 
+            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90);
+        private static final SwerveModuleSpec BACK_RIGHT =
+            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  250.479320 - 90);
         /**
          * Rotator port first, driver port second
          * 
@@ -44,11 +52,13 @@ public final class Constants
          * 
          * TODO: why do we need to subtract 90deg here?
          */
-        public static final SwerveModuleSpec[] MODULES = {
-            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  087.078116 - 90),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  250.479320 - 90),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  358.651157 - 90),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90),
+        
+        public static final SwerveModuleSpec[] MODULES = 
+        {
+            FRONT_LEFT, 
+            FRONT_RIGHT,
+            BACK_LEFT,
+            BACK_RIGHT
         };
 
         public static class PosPID
