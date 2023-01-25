@@ -26,14 +26,21 @@ public class Elevator extends ManagerSubsystemBase {
      * Set elevator to a desired height
      * @param height (double) the desired height
      */
-    public void setHeight(double height)
+    private void setHeight(double height)
     {
         if (height > Robot.ELEVATOR_MAX_HEIGHT) {
             height = Robot.ELEVATOR_MAX_HEIGHT;
         }
         elevatorPID.setTarget(height);
     }
-
+    public void setHigh()
+    {
+        setHeight(Robot.ELEVATOR_HIGH_HEIGHT);
+    }
+    public void setMid()
+    {
+        setHeight(Robot.ELEVATOR_MID_HEIGHT);
+    }
     /**
      * Set elevator to LOW position
      */
@@ -58,6 +65,10 @@ public class Elevator extends ManagerSubsystemBase {
         elevatorPID.setSpeed(Robot.ELEVATOR_SPEED);
     }
 
+    public void setSpeed(double speed) {
+        elevatorPID.setSpeed(speed);
+    }
+
     /** 
      * Set elevator speed to zero
      */
@@ -74,7 +85,10 @@ public class Elevator extends ManagerSubsystemBase {
     {
         return !elevatorPID.active();
     }
-
+    public void stopPIDing()
+    {
+        elevatorPID.cancel();
+    }
     // run PID
     @Override
     public void always() 

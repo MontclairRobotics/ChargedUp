@@ -113,6 +113,11 @@ public final class Constants
 
         public static final double ELEVATOR_UP_DOWN_CONVERSION_FACTOR = -1;
 
+        public static final double ELEVATOR_DEADBAND = 0.05;
+
+        public static final JoystickAdjuster ELEVATOR_JOY_ADJUSTER = new JoystickAdjuster(ELEVATOR_DEADBAND, 2.2);
+        
+        
         public static final double 
             ELEVATOR_UP_DOWN_KP = 1,
             ELEVATOR_UP_DOWN_KI = 1,
@@ -122,6 +127,8 @@ public final class Constants
         public static final PIDController elevatorUpDown() {
             return new PIDController(ELEVATOR_UP_DOWN_KP, ELEVATOR_UP_DOWN_KI, ELEVATOR_UP_DOWN_KD);
         }
+
+        
 
         // Shwooper Constants
         public static final int INTAKE_PORT = 0;
@@ -153,6 +160,9 @@ public final class Constants
         }
 
         public static final double STINGER_SPEED = 1;
+
+        public static final double STINGER_DEADBAND = 0.05;
+        public static final JoystickAdjuster STINGER_JOYSTICK_ADJUSTER = new JoystickAdjuster(STINGER_DEADBAND, 2);
 
         //Arm Constants
         public static final double ARM_SPEED = 0.5;
