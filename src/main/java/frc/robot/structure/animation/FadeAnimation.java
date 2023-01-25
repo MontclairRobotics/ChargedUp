@@ -9,18 +9,20 @@ public class FadeAnimation extends Animation
     private Color newColor;
     int index = 0;
 
-    public FadeAnimation(Color oldColor, Color newColor, double length) {
+    public FadeAnimation(Color oldColor, Color newColor, double length) 
+    {
         super(length);
         this.oldColor = oldColor;
         this.newColor = newColor;
     }
 
-    public void run(AddressableLEDBuffer ledBuffer) {
-        for (int i = 0; i<index; i++) {
+    public void run(AddressableLEDBuffer ledBuffer) 
+    {
+        for (int i = 0; i<index; i++) 
+        {
             ledBuffer.setLED(i, newColor);
-            
         }
+        
         index += 3;
-
     }
 }

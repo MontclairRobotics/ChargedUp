@@ -31,7 +31,6 @@ import frc.robot.subsystems.LED;
 // import frc.robot.subsystems.Elevator;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
-import frc.robot.structure.animation.AnimationTimer;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
@@ -65,7 +64,6 @@ public class ChargedUp extends RobotContainer
 
     // public static final Drivetrain drivetrain = new Drivetrain();
     public static final LED led = new LED();
-    public static final AnimationTimer animationTimer = new AnimationTimer();
     // public static final Elevator elevator = new Elevator();
     // public static final Shwooper shwooper = new Shwooper();
 

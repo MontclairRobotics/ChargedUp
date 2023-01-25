@@ -21,21 +21,21 @@ public class LED extends ManagerBase
 {
     private AddressableLED led = new AddressableLED(Constants.Robot.LED_PWM_PORT);
     private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(150);
-    private RainbowAnimation rainbow = new RainbowAnimation();
+
     private GamePiece gamePiece = GamePiece.NONE;
 
-    // States:
-    // Holding Cone -> yeller
-    // Holding Cube -> purple
-    // Holding None -> {
-    //      AllianceColor or Rainbow
-    // }
     private Stack<Animation> animationStack;
 
+    /**
+     * Check if the led driver currently has an animation playing
+     */
     public boolean hasCurrent()
     {
         return !animationStack.empty();
     }
+    /**
+     * Provide the current playing animation, throwing an error otherwise
+     */
     public Animation current() 
     {
         return animationStack.peek();
@@ -44,7 +44,6 @@ public class LED extends ManagerBase
     public LED()
     {
         led.setLength(ledBuffer.getLength());
-        setColor(Color.kBlue);
         led.setData(ledBuffer);
         led.start();
         
@@ -81,6 +80,7 @@ public class LED extends ManagerBase
 
     /**
      * Cancel the top command and return to the previous
+     * @return The cancelled command
      */
     public Animation cancel() 
     {
@@ -95,24 +95,20 @@ public class LED extends ManagerBase
     }
 
     /**
-     * Replace the current command with the given command.
+     * Replace the current command with the given command
+     * @return The cancelled command
      */
-    public void replace(Animation animation)
+    public Animation replace(Animation animation)
     {
-        animationStack.pop();
+        Animation anim = animationStack.pop();
         add(animation);
-    }
-    
-    public void setColor(Color color)
-    {
-        for (int i = 0; i < ledBuffer.getLength(); i++) {
-            ledBuffer.setLED(i,color);
-        }
+
+        return anim;
     }
 
     /**
-    * This method takes in the currently held game piece and changes the LEDS to the correct color.
-    * @param piece the game piece currently being held by the robot
+    * This method takes in the currently held game piece and changes the LEDS to the correct color
+    * @param piece The game piece currently being held by the robot
     */
     public void updateColor() 
     {

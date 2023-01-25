@@ -5,9 +5,11 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public class DefaultAnimation extends Animation{
+public class DefaultAnimation extends Animation
+{
 
-    public DefaultAnimation(){
+    public DefaultAnimation()
+    {
         super(Double.POSITIVE_INFINITY);
     }
     
@@ -18,15 +20,17 @@ public class DefaultAnimation extends Animation{
     {
         Alliance alliance = DriverStation.getAlliance();
         Color color = Color.kGray;
-        // var color = switch(DriverStation.getAlliance()) //Todo uncomment when java 17
-        // {
-        //     case Blue -> Color.kBlue,
-        //     case Red  -> Color.kRed,
-        //     case Invalid -> Color.kWhite
-        // };
+
+        //var color = switch(DriverStation.getAlliance()) //TODO: uncomment when java 17
+        //{
+        //    case Blue -> Color.kBlue,
+        //    case Red  -> Color.kRed,
+        //    case Invalid -> Color.kWhite
+        //};
+
         if (alliance == Alliance.Blue) color = Color.kBlue; 
         else if (alliance == Alliance.Red) color = Color.kRed;
         else if (alliance == Alliance.Invalid) color = Color.kWhite;
-        setColor(ledBuffer, color);
+        fill(ledBuffer, color);
     }
 }
