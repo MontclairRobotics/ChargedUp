@@ -121,7 +121,7 @@ public class ChargedUp extends RobotContainer
             }));
 
         // OPERATOR CONTROLS //
-
+        
 
         // D-Pad Controls
         operatorController.getDPad(DPad.UP)
@@ -160,13 +160,13 @@ public class ChargedUp extends RobotContainer
             .toggleWhenActive(Commands2023.toggleShwooper());
 
         //Elevator 
-        operatorController.getButton(Button.X_SQUARE)
-            .whenActive(() -> elevator.elevate()) 
-            .whenInactive(() -> elevator.stop());
+        // operatorController.getButton(Button.X_SQUARE)
+        //     .whenActive(() -> elevator.elevate()) 
+        //     .whenInactive(() -> elevator.stop());
 
-        operatorController.getButton(Button.A_CROSS)
-            .whenActive(() -> elevator.delevate()) 
-            .whenInactive(() -> elevator.stop());
+        // operatorController.getButton(Button.A_CROSS)
+        //     .whenActive(() -> elevator.delevate()) 
+        //     .whenInactive(() -> elevator.stop());
 
         // using dylan's code base: v complicated
         elevator.setDefaultCommand(Commands.run(() -> {
