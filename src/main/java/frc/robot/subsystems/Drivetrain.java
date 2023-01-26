@@ -186,9 +186,9 @@ public class Drivetrain extends SubsystemBase
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
         drive(
-            turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            drive.getX() * Drive.MAX_SPEED_MPS,
-            drive.getY() * Drive.MAX_SPEED_MPS
+            +turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
+            -drive.getY() * Drive.MAX_SPEED_MPS,
+            +drive.getX() * Drive.MAX_SPEED_MPS
         );
     }
     

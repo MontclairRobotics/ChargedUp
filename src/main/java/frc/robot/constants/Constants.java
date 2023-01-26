@@ -88,7 +88,7 @@ public final class Constants
         public static final double MAX_TURN_SPEED_RAD_PER_S  = Math.PI * 2;
         public static final double MAX_TURN_ACCEL_RAD_PER_S2 = Units.degreesToRadians(360);
 
-        public static final double WHEEL_BASE_W_M = Units.inchesToMeters(30);
+        public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27); //TODO: CONFIRM WITH JOSH
         public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
 
         public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
