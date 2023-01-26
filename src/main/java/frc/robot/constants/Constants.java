@@ -149,6 +149,8 @@ public final class Constants
         //Grabber Constants
         public static final boolean GRABBER_SOLENOID_DEFAULT_STATE = false;
 
+        //LED Constants
+        public static final int LED_PWM_PORT = 9;
         
         // Stinger Constants :)
         public static final int STINGER_PORT = 0;
@@ -225,8 +227,8 @@ public final class Constants
         public static final GameController.Type OPERATOR_CONTROLLER_TYPE = GameController.Type.PS4;
         public static final GameController.Type DRIVER_CONTROLLER_TYPE   = GameController.Type.PS4;
 
-        public static final int OPERATOR_CONTROLLER_PORT = 1;
-        public static final int DRIVER_CONTROLLER_PORT   = 0;
+        public static final int OPERATOR_CONTROLLER_PORT = 0;
+        public static final int DRIVER_CONTROLLER_PORT   = 1;
 
         public static final double DEADBAND = 0.05;
         
