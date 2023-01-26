@@ -4,7 +4,9 @@ import static org.team555.frc.command.Commands.*;
 
 import org.team555.frc.command.Commands;
 
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.structure.GamePiece;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
@@ -249,6 +251,19 @@ public class Commands2023
     //         ChargedUp.shwooper.retract();
     //     });
     // }
+
+    /*public static Command setLEDColor(Color color) {
+        return Commands.instant(() -> {
+            ChargedUp.led.setColor(color);
+        });
+    }
+    public static Command setObjectHolding(GamePiece object) 
+    {
+        return Commands.instant(() -> {
+            ChargedUp.led.setHolding(object);
+        });
+    }*/
+    
     /**
      * toggle the Shwooper
      * <p>
@@ -293,3 +308,4 @@ public class Commands2023
         });
     }
 }
+

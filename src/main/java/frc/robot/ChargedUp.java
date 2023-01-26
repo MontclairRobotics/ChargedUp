@@ -17,13 +17,16 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer;
+import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CompressorConfigType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
@@ -31,6 +34,7 @@ import frc.robot.subsystems.Stinger;
 import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
+import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
@@ -48,7 +52,7 @@ import com.kauailabs.navx.frc.AHRS;
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
-    public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
+    // public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -59,9 +63,10 @@ public class ChargedUp extends RobotContainer
         ControlScheme.OPERATOR_CONTROLLER_PORT);
 
     // COMPONENTS //
-    public static final AHRS gyroscope = new AHRS();
+    // public static final AHRS gyroscope = new AHRS();
 
     // SUBSYSTEMS //
+    public static final LED        led        = new LED();
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
     public static final Arm        arm        = new Arm();
@@ -70,16 +75,22 @@ public class ChargedUp extends RobotContainer
     public static final Stinger    stinger    = new Stinger();
 
     // MANAGERS //
-    public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
+    // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
 
     // INITIALIZER //
     @Override public void initialize() 
     {
-        Shuffleboard.getTab("Main")
-            .add("Field", field)
-            .withSize(4, 2)
-            .withPosition(0, 2);
+        driverController.getButton(Button.X_SQUARE)
+            .toggleOnTrue(Commands.instant(() -> {
+                led.add(new RainbowAnimation(2));
+                Logging.info("bruh");
+            }));
+        // Shuffleboard.getTab("Main")
+        //     .add("Field", field)
+        //     .withSize(4, 2)
+        //     .withPosition(0, 2);
 
+      
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() ->
             {
@@ -109,20 +120,17 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.START_TOUCHPAD)
             .whenActive(Commands.instant(() -> {
 
-                if(DriverStation.isEnabled()) 
+               if(DriverStation.isEnabled()) 
                 {
                     Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
                     return;
                 }
 
-                gyroscope.zeroYaw();
-                Logging.info("Zeroed NavX!");
-
+               gyroscope.zeroYaw();
+               Logging.info("Zeroed NavX!");
             }));
 
         // OPERATOR CONTROLS //
-        
-
         // D-Pad Controls
         operatorController.getDPad(DPad.UP)
             .whenActive(Commands2023.elevatorStingerToHigh());
@@ -179,19 +187,20 @@ public class ChargedUp extends RobotContainer
         }));
 
         // HANDLE AUTO //
-        AutoCommands.add("Main", () -> CommandGroupBase.sequence(
-            Commands.print("Starting main auto"),
-            drivetrain.commands.driveForTime(2, 1, 0, 1),
-            Commands.print("Ending the main auto"),
-            drivetrain.commands.driveInstant(0, 0, 0)
-        ));
+        // AutoCommands.add("Main", () -> CommandGroupBase.sequence(
+        //     Commands.print("Starting main auto"),
+        //     drivetrain.commands.driveForTime(2, 1, 0, 1),
+        //     Commands.print("Ending the main auto"),
+        //     drivetrain.commands.driveInstant(0, 0, 0)
+        // ));
 
         initAuto();
 
-        Shuffleboard.getTab("Main")
-            .add("Auto Commands", AutoCommands.chooser())
-            .withSize(2, 1)
-            .withPosition(5, 0);
+        // Shuffleboard.getTab("Main")
+        //     .add("Auto Commands", AutoCommands.chooser())
+        //     .withSize(2, 1)
+        //     .withPosition(5, 0);
+
     }
 
     private void initAuto()
@@ -203,7 +212,8 @@ public class ChargedUp extends RobotContainer
             HashMaps.of()
         );
         
-        AutoCommands.add("Test Line", () -> cmd);
-        AutoCommands.setDefaultCommand("Test Line");
+        // AutoCommands.add("Test Line", () -> cmd);.
+        AutoCommands.add("Main", () -> Commands.instant( () -> {}));
+        AutoCommands.setDefaultCommand("Main");
     }
 }

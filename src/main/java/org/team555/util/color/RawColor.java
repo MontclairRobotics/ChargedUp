@@ -1,6 +1,10 @@
 package org.team555.util.color;
 
 import org.team555.math.MathUtils;
+
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+
 import static org.team555.util.ArrConstruct.*;
 
 public interface RawColor 
@@ -8,6 +12,19 @@ public interface RawColor
     RGB rgb();
     HSV hsv();
     HSL hsl();
+
+    static RawColor from(Color col)
+    {
+        return rgb((int)(col.red*255), (int)(col.blue*255), (int)(col.green*255));
+    }
+    default Color8Bit to8bit()
+    {
+        return new Color8Bit(rgb().r, rgb().b, rgb().b);
+    }
+    default Color to()
+    {
+        return new Color(to8bit());
+    }
 
     default RawColor blendAdd(RawColor other)
     {
