@@ -1,22 +1,36 @@
-// package frc.robot.subsystems;
+package frc.robot.subsystems;
 
-// import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
-// import frc.robot.constants.Constants;
+import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
 
-// import edu.wpi.first.wpilibj.PneumaticsModuleType;
-// import edu.wpi.first.wpilibj.Solenoid;
+import frc.robot.constants.Constants;
+import static frc.robot.constants.Constants.*;
+
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Solenoid;
 
 
-// public class Grabber extends ManagerSubsystemBase {
+public class Grabber extends ManagerSubsystemBase {
+    Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_SOLENOID_PORT);
+    
+    private void grab() 
+    {
+        solenoid.set(!Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
+    }
 
-//     Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Constants.Pneu.COMPRESSOR_PORT);
-//     //Grabber.grab()
-//     public void grab() {
-//         solenoid.set(Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
-//     }
+    private void release() 
+    {
+        solenoid.set(Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
+    }
 
-//     public void release() {
-//         solenoid.set(!Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
-//     }
-//     //Grabber.release()
-// }
+    /**
+     * Toggle the Grabber
+     * <p>
+     * - if it is grabbed something, then <b>release</b>
+     * <p>
+     * - if it is released, <b>grab</b> 
+     */
+    public void toggle()
+    {
+        solenoid.set(!solenoid.get());
+    }
+}

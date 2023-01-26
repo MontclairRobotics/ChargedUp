@@ -3,8 +3,11 @@ package frc.robot.constants;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
+import java.util.ArrayList;
+
 import org.team555.frc.controllers.GameController;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -24,12 +27,21 @@ public final class Constants
 
     public static class Pneu
     {
-    //     public static final int COMPRESSOR_PORT = 0;
-    //     public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
+        public static final int COMPRESSOR_PORT = 0;
+        public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
+        public static final int GRABBER_SOLENOID_PORT = 0;
     }
 
     public static class Drive
     {
+        private static final SwerveModuleSpec FRONT_LEFT = 
+            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  358.651157 - 90);
+        private static final SwerveModuleSpec FRONT_RIGHT = 
+            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  087.078116 - 90);
+        private static final SwerveModuleSpec BACK_LEFT = 
+            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90);
+        private static final SwerveModuleSpec BACK_RIGHT =
+            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  250.479320 - 90);
         /**
          * Rotator port first, driver port second
          * 
@@ -40,11 +52,13 @@ public final class Constants
          * 
          * TODO: why do we need to subtract 90deg here?
          */
-        public static final SwerveModuleSpec[] MODULES = {
-            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  087.078116 - 90),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  250.479320 - 90),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  358.651157 - 90),
-            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90),
+        
+        public static final SwerveModuleSpec[] MODULES = 
+        {
+            FRONT_LEFT, 
+            FRONT_RIGHT,
+            BACK_LEFT,
+            BACK_RIGHT
         };
 
         public static class PosPID
@@ -83,6 +97,8 @@ public final class Constants
             new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //BL
             new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
         );
+        public static final double[][] speeds  = {{0.25, 0.25}, {0.5, 0.5}, {0.75, 0.75}, {1.0, 1.0}};  
+        // 1st element is drive speed, 2nd is angular speed
     }
     public static class Robot 
     {
@@ -101,6 +117,29 @@ public final class Constants
         public static final int ELEVATOR_MOTOR_PORT = 4;
         public static final boolean ELEVATOR_INVERTED = false;
 
+        public static final double ELEVATOR_MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
+        public static final double ELEVATOR_MID_HEIGHT = 0.5;
+        public static final double ELEVATOR_HIGH_HEIGHT = 1;
+
+        public static final double ELEVATOR_UP_DOWN_CONVERSION_FACTOR = -1;
+
+        public static final double ELEVATOR_DEADBAND = 0.05;
+
+        public static final JoystickAdjuster ELEVATOR_JOY_ADJUSTER = new JoystickAdjuster(ELEVATOR_DEADBAND, 2.2);
+        
+        
+        public static final double 
+            ELEVATOR_UP_DOWN_KP = 1,
+            ELEVATOR_UP_DOWN_KI = 1,
+            ELEVATOR_UP_DOWN_KD = 1
+        ;
+
+        public static final PIDController elevatorUpDown() {
+            return new PIDController(ELEVATOR_UP_DOWN_KP, ELEVATOR_UP_DOWN_KI, ELEVATOR_UP_DOWN_KD);
+        }
+
+        
+
         // Shwooper Constants
         public static final int INTAKE_PORT = 0;
         public static final double INTAKE_SPEED = 0.5;
@@ -115,12 +154,71 @@ public final class Constants
         
         // Stinger Constants :)
         public static final int STINGER_PORT = 0;
+        public static final double
+            STINGER_IN_OUT_KP = 1,
+            STINGER_IN_OUT_KI = 0,
+            STINGER_IN_OUT_KD = 0
+            ;
+        public static final double STINGER_IN_OUT_CONVERSION_FACTOR = -1;
+
+        public static final double STINGER_MID_LENGTH = 0.5;
+        public static final double STINGER_HIGH_LENGTH = 1;
+
+        public static final double STINGER_EXTENSION_LENGTH = Units.feetToMeters(52.0/12); // 52 inches
+        
+        public static PIDController stingerInOut()
+        {
+            return new PIDController(STINGER_IN_OUT_KP,STINGER_IN_OUT_KI,STINGER_IN_OUT_KD);
+        }
+
+        public static final double STINGER_SPEED = 1;
+
+        public static final double STINGER_DEADBAND = 0.05;
+        public static final JoystickAdjuster STINGER_JOYSTICK_ADJUSTER = new JoystickAdjuster(STINGER_DEADBAND, 2);
 
         //Arm Constants
         public static final double ARM_SPEED = 0.5;
-        public static final double ARM_UP_DOWN_PORT = -1;
-        public static final double ARM_IN_OUT_PORT = -1;
+        public static final int ARM_UP_DOWN_PORT = 4;
+        public static final int ARM_IN_OUT_PORT = -1;
         public static final double ARM_IN_OUT_SPEED = 0.5;
+
+        public static final double 
+            ARM_IN_OUT_KP = 1,
+            ARM_IN_OUT_KI = 0,
+            ARM_IN_OUT_KD = 0
+        ;
+        
+        public static final double ARM_IN_OUT_POSITION_CONVERSION_FACTOR = -1;
+
+        public static PIDController armInOut()
+        {
+            return new PIDController(ARM_IN_OUT_KP, ARM_IN_OUT_KI, ARM_IN_OUT_KD);
+        }
+
+        public static final double 
+            ARM_UP_DOWN_KP = 1,
+            ARM_UP_DOWN_KI = 0,
+            ARM_UP_DOWN_KD = 0
+        ;
+
+        public static final double ARM_UP_DOWN_POSITION_CONVERSION_FACTOR = -1;
+
+        public static PIDController armUpDown(){//I AM RIGHT
+            PIDController pid = new PIDController(ARM_UP_DOWN_KP, ARM_UP_DOWN_KI, ARM_UP_DOWN_KD);
+            pid.enableContinuousInput(-Math.PI, Math.PI);
+            return pid;
+        }
+
+        //arm commands angles and lengths 
+        public static final double ARM_RETURN_POSITION = 0;
+        //in theory the length extension should be the same for pegs and shelves
+        public static final double ARM_MID_LENGTH = 0.5; //to be changed when arm is constructed (currently in m)
+        public static final double ARM_HIGH_LENGTH = 1; // ^^^^
+        
+        public static final double ARM_MID_PEG_ANGLE = Rotation2d.fromDegrees(90).getRadians();
+        public static final double ARM_HIGH_PEG_ANGLE = Rotation2d.fromDegrees(120).getRadians();
+        public static final double ARM_MID_SHELF_ANGLE = Rotation2d.fromDegrees(95).getRadians();
+        public static final double ARM_HIGH_SHELF_ANGLE = Rotation2d.fromDegrees(125).getRadians();
 
     }
 

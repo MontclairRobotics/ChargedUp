@@ -10,6 +10,7 @@ import org.team555.frc.command.commandrobot.RobotContainer;
 import org.team555.frc.controllers.GameController;
 import org.team555.frc.controllers.GameController.Axis;
 import org.team555.frc.controllers.GameController.Button;
+import org.team555.frc.controllers.GameController.DPad;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -25,17 +26,20 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
-// import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.LED;
-// import frc.robot.subsystems.Shwooper;
-// import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Shwooper;
+import frc.robot.subsystems.Stinger;
+import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
-// import frc.robot.subsystems.AngularVelocityManager;
+import frc.robot.subsystems.AngularVelocityManager;
+import frc.robot.subsystems.Arm;
 
 import static frc.robot.constants.Constants.*;
 
@@ -62,11 +66,13 @@ public class ChargedUp extends RobotContainer
     // public static final AHRS gyroscope = new AHRS();
 
     // SUBSYSTEMS //
-
-    // public static final Drivetrain drivetrain = new Drivetrain();
-    public static final LED led = new LED();
-    // public static final Elevator elevator = new Elevator();
-    // public static final Shwooper shwooper = new Shwooper();
+    public static final LED        led        = new LED();
+    public static final Drivetrain drivetrain = new Drivetrain();
+    public static final Elevator   elevator   = new Elevator();
+    public static final Arm        arm        = new Arm();
+    public static final Shwooper   shwooper   = new Shwooper();
+    public static final Grabber    grabber    = new Grabber();
+    public static final Stinger    stinger    = new Stinger();
 
     // MANAGERS //
     // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -86,52 +92,80 @@ public class ChargedUp extends RobotContainer
 
       
         // HANDLE DRIVING //
-        // drivetrain.setDefaultCommand(Commands.run(() ->
-        //     {
-        //         if(!DriverStation.isTeleop())
-        //         {
-        //             drivetrain.drive(0,0,0);
-        //             return;
-        //         }
+        drivetrain.setDefaultCommand(Commands.run(() ->
+            {
+                if(!DriverStation.isTeleop())
+                {
+                    drivetrain.drive(0,0,0);
+                    return;
+                }
 
-        //         drivetrain.driveInput(
-        //             JoystickInput.getRight(driverController, true,  false),
-        //             JoystickInput.getLeft (driverController, false, false)
-        //         );
-        //     },
-        //     drivetrain
-        // ));
+                drivetrain.driveInput(
+                    JoystickInput.getRight(driverController, true,  false),
+                    JoystickInput.getLeft (driverController, false, false)
+                );
+            },
+            drivetrain
+        ));
 
-        // driverController.getButton(Button.A_CROSS)
-        //     .toggleWhenActive(drivetrain.commands.enableFieldRelative());
-        // driverController.getButton(Button.X_SQUARE)
-        //     .toggleWhenActive(drivetrain.commands.disableFieldRelative());
-        
-        // operatorController.getAxis(Axis.LEFT_TRIGGER)
-        //     .whenGreaterThan(0.5)
-        //     .whenActive(() -> shwooper.suck())
-        //     .whenInactive(() -> shwooper.stop());
-        
-        // operatorController.getAxis(Axis.RIGHT_TRIGGER)
-        //     .whenGreaterThan(0.5)
-        //     .whenActive(() -> shwooper.spit())
-        //     .whenInactive(() -> shwooper.stop());
+        driverController.getButton(Button.A_CROSS)
+            .toggleWhenActive(drivetrain.commands.enableFieldRelative());
+        driverController.getButton(Button.X_SQUARE)
+            .toggleWhenActive(drivetrain.commands.disableFieldRelative());
+        driverController.getButton(Button.RIGHT_BUMPER)
+            .toggleWhenActive(drivetrain.commands.increaseSpeed());
+        driverController.getButton(Button.LEFT_BUMPER)
+            .toggleWhenActive(drivetrain.commands.decreaseSpeed());
 
-        // driverController.getButton(Button.START_TOUCHPAD)
-        //     .whenActive(Commands.instant(() -> {
+        driverController.getButton(Button.START_TOUCHPAD)
+            .whenActive(Commands.instant(() -> {
 
-        //         if(DriverStation.isEnabled()) 
-        //         {
-        //             Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
-        //             return;
-        //         }
+               if(DriverStation.isEnabled()) 
+                {
+                    Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
+                    return;
+                }
 
-        //         gyroscope.zeroYaw();
-        //         Logging.info("Zeroed NavX!");
+               gyroscope.zeroYaw();
+               Logging.info("Zeroed NavX!");
+            }));
 
-        //     }));
-        
         // OPERATOR CONTROLS //
+        // D-Pad Controls
+        operatorController.getDPad(DPad.UP)
+            .whenActive(Commands2023.elevatorStingerToHigh());
+        operatorController.getDPad(DPad.LEFT)
+            .whenActive(Commands2023.elevatorStingerToMid());
+        operatorController.getDPad(DPad.DOWN)
+            .whenActive(Commands2023.elevatorStingerToLow());
+
+        // Stinger
+        stinger.setDefaultCommand(Commands.run(() -> {
+            JoystickInput right = JoystickInput.getRight(
+                operatorController, 
+                false, 
+                false);
+            Robot.STINGER_JOYSTICK_ADJUSTER.adjustX(right);
+            stinger.setSpeed(right.getX());
+        }));
+
+        // Grabber
+        operatorController.getButton(Button.A_CROSS)
+            .toggleWhenActive(Commands2023.toggleGrabber());
+
+        // Schwooper 
+        operatorController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.suck())
+            .whenInactive(() -> shwooper.stop());
+        
+        operatorController.getAxis(Axis.RIGHT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whenActive(() -> shwooper.spit())
+            .whenInactive(() -> shwooper.stop());
+
+        operatorController.getButton(Button.X_SQUARE)
+            .toggleWhenActive(Commands2023.toggleShwooper());
 
         //Elevator 
         // operatorController.getButton(Button.X_SQUARE)
@@ -141,6 +175,16 @@ public class ChargedUp extends RobotContainer
         // operatorController.getButton(Button.A_CROSS)
         //     .whenActive(() -> elevator.delevate()) 
         //     .whenInactive(() -> elevator.stop());
+
+        // using dylan's code base: v complicated
+        elevator.setDefaultCommand(Commands.run(() -> {
+            JoystickInput left = JoystickInput.getLeft(
+                operatorController, 
+                false, 
+                false);
+            Robot.ELEVATOR_JOY_ADJUSTER.adjustY(left);
+            elevator.setSpeed(left.getY());
+        }));
 
         // HANDLE AUTO //
         // AutoCommands.add("Main", () -> CommandGroupBase.sequence(
@@ -161,12 +205,12 @@ public class ChargedUp extends RobotContainer
 
     private void initAuto()
     {
-        // var cmd = Trajectories.auto(
-        //     "Test Line", 
-        //     Drive.MAX_SPEED_MPS / 2, 
-        //     Drive.MAX_ACCEL_MPS2, 
-        //     HashMaps.of()
-        // );
+        Command cmd = Trajectories.auto(
+            "Test Line", 
+            Drive.MAX_SPEED_MPS / 2, 
+            Drive.MAX_ACCEL_MPS2, 
+            HashMaps.of()
+        );
         
         // AutoCommands.add("Test Line", () -> cmd);.
         AutoCommands.add("Main", () -> Commands.instant( () -> {}));
