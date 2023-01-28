@@ -38,7 +38,7 @@ import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.subsystems.AngularVelocityManager;
+// import frc.robot.subsystems.AngularVelocityManager;
 import frc.robot.subsystems.Arm;
 
 import static frc.robot.constants.Constants.*;
@@ -63,7 +63,7 @@ public class ChargedUp extends RobotContainer
         ControlScheme.OPERATOR_CONTROLLER_PORT);
 
     // COMPONENTS //
-    // public static final AHRS gyroscope = new AHRS();
+    public static final AHRS gyroscope = new AHRS();
 
     // SUBSYSTEMS //
     public static final LED        led        = new LED();
@@ -109,16 +109,16 @@ public class ChargedUp extends RobotContainer
         ));
 
         driverController.getButton(Button.A_CROSS)
-            .toggleWhenActive(drivetrain.commands.enableFieldRelative());
+            .toggleOnTrue(drivetrain.commands.enableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
-            .toggleWhenActive(drivetrain.commands.disableFieldRelative());
+            .toggleOnTrue(drivetrain.commands.disableFieldRelative());
         driverController.getButton(Button.RIGHT_BUMPER)
-            .toggleWhenActive(drivetrain.commands.increaseSpeed());
+            .toggleOnTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
-            .toggleWhenActive(drivetrain.commands.decreaseSpeed());
+            .toggleOnTrue(drivetrain.commands.decreaseSpeed());
 
         driverController.getButton(Button.START_TOUCHPAD)
-            .whenActive(Commands.instant(() -> {
+            .onTrue(Commands.instant(() -> {
 
                if(DriverStation.isEnabled()) 
                 {
@@ -133,11 +133,11 @@ public class ChargedUp extends RobotContainer
         // OPERATOR CONTROLS //
         // D-Pad Controls
         operatorController.getDPad(DPad.UP)
-            .whenActive(Commands2023.elevatorStingerToHigh());
+            .onTrue(Commands2023.elevatorStingerToHigh());
         operatorController.getDPad(DPad.LEFT)
-            .whenActive(Commands2023.elevatorStingerToMid());
+            .onTrue(Commands2023.elevatorStingerToMid());
         operatorController.getDPad(DPad.DOWN)
-            .whenActive(Commands2023.elevatorStingerToLow());
+            .onTrue(Commands2023.elevatorStingerToLow());
 
         // Stinger
         stinger.setDefaultCommand(Commands.run(() -> {
@@ -151,21 +151,21 @@ public class ChargedUp extends RobotContainer
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
-            .toggleWhenActive(Commands2023.toggleGrabber());
+            .toggleOnTrue(Commands2023.toggleGrabber());
 
         // Schwooper 
         operatorController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
-            .whenActive(() -> shwooper.suck())
-            .whenInactive(() -> shwooper.stop());
+            .onTrue (Commands2023.shwooperSuck())
+            .onFalse(Commands2023.stopShwooper());
         
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
             .whenGreaterThan(0.5)
-            .whenActive(() -> shwooper.spit())
-            .whenInactive(() -> shwooper.stop());
+            .onTrue (Commands2023.shwooperSpit())
+            .onFalse(Commands2023.stopShwooper());
 
         operatorController.getButton(Button.X_SQUARE)
-            .toggleWhenActive(Commands2023.toggleShwooper());
+            .toggleOnTrue(Commands2023.toggleShwooper());
 
         //Elevator 
         // operatorController.getButton(Button.X_SQUARE)
