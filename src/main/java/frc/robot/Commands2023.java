@@ -304,8 +304,16 @@ public class Commands2023
      */
     public static Command stopShwooper() {
         return Commands.instant(() -> {
-            ChargedUp.shwooper.stop();
+            ChargedUp.Shwooper.stop();
+        });
+    }
+    // NOT DONE 
+    public static Command pickUp() 
+    {
+        return Commands.instant(() -> {
+            ChargedUp.Stinger.fullyRetract();
+            ChargedUp.Elevator.setLow();
+            ChargedUp.Grabber.grab();
         });
     }
 }
-
