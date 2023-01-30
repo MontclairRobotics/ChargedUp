@@ -3,6 +3,7 @@ package frc.robot.constants;
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
+import java.text.FieldPosition;
 import java.util.ArrayList;
 
 import org.team555.frc.controllers.GameController;
@@ -12,6 +13,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -91,12 +93,30 @@ public final class Constants
         public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27); //TODO: CONFIRM WITH JOSH
         public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
 
+        private static Translation2d FLPosition = new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2); //FL
+        private static Translation2d FRPosition = new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2); //FR
+        private static Translation2d BLPosition = new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2); //BL
+        private static Translation2d BRPosition = new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2); //BR
         public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-            new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FL
-            new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2), //FR
-            new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2), //BL
-            new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2)  //BR
+            FLPosition, //FL
+            FRPosition, //FR
+            BLPosition, //BL
+            BRPosition  //BR
         );
+
+        public static final SwerveModulePosition FL_SWERVE_POS = new SwerveModulePosition(FLPosition.getNorm(), FLPosition.getAngle());
+        public static final SwerveModulePosition FR_SWERVE_POS = new SwerveModulePosition(FRPosition.getNorm(), FRPosition.getAngle());
+        public static final SwerveModulePosition BL_SWERVE_POS = new SwerveModulePosition(BLPosition.getNorm(), BLPosition.getAngle());
+        public static final SwerveModulePosition BR_SWERVE_POS = new SwerveModulePosition(BRPosition.getNorm(), BRPosition.getAngle());
+
+        public static final SwerveModulePosition[] POSITIONS = 
+        {
+            FL_SWERVE_POS,
+            FR_SWERVE_POS,
+            BL_SWERVE_POS,
+            BR_SWERVE_POS
+        };
+
         public static final double[][] speeds  = {{0.25, 0.25}, {0.5, 0.5}, {0.75, 0.75}, {1.0, 1.0}};  
         // 1st element is drive speed, 2nd is angular speed
     }
