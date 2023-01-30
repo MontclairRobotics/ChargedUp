@@ -2,36 +2,34 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 6.45,
-        "y": 0.95
+        "x": 1.85,
+        "y": 2.8
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.622055894746555,
-        "y": 0.8804928574483877
+        "x": 2.267801742925551,
+        "y": 2.8145899583579532
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 180.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Pick Up"
-        ],
-        "executionBehavior": "sequential",
+        "names": [],
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 1.85,
-        "y": 0.45
+        "x": 3.85,
+        "y": 2.8
       },
       "prevControl": {
-        "x": 2.6335561296996364,
-        "y": 0.8263929558451969
+        "x": 3.38124141555933,
+        "y": 2.808182211527071
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -41,7 +39,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
