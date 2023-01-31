@@ -28,13 +28,13 @@ public class Trajectories
         return PathPlanner.loadPath(name, maxVel, maxAccel);
     }
 
-    // public static Command follow(String name, double maxVel, double maxAccel)
-    // {
-    //     return ChargedUp.drivetrain.commands.follow(get(name, maxVel, maxAccel));
-    // }
+    public static Command follow(String name, double maxVel, double maxAccel)
+    {
+        return ChargedUp.drivetrain.commands.follow(get(name, maxVel, maxAccel));
+    }
 
-    // public static Command auto(String name, double maxVel, double maxAccel, HashMap<String, Command> commands)
-    // {
-    //     return ChargedUp.drivetrain.commands.auto(get(name, maxVel, maxAccel), commands);
-    // }
+    public static Command auto(String name, double maxVel, double maxAccel, HashMap<String, Command> commands)
+    {
+        return ChargedUp.drivetrain.commands.auto(get(name, maxVel, maxAccel), commands);
+    }
 }
