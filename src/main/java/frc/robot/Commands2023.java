@@ -436,9 +436,12 @@ public class Commands2023
                 elevatorToMid()
             )
         );
-
         //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
         return c;
->>>>>>> main
+    }
+
+    public static Command fromStringToCommand(String str)
+    {
+        return Commands.none();
     }
 }
