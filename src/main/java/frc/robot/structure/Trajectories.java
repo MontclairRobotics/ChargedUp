@@ -8,7 +8,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 import org.team555.frc.command.AutoCommands;
-import org.team555.frc.command.Commands;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;

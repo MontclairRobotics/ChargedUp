@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import org.team555.frc.command.Commands;
+import edu.wpi.first.wpilibj2.command.Commands;
 import org.team555.math.MathUtils;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
@@ -46,6 +45,7 @@ import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase
         int i = 0;
         for(SwerveModuleSpec spec : Drive.MODULES)
         {
-            modules[i] = spec.createNeo(
+            modules[i] = spec.createFalconDriveNeoTurn(
                 Shuffleboard.getTab("Drivetrain")
                     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
                     .withSize(2, 5)
@@ -296,8 +296,18 @@ public class Drivetrain extends SubsystemBase
                 );
             }
             
-            odometry.update(getRobotRotation(), states);
+            odometry.update(
+                getRobotRotation(), 
+                getModulePositions()
+            );
         }
+    }
+
+    public SwerveModulePosition[] getModulePositions()
+    {
+        return Arrays.stream(modules)
+            .map(x -> x.getPosition())
+            .toArray(SwerveModulePosition[]::new);
     }
 
     @Override 
@@ -308,7 +318,11 @@ public class Drivetrain extends SubsystemBase
 
     public void setRobotPose(Pose2d pose)
     {
-        odometry.resetPosition(pose, getRobotRotation());
+        odometry.resetPosition(
+            getRobotRotation(),
+            getModulePositions(),
+            pose
+        );
 
         currentSimulationX = pose.getX();
         currentSimulationY = pose.getY();
@@ -358,34 +372,35 @@ public class Drivetrain extends SubsystemBase
 
         public Command increaseSpeed()
         {
-            return Commands.instant(() -> Drivetrain.this.increaseMaxSpeed());
+            return Commands.runOnce(() -> Drivetrain.this.increaseMaxSpeed());
         }
         public Command decreaseSpeed()
         {
-            return Commands.instant(() -> Drivetrain.this.decreaseMaxSpeed());
+            return Commands.runOnce(() -> Drivetrain.this.decreaseMaxSpeed());
         }
 
         public Command driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.instant(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
+            return Commands.runOnce(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
         public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return CommandGroupBase.sequence
+            return Commands.parallel
             (
                 enableFieldRelative(),
-                Commands.runForTime(time, () -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this),
+                Commands.run(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this)
+                    .deadlineWith(Commands.waitSeconds(time)),
                 disableFieldRelative()
             );
         }
 
         public Command enableFieldRelative()
         {
-            return Commands.instant(Drivetrain.this::enableFieldRelative, Drivetrain.this);
+            return Commands.runOnce(Drivetrain.this::enableFieldRelative, Drivetrain.this);
         }
         public Command disableFieldRelative()
         {
-            return Commands.instant(Drivetrain.this::disableFieldRelative, Drivetrain.this);
+            return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
         public Command follow(PathPlannerTrajectory trajectory)

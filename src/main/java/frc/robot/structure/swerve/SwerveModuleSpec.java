@@ -20,4 +20,7 @@ public abstract class SwerveModuleSpec
 
     public abstract SwerveModule createNeo();
     public abstract SwerveModule createNeo(ShuffleboardLayout container);
+    
+    public abstract SwerveModule createFalconDriveNeoTurn();
+    public abstract SwerveModule createFalconDriveNeoTurn(ShuffleboardLayout container);
 }
