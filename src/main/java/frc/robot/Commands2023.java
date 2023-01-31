@@ -127,7 +127,7 @@ public class Commands2023
     public static Command retractStinger()
     {
         return run(() -> ChargedUp.stinger.fullyRetract(), ChargedUp.stinger)
-            until(ChargedUp.stinger::isPIDFree);
+            .until(ChargedUp.stinger::isPIDFree);
     }
     /**
      * extends the stinger to the length of the middle pole
