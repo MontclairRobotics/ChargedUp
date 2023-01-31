@@ -119,7 +119,8 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract());
+        return run(() -> ChargedUp.stinger.fullyRetract(), ChargedUp.stinger)
+            until(ChargedUp.stinger::isPIDFree);
     }
     /**
      * extends the stinger to the length of the middle pole
@@ -127,7 +128,8 @@ public class Commands2023
      */
     public static Command stingerToMid()
     {
-        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid());
+        return run(() -> ChargedUp.stinger.toMid(), ChargedUp.stinger)
+            .until(ChargedUp.stinger::isPIDFree);
     }
     /**
      * extends the stinger to the high pole
@@ -135,7 +137,8 @@ public class Commands2023
      */
     public static Command stingerToHigh()
     {
-        return Commands.runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh());
+        return run(() -> ChargedUp.stinger.toHigh(), ChargedUp.stinger)
+            .until(ChargedUp.stinger::isPIDFree);
     }
 
     // ELEVATOR COMMANDS
@@ -179,10 +182,14 @@ public class Commands2023
      */
     public static Command elevatorStingerToHigh()
     {
-        return Commands.parallel(
-            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setHigh()),
-            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toHigh())
-        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+        CommandBase c = parallel(
+            run(() -> ChargedUp.elevator.setHigh())
+                .until(ChargedUp.elevator::isPIDFree),
+            run(() -> ChargedUp.stinger.toHigh())
+                .until(ChargedUp.stinger::isPIDFree)
+        );
+        c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
+        return c;
     }
     /**
      * Moves the Elevator and Stinger to MID position simultaneously
@@ -194,10 +201,15 @@ public class Commands2023
      */
     public static Command elevatorStingerToMid()
     {
-        return Commands.parallel(
-            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setMid()),
-            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.toMid())
-        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+        CommandBase c = parallel(
+            run(() -> ChargedUp.elevator.setMid())
+                .until(ChargedUp.elevator::isPIDFree),
+            run(() -> ChargedUp.stinger.toMid())
+                .until(ChargedUp.stinger::isPIDFree)
+        );
+
+        c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
+        return c;
     }
     /**
      * Moves the Elevator and Stinger to LOW position simultaneously
@@ -209,10 +221,14 @@ public class Commands2023
      */
     public static Command elevatorStingerToLow()
     {
-        return Commands.parallel(
-            runUntil(ChargedUp.elevator::isPIDFree, () -> ChargedUp.elevator.setLow()),
-            runUntil(ChargedUp.stinger::isPIDFree, () -> ChargedUp.stinger.fullyRetract())
-        ).deadlineWith(block(ChargedUp.stinger, ChargedUp.elevator));
+        CommandBase c = parallel(
+            run(() -> ChargedUp.elevator.setLow())
+                .until(ChargedUp.elevator::isPIDFree),
+            run(() -> ChargedUp.stinger.fullyRetract())
+                .until(ChargedUp.stinger::isPIDFree)
+        );
+        c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
+        return c;
     }
 
     /**
