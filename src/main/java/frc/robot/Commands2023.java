@@ -11,6 +11,7 @@ import frc.robot.structure.GamePiece;
 import frc.robot.structure.Unimplemented;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Stinger;
 
 import static frc.robot.ChargedUp.elevator;
@@ -261,18 +262,18 @@ public class Commands2023
 
     // GRABBER COMMANDS
     
-    //public static Command openGrabber() {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.grabber.grab();
-    //     });
+    public static Command openGrabber() {
+        return Commands.runOnce(() -> {
+            ChargedUp.grabber.grab();
+        });
 
-    // }
+     }
 
-    // public static Command closeGrabber() {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.grabber.release();
-    //     });
-    // }
+    public static Command closeGrabber() {
+        return Commands.runOnce(() -> {
+            ChargedUp.grabber.release();
+        });
+    }
 
     /**
      * Toggle the Grabber
@@ -389,5 +390,17 @@ public class Commands2023
             stopShwooper(),
             elevatorToMid()
         );
+    }
+
+    public static Command score()
+    {
+        CommandBase c = Commands.sequence(
+            elevatorStingerToHigh(), 
+            openGrabber(), 
+            Commands.parallel(retractStinger(), elevatorToMid())
+        );
+
+        //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
+        return c;
     }
 }
