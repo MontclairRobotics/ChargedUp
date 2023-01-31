@@ -381,13 +381,6 @@ public class Commands2023
 
     public static Command pickup() 
     {
-<<<<<<< HEAD
-        return Commands.runOnce(() -> {
-            ChargedUp.Stinger.fullyRetract();
-            ChargedUp.Elevator.setLow();
-            ChargedUp.Grabber.grab();
-        });
-=======
         // SEQUENCE //
             // PARALLEL //
                 //grabber toggle
