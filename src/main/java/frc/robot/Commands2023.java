@@ -337,6 +337,16 @@ public class Commands2023
         return Commands.runOnce(ChargedUp.shwooper::toggle);
     }
 
+    public static Command retractSchwooper()
+    {
+        return Commands.runOnce(ChargedUp.shwooper::retract);
+    }
+    
+    public static Command extendSchwooper()
+    {
+        return Commands.runOnce(ChargedUp.shwooper::extend);
+    }
+
     /**
      * intake suck
      * @return Command
@@ -386,25 +396,45 @@ public class Commands2023
             //stop sucking
             //elevator mid 
         // END SEQUENCE 
+
         return Commands.sequence(
+            // Ensure grabber released
+            releaseGrabber(),
+
+            // Lower grabber in place
             Commands.parallel(
-                releaseGrabber(),
-                retractStinger()
+                retractStinger(),
+                elevatorToLow()
             ),
-            elevatorToLow(),
+
+            // Suck it
             shwooperSuck(),
-            waitSeconds(Robot.SUCK_TIME),
+            waitSeconds(Robot.INTAKE_SUCK_TIME),
             stopShwooper(),
-            elevatorToMid()
+
+            // Grab it
+            grabGrabber(),
+
+            // Prepare to leave
+            elevatorToMid(),
+            retractSchwooper()
         );
     }
 
     public static Command score()
     {
         CommandBase c = Commands.sequence(
+            // Prepare position
             elevatorStingerToHigh(), 
+
+            // Drop grabber
             openGrabber(), 
-            Commands.parallel(retractStinger(), elevatorToMid())
+
+            // Return to position
+            Commands.parallel(
+                retractStinger(), 
+                elevatorToMid()
+            )
         );
 
         //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
