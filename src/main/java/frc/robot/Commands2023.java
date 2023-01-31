@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
+import frc.robot.structure.Unimplemented;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -352,14 +353,24 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.shwooper::stop);
     }
-    // NOT DONE 
-    public static Command pickUp() 
+    
+
+    public static Command pickup() 
     {
-        return Commands.instant(() -> {
-            ChargedUp.Stinger.fullyRetract();
-            ChargedUp.Elevator.setLow();
-            ChargedUp.Grabber.grab();
-        });
+        // SEQUENCE //
+            // PARALLEL //
+                //grabber toggle
+                //retract stinger
+            // END PARALLEL //
+            //elevator low
+            // FOR (Robot.SUCK_TIME) SECONDS //
+                //suck
+            // END FOR SECONDS //
+            //stop sucking
+            //elevator mid 
+        // END SEQUENCE //
+
+        return Unimplemented.here();
     }
 
     public static Command score()
