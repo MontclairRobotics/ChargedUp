@@ -12,12 +12,12 @@ import edu.wpi.first.wpilibj.Solenoid;
 public class Grabber extends ManagerSubsystemBase {
     Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_SOLENOID_PORT);
     
-    private void grab() 
+    public void grab() 
     {
         solenoid.set(!Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
     }
 
-    private void release() 
+    public void release() 
     {
         solenoid.set(Constants.Robot.GRABBER_SOLENOID_DEFAULT_STATE);
     }

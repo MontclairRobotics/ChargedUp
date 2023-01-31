@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
+import frc.robot.structure.Unimplemented;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Grabber;
 import frc.robot.subsystems.Stinger;
 
 import static frc.robot.ChargedUp.elevator;
@@ -260,18 +262,18 @@ public class Commands2023
 
     // GRABBER COMMANDS
     
-    //public static Command openGrabber() {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.grabber.grab();
-    //     });
+    public static Command openGrabber() {
+        return Commands.runOnce(() -> {
+            ChargedUp.grabber.grab();
+        });
 
-    // }
+     }
 
-    // public static Command closeGrabber() {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.grabber.release();
-    //     });
-    // }
+    public static Command closeGrabber() {
+        return Commands.runOnce(() -> {
+            ChargedUp.grabber.release();
+        });
+    }
 
     /**
      * Toggle the Grabber
@@ -284,6 +286,16 @@ public class Commands2023
     public static Command toggleGrabber()
     {
         return Commands.runOnce(ChargedUp.grabber::toggle);
+    }
+    
+    public static Command grabGrabber()
+    {
+        return Commands.runOnce(ChargedUp.grabber::grab);
+    }
+    
+    public static Command releaseGrabber()
+    {
+        return Commands.runOnce(ChargedUp.grabber::release);
     }
 
     // SHWOOPER COMMMANDS
@@ -351,13 +363,52 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.shwooper::stop);
     }
-    // NOT DONE 
-    public static Command pickUp() 
+    
+
+    public static Command pickup() 
     {
+<<<<<<< HEAD
         return Commands.runOnce(() -> {
             ChargedUp.Stinger.fullyRetract();
             ChargedUp.Elevator.setLow();
             ChargedUp.Grabber.grab();
         });
+=======
+        // SEQUENCE //
+            // PARALLEL //
+                //grabber toggle
+                //retract stinger
+            // END PARALLEL //
+            //elevator low
+            // FOR (Robot.SUCK_TIME) SECONDS //
+                //suck
+            // END FOR SECONDS //
+            //stop sucking
+            //elevator mid 
+        // END SEQUENCE 
+        return Commands.sequence(
+            Commands.parallel(
+                releaseGrabber(),
+                retractStinger()
+            ),
+            elevatorToLow(),
+            shwooperSuck(),
+            waitSeconds(Robot.SUCK_TIME),
+            stopShwooper(),
+            elevatorToMid()
+        );
+    }
+
+    public static Command score()
+    {
+        CommandBase c = Commands.sequence(
+            elevatorStingerToHigh(), 
+            openGrabber(), 
+            Commands.parallel(retractStinger(), elevatorToMid())
+        );
+
+        //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
+        return c;
+>>>>>>> main
     }
 }
