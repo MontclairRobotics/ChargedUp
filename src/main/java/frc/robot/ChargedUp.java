@@ -5,7 +5,7 @@
 package frc.robot;
 
 import org.team555.frc.command.AutoCommands;
-import org.team555.frc.command.Commands;
+import edu.wpi.first.wpilibj2.command.Commands;
 import org.team555.frc.command.commandrobot.RobotContainer;
 import org.team555.frc.controllers.GameController;
 import org.team555.frc.controllers.GameController.Axis;
@@ -81,7 +81,7 @@ public class ChargedUp extends RobotContainer
     @Override public void initialize() 
     {
         driverController.getButton(Button.X_SQUARE)
-            .toggleOnTrue(Commands.instant(() -> {
+            .toggleOnTrue(Commands.runOnce(() -> {
                 led.add(new RainbowAnimation(2));
                 Logging.info("bruh");
             }));
@@ -118,7 +118,7 @@ public class ChargedUp extends RobotContainer
             .toggleOnTrue(drivetrain.commands.decreaseSpeed());
 
         driverController.getButton(Button.START_TOUCHPAD)
-            .onTrue(Commands.instant(() -> {
+            .onTrue(Commands.runOnce(() -> {
 
                if(DriverStation.isEnabled()) 
                 {
@@ -205,15 +205,17 @@ public class ChargedUp extends RobotContainer
 
     private void initAuto()
     {
-        Command cmd = Trajectories.auto(
-            "Test Line", 
-            Drive.MAX_SPEED_MPS / 2, 
-            Drive.MAX_ACCEL_MPS2, 
+        Command cmd = drivetrain.commands.auto(
+            Trajectories.get(
+                "Test Line", 
+                Drive.MAX_SPEED_MPS / 2, 
+                Drive.MAX_ACCEL_MPS2
+            ),
             HashMaps.of()
         );
         
         // AutoCommands.add("Test Line", () -> cmd);.
-        AutoCommands.add("Main", () -> Commands.instant( () -> {}));
+        AutoCommands.add("Main", () -> Commands.runOnce( () -> {}));
         AutoCommands.setDefaultCommand("Main");
     }
 }
