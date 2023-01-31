@@ -351,5 +351,13 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.shwooper::stop);
     }
+    // NOT DONE 
+    public static Command pickUp() 
+    {
+        return Commands.instant(() -> {
+            ChargedUp.Stinger.fullyRetract();
+            ChargedUp.Elevator.setLow();
+            ChargedUp.Grabber.grab();
+        });
+    }
 }
-
