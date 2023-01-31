@@ -120,6 +120,11 @@ public final class Constants
         public static final double[][] speeds  = {{0.25, 0.25}, {0.5, 0.5}, {0.75, 0.75}, {1.0, 1.0}};  
         // 1st element is drive speed, 2nd is angular speed
     }
+    public static class Auto 
+    {
+        public static final double MAX_VEL = 10;
+        public static final double MAX_ACC = 4; // these numbers have origin inside my ass
+    }
     public static class Robot 
     {
         public static final double ROBOT_MASS_KG      = Units.lbsToKilograms(60);

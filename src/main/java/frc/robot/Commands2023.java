@@ -8,7 +8,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
+import frc.robot.structure.Trajectories;
 import frc.robot.structure.Unimplemented;
+import frc.robot.structure.factories.HashMaps;
+import frc.robot.structure.helpers.Logging;
+import frc.robot.constants.Constants.Auto;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -440,8 +444,62 @@ public class Commands2023
         return c;
     }
 
+    public static Command balance()
+    {
+        // TODO: this
+        return Unimplemented.here();
+    }
+
     public static Command fromStringToCommand(String str)
     {
-        return Commands.none();
+        // Single actions
+        if(str.length() == 1)
+        {
+            switch(str)
+            {
+                case "A":
+                case "C": return pickup();
+
+                case "1":
+                case "2":
+                case "3": return score();
+
+                case "B": return balance();
+
+                default: 
+                {
+                    Logging.error("Invalid path point! Please be better.");
+                    return none();
+                }
+            }
+        }
+        // Transition
+        else if(str.length() == 2)
+        {
+            try 
+            {
+                return Trajectories.auto(
+                    str, 
+                    Auto.MAX_VEL, 
+                    Auto.MAX_ACC, 
+                    HashMaps.of(
+                        "Elevator Mid",  elevatorToMid(),
+                        "Elevator High", elevatorToHigh(),
+                        "Extend Intake", extendSchwooper()
+                    )
+                );
+            }
+            catch (Exception e)
+            {
+                Logging.error("Error finding path transition " + str + ": is it valid? Are you dumb? Who knows!\n" + e);
+                return none();
+            }
+        }
+        // Error
+        else 
+        {
+            Logging.error("(> 2 || == 0) characters in received string! Please cry about it.");
+            return none();
+        }
     }
 }
