@@ -354,7 +354,7 @@ public class Commands2023
     // NOT DONE 
     public static Command pickUp() 
     {
-        return Commands.instant(() -> {
+        return Commands.runOnce(() -> {
             ChargedUp.Stinger.fullyRetract();
             ChargedUp.Elevator.setLow();
             ChargedUp.Grabber.grab();
