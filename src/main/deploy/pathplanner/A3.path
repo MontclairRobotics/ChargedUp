@@ -70,8 +70,12 @@
       }
     }
   ],
-  "maxVelocity": 0.5,
-  "maxAcceleration": null,
-  "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.6169744318181813,
+      "names": [
+        "Elevator High"
+      ]
+    }
+  ]
 }

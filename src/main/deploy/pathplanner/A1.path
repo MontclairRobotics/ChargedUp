@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 6.45,
-        "y": 0.95
+        "y": 4.6
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.499765787066987,
-        "y": 0.8572625077261484
+        "x": 5.522474727669004,
+        "y": 4.7348141155205825
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -17,23 +17,23 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.4608317545247,
-        "y": 0.7891356859200959
+        "x": 3.785240771614689,
+        "y": 4.723459645219574
       },
       "prevControl": {
-        "x": 5.169159356061802,
-        "y": 0.8328803834021975
+        "x": 4.831655473092251,
+        "y": 4.723459645219574
       },
       "nextControl": {
-        "x": 2.070715756162392,
-        "y": 0.6415275720069831
+        "x": 2.6781799172663514,
+        "y": 4.723459645219574
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -42,7 +42,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -50,11 +50,11 @@
     {
       "anchorPoint": {
         "x": 1.85,
-        "y": 2.8
+        "y": 3.85
       },
       "prevControl": {
-        "x": 2.013943404657349,
-        "y": 1.0446112676927897
+        "x": 2.167228753720965,
+        "y": 4.83700434822966
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -75,9 +75,9 @@
   "isReversed": null,
   "markers": [
     {
-      "position": 1.5127272727272847,
+      "position": 1.362997159090909,
       "names": [
-        "elevator high"
+        "Elevator High"
       ]
     }
   ]

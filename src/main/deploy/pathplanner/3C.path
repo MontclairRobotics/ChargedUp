@@ -50,5 +50,18 @@
   "maxVelocity": 1.0,
   "maxAcceleration": null,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.19705255681818182,
+      "names": [
+        "Elevator Mid"
+      ]
+    },
+    {
+      "position": 0.7493252840909079,
+      "names": [
+        "Extend Intake"
+      ]
+    }
+  ]
 }

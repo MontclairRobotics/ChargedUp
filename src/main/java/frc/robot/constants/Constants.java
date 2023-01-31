@@ -162,9 +162,11 @@ public final class Constants
 
         // Shwooper Constants
         public static final int INTAKE_PORT = 0;
+        public static final int INTAKE_PNEU_PORT = 2;
         public static final double INTAKE_SPEED = 0.5;
         public static final boolean INTAKE_INVERSION = false;
         public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
+        public static final double INTAKE_SUCK_TIME = 1;
 
         //Grabber Constants
         public static final boolean GRABBER_SOLENOID_DEFAULT_STATE = false;

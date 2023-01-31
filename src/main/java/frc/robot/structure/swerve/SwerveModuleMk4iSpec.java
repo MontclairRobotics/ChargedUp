@@ -27,4 +27,16 @@ public class SwerveModuleMk4iSpec extends SwerveModuleSpec
     {
         return Mk4iSwerveModuleHelper.createNeo(container, ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians);
     }
+
+    @Override
+    public SwerveModule createFalconDriveNeoTurn() 
+    {
+        return Mk4iSwerveModuleHelper.createFalcon500Neo(ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians);
+    }
+    
+    @Override
+    public SwerveModule createFalconDriveNeoTurn(ShuffleboardLayout container) 
+    {
+        return Mk4iSwerveModuleHelper.createFalcon500Neo(container, ratio, driverPort, steerPort, steerEncoderPort, steerOffsetRadians);
+    }
 }
