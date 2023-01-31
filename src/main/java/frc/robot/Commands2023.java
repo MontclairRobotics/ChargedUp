@@ -21,6 +21,8 @@ import frc.robot.subsystems.Stinger;
 import static frc.robot.ChargedUp.elevator;
 import static frc.robot.ChargedUp.stinger;
 
+import java.util.ArrayList;
+
 public class Commands2023 
 {   
     // put commands here
@@ -495,4 +497,17 @@ public class Commands2023
             return none();
         }
     }
+
+    public static Command fromSequenceToCommand(ArrayList<String> list)
+    {
+        Command[] commandList = new Command[list.size()];
+        for (int i = 0; i < list.size(); i++)
+        {
+            commandList[i] = fromStringToCommand(list.get(i));
+        }
+        return Commands.sequence(commandList);
+    }
+    
+    
+    // fromStringtoCommand
 }
