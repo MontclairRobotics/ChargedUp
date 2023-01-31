@@ -73,5 +73,12 @@
   "maxVelocity": 2.0,
   "maxAcceleration": null,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.75,
+      "names": [
+        "Elevator High"
+      ]
+    }
+  ]
 }
