@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.constants.Constants.Robot;
@@ -26,7 +27,8 @@ public class Commands2023
      */
     public static Command armGoToLength(double length)
     {
-        return runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(length), ChargedUp.arm);
+        return Commands.run(() -> ChargedUp.arm.extendTo(length), ChargedUp.arm)
+            .until(ChargedUp.arm::isUpDownPIDFree);
     }
     
     /** 
@@ -34,27 +36,38 @@ public class Commands2023
      */
     public static Command armGoToAngle(double angle)
     {
-        return runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm);
+        return Commands.run(() -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm)
+            .until(ChargedUp.arm::isUpDownPIDFree);
     }
     /**
      * arm returns to origin position in fully retracted and lowered position
      */
     public static Command returnArm()
     {
-        return Commands.parallel (
-            runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_RETURN_POSITION)),
-            runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(0))
-        ).deadlineWith(block(ChargedUp.arm));
+        CommandBase x = Commands.parallel 
+        (
+            armGoToAngle(Robot.ARM_RETURN_POSITION),
+            armGoToLength(0)
+        );
+
+        x.addRequirements(ChargedUp.arm);
+
+        return x;
     }
     /**
      * moves the arm to be above the mid peg so cones can drop and score
      */
     public static Command armToMidPeg()
     {
-        return Commands.parallel (
-            runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_MID_PEG_ANGLE)),
-            runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_MID_LENGTH))
-        ).deadlineWith(block(ChargedUp.arm));
+        CommandBase x = Commands.parallel 
+        (
+            armGoToAngle(Robot.ARM_MID_PEG_ANGLE),
+            armGoToLength(Robot.)
+        );
+
+        x.addRequirements(ChargedUp.arm);
+
+        return x;
     }
 
     /**
@@ -62,7 +75,7 @@ public class Commands2023
      */
     public static Command armToHighPeg()
     {
-        var x = Commands.parallel
+        CommandBase x = Commands.parallel
         (
             Commands.run(() -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_PEG_ANGLE))
                 .until(ChargedUp.arm::isUpDownPIDFree),
