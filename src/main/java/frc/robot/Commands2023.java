@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Stinger;
@@ -27,7 +26,7 @@ public class Commands2023
      */
     public static Command armGoToLength(double length)
     {
-        return Commands.run(() -> ChargedUp.arm.extendTo(length), ChargedUp.arm)
+        return run(() -> ChargedUp.arm.extendTo(length), ChargedUp.arm)
             .until(ChargedUp.arm::isUpDownPIDFree);
     }
     
@@ -36,7 +35,7 @@ public class Commands2023
      */
     public static Command armGoToAngle(double angle)
     {
-        return Commands.run(() -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm)
+        return run(() -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm)
             .until(ChargedUp.arm::isUpDownPIDFree);
     }
     /**
@@ -59,10 +58,10 @@ public class Commands2023
      */
     public static Command armToMidPeg()
     {
-        CommandBase x = Commands.parallel 
+        CommandBase x = parallel 
         (
             armGoToAngle(Robot.ARM_MID_PEG_ANGLE),
-            armGoToLength(Robot.)
+            armGoToLength(Robot.ARM_MID_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -75,12 +74,10 @@ public class Commands2023
      */
     public static Command armToHighPeg()
     {
-        CommandBase x = Commands.parallel
+        CommandBase x = parallel
         (
-            Commands.run(() -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_PEG_ANGLE))
-                .until(ChargedUp.arm::isUpDownPIDFree),
-            Commands.run(() -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
-                .until(ChargedUp.arm::isInOutPIDFree)
+            armGoToAngle(Robot.ARM_HIGH_PEG_ANGLE),
+            armGoToLength(Robot.ARM_HIGH_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -93,10 +90,15 @@ public class Commands2023
      */
     public static Command armToMidShelf()
     {
-        return Commands.parallel (
-            runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_PEG_ANGLE)),
-            runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
-        ).deadlineWith(block(ChargedUp.arm));
+        CommandBase x = parallel
+        (
+            armGoToAngle(Robot.ARM_MID_SHELF_ANGLE),
+            armGoToLength(Robot.ARM_MID_LENGTH)
+        );
+
+        x.addRequirements(ChargedUp.arm);
+
+        return x;
     }
 
     /**
@@ -105,10 +107,15 @@ public class Commands2023
      */
     public static Command armToHighShelf()
     {
-        return Commands.parallel (
-            runUntil(ChargedUp.arm::isUpDownPIDFree, () -> ChargedUp.arm.rotateTo(Robot.ARM_HIGH_SHELF_ANGLE)),
-            runUntil(ChargedUp.arm::isInOutPIDFree, () -> ChargedUp.arm.extendTo(Robot.ARM_HIGH_LENGTH))
-        ).deadlineWith(block(ChargedUp.arm));
+        CommandBase x = parallel
+        (
+            armGoToAngle(Robot.ARM_HIGH_SHELF_ANGLE),
+            armGoToLength(Robot.ARM_HIGH_LENGTH)
+        );
+
+        x.addRequirements(ChargedUp.arm);
+
+        return x;
     }
    
     // STINGER COMMMANDS
@@ -146,7 +153,8 @@ public class Commands2023
      */
     public static Command elevatorToLow()
     {
-        return Commands.runUntil(elevator::isPIDFree, elevator::setLow, elevator);
+        return run(elevator::setLow, elevator)
+            .until(elevator::isPIDFree);
     }
 
     /**
@@ -155,7 +163,8 @@ public class Commands2023
      */
     public static Command elevatorToMid()
     {
-        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setMid(), elevator);
+        return run(elevator::setMid, elevator)
+            .until(elevator::isPIDFree);
     }
 
     /**
@@ -164,7 +173,8 @@ public class Commands2023
      */
     public static Command elevatorToHigh()
     {
-        return Commands.runUntil(elevator::isPIDFree, () -> elevator.setHigh(), elevator);
+        return run(elevator::setHigh, elevator)
+            .until(elevator::isPIDFree);
     }
 
     // ELEVATOR + STINGER COMMANDS 
@@ -220,11 +230,14 @@ public class Commands2023
      */
     public static Command stopPIDing()
     {
-        return Commands.runOnce(()->{
-            ChargedUp.stinger.stopPIDing();
-            ChargedUp.stinger.stopPIDing();
-        },
-        ChargedUp.stinger,ChargedUp.elevator);
+        return Commands.runOnce(() ->
+            {
+                ChargedUp.stinger.stopPIDing();
+                ChargedUp.elevator.stopPIDing();
+            },
+            ChargedUp.stinger,
+            ChargedUp.elevator
+        );
     }
 
     
@@ -252,10 +265,9 @@ public class Commands2023
      * - if it is released, grab
      * @return Command
      */
-    public static Command toggleGrabber(){
-        return Commands.runOnce(() ->{
-            ChargedUp.grabber.toggle();
-        });
+    public static Command toggleGrabber()
+    {
+        return Commands.runOnce(ChargedUp.grabber::toggle);
     }
 
     // SHWOOPER COMMMANDS
@@ -292,40 +304,36 @@ public class Commands2023
      * - if it is retracted, <b>extend</b>
      * @return Command
      */
-    public static Command toggleShwooper() {
-        return Commands.runOnce( () -> {
-            ChargedUp.shwooper.toggle();
-        });
+    public static Command toggleShwooper() 
+    {
+        return Commands.runOnce(ChargedUp.shwooper::toggle);
     }
 
     /**
      * intake suck
      * @return Command
      */
-    public static Command shwooperSuck() {
-        return Commands.runOnce(() -> {
-            ChargedUp.shwooper.suck();
-        });
+    public static Command shwooperSuck() 
+    {
+        return Commands.runOnce(ChargedUp.shwooper::suck);
     }
  
     /**
      * intake spit
      * @return Command
      */
-    public static Command shwooperSpit() {
-        return Commands.runOnce(() -> {
-            ChargedUp.shwooper.spit();
-        });
+    public static Command shwooperSpit() 
+    {
+        return Commands.runOnce(ChargedUp.shwooper::spit);
     }
 
     /**
      * Stop intake
      * @return Command
      */
-    public static Command stopShwooper() {
-        return Commands.runOnce(() -> {
-            ChargedUp.shwooper.stop();
-        });
+    public static Command stopShwooper() 
+    {
+        return Commands.runOnce(ChargedUp.shwooper::stop);
     }
 }
 
