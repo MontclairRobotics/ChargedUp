@@ -286,6 +286,16 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.grabber::toggle);
     }
+    
+    public static Command grabGrabber()
+    {
+        return Commands.runOnce(ChargedUp.grabber::grab);
+    }
+    
+    public static Command releaseGrabber()
+    {
+        return Commands.runOnce(ChargedUp.grabber::release);
+    }
 
     // SHWOOPER COMMMANDS
 
@@ -367,8 +377,17 @@ public class Commands2023
             // END FOR SECONDS //
             //stop sucking
             //elevator mid 
-        // END SEQUENCE //
-
-        return Unimplemented.here();
+        // END SEQUENCE 
+        return Commands.sequence(
+            Commands.parallel(
+                releaseGrabber(),
+                retractStinger()
+            ),
+            elevatorToLow(),
+            shwooperSuck(),
+            waitSeconds(Robot.SUCK_TIME),
+            stopShwooper(),
+            elevatorToMid()
+        );
     }
 }
