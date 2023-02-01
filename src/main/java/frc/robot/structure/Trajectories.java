@@ -23,16 +23,42 @@ import frc.robot.structure.helpers.Logging;
  */
 public class Trajectories 
 {
+    /**
+     * Returns the trajectory with the given name 
+     * and with given maximum velocity and acceleration
+     * @param name the name of the trajectory
+     * @param maxVel the maximum velocity
+     * @param maxAccel the maximum acceleration 
+     * @return the trajectory
+     */
     public static PathPlannerTrajectory get(String name, double maxVel, double maxAccel)
     {
         return PathPlanner.loadPath(name, maxVel, maxAccel);
     }
 
+    /**
+     * Returns a command that follows the trajectory with the given name
+     * and with given maximum velocity and acceleration
+     * @param name the name of the trajectory
+     * @param maxVel the maximum velocity
+     * @param maxAccel the maximum acceleration 
+     * @return the command that follows the trajectory
+     */
     public static Command follow(String name, double maxVel, double maxAccel)
     {
         return ChargedUp.drivetrain.commands.follow(get(name, maxVel, maxAccel));
     }
 
+    /**
+     * Creates an auto with a trajectory provided by 
+     * {@link #get(String, double, double) get(name, maxVel, maxAccel)}
+     * and with a hashmap containing the markers along the trajectory and their respective commands
+     * @param name the name of the trajectory
+     * @param maxVel the maximum velocity
+     * @param maxAccel the maximum acceleration 
+     * @param commands the hashmap containing the markers and their commands
+     * @return an auto
+     */
     public static Command auto(String name, double maxVel, double maxAccel, HashMap<String, Command> commands)
     {
         return ChargedUp.drivetrain.commands.auto(get(name, maxVel, maxAccel), commands);
