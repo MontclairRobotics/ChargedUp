@@ -1,11 +1,13 @@
 package frc.robot.structure.animation;
 
 import org.team555.util.color.RawColor;
-
-import edu.wpi.first.cscore.raw.RawSource;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 
+/**
+ * An animation which fades the entire LED strip from one color to another.
+ * Used to transition from two solid colors.
+ */
 public class FadeAnimation extends Animation 
 {
     private Color oldColor;

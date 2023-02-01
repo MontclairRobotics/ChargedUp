@@ -2,16 +2,25 @@ package frc.robot.structure;
 
 import java.util.ArrayList;
 
+/**
+ * A collection of static methods relating to the parsing of autonomous sequence strings.
+ */
 public class SequenceParser 
 {
+    private SequenceParser() {}
+
     //orange juice because i said so. "Cesca is so awesome" - Dylan & Abe (simultaneously)
     
+    /**
+     * Lex an autonomous sequence string into its components.
+     * Skips over any whitespace characters and appends modifiers 
+     * to their bases ("!A" remains conjoined while " A" becomes "A").
+     * 
+     * @param str The autonomous sequence string
+     * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
+     */
     public static ArrayList<String> lex(String str)
     {
-        // "1AB" -> [1, A, B]
-        // "1 A B" -> [1, A, B]
-        // "1 !A B" -> [1, !A, B]
-
         ArrayList<String> out = new ArrayList<String>();
         boolean isExclaimed = false;
 
@@ -51,9 +60,20 @@ public class SequenceParser
 
         return out;
     }
-
-    // 1AB
-    // 1, 1A, A, AB, B
+    
+    /**
+     * Parse an autonomous sequence string into the commands which it will execute.
+     * 
+     * First, this method lexes the inpur using {@link #lex(String)}, then
+     * generates the list of commands which the sequence will compris, including
+     * both actions like "A" or "B" and transitions like "AB" and "1C".
+     * 
+     * Skips any commands attributed with '!'.
+     * 
+     * @param str The autonomous sequence string
+     * @return A list which contains identifiers for the commands which comprise the autonomous routine, 
+     * or null if lexing or parsing fails
+     */
     public static ArrayList<String> parse(String str) 
     {
         // Lex

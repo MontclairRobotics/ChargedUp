@@ -1,12 +1,21 @@
 package frc.robot.structure.helpers;
 
+/**
+ * Handle general logging for the robot.
+ */
 public class Logging 
 {
+    /**
+     * The amount of logs that can be reported by {@link #logString()} into a single message.
+     */
     public static final int LOG_CAPACITY = 100;
 
     private static String[] logs = new String[LOG_CAPACITY];
     private static int currentLog = 0;
 
+    /**
+     * Add a log to the list to be reported from.
+     */
     private static void addLog(String s)
     {
         if(currentLog < LOG_CAPACITY)
@@ -25,6 +34,10 @@ public class Logging
         }
     }
 
+    /**
+     * Get a report of the most recent logs, capped at {@link #LOG_CAPACITY}.
+     * Seperates each log by a newline.
+     */
     public static String logString()
     {
         StringBuilder s = new StringBuilder();
@@ -38,6 +51,9 @@ public class Logging
         return s.toString();
     }
 
+    /**
+     * Print and store an informational log.
+     */
     public static void info(String message)
     {
         String s = "[INFO]: " + message;
@@ -45,6 +61,10 @@ public class Logging
         System.out.println(ConsoleColors.WHITE_BRIGHT + s + ConsoleColors.RESET);
         addLog(s);
     }
+    
+    /**
+     * Print and store a warning log.
+     */
     public static void warning(String message)
     {
         String s = "[WARNING]: " + message;
@@ -52,6 +72,10 @@ public class Logging
         System.out.println(ConsoleColors.YELLOW_UNDERLINED + s + ConsoleColors.RESET);
         addLog(s);
     }
+    
+    /**
+     * Print and store an erroneous log.
+     */
     public static void error(String message)
     {
         String s = "[ERROR]: " + message;
@@ -59,6 +83,10 @@ public class Logging
         System.out.println(ConsoleColors.RED_UNDERLINED + s + ConsoleColors.RESET);
         addLog(s);
     }
+    
+    /**
+     * Print and store a fatal log.
+     */
     public static void fatal(String message)
     {
         String s = "[FATAL]: " + message;

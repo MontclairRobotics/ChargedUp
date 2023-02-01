@@ -3,11 +3,13 @@ package frc.robot.structure.animation;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 
+/**
+ * An animation which wipes from one color to another (without any blurring).
+ */
 public class WipeAnimation extends Animation 
 {
     private Color oldColor;
     private Color newColor;
-    private int index = 0;
 
     public WipeAnimation(double time, Color oldColor, Color newColor) 
     {
@@ -18,12 +20,13 @@ public class WipeAnimation extends Animation
 
     public void run(AddressableLEDBuffer ledBuffer) 
     {
+        final int wipeOffset = (int)(ledBuffer.getLength() * percentFinished());
+
         fill(ledBuffer, oldColor);
-        for (int i = 0; i < index; i++) {
+
+        for (int i = 0; i < wipeOffset; i++) 
+        {
             ledBuffer.setLED(i, newColor);
-
         }
-        index += 3;
-
     }
 }

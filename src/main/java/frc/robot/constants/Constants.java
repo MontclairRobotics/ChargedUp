@@ -1,6 +1,7 @@
 package frc.robot.constants;
 
 import com.pathplanner.lib.auto.PIDConstants;
+import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
 
 import java.text.FieldPosition;
@@ -33,6 +34,14 @@ public final class Constants
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int GRABBER_SOLENOID_PORT = 0;
     }
+
+    public static final MechanicalConfiguration CONFIGURATION = new MechanicalConfiguration(
+        Drivebase.WHEEL_DIAMETER_METER, 
+        8.14, 
+        false, 
+        8.14, 
+        false
+    );
 
     public static class Drive
     {

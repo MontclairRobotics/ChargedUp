@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 
 /**
- * An animation which simply fills the led buffer with a provided color for some amount of time
+ * An animation which simply fills the led buffer with a provided color for some amount of time.
  */
 public class SolidAnimation extends Animation
 {
