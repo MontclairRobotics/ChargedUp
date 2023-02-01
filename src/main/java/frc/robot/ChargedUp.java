@@ -85,11 +85,10 @@ public class ChargedUp extends RobotContainer
                 led.add(new RainbowAnimation(2));
                 Logging.info("bruh");
             }));
-        // Shuffleboard.getTab("Main")
-        //     .add("Field", field)
-        //     .withSize(4, 2)
-        //     .withPosition(0, 2);
-
+        //Shuffleboard.getTab("Main")
+        //  .add("Field", field)
+        //    .withSize(4, 2)
+        //    .withPosition(0, 2);
       
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() ->
@@ -107,7 +106,9 @@ public class ChargedUp extends RobotContainer
             },
             drivetrain
         ));
-
+            /** 
+             * Buttons for Field Relative and Speed
+             */
         driverController.getButton(Button.A_CROSS)
             .toggleOnTrue(drivetrain.commands.enableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
@@ -116,7 +117,9 @@ public class ChargedUp extends RobotContainer
             .toggleOnTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
             .toggleOnTrue(drivetrain.commands.decreaseSpeed());
-
+            /**
+             * Button to Zero NavX
+             */ 
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
 
@@ -145,7 +148,7 @@ public class ChargedUp extends RobotContainer
                 operatorController, 
                 false, 
                 false);
-            Robot.STINGER_JOYSTICK_ADJUSTER.adjustX(right);
+            Robot.Stinger.STINGER_JOYSTICK_ADJUSTER.adjustX(right);
             stinger.setSpeed(right.getX());
         }));
 
@@ -154,55 +157,60 @@ public class ChargedUp extends RobotContainer
             .toggleOnTrue(Commands2023.toggleGrabber());
 
         // Schwooper 
+        /**
+         * button to suck
+         */ 
         operatorController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSuck())
             .onFalse(Commands2023.stopShwooper());
-        
+        /**
+         * button to blow
+         */ 
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSpit())
             .onFalse(Commands2023.stopShwooper());
-
+        /**
+         * toggles shwooper
+         */
         operatorController.getButton(Button.X_SQUARE)
             .toggleOnTrue(Commands2023.toggleShwooper());
 
         //Elevator 
-        // operatorController.getButton(Button.X_SQUARE)
-        //     .whenActive(() -> elevator.elevate()) 
-        //     .whenInactive(() -> elevator.stop());
+        //operatorController.getButton(Button.X_SQUARE)
+        //    .whenActive(() -> elevator.elevate()) 
+        //    .whenInactive(() -> elevator.stop());
 
-        // operatorController.getButton(Button.A_CROSS)
-        //     .whenActive(() -> elevator.delevate()) 
-        //     .whenInactive(() -> elevator.stop());
+        //operatorController.getButton(Button.A_CROSS)
+        //    .whenActive(() -> elevator.delevate()) 
+        //    .whenInactive(() -> elevator.stop());
 
-        // using dylan's code base: v complicated
+        //using dylan's code base: v complicated
         elevator.setDefaultCommand(Commands.run(() -> {
             JoystickInput left = JoystickInput.getLeft(
                 operatorController, 
                 false, 
                 false);
-            Robot.ELEVATOR_JOY_ADJUSTER.adjustY(left);
+            Robot.Elevator.ELEVATOR_JOY_ADJUSTER.adjustY(left);
             elevator.setSpeed(left.getY());
         }));
 
         // HANDLE AUTO //
-        // AutoCommands.add("Main", () -> CommandGroupBase.sequence(
-        //     Commands.print("Starting main auto"),
-        //     drivetrain.commands.driveForTime(2, 1, 0, 1),
-        //     Commands.print("Ending the main auto"),
-        //     drivetrain.commands.driveInstant(0, 0, 0)
-        // ));
-
+        //AutoCommands.add("Main", () -> CommandGroupBase.sequence(
+        //    Commands.print("Starting main auto"),
+        //    drivetrain.commands.driveForTime(2, 1, 0, 1),
+        //    Commands.print("Ending the main auto"),
+        //    drivetrain.commands.driveInstant(0, 0, 0)
+        //));
         initAuto();
 
         // Shuffleboard.getTab("Main")
-        //     .add("Auto Commands", AutoCommands.chooser())
-        //     .withSize(2, 1)
-        //     .withPosition(5, 0);
-
+        //    .add("Auto Commands", AutoCommands.chooser())
+        //    .withSize(2, 1)
+        //    .withPosition(5, 0);
     }
-
+    // Test line
     private void initAuto()
     {
         Command cmd = drivetrain.commands.auto(

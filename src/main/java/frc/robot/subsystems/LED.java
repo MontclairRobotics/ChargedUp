@@ -19,7 +19,7 @@ import frc.robot.structure.animation.*;
 
 public class LED extends ManagerBase 
 {
-    private AddressableLED led = new AddressableLED(Constants.Robot.LED_PWM_PORT);
+    private AddressableLED led = new AddressableLED(Constants.Robot.LED.LED_PWM_PORT);
     private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(150);
 
     private GamePiece gamePiece = GamePiece.NONE;
