@@ -42,6 +42,7 @@ public abstract class Animation
         timer.reset();
         timer.start();
     }
+
     /**
      * Pauses execution of this animation
      */
@@ -49,6 +50,7 @@ public abstract class Animation
     {
         timer.stop();
     }
+
     /**
      * Resumes execution of this animation.
      * This does nothing if the animation is already running
@@ -57,6 +59,7 @@ public abstract class Animation
     {
         timer.start();
     }
+    
     /**
      * Checks if this animation has completed.
      * Always returns {@code false} if this animation has a length of {@link Double#POSITIVE_INFINITY}
