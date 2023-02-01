@@ -56,7 +56,7 @@ public class Commands2023
     {
         CommandBase x = Commands.parallel 
         (
-            armGoToAngle(Robot.ARM_RETURN_POSITION),
+            armGoToAngle(Robot.Arm.ARM_RETURN_POSITION),
             armGoToLength(0)
         );
 
@@ -71,8 +71,8 @@ public class Commands2023
     {
         CommandBase x = parallel 
         (
-            armGoToAngle(Robot.ARM_MID_PEG_ANGLE),
-            armGoToLength(Robot.ARM_MID_LENGTH)
+            armGoToAngle(Robot.Arm.ARM_MID_PEG_ANGLE),
+            armGoToLength(Robot.Arm.ARM_MID_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -87,8 +87,8 @@ public class Commands2023
     {
         CommandBase x = parallel
         (
-            armGoToAngle(Robot.ARM_HIGH_PEG_ANGLE),
-            armGoToLength(Robot.ARM_HIGH_LENGTH)
+            armGoToAngle(Robot.Arm.ARM_HIGH_PEG_ANGLE),
+            armGoToLength(Robot.Arm.ARM_HIGH_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -103,8 +103,8 @@ public class Commands2023
     {
         CommandBase x = parallel
         (
-            armGoToAngle(Robot.ARM_MID_SHELF_ANGLE),
-            armGoToLength(Robot.ARM_MID_LENGTH)
+            armGoToAngle(Robot.Arm.ARM_MID_SHELF_ANGLE),
+            armGoToLength(Robot.Arm.ARM_MID_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -120,8 +120,8 @@ public class Commands2023
     {
         CommandBase x = parallel
         (
-            armGoToAngle(Robot.ARM_HIGH_SHELF_ANGLE),
-            armGoToLength(Robot.ARM_HIGH_LENGTH)
+            armGoToAngle(Robot.Arm.ARM_HIGH_SHELF_ANGLE),
+            armGoToLength(Robot.Arm.ARM_HIGH_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -411,7 +411,7 @@ public class Commands2023
 
             // Suck it
             shwooperSuck(),
-            waitSeconds(Robot.INTAKE_SUCK_TIME),
+            waitSeconds(Robot.Shwooper.INTAKE_SUCK_TIME),
             stopShwooper(),
 
             // Grab it
