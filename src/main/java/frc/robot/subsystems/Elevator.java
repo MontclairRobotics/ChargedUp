@@ -11,15 +11,15 @@ import frc.robot.constants.Constants.*;
 import frc.robot.structure.PIDMechanism;
 
 public class Elevator extends ManagerSubsystemBase {
-    private CANSparkMax motor = new CANSparkMax(Robot.Elevator.ELEVATOR_MOTOR_PORT, MotorType.kBrushless);
+    private CANSparkMax motor = new CANSparkMax(Robot.Elevator.MOTOR_PORT, MotorType.kBrushless);
 
-    PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.elevatorUpDown());
+    PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.updown());
     RelativeEncoder elevatorEncoder = motor.getEncoder();
     
     public Elevator()
     {
-        motor.setInverted(Robot.Elevator.ELEVATOR_INVERTED);
-        elevatorEncoder.setPositionConversionFactor(Robot.Elevator.ELEVATOR_UP_DOWN_CONVERSION_FACTOR);
+        motor.setInverted(Robot.Elevator.INVERTED);
+        elevatorEncoder.setPositionConversionFactor(Robot.Elevator.UP_DOWN_CONVERSION_FACTOR);
     }
 
     /**
@@ -28,24 +28,24 @@ public class Elevator extends ManagerSubsystemBase {
      */
     private void setHeight(double height)
     {
-        if (height > Robot.Elevator.ELEVATOR_MAX_HEIGHT) {
-            height = Robot.Elevator.ELEVATOR_MAX_HEIGHT;
+        if (height > Robot.Elevator.MAX_HEIGHT) {
+            height = Robot.Elevator.MAX_HEIGHT;
         }
         elevatorPID.setTarget(height);
     }
     /**
-     * Set the elevator to {@link Robot#ELEVATOR_HIGH_HEIGHT the high height}
+     * Set the elevator to {@link Robot#HIGH_HEIGHT the high height}
      */
     public void setHigh()
     {
-        setHeight(Robot.Elevator.ELEVATOR_HIGH_HEIGHT);
+        setHeight(Robot.Elevator.HIGH_HEIGHT);
     }
     /**
-     * Set the elevator to {@link Robot#ELEVATOR_MID_HEIGHT the middle height}
+     * Set the elevator to {@link Robot#MID_HEIGHT the middle height}
      */
     public void setMid()
     {
-        setHeight(Robot.Elevator.ELEVATOR_MID_HEIGHT);
+        setHeight(Robot.Elevator.MID_HEIGHT);
     }
     /**
      * Set elevator to LOW position
@@ -57,19 +57,19 @@ public class Elevator extends ManagerSubsystemBase {
 
 
     /**
-     * Raise elevator height manually at the negative {@link Robot#ELEVATOR_SPEED elevator speed constant}
+     * Raise elevator height manually at the negative {@link Robot#UP_DOWN_SPEED elevator speed constant}
      */
     public void delevate()
     {
-        elevatorPID.setSpeed(-Robot.Elevator.ELEVATOR_SPEED);
+        elevatorPID.setSpeed(-Robot.Elevator.SPEED);
     }
 
     /**
-     * Lower elevator height manually at the {@link Robot#ELEVATOR_SPEED elevator speed constant}
+     * Lower elevator height manually at the {@link Robot#UP_DOWN_SPEED elevator speed constant}
      */
     public void elevate()
     {
-        elevatorPID.setSpeed(Robot.Elevator.ELEVATOR_SPEED);
+        elevatorPID.setSpeed(Robot.Elevator.SPEED);
     }
 
     /**

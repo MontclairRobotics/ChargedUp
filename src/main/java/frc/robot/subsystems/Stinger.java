@@ -12,13 +12,13 @@ import frc.robot.constants.Constants.Robot;
 import frc.robot.structure.PIDMechanism;
 
 public class Stinger extends ManagerSubsystemBase{
-    public final CANSparkMax stingerMotor = new CANSparkMax (Robot.Stinger.STINGER_PORT, MotorType.kBrushless);
-    PIDMechanism StingerPID = new PIDMechanism(Robot.Stinger.stingerInOut());
+    public final CANSparkMax stingerMotor = new CANSparkMax (Robot.Stinger.MOTOR_PORT, MotorType.kBrushless);
+    PIDMechanism StingerPID = new PIDMechanism(Robot.Stinger.inout());
     RelativeEncoder StingerEncoder = stingerMotor.getEncoder();
 
     public Stinger()
     {
-        StingerEncoder.setPositionConversionFactor(Robot.Stinger.STINGER_IN_OUT_CONVERSION_FACTOR);
+        StingerEncoder.setPositionConversionFactor(Robot.Stinger.IN_OUT_CONVERSION_FACTOR);
     }
     /**
      * Extends Stinger to a desired length
@@ -26,23 +26,23 @@ public class Stinger extends ManagerSubsystemBase{
      */
     private void extendToLength(double length)
     {
-        if (length > Robot.Stinger.STINGER_EXTENSION_LENGTH)
-            length = Robot.Stinger.STINGER_EXTENSION_LENGTH;
+        if (length > Robot.Stinger.EXT_LENGTH)
+            length = Robot.Stinger.EXT_LENGTH;
         StingerPID.setTarget(length);
     }
     /**
-     * Extend the stinger to the {@link Robot#STINGER_HIGH_LENGTH the high Length}
+     * Extend the stinger to the {@link Robot#HIGH_LENGTH_MUL the high Length}
      */
     public void toHigh()
     {
-        extendToLength(Robot.Stinger.STINGER_HIGH_LENGTH);
+        extendToLength(Robot.Stinger.HIGH_LENGTH_MUL);
     }
     /**
-     * Extend the stinger to the {@link Robot#STINGER_MID_LENGTH the middle Length}
+     * Extend the stinger to the {@link Robot#MID_LENGTH_MUL the middle Length}
      */
     public void toMid()
     {
-        extendToLength(Robot.Stinger.STINGER_MID_LENGTH);
+        extendToLength(Robot.Stinger.MID_LENGTH_MUL);
     }
     /**
      *  Fully Retracts Stinger
@@ -52,18 +52,18 @@ public class Stinger extends ManagerSubsystemBase{
         StingerPID.setTarget(0);
     }
     /**
-     * Manually extends Stinger at {@link Robot#STINGER_SPEED the Stinger Speed} 
+     * Manually extends Stinger at {@link Robot#UP_DOWN_SPEED the Stinger Speed} 
      */
     public void startExtending()
     {
-        StingerPID.setSpeed(Robot.Stinger.STINGER_SPEED);
+        StingerPID.setSpeed(Robot.Stinger.SPEED);
     }
     /**
-     * Manually retracts Stinger at the negative of {@link Robot#STINGER_SPEED the Stinger Speed}
+     * Manually retracts Stinger at the negative of {@link Robot#UP_DOWN_SPEED the Stinger Speed}
      */
     public void startRetracting()
     {
-        StingerPID.setSpeed(-Robot.Stinger.STINGER_SPEED);
+        StingerPID.setSpeed(-Robot.Stinger.SPEED);
     }
     /**
      * Stops the Stinger

@@ -56,7 +56,7 @@ public class Commands2023
     {
         CommandBase x = Commands.parallel 
         (
-            armGoToAngle(Robot.Arm.ARM_RETURN_POSITION),
+            armGoToAngle(Robot.Arm.RETURN_POSITION),
             armGoToLength(0)
         );
 
@@ -71,8 +71,8 @@ public class Commands2023
     {
         CommandBase x = parallel 
         (
-            armGoToAngle(Robot.Arm.ARM_MID_PEG_ANGLE),
-            armGoToLength(Robot.Arm.ARM_MID_LENGTH)
+            armGoToAngle(Robot.Arm.MID_PEG_ANGLE),
+            armGoToLength(Robot.Arm.MID_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -87,8 +87,8 @@ public class Commands2023
     {
         CommandBase x = parallel
         (
-            armGoToAngle(Robot.Arm.ARM_HIGH_PEG_ANGLE),
-            armGoToLength(Robot.Arm.ARM_HIGH_LENGTH)
+            armGoToAngle(Robot.Arm.HIGH_PEG_ANGLE),
+            armGoToLength(Robot.Arm.HIGH_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -103,8 +103,8 @@ public class Commands2023
     {
         CommandBase x = parallel
         (
-            armGoToAngle(Robot.Arm.ARM_MID_SHELF_ANGLE),
-            armGoToLength(Robot.Arm.ARM_MID_LENGTH)
+            armGoToAngle(Robot.Arm.MID_SHELF_ANGLE),
+            armGoToLength(Robot.Arm.MID_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -120,8 +120,8 @@ public class Commands2023
     {
         CommandBase x = parallel
         (
-            armGoToAngle(Robot.Arm.ARM_HIGH_SHELF_ANGLE),
-            armGoToLength(Robot.Arm.ARM_HIGH_LENGTH)
+            armGoToAngle(Robot.Arm.HIGH_SHELF_ANGLE),
+            armGoToLength(Robot.Arm.HIGH_LENGTH)
         );
 
         x.addRequirements(ChargedUp.arm);
@@ -196,9 +196,9 @@ public class Commands2023
     /**
      * Moves the Elevator and Stinger to High position simultaneously
      * <p>
-     * Elevator goes to {@link Robot#ELEVATOR_HIGH_HEIGHT High Height Constant}
+     * Elevator goes to {@link Robot#HIGH_HEIGHT High Height Constant}
      * <p>
-     * Stinger goes to {@link Robot#STINGER_HIGH_LENGTH High Length Constant}
+     * Stinger goes to {@link Robot#HIGH_LENGTH_MUL High Length Constant}
      * @return Command
      */
     public static Command elevatorStingerToHigh()
@@ -215,9 +215,9 @@ public class Commands2023
     /**
      * Moves the Elevator and Stinger to MID position simultaneously
      * <p>
-     * Elevator goes to {@link Robot#ELEVATOR_MID_HEIGHT High Height Constant}
+     * Elevator goes to {@link Robot#MID_HEIGHT High Height Constant}
      * <p>
-     * Stinger goes to {@link Robot#STINGER_MID_LENGTH High Length Constant}
+     * Stinger goes to {@link Robot#MID_LENGTH_MUL High Length Constant}
      * @return Command
      */
     public static Command elevatorStingerToMid()
@@ -420,7 +420,7 @@ public class Commands2023
 
             // Suck it
             shwooperSuck(),
-            waitSeconds(Robot.Shwooper.INTAKE_SUCK_TIME),
+            waitSeconds(Robot.Shwooper.SUCK_TIME_FOR_PICKUP_AUTO),
             stopShwooper(),
 
             // Grab it

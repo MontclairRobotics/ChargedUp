@@ -148,103 +148,136 @@ public final class Constants
 
         public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
 
-
         public static class Elevator 
         {
-            public static final double ELEVATOR_SPEED = 0.1;  //TODO: Tweak these values
-            public static final int ELEVATOR_MOTOR_PORT = 4;
-            public static final boolean ELEVATOR_INVERTED = false;
-            public static final double ELEVATOR_MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
-            public static final double ELEVATOR_MID_HEIGHT = 0.5;
-            public static final double ELEVATOR_HIGH_HEIGHT = 1;
-            public static final double ELEVATOR_UP_DOWN_CONVERSION_FACTOR = -1;
-            public static final double ELEVATOR_DEADBAND = 0.05;
-            public static final JoystickAdjuster ELEVATOR_JOY_ADJUSTER = new JoystickAdjuster(ELEVATOR_DEADBAND, 2.2);            
+            public static final int MOTOR_PORT = 4;
+            public static final boolean INVERTED = false;
+
+            public static final double SPEED = 0.1;  //TODO: Tweak these values
+
+            public static final double MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
+            public static final double MID_HEIGHT = 0.5;
+            public static final double HIGH_HEIGHT = 1;
+
+            public static final double UP_DOWN_CONVERSION_FACTOR = -1;
+
+            public static final double DEADBAND = 0.05;
+            public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
+
             public static final double 
-                ELEVATOR_UP_DOWN_KP = 1,
-                ELEVATOR_UP_DOWN_KI = 1,
-                ELEVATOR_UP_DOWN_KD = 1
+                UP_DOWN_KP = 1,
+                UP_DOWN_KI = 1,
+                UP_DOWN_KD = 1
             ;
-            public static final PIDController elevatorUpDown() 
+
+            public static final PIDController updown() 
             {
-                return new PIDController(ELEVATOR_UP_DOWN_KP, ELEVATOR_UP_DOWN_KI, ELEVATOR_UP_DOWN_KD);
+                return new PIDController(UP_DOWN_KP, UP_DOWN_KI, UP_DOWN_KD);
             }
-        }        
+        }
+
         public static class Shwooper 
         {
-            public static final int INTAKE_PORT = 0;
-            public static final int INTAKE_PNEU_PORT = 2;
-            public static final double INTAKE_SPEED = 0.5;
-            public static final boolean INTAKE_INVERSION = false;
-            public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
-            public static final double INTAKE_SUCK_TIME = 1;
-        }   
+            public static final int PORT = 0;
+            public static final int PNEU_PORT = 2;
+
+            public static final boolean SOLENOID_DEFAULT_STATE = false;
+
+            public static final double SPEED = 0.5;
+            public static final boolean INVERSION = false;
+
+            public static final double SUCK_TIME_FOR_PICKUP_AUTO = 1;
+        }  
+
         public static class Grabber 
         {
-            public static final boolean GRABBER_SOLENOID_DEFAULT_STATE = false;
+            public static final boolean SOLENOID_DEFAULT_STATE = false;
         }
+
         public static class LED 
         {
-            public static final int LED_PWM_PORT = 9;
+            public static final int PWM_PORT = 9;
         }
+
         public static class Stinger 
         {
-            public static final int STINGER_PORT = 0;
+            public static final int MOTOR_PORT = 0;
+
             public static final double
-                STINGER_IN_OUT_KP = 1,
-                STINGER_IN_OUT_KI = 0,
-                STINGER_IN_OUT_KD = 0
+                IN_OUT_KP = 1,
+                IN_OUT_KI = 0,
+                IN_OUT_KD = 0
             ;
-            public static final double STINGER_IN_OUT_CONVERSION_FACTOR = -1;
-            public static final double STINGER_MID_LENGTH = 0.5;
-            public static final double STINGER_HIGH_LENGTH = 1;
-            public static final double STINGER_EXTENSION_LENGTH = Units.feetToMeters(52.0/12); // 52 inches
-            public static PIDController stingerInOut()
+            
+            public static final PIDController inout()
             {
-                return new PIDController(STINGER_IN_OUT_KP,STINGER_IN_OUT_KI,STINGER_IN_OUT_KD);
+                return new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
             }
-            public static final double STINGER_SPEED = 1;
-            public static final double STINGER_DEADBAND = 0.05;
-            public static final JoystickAdjuster STINGER_JOYSTICK_ADJUSTER = new JoystickAdjuster(STINGER_DEADBAND, 2);
+
+            public static final double IN_OUT_CONVERSION_FACTOR = -1;
+
+            public static final double MID_LENGTH_MUL = 0.5;
+            public static final double HIGH_LENGTH_MUL = 1;
+
+            public static final double EXT_LENGTH = Units.feetToMeters(52.0/12); // 52 inches
+
+            public static final double SPEED = 1;
+            public static final double DEADBAND = 0.05;
+
+            public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2);
         }
+
         public static class Arm 
         {
-            public static final double ARM_SPEED = 0.5;
-            public static final int ARM_UP_DOWN_PORT = 4;
-            public static final int ARM_IN_OUT_PORT = -1;
-            public static final double ARM_IN_OUT_SPEED = 0.5;
+            public static final double UP_DOWN_SPEED = 0.5;
+            public static final double IN_OUT_SPEED = 0.5;
+            
+            public static final int UP_DOWN_PORT = 4;
+            public static final int IN_OUT_PORT = -1;
+
             public static final double 
-                ARM_IN_OUT_KP = 1,
-                ARM_IN_OUT_KI = 0,
-                ARM_IN_OUT_KD = 0
+                IN_OUT_KP = 1,
+                IN_OUT_KI = 0,
+                IN_OUT_KD = 0
             ;
-            public static final double ARM_IN_OUT_POSITION_CONVERSION_FACTOR = -1;
-            public static PIDController armInOut()
+
+            public static final double IN_OUT_POSITION_CONVERSION_FACTOR = -1;
+
+            public static final PIDController inout()
             {
-                return new PIDController(ARM_IN_OUT_KP, ARM_IN_OUT_KI, ARM_IN_OUT_KD);
+                return new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
             }
+
             public static final double 
-                ARM_UP_DOWN_KP = 1,
-                ARM_UP_DOWN_KI = 0,
-                ARM_UP_DOWN_KD = 0
+                UP_DOWN_KP = 1,
+                UP_DOWN_KI = 0,
+                UP_DOWN_KD = 0
             ;
-            public static final double ARM_UP_DOWN_POSITION_CONVERSION_FACTOR = -1;
-            public static PIDController armUpDown(){//I AM RIGHT
-                PIDController pid = new PIDController(ARM_UP_DOWN_KP, ARM_UP_DOWN_KI, ARM_UP_DOWN_KD);
+
+            public static final double UP_DOWN_POSITION_CONVERSION_FACTOR = -1;
+
+            public static PIDController updown()
+            {
+                PIDController pid = new PIDController(UP_DOWN_KP, UP_DOWN_KI, UP_DOWN_KD);
                 pid.enableContinuousInput(-Math.PI, Math.PI);
                 return pid;
             }
+
             //arm commands angles and lengths 
-            public static final double ARM_RETURN_POSITION = 0;
+            public static final double RETURN_POSITION = 0;
+
             //in theory the length extension should be the same for pegs and shelves
-            public static final double ARM_MID_LENGTH = 0.5; //to be changed when arm is constructed (currently in m)
-            public static final double ARM_HIGH_LENGTH = 1; // ^^^^
-            public static final double ARM_MID_PEG_ANGLE = Rotation2d.fromDegrees(90).getRadians();
-            public static final double ARM_HIGH_PEG_ANGLE = Rotation2d.fromDegrees(120).getRadians();
-            public static final double ARM_MID_SHELF_ANGLE = Rotation2d.fromDegrees(95).getRadians();
-            public static final double ARM_HIGH_SHELF_ANGLE = Rotation2d.fromDegrees(125).getRadians();
+            public static final double MID_LENGTH = 0.5; //to be changed when arm is constructed (currently in m)
+            public static final double HIGH_LENGTH = 1; // ^^^^
+
+            public static final double MID_PEG_ANGLE = Rotation2d.fromDegrees(90).getRadians();
+            public static final double MID_SHELF_ANGLE = Rotation2d.fromDegrees(95).getRadians();
+
+            public static final double HIGH_PEG_ANGLE = Rotation2d.fromDegrees(120).getRadians();
+            public static final double HIGH_SHELF_ANGLE = Rotation2d.fromDegrees(125).getRadians();
         }       
     }
+    
     public static class ControlScheme
     {
         public static final GameController.Type OPERATOR_CONTROLLER_TYPE = GameController.Type.PS4;
@@ -253,11 +286,12 @@ public final class Constants
         public static final int OPERATOR_CONTROLLER_PORT = 0;
         public static final int DRIVER_CONTROLLER_PORT   = 1;
 
-        public static final double DEADBAND = 0.05;
+        public static final double DRIVE_DEADBAND = 0.05;
         
-        public static final JoystickAdjuster DRIVE_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);
-        public static final JoystickAdjuster TURN_ADJUSTER  = new JoystickAdjuster(DEADBAND, 1.5);
+        public static final JoystickAdjuster DRIVE_ADJUSTER = new JoystickAdjuster(DRIVE_DEADBAND, 2.2);
+        public static final JoystickAdjuster TURN_ADJUSTER  = new JoystickAdjuster(DRIVE_DEADBAND, 1.5);
     }
+
     public static class Field
     {
         public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???

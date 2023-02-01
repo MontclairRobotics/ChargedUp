@@ -14,12 +14,12 @@ public class Grabber extends ManagerSubsystemBase {
     
     public void grab() 
     {
-        solenoid.set(!Constants.Robot.Grabber.GRABBER_SOLENOID_DEFAULT_STATE);
+        solenoid.set(!Constants.Robot.Grabber.SOLENOID_DEFAULT_STATE);
     }
 
     public void release() 
     {
-        solenoid.set(Constants.Robot.Grabber.GRABBER_SOLENOID_DEFAULT_STATE);
+        solenoid.set(Constants.Robot.Grabber.SOLENOID_DEFAULT_STATE);
     }
 
     /**

@@ -14,13 +14,13 @@ import frc.robot.constants.Constants.*;
 
 public class Shwooper extends ManagerSubsystemBase {
 
-    private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Robot.Shwooper.INTAKE_PNEU_PORT);
+    private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Robot.Shwooper.PNEU_PORT);
 
-    private final CANSparkMax intakeMotor = new CANSparkMax(Robot.Shwooper.INTAKE_PORT, MotorType.kBrushless);
+    private final CANSparkMax intakeMotor = new CANSparkMax(Robot.Shwooper.PORT, MotorType.kBrushless);
         // INTAKE PORT HAS NO VALUE
     public Shwooper() 
     {
-        intakeMotor.setInverted(Robot.Shwooper.INTAKE_INVERSION);
+        intakeMotor.setInverted(Robot.Shwooper.INVERSION);
     }
 
     /**
@@ -28,14 +28,14 @@ public class Shwooper extends ManagerSubsystemBase {
     */
     public void suck() 
     {
-        intakeMotor.set(Robot.Shwooper.INTAKE_SPEED);
+        intakeMotor.set(Robot.Shwooper.SPEED);
     }
     /**
     * intake start spitting
     */
     public void spit() 
     {
-        intakeMotor.set(-Robot.Shwooper.INTAKE_SPEED);
+        intakeMotor.set(-Robot.Shwooper.SPEED);
     }
     /**
     * stop the intake
@@ -47,12 +47,12 @@ public class Shwooper extends ManagerSubsystemBase {
 
     public void extend() 
     {
-        shwooperSolenoid.set(!Robot.Shwooper.SHWOOPER_SOLENOID_DEFAULT_STATE);
+        shwooperSolenoid.set(!Robot.Shwooper.SOLENOID_DEFAULT_STATE);
     }
 
     public void retract() 
     {
-        shwooperSolenoid.set(Robot.Shwooper.SHWOOPER_SOLENOID_DEFAULT_STATE);
+        shwooperSolenoid.set(Robot.Shwooper.SOLENOID_DEFAULT_STATE);
     }
 
     /**

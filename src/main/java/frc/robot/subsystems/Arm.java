@@ -12,27 +12,27 @@ import frc.robot.structure.PIDMechanism;
 public class Arm extends ManagerSubsystemBase{
 
     
-    CANSparkMax armUpDown = new CANSparkMax(Robot.Arm.ARM_UP_DOWN_PORT, MotorType.kBrushless);
-    CANSparkMax armInOut = new CANSparkMax(Robot.Arm.ARM_IN_OUT_PORT, MotorType.kBrushless);
+    CANSparkMax armUpDown = new CANSparkMax(Robot.Arm.UP_DOWN_PORT, MotorType.kBrushless);
+    CANSparkMax armInOut = new CANSparkMax(Robot.Arm.IN_OUT_PORT, MotorType.kBrushless);
 
-    PIDMechanism armInOutPID = new PIDMechanism(Robot.Arm.armInOut());
+    PIDMechanism armInOutPID = new PIDMechanism(Robot.Arm.inout());
     RelativeEncoder armInOutEncoder = armInOut.getEncoder();
     
-    PIDMechanism armUpDownPID = new PIDMechanism(Robot.Arm.armUpDown());
+    PIDMechanism armUpDownPID = new PIDMechanism(Robot.Arm.updown());
     RelativeEncoder armUpDownEncoder = armUpDown.getEncoder();
 
     public Arm()
     {
-        armInOutEncoder.setPositionConversionFactor(Robot.Arm.ARM_IN_OUT_POSITION_CONVERSION_FACTOR);
-        armUpDownEncoder.setPositionConversionFactor(Robot.Arm.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
+        armInOutEncoder.setPositionConversionFactor(Robot.Arm.IN_OUT_POSITION_CONVERSION_FACTOR);
+        armUpDownEncoder.setPositionConversionFactor(Robot.Arm.UP_DOWN_POSITION_CONVERSION_FACTOR);
     }
 
     /**
-     * rotates the arm with the armUpDown motor at {@link Robot#ARM_SPEED arm speed constant}
+     * rotates the arm with the armUpDown motor at {@link Robot#UP_DOWN_SPEED arm speed constant}
      */
     public void rotateWithSpeed(double speed)
     {
-        armUpDownPID.setSpeed(speed * Robot.Arm.ARM_SPEED);
+        armUpDownPID.setSpeed(speed * Robot.Arm.UP_DOWN_SPEED);
     }
 
     /**
@@ -55,19 +55,19 @@ public class Arm extends ManagerSubsystemBase{
     }
 
     /**
-     * extends the arm out using armInOut motor at {@link Robot#ARM_IN_OUT_SPEED arm speed constant} 
+     * extends the arm out using armInOut motor at {@link Robot#IN_OUT_SPEED arm speed constant} 
      */
     public void startExtending()
     {
-        armInOutPID.setSpeed(Robot.Arm.ARM_IN_OUT_SPEED);
+        armInOutPID.setSpeed(Robot.Arm.IN_OUT_SPEED);
     }
 
     /**
-     * retracts the arm using armInOut motor at -{@link Robot#ARM_IN_OUT_SPEED arm speed constant}
+     * retracts the arm using armInOut motor at -{@link Robot#IN_OUT_SPEED arm speed constant}
      */
     public void startRetracting()
     {
-        armInOutPID.setSpeed(-Robot.Arm.ARM_IN_OUT_SPEED);
+        armInOutPID.setSpeed(-Robot.Arm.IN_OUT_SPEED);
     }
 
     /**
