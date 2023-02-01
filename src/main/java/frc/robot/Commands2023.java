@@ -271,14 +271,19 @@ public class Commands2023
 
     // GRABBER COMMANDS
     
-    public static Command openGrabber() {
+    /**
+     * Closes the Grabber
+     */ 
+    public static Command closeGrabber() {
         return Commands.runOnce(() -> {
             ChargedUp.grabber.grab();
         });
 
      }
-
-    public static Command closeGrabber() {
+     /**
+      * Opens the grabber
+      */
+    public static Command openGrabber() {
         return Commands.runOnce(() -> {
             ChargedUp.grabber.release();
         });
@@ -296,12 +301,12 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.grabber::toggle);
     }
-    
+    // grabs 
     public static Command grabGrabber()
     {
         return Commands.runOnce(ChargedUp.grabber::grab);
     }
-    
+    // releases the grabber
     public static Command releaseGrabber()
     {
         return Commands.runOnce(ChargedUp.grabber::release);
@@ -345,12 +350,16 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.shwooper::toggle);
     }
-
+    /**
+     * retracts shwooper
+     */ 
     public static Command retractSchwooper()
     {
         return Commands.runOnce(ChargedUp.shwooper::retract);
     }
-    
+    /** 
+     * extends shwooper
+     */  
     public static Command extendSchwooper()
     {
         return Commands.runOnce(ChargedUp.shwooper::extend);
@@ -383,7 +392,7 @@ public class Commands2023
         return Commands.runOnce(ChargedUp.shwooper::stop);
     }
     
-
+    // picks up objects and raises the elevator to the middle after picking the object up
     public static Command pickup() 
     {
         // SEQUENCE //
@@ -422,17 +431,21 @@ public class Commands2023
             retractSchwooper()
         );
     }
-
+    /**
+     * Moves stinger to the highest pole and opens the grabber
+     */
     public static Command score()
     {
         CommandBase c = Commands.sequence(
-            // Prepare position
+            
+            //Prepare position
+            
             elevatorStingerToHigh(), 
 
-            // Drop grabber
+            //Drop grabber
             openGrabber(), 
 
-            // Return to position
+             //Return to position 
             Commands.parallel(
                 retractStinger(), 
                 elevatorToMid()
