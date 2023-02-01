@@ -12,19 +12,19 @@ import frc.robot.structure.PIDMechanism;
 public class Arm extends ManagerSubsystemBase{
 
     
-    CANSparkMax armUpDown = new CANSparkMax(Robot.ARM_UP_DOWN_PORT, MotorType.kBrushless);
-    CANSparkMax armInOut = new CANSparkMax(Robot.ARM_IN_OUT_PORT, MotorType.kBrushless);
+    CANSparkMax armUpDown = new CANSparkMax(Robot.Arm.ARM_UP_DOWN_PORT, MotorType.kBrushless);
+    CANSparkMax armInOut = new CANSparkMax(Robot.Arm.ARM_IN_OUT_PORT, MotorType.kBrushless);
 
-    PIDMechanism armInOutPID = new PIDMechanism(Robot.armInOut());
+    PIDMechanism armInOutPID = new PIDMechanism(Robot.Arm.armInOut());
     RelativeEncoder armInOutEncoder = armInOut.getEncoder();
     
-    PIDMechanism armUpDownPID = new PIDMechanism(Robot.armUpDown());
+    PIDMechanism armUpDownPID = new PIDMechanism(Robot.Arm.armUpDown());
     RelativeEncoder armUpDownEncoder = armUpDown.getEncoder();
 
     public Arm()
     {
-        armInOutEncoder.setPositionConversionFactor(Robot.ARM_IN_OUT_POSITION_CONVERSION_FACTOR);
-        armUpDownEncoder.setPositionConversionFactor(Robot.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
+        armInOutEncoder.setPositionConversionFactor(Robot.Arm.ARM_IN_OUT_POSITION_CONVERSION_FACTOR);
+        armUpDownEncoder.setPositionConversionFactor(Robot.Arm.ARM_UP_DOWN_POSITION_CONVERSION_FACTOR);
     }
 
     /**
@@ -32,7 +32,7 @@ public class Arm extends ManagerSubsystemBase{
      */
     public void rotateWithSpeed(double speed)
     {
-        armUpDownPID.setSpeed(speed * Robot.ARM_SPEED);
+        armUpDownPID.setSpeed(speed * Robot.Arm.ARM_SPEED);
     }
 
     /**
@@ -59,7 +59,7 @@ public class Arm extends ManagerSubsystemBase{
      */
     public void startExtending()
     {
-        armInOutPID.setSpeed(Robot.ARM_IN_OUT_SPEED);
+        armInOutPID.setSpeed(Robot.Arm.ARM_IN_OUT_SPEED);
     }
 
     /**
@@ -67,7 +67,7 @@ public class Arm extends ManagerSubsystemBase{
      */
     public void startRetracting()
     {
-        armInOutPID.setSpeed(-Robot.ARM_IN_OUT_SPEED);
+        armInOutPID.setSpeed(-Robot.Arm.ARM_IN_OUT_SPEED);
     }
 
     /**

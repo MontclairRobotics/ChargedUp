@@ -148,7 +148,7 @@ public class ChargedUp extends RobotContainer
                 operatorController, 
                 false, 
                 false);
-            Robot.STINGER_JOYSTICK_ADJUSTER.adjustX(right);
+            Robot.Stinger.STINGER_JOYSTICK_ADJUSTER.adjustX(right);
             stinger.setSpeed(right.getX());
         }));
 
@@ -192,7 +192,7 @@ public class ChargedUp extends RobotContainer
                 operatorController, 
                 false, 
                 false);
-            Robot.ELEVATOR_JOY_ADJUSTER.adjustY(left);
+            Robot.Elevator.ELEVATOR_JOY_ADJUSTER.adjustY(left);
             elevator.setSpeed(left.getY());
         }));
 
