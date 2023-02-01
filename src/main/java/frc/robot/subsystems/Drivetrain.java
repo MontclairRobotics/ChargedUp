@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.SwerveTrajectory;
+import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.swerve.SwerveModuleSpec;
@@ -174,6 +175,11 @@ public class Drivetrain extends SubsystemBase
     {
         useFieldRelative = false;
         Logging.info("Field relative disabled");
+    }
+
+    public double getChargeStationAngle()
+    {
+        return Unimplemented.here();
     }
     /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.

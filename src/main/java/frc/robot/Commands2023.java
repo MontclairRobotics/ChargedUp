@@ -12,7 +12,10 @@ import frc.robot.structure.Trajectories;
 import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.helpers.Logging;
+import frc.robot.constants.Drivebase;
 import frc.robot.constants.Constants.Auto;
+import frc.robot.constants.Constants.Drive;
+import frc.robot.constants.Constants.Field;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -442,7 +445,13 @@ public class Commands2023
     public static Command balance()
     {
         // TODO: this
-        return Unimplemented.here();
+        return Commands.run(() -> {
+            double angle = ChargedUp.drivetrain.getChargeStationAngle();
+            double speed = Drive.MAX_SPEED_MPS * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+            speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+            
+            ChargedUp.drivetrain.drive(0, 0, speed);
+        });
     }
 
     public static Command fromStringToCommand(String str)
@@ -452,7 +461,7 @@ public class Commands2023
         {
             switch(str)
             {
-                case "A":
+                case "A": 
                 case "C": return pickup();
 
                 case "1":
@@ -498,7 +507,7 @@ public class Commands2023
         }
     }
 
-    public static Command fromSequenceToCommand(ArrayList<String> list)
+    public static Command buildAuto(ArrayList<String> list)
     {
         Command[] commandList = new Command[list.size()];
         for (int i = 0; i < list.size(); i++)
@@ -508,6 +517,4 @@ public class Commands2023
         return Commands.sequence(commandList);
     }
     
-    
-    // fromStringtoCommand
 }

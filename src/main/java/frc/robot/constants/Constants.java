@@ -123,7 +123,7 @@ public final class Constants
     public static class Auto 
     {
         public static final double MAX_VEL = 10;
-        public static final double MAX_ACC = 4; // these numbers have origin inside my ass
+        public static final double MAX_ACC = 4; // these numbers have origin inside my head
     }
     public static class Robot 
     {
@@ -136,6 +136,8 @@ public final class Constants
         public static final double NORMAL_FORCE_ON_MODULE_N = Units.lbsToKilograms(45) * 9.81 / 4;
 
         public static final Rotation2d NAVX_OFFSET = Rotation2d.fromDegrees(0);
+
+        public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
 
         //Elevator Constants
         public static final double ELEVATOR_SPEED = 0.1;  //TODO: Tweak these values
@@ -261,5 +263,10 @@ public final class Constants
         
         public static final JoystickAdjuster DRIVE_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);
         public static final JoystickAdjuster TURN_ADJUSTER  = new JoystickAdjuster(DEADBAND, 1.5);
+    }
+
+    public static class Field
+    {
+        public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???
     }
 }
