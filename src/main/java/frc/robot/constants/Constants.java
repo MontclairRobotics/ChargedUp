@@ -120,6 +120,11 @@ public final class Constants
         public static final double[][] speeds  = {{0.25, 0.25}, {0.5, 0.5}, {0.75, 0.75}, {1.0, 1.0}};  
         // 1st element is drive speed, 2nd is angular speed
     }
+    public static class Auto 
+    {
+        public static final double MAX_VEL = 10;
+        public static final double MAX_ACC = 4; // these numbers have origin inside my head
+    }
     public static class Robot 
     {
         public static final double ROBOT_MASS_KG      = Units.lbsToKilograms(60);
@@ -131,6 +136,8 @@ public final class Constants
         public static final double NORMAL_FORCE_ON_MODULE_N = Units.lbsToKilograms(45) * 9.81 / 4;
 
         public static final Rotation2d NAVX_OFFSET = Rotation2d.fromDegrees(0);
+
+        public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
 
         //Elevator Constants
         public static final double ELEVATOR_SPEED = 0.1;  //TODO: Tweak these values
@@ -162,9 +169,11 @@ public final class Constants
 
         // Shwooper Constants
         public static final int INTAKE_PORT = 0;
+        public static final int INTAKE_PNEU_PORT = 2;
         public static final double INTAKE_SPEED = 0.5;
         public static final boolean INTAKE_INVERSION = false;
         public static final boolean SHWOOPER_SOLENOID_DEFAULT_STATE = false;
+        public static final double INTAKE_SUCK_TIME = 1;
 
         //Grabber Constants
         public static final boolean GRABBER_SOLENOID_DEFAULT_STATE = false;
@@ -254,5 +263,10 @@ public final class Constants
         
         public static final JoystickAdjuster DRIVE_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);
         public static final JoystickAdjuster TURN_ADJUSTER  = new JoystickAdjuster(DEADBAND, 1.5);
+    }
+
+    public static class Field
+    {
+        public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???
     }
 }

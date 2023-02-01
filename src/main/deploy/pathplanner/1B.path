@@ -48,5 +48,12 @@
   "maxVelocity": 4.0,
   "maxAcceleration": 3.0,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 0.19563210227272743,
+      "names": [
+        "Elevator Mid"
+      ]
+    }
+  ]
 }

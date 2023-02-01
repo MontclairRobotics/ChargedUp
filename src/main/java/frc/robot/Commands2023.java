@@ -8,7 +8,14 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
+import frc.robot.structure.Trajectories;
 import frc.robot.structure.Unimplemented;
+import frc.robot.structure.factories.HashMaps;
+import frc.robot.structure.helpers.Logging;
+import frc.robot.constants.Drivebase;
+import frc.robot.constants.Constants.Auto;
+import frc.robot.constants.Constants.Drive;
+import frc.robot.constants.Constants.Field;
 import frc.robot.constants.Constants.Robot;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Grabber;
@@ -16,6 +23,8 @@ import frc.robot.subsystems.Stinger;
 
 import static frc.robot.ChargedUp.elevator;
 import static frc.robot.ChargedUp.stinger;
+
+import java.util.ArrayList;
 
 public class Commands2023 
 {   
@@ -337,6 +346,16 @@ public class Commands2023
         return Commands.runOnce(ChargedUp.shwooper::toggle);
     }
 
+    public static Command retractSchwooper()
+    {
+        return Commands.runOnce(ChargedUp.shwooper::retract);
+    }
+    
+    public static Command extendSchwooper()
+    {
+        return Commands.runOnce(ChargedUp.shwooper::extend);
+    }
+
     /**
      * intake suck
      * @return Command
@@ -379,28 +398,123 @@ public class Commands2023
             //stop sucking
             //elevator mid 
         // END SEQUENCE 
+
         return Commands.sequence(
+            // Ensure grabber released
+            releaseGrabber(),
+
+            // Lower grabber in place
             Commands.parallel(
-                releaseGrabber(),
-                retractStinger()
+                retractStinger(),
+                elevatorToLow()
             ),
-            elevatorToLow(),
+
+            // Suck it
             shwooperSuck(),
-            waitSeconds(Robot.SUCK_TIME),
+            waitSeconds(Robot.INTAKE_SUCK_TIME),
             stopShwooper(),
-            elevatorToMid()
+
+            // Grab it
+            grabGrabber(),
+
+            // Prepare to leave
+            elevatorToMid(),
+            retractSchwooper()
         );
     }
 
     public static Command score()
     {
         CommandBase c = Commands.sequence(
+            // Prepare position
             elevatorStingerToHigh(), 
-            openGrabber(), 
-            Commands.parallel(retractStinger(), elevatorToMid())
-        );
 
+            // Drop grabber
+            openGrabber(), 
+
+            // Return to position
+            Commands.parallel(
+                retractStinger(), 
+                elevatorToMid()
+            )
+        );
         //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
         return c;
     }
+
+    public static Command balance()
+    {
+        // TODO: this
+        return Commands.run(() -> {
+            double angle = ChargedUp.drivetrain.getChargeStationAngle();
+            double speed = Drive.MAX_SPEED_MPS * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+            speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+            
+            ChargedUp.drivetrain.drive(0, 0, speed);
+        });
+    }
+
+    public static Command fromStringToCommand(String str)
+    {
+        // Single actions
+        if(str.length() == 1)
+        {
+            switch(str)
+            {
+                case "A": 
+                case "C": return pickup();
+
+                case "1":
+                case "2":
+                case "3": return score();
+
+                case "B": return balance();
+
+                default: 
+                {
+                    Logging.error("Invalid path point! Please be better.");
+                    return none();
+                }
+            }
+        }
+        // Transition
+        else if(str.length() == 2)
+        {
+            try 
+            {
+                return Trajectories.auto(
+                    str, 
+                    Auto.MAX_VEL, 
+                    Auto.MAX_ACC, 
+                    HashMaps.of(
+                        "Elevator Mid",  elevatorToMid(),
+                        "Elevator High", elevatorToHigh(),
+                        "Extend Intake", extendSchwooper()
+                    )
+                );
+            }
+            catch (Exception e)
+            {
+                Logging.error("Error finding path transition " + str + ": is it valid? Are you dumb? Who knows!\n" + e);
+                return none();
+            }
+        }
+        // Error
+        else 
+        {
+            Logging.error("(> 2 || == 0) characters in received string! Please cry about it.");
+            return none();
+        }
+    }
+
+    public static Command buildAuto(ArrayList<String> list)
+    {
+        Command[] commandList = new Command[list.size()];
+        for (int i = 0; i < list.size(); i++)
+        {
+            commandList[i] = fromStringToCommand(list.get(i));
+        }
+        return Commands.sequence(commandList);
+    }
+    
 }
