@@ -7,10 +7,12 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ChargedUp;
 import frc.robot.constants.Constants.*;
 import frc.robot.structure.PIDMechanism;
 
-public class Elevator extends ManagerSubsystemBase {
+public class Elevator extends ManagerSubsystemBase 
+{
     private CANSparkMax motor = new CANSparkMax(Robot.Elevator.MOTOR_PORT, MotorType.kBrushless);
 
     PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.updown());
@@ -112,6 +114,12 @@ public class Elevator extends ManagerSubsystemBase {
     @Override
     public void always() 
     {
+        if (ChargedUp.shwooper.isShwooperOut() && elevatorEncoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) {
+            elevatorPID.cancel();
+            if (elevatorPID.getSpeed() < 0) {
+                elevatorPID.setSpeed(0);
+            }
+        }
         elevatorPID.setMeasurement(elevatorEncoder.getPosition());
         elevatorPID.update();
         motor.set(elevatorPID.getSpeed());

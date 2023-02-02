@@ -74,6 +74,14 @@ public class Shwooper extends ManagerSubsystemBase {
     {
         shwooperSolenoid.set(!shwooperSolenoid.get());
     }
+
+    /**
+     * Get if the shwooper is inside or outside of the robot. True means outside, false means inside.
+     */
+    public boolean isShwooperOut()
+    {
+        return !Robot.Shwooper.SOLENOID_DEFAULT_STATE;
+    }
     
 
     

@@ -166,6 +166,8 @@ public final class Constants
             public static final double DEADBAND = 0.05;
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
+            public static final double BUFFER_SPACE_TO_INTAKE = 0.75; //in meters
+
             public static final double 
                 UP_DOWN_KP = 1,
                 UP_DOWN_KI = 1,
