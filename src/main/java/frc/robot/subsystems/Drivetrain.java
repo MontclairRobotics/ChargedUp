@@ -371,6 +371,11 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
+    public void setTargetAngle(double angle)
+    {
+        thetaPID.setTarget(angle);
+    }
+
     public Pose2d getRobotPose()
     {
         if(RobotBase.isReal())
@@ -390,6 +395,11 @@ public class Drivetrain extends SubsystemBase
     public void decreaseMaxSpeed() 
     {
         speedIndex = (speedIndex == 0) ? 0 : speedIndex - 1;
+    }
+
+    public boolean isThetaPIDFree()
+    {
+        return !thetaPID.active();
     }
 
 
@@ -462,6 +472,11 @@ public class Drivetrain extends SubsystemBase
         {
             SwerveAutoBuilder b = autoBuilder(markers);
             return b.fullAuto(trajectory);
+        }
+        public Command goToAngle(double angle)
+        {
+            return Commands.run(() -> Drivetrain.this.setTargetAngle(angle), Drivetrain.this)
+                .until(Drivetrain.this::isThetaPIDFree);
         }
     }
 }
