@@ -2,7 +2,8 @@ package frc.robot.constants;
 
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
-import com.swervedrivespecialties.swervelib.Mk4iSwerveModuleHelper.GearRatio;
+import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
+import com.swervedrivespecialties.swervelib.MotorType;
 
 import java.text.FieldPosition;
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.structure.helpers.Units555;
-import frc.robot.structure.swerve.SwerveModuleMk4iSpec;
 import frc.robot.structure.swerve.SwerveModuleSpec;
 
 public final class Constants 
@@ -35,24 +35,27 @@ public final class Constants
         public static final int GRABBER_SOLENOID_PORT = 0;
     }
 
-    public static final MechanicalConfiguration CONFIGURATION = new MechanicalConfiguration(
-        Drivebase.WHEEL_DIAMETER_METER, 
-        8.14, 
-        false, 
-        8.14, 
-        false
-    );
-
     public static class Drive
     {
+        public static final MechanicalConfiguration CONFIGURATION = new MechanicalConfiguration(
+            Drivebase.WHEEL_DIAMETER_METER, 
+            8.14, 
+            false, 
+            8.14, 
+            false
+        );
+
+        private static final MotorType DRIVE_TYPE = MotorType.FALCON;
+        private static final MotorType STEER_TYPE = MotorType.NEO;
+
         private static final SwerveModuleSpec FRONT_LEFT = 
-            new SwerveModuleMk4iSpec(GearRatio.L1,  29, 5,  12,  358.651157 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 29, STEER_TYPE, 5,  12,  358.651157 - 90);
         private static final SwerveModuleSpec FRONT_RIGHT = 
-            new SwerveModuleMk4iSpec(GearRatio.L1,  30, 28, 10,  087.078116 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 30, STEER_TYPE, 28, 10,  087.078116 - 90);
         private static final SwerveModuleSpec BACK_LEFT = 
-            new SwerveModuleMk4iSpec(GearRatio.L1,  3,  14, 13,  219.871863 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 14, 13,  219.871863 - 90);
         private static final SwerveModuleSpec BACK_RIGHT =
-            new SwerveModuleMk4iSpec(GearRatio.L1,  7,  4,  11,  250.479320 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  7, STEER_TYPE,  4, 11,  250.479320 - 90);
         /**
          * Rotator port first, driver port second
          * 
@@ -63,7 +66,6 @@ public final class Constants
          * 
          * TODO: why do we need to subtract 90deg here?
          */
-        
         public static final SwerveModuleSpec[] MODULES = 
         {
             FRONT_LEFT, 

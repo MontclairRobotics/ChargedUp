@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.structure.GamePiece;
+import frc.robot.structure.SequenceParser;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.HashMaps;
@@ -437,15 +438,13 @@ public class Commands2023
     public static Command score()
     {
         CommandBase c = Commands.sequence(
-            
             //Prepare position
-            
             elevatorStingerToHigh(), 
 
             //Drop grabber
             openGrabber(), 
 
-             //Return to position 
+            //Return to position 
             Commands.parallel(
                 retractStinger(), 
                 elevatorToMid()
@@ -455,19 +454,33 @@ public class Commands2023
         return c;
     }
 
+    /**
+     * Automatically compensates for angle offset caused by oscillatory motion of the 
+     * 'Charging Station'.
+     * 
+     * Uses {@link Drivetrain#getChargeStationAngle()} to get the charge station angle,
+     * and inverts the direction of motion (relative to the angle) using 
+     * {@link Robot#CHARGER_STATION_INCLINE_INVERT}.
+     */
     public static Command balance()
     {
-        // TODO: this
         return Commands.run(() -> 
         {
             double angle = ChargedUp.drivetrain.getChargeStationAngle();
             double speed = Drive.MAX_SPEED_MPS * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+
             speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
             
             ChargedUp.drivetrain.drive(0, 0, speed);
         });
     }
 
+    /**
+     * Get the action command which corresponds to the given auto sequence string segment. 
+     * This method can either take in transitions or actions.
+     * 
+     * @return The command, or none() with a log if an error occurs
+     */
     public static Command fromStringToCommand(String str)
     {
         // Single actions
@@ -521,14 +534,38 @@ public class Commands2023
         }
     }
 
+    /**
+     * Create the autonomous command from the given parsed autonomous sequence string.
+     * 
+     * @return The command, with none() inserted into places in the sequence where an error occured.
+     */
     public static Command buildAuto(ArrayList<String> list)
     {
         Command[] commandList = new Command[list.size()];
+
         for (int i = 0; i < list.size(); i++)
         {
             commandList[i] = fromStringToCommand(list.get(i));
         }
+        
         return Commands.sequence(commandList);
     }
     
+    /**
+     * Create the autonomous command from the given parsed autonomous sequence string.
+     * 
+     * @return The command, with none() inserted into places in the sequence where an error occured,
+     * or none() itself if parsing or lexing fails.
+     */
+    public static Command buildAuto(String p) 
+    {
+        ArrayList<String> parts = SequenceParser.parse(p);
+
+        if(parts == null) 
+        {
+            return none();
+        }
+
+        return buildAuto(parts);
+    }
 }
