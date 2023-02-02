@@ -24,44 +24,52 @@ public class Shwooper extends ManagerSubsystemBase {
     }
 
     /**
-    * intake starts sucking
-    */
+     * Intake starts sucking
+     */
     public void suck() 
     {
         intakeMotor.set(Robot.Shwooper.SPEED);
     }
+
     /**
-    * intake start spitting
-    */
+     * Expel game pieces from intake
+     */
     public void spit() 
     {
         intakeMotor.set(-Robot.Shwooper.SPEED);
     }
+
     /**
-    * stop the intake
-    */
+     * Stops intake motors
+     */
     public void stop() 
     {
         intakeMotor.set(0);
     }
 
+    /**
+     * Extends the intake using solenoid. Solenoid is not set at the default state
+     */
     public void extend() 
     {
         shwooperSolenoid.set(!Robot.Shwooper.SOLENOID_DEFAULT_STATE);
     }
 
+    /**
+     * Retracts the intake using solenoid. Solenoid is set at the default state
+     */
     public void retract() 
     {
         shwooperSolenoid.set(Robot.Shwooper.SOLENOID_DEFAULT_STATE);
     }
 
     /**
-    * toggle the Shwooper
-    * <p>
-    * - if it is extended, <b>retract</b>
-    * <p>
-    * - if it is retracted, <b>extend</b>
-    */
+     * toggle the Shwooper
+     * <p>
+     * - if it is extended, <b>retract</b>
+     * <p>
+     * - if it is retracted, <b>extend</b>
+     */
     public void toggle() 
     {
         shwooperSolenoid.set(!shwooperSolenoid.get());

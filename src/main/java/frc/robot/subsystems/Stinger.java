@@ -20,6 +20,7 @@ public class Stinger extends ManagerSubsystemBase{
     {
         StingerEncoder.setPositionConversionFactor(Robot.Stinger.IN_OUT_CONVERSION_FACTOR);
     }
+
     /**
      * Extends Stinger to a desired length
      * @param length (double) the desired length 
@@ -30,6 +31,7 @@ public class Stinger extends ManagerSubsystemBase{
             length = Robot.Stinger.EXT_LENGTH;
         StingerPID.setTarget(length);
     }
+
     /**
      * Extend the stinger to the {@link Robot#HIGH_LENGTH_MUL the high Length}
      */
@@ -37,6 +39,7 @@ public class Stinger extends ManagerSubsystemBase{
     {
         extendToLength(Robot.Stinger.HIGH_LENGTH_MUL);
     }
+
     /**
      * Extend the stinger to the {@link Robot#MID_LENGTH_MUL the middle Length}
      */
@@ -44,6 +47,7 @@ public class Stinger extends ManagerSubsystemBase{
     {
         extendToLength(Robot.Stinger.MID_LENGTH_MUL);
     }
+
     /**
      *  Fully Retracts Stinger
      */
@@ -51,6 +55,7 @@ public class Stinger extends ManagerSubsystemBase{
     {
         StingerPID.setTarget(0);
     }
+
     /**
      * Manually extends Stinger at {@link Robot#UP_DOWN_SPEED the Stinger Speed} 
      */
@@ -58,6 +63,7 @@ public class Stinger extends ManagerSubsystemBase{
     {
         StingerPID.setSpeed(Robot.Stinger.SPEED);
     }
+
     /**
      * Manually retracts Stinger at the negative of {@link Robot#UP_DOWN_SPEED the Stinger Speed}
      */
@@ -65,6 +71,7 @@ public class Stinger extends ManagerSubsystemBase{
     {
         StingerPID.setSpeed(-Robot.Stinger.SPEED);
     }
+
     /**
      * Stops the Stinger
      */
@@ -92,7 +99,7 @@ public class Stinger extends ManagerSubsystemBase{
     }
 
     /**
-     * Cancel the PID
+     * Cancel the {@link Stinger#stingerPID stingerPID}
      */
     public void stopPIDing()
     {

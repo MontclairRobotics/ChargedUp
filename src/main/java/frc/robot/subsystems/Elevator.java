@@ -33,6 +33,7 @@ public class Elevator extends ManagerSubsystemBase {
         }
         elevatorPID.setTarget(height);
     }
+
     /**
      * Set the elevator to {@link Robot#HIGH_HEIGHT the high height}
      */
@@ -40,6 +41,7 @@ public class Elevator extends ManagerSubsystemBase {
     {
         setHeight(Robot.Elevator.HIGH_HEIGHT);
     }
+
     /**
      * Set the elevator to {@link Robot#MID_HEIGHT the middle height}
      */
@@ -47,6 +49,7 @@ public class Elevator extends ManagerSubsystemBase {
     {
         setHeight(Robot.Elevator.MID_HEIGHT);
     }
+
     /**
      * Set elevator to LOW position
      */
@@ -55,9 +58,8 @@ public class Elevator extends ManagerSubsystemBase {
         elevatorPID.setTarget(0);
     }
 
-
     /**
-     * Raise elevator height manually at the negative {@link Robot#UP_DOWN_SPEED elevator speed constant}
+     * Lowers elevator height manually at the negative {@link Robot#ELEVATOR_SPEED elevator speed constant}
      */
     public void delevate()
     {
@@ -65,7 +67,7 @@ public class Elevator extends ManagerSubsystemBase {
     }
 
     /**
-     * Lower elevator height manually at the {@link Robot#UP_DOWN_SPEED elevator speed constant}
+     * Raises elevator height manually at the {@link Robot#ELEVATOR_SPEED elevator speed constant}
      */
     public void elevate()
     {
@@ -73,7 +75,7 @@ public class Elevator extends ManagerSubsystemBase {
     }
 
     /**
-     * Set the speed of the Elevator motor
+     * Set the speed of the {@link Elevator#motor Elevator motor}
      * @param speed desired speed
      */
     public void setSpeed(double speed) 
@@ -82,7 +84,7 @@ public class Elevator extends ManagerSubsystemBase {
     }
 
     /** 
-     * Set elevator speed to zero
+     * Sets elevator speed to zero
      */
     public void stop()
     {
@@ -90,21 +92,23 @@ public class Elevator extends ManagerSubsystemBase {
     }
 
     /**
-     * returns if the elevator is currently not using pid
+     * returns if the elevator is currently not using {@link Elevator#elevatorPID PID}
      * @return boolean
      */
     public boolean isPIDFree()
     {
         return !elevatorPID.active();
     }
+
     /**
-     * Cancel the elevator PIDing 
+     * Cancel the elevator PIDing using {@link Elevator#elevatorPID}
      */
     public void stopPIDing()
     {
         elevatorPID.cancel();
     }
-    // run PID
+
+    
     @Override
     public void always() 
     {

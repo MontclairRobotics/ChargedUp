@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
-import frc.robot.structure.Unimplemented;
+import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.swerve.SwerveModuleSpec;
@@ -175,11 +175,6 @@ public class Drivetrain extends SubsystemBase
         useFieldRelative = false;
         Logging.info("Field relative disabled");
     }
-
-    public double getChargeStationAngle()
-    {
-        return Unimplemented.here();
-    }
     /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
      * Should be called in order to manually control the robot.
@@ -286,6 +281,11 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
+    /**
+     * Converts speed of each swerve module from meters/second to voltage and converts angle to radians. 
+     * Then, updates odometry with new values. 
+     * @param states array of {@link SwerveModuleState}, contains all four states
+     */
     private void driveFromStates(SwerveModuleState[] states)
     {
         // Only run this code if in real mode
@@ -308,6 +308,10 @@ public class Drivetrain extends SubsystemBase
         }
     }
 
+    /**
+     * Maps all of the x-positions a module goes to and makes an array containing these positions
+     * @return an object of class SwerveModulePosition
+     */
     public SwerveModulePosition[] getModulePositions()
     {
         return Arrays.stream(modules)
@@ -321,6 +325,7 @@ public class Drivetrain extends SubsystemBase
         ChargedUp.field.setRobotPose(getRobotPose());
     }
 
+    
     public void setRobotPose(Pose2d pose)
     {
         odometry.resetPosition(
@@ -357,7 +362,7 @@ public class Drivetrain extends SubsystemBase
             return new Pose2d(currentSimulationX, currentSimulationY, getRobotRotation());
         }
     }
-
+    
     public void increaseMaxSpeed()
     {
         speedIndex = (speedIndex == Drive.speeds.length-1) ? speedIndex : speedIndex + 1;
