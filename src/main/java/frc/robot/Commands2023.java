@@ -458,7 +458,8 @@ public class Commands2023
     public static Command balance()
     {
         // TODO: this
-        return Commands.run(() -> {
+        return Commands.run(() -> 
+        {
             double angle = ChargedUp.drivetrain.getChargeStationAngle();
             double speed = Drive.MAX_SPEED_MPS * angle / Field.CHARGE_ANGLE_RANGE_DEG;
             speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;

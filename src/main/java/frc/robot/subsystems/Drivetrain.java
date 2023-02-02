@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
-import frc.robot.structure.SwerveTrajectory;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.swerve.SwerveModuleSpec;
