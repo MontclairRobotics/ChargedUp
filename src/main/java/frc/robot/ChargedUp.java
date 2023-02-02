@@ -95,31 +95,29 @@ public class ChargedUp extends RobotContainer
             {
                 if(!DriverStation.isTeleop())
                 {
-                    drivetrain.drive(0,0,0);
+                    drivetrain.set(0,0,0);
                     return;
                 }
 
-                drivetrain.driveInput(
+                drivetrain.setInput(
                     JoystickInput.getRight(driverController, true,  false),
                     JoystickInput.getLeft (driverController, false, false)
                 );
             },
             drivetrain
         ));
-            /** 
-             * Buttons for Field Relative and Speed
-             */
+    
+        // Buttons for Field Relative and Speed
         driverController.getButton(Button.A_CROSS)
-            .toggleOnTrue(drivetrain.commands.enableFieldRelative());
+            .onTrue(drivetrain.commands.enableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
-            .toggleOnTrue(drivetrain.commands.disableFieldRelative());
+            .onTrue(drivetrain.commands.disableFieldRelative());
         driverController.getButton(Button.RIGHT_BUMPER)
-            .toggleOnTrue(drivetrain.commands.increaseSpeed());
+            .onTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
-            .toggleOnTrue(drivetrain.commands.decreaseSpeed());
-            /**
-             * Button to Zero NavX
-             */ 
+            .onTrue(drivetrain.commands.decreaseSpeed());
+        
+        // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
 
@@ -134,6 +132,7 @@ public class ChargedUp extends RobotContainer
             }));
 
         // OPERATOR CONTROLS //
+
         // D-Pad Controls
         operatorController.getDPad(DPad.UP)
             .onTrue(Commands2023.elevatorStingerToHigh());
@@ -154,19 +153,16 @@ public class ChargedUp extends RobotContainer
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
-            .toggleOnTrue(Commands2023.toggleGrabber());
+            .onTrue(Commands2023.toggleGrabber());
 
         // Schwooper 
-        /**
-         * button to suck
-         */ 
+        
+        // suck button
         operatorController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSuck())
             .onFalse(Commands2023.stopShwooper());
-        /**
-         * button to blow
-         */ 
+        // button to spit/stop schwooper
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSpit())

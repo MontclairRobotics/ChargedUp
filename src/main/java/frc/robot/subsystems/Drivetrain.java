@@ -33,6 +33,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.PIDMechanism;
+import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.swerve.SwerveModuleSpec;
@@ -58,6 +60,10 @@ public class Drivetrain extends SubsystemBase
     public final PIDController xController;
     public final PIDController yController;
     public final PIDController thetaController;
+
+    public final PIDMechanism xPID;
+    public final PIDMechanism yPID;
+    public final PIDMechanism thetaPID;
     
     private Pose2d estimatedPose;
     private double currentRelativeXVel, currentRelativeYVel, currentOmega;
@@ -91,7 +97,7 @@ public class Drivetrain extends SubsystemBase
         int i = 0;
         for(SwerveModuleSpec spec : Drive.MODULES)
         {
-            modules[i] = spec.createFalconDriveNeoTurn(
+            modules[i] = spec.build(
                 Shuffleboard.getTab("Drivetrain")
                     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
                     .withSize(2, 5)
@@ -156,6 +162,11 @@ public class Drivetrain extends SubsystemBase
         );
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        // Build PID Mechanisms //
+        xPID = new PIDMechanism(xController);
+        yPID = new PIDMechanism(yController);
+        thetaPID = new PIDMechanism(thetaController);
     }
 
     /**
@@ -174,6 +185,11 @@ public class Drivetrain extends SubsystemBase
         useFieldRelative = false;
         Logging.info("Field relative disabled");
     }
+
+    public double getChargeStationAngle()
+    {
+        return ChargedUp.gyroscope.getPitch();
+    }
     /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
      * Should be called in order to manually control the robot.
@@ -181,38 +197,45 @@ public class Drivetrain extends SubsystemBase
      * @param turn the turn axis of the joystick
      * @param drive the driving axis of the joystick
      */
-    public void driveInput(JoystickInput turn, JoystickInput drive)
+    public void setInput(JoystickInput turn, JoystickInput drive)
     {
         ControlScheme.TURN_ADJUSTER.adjustX(turn);
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
-        drive(
-            +turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            -drive.getY() * Drive.MAX_SPEED_MPS,
-            +drive.getX() * Drive.MAX_SPEED_MPS
+        set(
+            turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
+            drive.getX() * Drive.MAX_SPEED_MPS,
+            drive.getY() * Drive.MAX_SPEED_MPS
         );
     }
     
     /**
-     * Driving with the given velocities 
+     * Set to use the given velocities in robot-wise coordinates:
+     * <ul>
+     *      <li>+y is forward</li>
+     *      <li>+x is left</li>
+     *      <li>+O is CCW</li>
+     * </ul>
+     * 
+     * TODO: is this correct?
+     * 
      * @param omega_rad_per_second rotational velocity in radians per second
      * @param vx_meter_per_second x direction velocity 
      * @param vy_meter_per_second y direction velocity
      */
-    public void drive(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+    public void set(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
-        // Rotate so that the front is the real front of the robot
-        double newvx = Robot.NAVX_OFFSET.getCos() * vx_meter_per_second - Robot.NAVX_OFFSET.getSin() * vy_meter_per_second;
-        double newvy = Robot.NAVX_OFFSET.getSin() * vx_meter_per_second + Robot.NAVX_OFFSET.getCos() * vy_meter_per_second;
+        vy_meter_per_second  = +MathUtils.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        vx_meter_per_second  = +MathUtils.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        omega_rad_per_second = -MathUtils.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
         
-        // TODO: why do we need to negate the y velocity here?
-        // TODO: should this negation be reflected in "currentYVel"?
+        vx_meter_per_second  *= Drive.speeds[speedIndex][0];
+        vy_meter_per_second  *= Drive.speeds[speedIndex][0];
+        omega_rad_per_second *= Drive.speeds[speedIndex][1];
 
-        // Get the states for the modules
-        ChassisSpeeds chassisSpeeds = getChassisSpeeds(omega_rad_per_second, newvx, newvy);
-
-        // Actually drive
-        driveFromChassisSpeeds(chassisSpeeds);
+        xPID.setSpeed(vx_meter_per_second);
+        yPID.setSpeed(vy_meter_per_second);
+        thetaPID.setSpeed(omega_rad_per_second);
     }
 
     /**
@@ -224,15 +247,6 @@ public class Drivetrain extends SubsystemBase
      */
     private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
     {
-        // TODO: why do we need to negate the y velocity here?
-        // TODO: unflip omega and fix with input flipping
-        adjusted_vy    = MathUtils.clamp(adjusted_vx,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        adjusted_vx    = MathUtils.clamp(adjusted_vy,     -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        adjusted_omega = -MathUtils.clamp(adjusted_omega, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
-        adjusted_vx *= Drive.speeds[speedIndex][0];
-        adjusted_vy *= Drive.speeds[speedIndex][0];
-        adjusted_omega *= Drive.speeds[speedIndex][1];
-
         if(useFieldRelative)
         {
             return ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -322,6 +336,13 @@ public class Drivetrain extends SubsystemBase
     public void periodic() 
     {
         ChargedUp.field.setRobotPose(getRobotPose());
+
+        xPID.setMeasurement(getRobotPose().getX());
+        yPID.setMeasurement(getRobotPose().getY());
+        thetaPID.setMeasurement(getRobotRotation().getDegrees());
+
+        ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
+        driveFromChassisSpeeds(c);
     }
 
     
@@ -371,8 +392,6 @@ public class Drivetrain extends SubsystemBase
         speedIndex = (speedIndex == 0) ? 0 : speedIndex - 1;
     }
 
-    
-
 
     public final DriveCommands commands = this.new DriveCommands();
     public class DriveCommands 
@@ -390,14 +409,14 @@ public class Drivetrain extends SubsystemBase
 
         public Command driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.runOnce(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
+            return Commands.runOnce(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
         public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.parallel
             (
                 enableFieldRelative(),
-                Commands.run(() -> Drivetrain.this.drive(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this)
+                Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this)
                     .deadlineWith(Commands.waitSeconds(time)),
                 disableFieldRelative()
             );

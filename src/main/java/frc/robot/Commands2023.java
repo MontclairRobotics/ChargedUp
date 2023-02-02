@@ -471,7 +471,7 @@ public class Commands2023
 
             speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
             
-            ChargedUp.drivetrain.drive(0, 0, speed);
+            ChargedUp.drivetrain.set(0, 0, speed);
         });
     }
 
