@@ -17,10 +17,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrajectoryParameterizer;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CompressorConfigType;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
@@ -77,8 +80,12 @@ public class ChargedUp extends RobotContainer
     // MANAGERS //
     // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
 
+    // AUTO COMMAND //
+    private static Command autoCommand;
+
     // INITIALIZER //
-    @Override public void initialize() 
+    @Override 
+    public void initialize() 
     {
         driverController.getButton(Button.X_SQUARE)
             .toggleOnTrue(Commands.runOnce(() -> {
@@ -193,33 +200,29 @@ public class ChargedUp extends RobotContainer
         }));
 
         // HANDLE AUTO //
-        //AutoCommands.add("Main", () -> CommandGroupBase.sequence(
-        //    Commands.print("Starting main auto"),
-        //    drivetrain.commands.driveForTime(2, 1, 0, 1),
-        //    Commands.print("Ending the main auto"),
-        //    drivetrain.commands.driveInstant(0, 0, 0)
-        //));
-        initAuto();
+        GenericEntry entry = Shuffleboard.getTab("Main")
+            .add("Auto Command", "1")
+            .withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
 
-        // Shuffleboard.getTab("Main")
-        //    .add("Auto Commands", AutoCommands.chooser())
-        //    .withSize(2, 1)
-        //    .withPosition(5, 0);
-    }
-    // Test line
-    private void initAuto()
-    {
-        Command cmd = drivetrain.commands.auto(
-            Trajectories.get(
-                "Test Line", 
-                Drive.MAX_SPEED_MPS / 2, 
-                Drive.MAX_ACCEL_MPS2
-            ),
-            HashMaps.of()
-        );
-        
-        // AutoCommands.add("Test Line", () -> cmd);.
-        AutoCommands.add("Main", () -> Commands.runOnce( () -> {}));
-        AutoCommands.setDefaultCommand("Main");
+        entry.andThen(e -> 
+        {
+            if(!e.isString())
+            {
+                Logging.error("Auto command was not a string. This appears to be a skill issue.");
+                return;
+            }
+
+            autoCommand = Commands2023.buildAuto(e.getString());
+        });
+
+
+        AutoCommands.add("Auto", () -> autoCommand);
+        AutoCommands.setDefaultCommand("Auto");
+
+        // SETUP LOGGING //
+        Shuffleboard.getTab("Main")
+            .addString("Logs", Logging::logString)
+            .withWidget(BuiltInWidgets.kTextView);
     }
 }
