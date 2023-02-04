@@ -298,6 +298,7 @@ public final class Constants
 
     public static class Field
     {
-        public static final double CHARGE_ANGLE_RANGE_DEG = 2.5; //TODO: what should this be???
+        public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???
+        public static final double CHARGE_ANGLE_DEADBAND = 2.5;
     }
 }

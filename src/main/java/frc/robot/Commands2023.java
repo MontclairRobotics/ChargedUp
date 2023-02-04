@@ -468,7 +468,10 @@ public class Commands2023
         {
             double angle = ChargedUp.drivetrain.getChargeStationAngle();
             double speed = Drive.MAX_SPEED_MPS * angle / Field.CHARGE_ANGLE_RANGE_DEG;
-
+            if (angle <= Field.CHARGE_ANGLE_DEADBAND && angle >= -Field.CHARGE_ANGLE_DEADBAND) 
+            {
+                speed = 0;
+            }
             speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
             
             ChargedUp.drivetrain.set(0, 0, speed);
