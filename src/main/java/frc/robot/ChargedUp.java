@@ -81,7 +81,7 @@ public class ChargedUp extends RobotContainer
     // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
 
     // AUTO COMMAND //
-    private static Command autoCommand;
+    private static Command autoCommand = Commands.none();
 
     // INITIALIZER //
     @Override 
