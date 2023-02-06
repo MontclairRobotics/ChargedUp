@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+
+import org.team555.frc.vision.Limelight;
 import org.team555.math.MathUtils;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -34,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.PIDMechanism;
+import frc.robot.structure.Tracking;
 import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
@@ -64,12 +67,15 @@ public class Drivetrain extends SubsystemBase
     public final PIDMechanism xPID;
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
+
+    private Tracking objectTracked; 
     
     private Pose2d estimatedPose;
     private double currentRelativeXVel, currentRelativeYVel, currentOmega;
     private double currentSimulationX, currentSimulationY, currentSimulationTheta;
 
     private boolean useFieldRelative = true;
+
 
     //sets the speedIndex to speeds length
     private static int speedIndex = Drive.speeds.length-1;
@@ -339,7 +345,15 @@ public class Drivetrain extends SubsystemBase
 
         xPID.setMeasurement(getRobotPose().getX());
         yPID.setMeasurement(getRobotPose().getY());
-        thetaPID.setMeasurement(getRobotRotation().getDegrees());
+       
+        if (objectTracked == Tracking.NONE) 
+        {
+            thetaPID.setMeasurement(getRobotRotation().getDegrees());
+        }
+        else
+        {
+            thetaPID.setMeasurement(ChargedUp.limelight.getX());
+        }
 
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
         driveFromChassisSpeeds(c);
@@ -386,6 +400,17 @@ public class Drivetrain extends SubsystemBase
         {
             return new Pose2d(currentSimulationX, currentSimulationY, getRobotRotation());
         }
+    }
+
+    public void trackObject(Tracking object) 
+    {
+        ChargedUp.limelight.setPipeline(object.getPipelineNum());
+        objectTracked = object;
+    }
+
+    public void stopTracking() 
+    {
+        objectTracked = Tracking.NONE;
     }
     
     public void increaseMaxSpeed()
@@ -441,6 +466,17 @@ public class Drivetrain extends SubsystemBase
             return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
+        // VISION COMMANDS
+
+        //TODO: Make these commands
+        public Command turnToCone() {
+            return Unimplemented.here();
+        }
+
+        public Command turnToCube() {
+            return Unimplemented.here();
+        }
+
         public Command follow(PathPlannerTrajectory trajectory)
         {
             return new PPSwerveControllerCommand(
@@ -478,5 +514,6 @@ public class Drivetrain extends SubsystemBase
             return Commands.run(() -> Drivetrain.this.setTargetAngle(angle), Drivetrain.this)
                 .until(Drivetrain.this::isThetaPIDFree);
         }
+
     }
 }

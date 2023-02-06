@@ -35,6 +35,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
 import frc.robot.subsystems.Stinger;
 import frc.robot.subsystems.Grabber;
+import org.team555.frc.vision.Limelight;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.animation.RainbowAnimation;
@@ -76,6 +77,7 @@ public class ChargedUp extends RobotContainer
     public static final Shwooper   shwooper   = new Shwooper();
     public static final Grabber    grabber    = new Grabber();
     public static final Stinger    stinger    = new Stinger();
+    public static final Limelight  limelight  = new Limelight();
 
     // MANAGERS //
     // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
