@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.team555.frc.command.commandrobot.ManagerBase;
 
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -123,41 +125,110 @@ public class Limelight extends ManagerBase
     */
     public final double[] getBotposeRaw() {return botpose.getDoubleArray((double[])null);}
 
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getBotposeRaw}
+    */
+    public final Pose3d getBotpose()
+    {
+        double[] items = getBotposeRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
+
     private final NetworkTableEntry botpose_wpiblue = table.getEntry("botpose_wpiblue");
+
     /**
     * Robot transform in field-space (blue driverstation WPILIB origin). Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
     */
     public final double[] getBotposeWpiblueRaw() {return botpose_wpiblue.getDoubleArray((double[])null);}
 
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getBotposeWpiblueRaw}
+    */
+    public final Pose3d getBotposeWpiblue()
+    {
+        double[] items = getBotposeWpiblueRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
+
     private final NetworkTableEntry botpose_wpired = table.getEntry("botpose_wpired");
+
     /**
     * Robot transform in field-space (red driverstation WPILIB origin). Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
     */
     public final double[] getBotposeWpiredRaw() {return botpose_wpired.getDoubleArray((double[])null);}
 
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getBotposeWpiredRaw}
+    */
+    public final Pose3d getBotposeWpired()
+    {
+        double[] items = getBotposeWpiredRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
+
     private final NetworkTableEntry camerapose_targetspace = table.getEntry("camerapose_targetspace");
+
     /**
     * 3D transform of the camera in the coordinate system of the primary in-view AprilTag (array (6))
     */
     public final double[] getCameraposeTargetspaceRaw() {return camerapose_targetspace.getDoubleArray((double[])null);}
 
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getCameraposeTargetspaceRaw}
+    */
+    public final Pose3d getCameraposeTargetspace()
+    {
+        double[] items = getCameraposeTargetspaceRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
+
     private final NetworkTableEntry targetpose_cameraspace = table.getEntry("targetpose_cameraspace");
+
     /**
     * 3D transform of the primary in-view AprilTag in the coordinate system of the Camera (array (6))
     */
     public final double[] getTargetposeCameraspaceRaw() {return targetpose_cameraspace.getDoubleArray((double[])null);}
 
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getTargetposeCameraspaceRaw}
+    */
+    public final Pose3d getTargetposeCameraspace()
+    {
+        double[] items = getTargetposeCameraspaceRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
+
     private final NetworkTableEntry targetpose_robotspace = table.getEntry("targetpose_robotspace");
+
     /**
     * 3D transform of the primary in-view AprilTag in the coordinate system of the Robot (array (6))
     */
     public final double[] getTargetposeRobotspaceRaw() {return targetpose_robotspace.getDoubleArray((double[])null);}
 
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getTargetposeRobotspaceRaw}
+    */
+    public final Pose3d getTargetposeRobotspace()
+    {
+        double[] items = getTargetposeRobotspaceRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
+
     private final NetworkTableEntry botpose_targetspace = table.getEntry("botpose_targetspace");
+
     /**
     * 3D transform of the robot in the coordinate system of the primary in-view AprilTag (array (6))
     */
     public final double[] getBotposeTargetspaceRaw() {return botpose_targetspace.getDoubleArray((double[])null);}
+
+    /**
+    * Gets the pose3d encoded by {@link Limelight#getBotposeTargetspaceRaw}
+    */
+    public final Pose3d getBotposeTargetspace()
+    {
+        double[] items = getBotposeTargetspaceRaw();
+        return new Pose3d(items[0], items[1], items[2], new Rotation3d(items[3], items[4], items[5]));
+    }
 
     private final NetworkTableEntry tid = table.getEntry("tid");
     /**
