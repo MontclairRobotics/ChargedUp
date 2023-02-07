@@ -203,6 +203,22 @@ public final class Constants
             public static final int PWM_PORT = 9;
         }
 
+
+        public static class Limelight {
+            public static final int LED_MODE_CURRENT = 0;
+            public static final int LED_MODE_FORCE_OFF = 1;
+            public static final int LED_MODE_FORCE_BLINK = 2;
+            public static final int LED_MODE_FORCE_ON = 3;
+            public static final int CAM_MODE_VISION_PROCESSOR = 0;
+            public static final int CAM_MODE_DRIVER_CAMERA = 1;
+            public static final int STREAM_STANDARD = 0;
+            public static final int STREAM_PIP_MAIN = 1;
+            public static final int STREAM_PIP_SECONDARY = 2;
+            public static final int SNAPSHOT_MODE_RESET = 0;
+            public static final int SNAPSHOT_TAKE_EXACTLY_ONE = 1;
+            public static final double[] CROP_VALUES = {-1, 1, -1, 1};
+        }
+
         public static class Stinger 
         {
             public static final int MOTOR_PORT = 0;
@@ -301,4 +317,6 @@ public final class Constants
         public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???
         public static final double CHARGE_ANGLE_DEADBAND = 2.5;
     }
+
+    public static final String DYLAN = "DYLAN";
 }

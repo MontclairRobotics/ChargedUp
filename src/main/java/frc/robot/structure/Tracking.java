@@ -15,13 +15,13 @@ public enum Tracking {
     CONE(2),
     SERENA(3);
 
-    private int pipelineNum;
+    private double pipelineNum;
 
-    private Tracking(int pipelineNum) {
+    private Tracking(double pipelineNum) {
         this.pipelineNum = pipelineNum;
     }
 
-    public int getPipelineNum() {
+    public double getPipelineNum() {
         return pipelineNum;
     }
 }

@@ -345,15 +345,7 @@ public class Drivetrain extends SubsystemBase
 
         xPID.setMeasurement(getRobotPose().getX());
         yPID.setMeasurement(getRobotPose().getY());
-       
-        if (objectTracked == Tracking.NONE) 
-        {
-            thetaPID.setMeasurement(getRobotRotation().getDegrees());
-        }
-        else
-        {
-            thetaPID.setMeasurement(ChargedUp.limelight.getX());
-        }
+        thetaPID.setMeasurement(getRobotRotation().getDegrees());
 
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
         driveFromChassisSpeeds(c);
@@ -428,6 +420,12 @@ public class Drivetrain extends SubsystemBase
     }
 
 
+    public double getObjectAngle() 
+    {
+        if (objectTracked == Tracking.NONE) return 0;
+        return getRobotRotation().getDegrees() + ChargedUp.limelight.getX(); 
+    }
+
     public final DriveCommands commands = this.new DriveCommands();
     public class DriveCommands 
     {
@@ -468,9 +466,10 @@ public class Drivetrain extends SubsystemBase
 
         // VISION COMMANDS
 
-        //TODO: Make these commands
-        public Command turnToTarget() {
-            return Unimplemented.here();
+        public Command turnToTarget() 
+        {
+            return Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(getObjectAngle()))
+                .until(() -> isThetaPIDFree());
         }
 
         public Command follow(PathPlannerTrajectory trajectory)

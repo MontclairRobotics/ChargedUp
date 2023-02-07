@@ -20,19 +20,191 @@ public class Limelight extends ManagerBase
     private final NetworkTableEntry tx = table.getEntry("tx");
     private final NetworkTableEntry ty = table.getEntry("ty");
     private final NetworkTableEntry ta = table.getEntry("ta");  
+    private final NetworkTableEntry pipeline = table.getEntry("pipeline");
+    private final NetworkTableEntry latency = table.getEntry("tl"); // pipeine's latency contribution
+    private final NetworkTableEntry tshort = table.getEntry("tshort");
+    private final NetworkTableEntry tlong = table.getEntry("tlong");
+    private final NetworkTableEntry thor = table.getEntry("thor");
+    private final NetworkTableEntry tvert = table.getEntry("tvert");
+    private final NetworkTableEntry json = table.getEntry("json");
+    private final NetworkTableEntry tclass = table.getEntry("tclass");
+    private final NetworkTableEntry LEDMode = table.getEntry("ledMode");
+    private final NetworkTableEntry camMode = table.getEntry("camMode");
+    private final NetworkTableEntry stream = table.getEntry("stream");
+    private final NetworkTableEntry snapshot = table.getEntry("snapshot");
+    private final NetworkTableEntry crop = table.getEntry("crop");
+    private final NetworkTableEntry botpose = table.getEntry("botpose");
 
     // Getters //
-    public boolean getDetected() {return isDetected;}
-    public double getX() {return x;}
-    public double getY() {return y;}
-    public double getArea() {return area;}
-    public int getPipelineNum()
+    /**
+     * if its detected, return true
+     * 
+     *   .   ___                 __                                
+     *   . /'___\               /\ \                               
+     *   ./\ \__/  __  __    ___\ \ \/'\   __  __    ___   __  __  
+     *   .\ \ ,__\/\ \/\ \  /'___\ \ , <  /\ \/\ \  / __`\/\ \/\ \ 
+     *   . \ \ \_/\ \ \_\ \/\ \__/\ \ \\`\\ \ \_\ \/\ \L\ \ \ \_\ \
+     *   .  \ \_\  \ \____/\ \____\\ \_\ \_\/`____ \ \____/\ \____/
+     *   .   \/_/   \/___/  \/____/ \/_/\/_/`/___/> \/___/  \/___/ 
+     *   .                                     /\___/              
+     *   . 
+     * 
+     *   .+"+.+"+.+"+.+"+.+"+.
+     *  ( JAVA DOCS ARE COOL  )
+     *   )                   (
+     *  (         !!!         )
+     *   "+.+"+.+"+.+"+.+"+.+"
+
+     * 
+     * What the actual fuck guys?!?!??!?!?!?!?
+     * 
+     * The fitness grahm pacer test is a multistage aerobic capacity test, that progressively gets more difficult as it continues
+     * 
+     * "alex play money so big by yeat"
+     * 
+     * ctrl + shit
+     * 
+     *                    _|<p>
+     * hello;)          _|<p>
+     *                _|<p>
+     *              _|<p>
+     *            _|<p>
+     *          _|<p>
+     * ________|<p>
+     */    
+    public boolean getDetected()    {return isDetected;}
+    /**
+     * Get Horizontal Offset From Crosshair To Target (LL1: -27 degrees to 27 degrees | LL2: -29.8 to 29.8 degrees)
+     */
+    public double getX()            {return x;}
+    /**
+     * Get Vertical Offset From Crosshair To Target (LL1: -20.5 degrees to 20.5 degrees | LL2: -24.85 to 24.85 degrees)
+     */
+    public double getY()            {return y;}
+    /**
+     * Get Target Area (0% of image to 100% of image)
+     */
+    public double getArea()         {return area;}
+    /**
+     * Get True active pipeline index of the camera (0 .. 9)
+     */
+    public double getPipelineNum()  {return pipeline.getDouble(0);}
+    /**
+     * Get The pipeline’s latency contribution (ms) Add at least 11ms for image capture latency.
+     */
+    public double getLatency()      {return latency .getDouble(0);}
+    /**
+     * Get Sidelength of shortest side of the fitted bounding box (pixels)
+     */
+    public double getShort()        {return tshort  .getDouble(0);}
+    /**
+     * Get Sidelength of longest side of the fitted bounding box (pixels)
+     */
+    public double getLong()         {return tlong   .getDouble(0);}
+    /**
+     * Get Horizontal sidelength of the rough bounding box (0 - 320 pixels)
+     */
+    public double getTHOR()         {return thor    .getDouble(0);}
+    /**
+     * Get Vertical sidelength of the rough bounding box (0 - 320 pixels)
+     */
+    public double getVert()         {return tvert   .getDouble(0);}
+    /**
+     * Get Full JSON dump of targeting results
+     */
+    public String getJson()         {return json    .getString("");}
+    /**
+     * Get Class ID of primary neural detector result or neural classifier result
+     */
+    public double getClassID()      {return tclass  .getDouble(-1.0);}
+
+    /**
+    * Robot transform in field-space. Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
+    */
+    public final double[] getBotposeRaw() {return botpose.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry botpose_wpiblue = table.getEntry("botpose_wpiblue");
+    /**
+    * Robot transform in field-space (blue driverstation WPILIB origin). Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
+    */
+    public final double[] getBotposeWpiblueRaw() {return botpose_wpiblue.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry botpose_wpired = table.getEntry("botpose_wpired");
+    /**
+    * Robot transform in field-space (red driverstation WPILIB origin). Translation (X,Y,Z) Rotation(Roll,Pitch,Yaw)
+    */
+    public final double[] getBotposeWpiredRaw() {return botpose_wpired.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry camerapose_targetspace = table.getEntry("camerapose_targetspace");
+    /**
+    * 3D transform of the camera in the coordinate system of the primary in-view AprilTag (array (6))
+    */
+    public final double[] getCameraposeTargetspaceRaw() {return camerapose_targetspace.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry targetpose_cameraspace = table.getEntry("targetpose_cameraspace");
+    /**
+    * 3D transform of the primary in-view AprilTag in the coordinate system of the Camera (array (6))
+    */
+    public final double[] getTargetposeCameraspaceRaw() {return targetpose_cameraspace.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry targetpose_robotspace = table.getEntry("targetpose_robotspace");
+    /**
+    * 3D transform of the primary in-view AprilTag in the coordinate system of the Robot (array (6))
+    */
+    public final double[] getTargetposeRobotspaceRaw() {return targetpose_robotspace.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry botpose_targetspace = table.getEntry("botpose_targetspace");
+    /**
+    * 3D transform of the robot in the coordinate system of the primary in-view AprilTag (array (6))
+    */
+    public final double[] getBotposeTargetspaceRaw() {return botpose_targetspace.getDoubleArray((double[])null);}
+
+    private final NetworkTableEntry tid = table.getEntry("tid");
+    /**
+    * ID of the primary in-view AprilTag
+    */
+    public final double getTid() {return tid.getDouble(0);}
+    
+    // Setters //
+    public void setCamMode(int mode)
     {
-        return (int) table.getEntry("getpipe").getDouble(0.0);
+        camMode.setInteger(mode);
     }
 
-    public void setPipeline(int pipelineNum) {
-        table.getEntry("pipeline").setNumber(pipelineNum); 
+    public void setLEDMode(int mode) 
+    {
+        LEDMode.setNumber(mode);
+    }
+
+    public void setStreamMode(int mode) 
+    {
+        stream.setNumber(mode);
+    }
+
+    public void setSnapshotMode(int mode) 
+    {
+        snapshot.setNumber(mode);
+    }
+
+    /**
+    * Takes a double array of length 4, with the crop values from -1 to 1.<p>
+    * [0] Min X crop value of rectangle<p>
+    * [1] Max X value of crop rectangle<p>
+    * [2] Min value of crop rectangle<p>
+    * [3] Max Y value of crop rectangle
+    */
+    public void setCrop(double[] arr)
+    {
+        crop.setDoubleArray(arr);
+    }
+
+    /**
+     * Change the current pipeline
+     * @param pipelineNum pipeline to change to
+     */
+    public void setPipeline(double pipelineNum) 
+    {
+        pipeline.setNumber(pipelineNum); 
     }
 
     @Override
