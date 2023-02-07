@@ -1,4 +1,4 @@
-package org.team555.frc.vision;
+package frc.robot.structure.vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
