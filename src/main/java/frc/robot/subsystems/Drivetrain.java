@@ -469,11 +469,7 @@ public class Drivetrain extends SubsystemBase
         // VISION COMMANDS
 
         //TODO: Make these commands
-        public Command turnToCone() {
-            return Unimplemented.here();
-        }
-
-        public Command turnToCube() {
+        public Command turnToTarget() {
             return Unimplemented.here();
         }
 

@@ -15,30 +15,24 @@ public class Limelight extends ManagerBase
     double y;
     double area;
     
-    private final NetworkTable table;
-    private final NetworkTableEntry tv;
-    private final NetworkTableEntry tx;
-    private final NetworkTableEntry ty;
-    private final NetworkTableEntry ta;    
-    
-    public Limelight() 
-    {
-        table = NetworkTableInstance.getDefault().getTable("limelight");
-        tv = table.getEntry("tv");
-        tx = table.getEntry("tx");
-        ty = table.getEntry("ty");
-        ta  = table.getEntry("ta");
-    }
+    private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");;
+    private final NetworkTableEntry tv = table.getEntry("tv");
+    private final NetworkTableEntry tx = table.getEntry("tx");
+    private final NetworkTableEntry ty = table.getEntry("ty");
+    private final NetworkTableEntry ta = table.getEntry("ta");  
 
     // Getters //
     public boolean getDetected() {return isDetected;}
     public double getX() {return x;}
     public double getY() {return y;}
     public double getArea() {return area;}
+    public int getPipelineNum()
+    {
+        return (int) table.getEntry("getpipe").getDouble(0.0);
+    }
 
-    //TODO: set the pipeline of the limelight
     public void setPipeline(int pipelineNum) {
-
+        table.getEntry("pipeline").setNumber(pipelineNum); 
     }
 
     @Override
