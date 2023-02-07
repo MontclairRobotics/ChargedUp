@@ -35,13 +35,13 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
 import frc.robot.subsystems.Stinger;
 import frc.robot.subsystems.Grabber;
-import org.team555.frc.vision.Limelight;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
+import frc.robot.structure.vision.Limelight;
 // import frc.robot.subsystems.AngularVelocityManager;
 import frc.robot.subsystems.Arm;
 
