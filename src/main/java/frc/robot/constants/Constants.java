@@ -30,7 +30,7 @@ public final class Constants
 
     public static class Pneu
     {
-        public static final int COMPRESSOR_PORT = 0;
+        public static final int COMPRESSOR_PORT = 63;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int GRABBER_SOLENOID_PORT = 0;
     }
