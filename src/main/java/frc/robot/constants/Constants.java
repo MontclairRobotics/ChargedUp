@@ -49,13 +49,13 @@ public final class Constants
         private static final MotorType STEER_TYPE = MotorType.NEO;
 
         private static final SwerveModuleSpec FRONT_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 29, STEER_TYPE, 5,  12,  358.651157 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  358.651157 - 90);
         private static final SwerveModuleSpec FRONT_RIGHT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 30, STEER_TYPE, 28, 10,  087.078116 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 1, STEER_TYPE, 18, 13,  087.078116 - 90);
         private static final SwerveModuleSpec BACK_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 14, 13,  219.871863 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 28, 11,  219.871863 - 90);
         private static final SwerveModuleSpec BACK_RIGHT =
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  7, STEER_TYPE,  4, 11,  250.479320 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  41, STEER_TYPE,  29, 4,  250.479320 - 90);
         /**
          * Rotator port first, driver port second
          * 
