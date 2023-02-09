@@ -16,7 +16,8 @@ public class Limelight extends ManagerBase
     double x;
     double y;
     double area;
-    
+    private double pipelineNum = 0;
+
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");;
     private final NetworkTableEntry tv = table.getEntry("tv");
     private final NetworkTableEntry tx = table.getEntry("tx");
@@ -36,6 +37,8 @@ public class Limelight extends ManagerBase
     private final NetworkTableEntry snapshot = table.getEntry("snapshot");
     private final NetworkTableEntry crop = table.getEntry("crop");
     private final NetworkTableEntry botpose = table.getEntry("botpose");
+
+    
 
     // Getters //
     /**
@@ -90,7 +93,7 @@ public class Limelight extends ManagerBase
     /**
      * Get True active pipeline index of the camera (0 .. 9)
      */
-    public double getPipelineNum()  {return pipeline.getDouble(0);}
+    public double getPipelineNum()  {return (double) pipeline.getInteger(0);}
     /**
      * Get The pipeline’s latency contribution (ms) Add at least 11ms for image capture latency.
      */
@@ -273,15 +276,15 @@ public class Limelight extends ManagerBase
      * Change the current pipeline
      * @param pipelineNum pipeline to change to
      */
-    public void setPipeline(double pipelineNum) 
+    public void setPipeline(double pipelineNumInput) 
     {
-        pipeline.setNumber(pipelineNum); 
+        pipelineNum = pipelineNumInput;
     }
-
     @Override
     public void always() 
     {
         //Read values periodically
+        pipeline.setDouble(pipelineNum);
         isDetected = tv.getDouble(0.0) == 1 ? true : false;
         x = tx.getDouble(0.0);
         y = ty.getDouble(0.0);
