@@ -471,6 +471,16 @@ public class Drivetrain extends SubsystemBase
                 .until(() -> isThetaPIDFree());
         }
 
+        /**
+         * Goes towards the object on the x-axis.
+         * @return
+         */
+        public Command moveToObjectSideways()
+        {
+            return Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(getRobotPose().getX() + 0.05 * ChargedUp.drivetrain.getObjectAngle()))
+                .until(() -> !xPID.active());
+        }
+
         public Command follow(PathPlannerTrajectory trajectory)
         {
             return new PPSwerveControllerCommand(
