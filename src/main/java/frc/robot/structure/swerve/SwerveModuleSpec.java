@@ -3,7 +3,6 @@ package frc.robot.structure.swerve;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
-import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
@@ -40,7 +39,7 @@ public class SwerveModuleSpec
     {
         return new MkSwerveModuleBuilder()
             .withDriveMotor(driverType, driverPort)
-            .withSteerMotor(steerType, driverPort)
+            .withSteerMotor(steerType, steerPort)
             .withSteerEncoderPort(steerEncoderPort)
             .withSteerOffset(steerOffsetRadians)
             .withGearRatio(config);

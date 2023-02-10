@@ -15,6 +15,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -25,8 +26,12 @@ import frc.robot.structure.swerve.SwerveModuleSpec;
 
 public final class Constants 
 {
-
     private Constants() {}
+
+    static 
+    {
+        
+    }
 
     public static class Pneu
     {
@@ -39,9 +44,9 @@ public final class Constants
     {
         public static final MechanicalConfiguration CONFIGURATION = new MechanicalConfiguration(
             Drivebase.WHEEL_DIAMETER_METER, 
-            8.14, 
+            1.0 / 8.14, 
             false, 
-            8.14, 
+            1.0 / 8.14, 
             false
         );
 
@@ -49,13 +54,13 @@ public final class Constants
         public static final MotorType STEER_TYPE = MotorType.NEO;
 
         private static final SwerveModuleSpec FRONT_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  358.651157 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  90.000000);
         private static final SwerveModuleSpec FRONT_RIGHT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 1, STEER_TYPE, 18, 13,  087.078116 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 1, STEER_TYPE, 18, 13,  40.605469);
         private static final SwerveModuleSpec BACK_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 28, 11,  219.871863 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 28, 11,  209.003906);
         private static final SwerveModuleSpec BACK_RIGHT =
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  41, STEER_TYPE,  29, 4,  250.479320 - 90);
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  41, STEER_TYPE,  29, 4,  16.611328);
         /**
          * Rotator port first, driver port second
          * 
@@ -152,7 +157,7 @@ public final class Constants
 
         public static class Elevator 
         {
-            public static final int MOTOR_PORT = 4;
+            public static final int MOTOR_PORT = 5;
             public static final boolean INVERTED = false;
 
             public static final double SPEED = 0.1;  //TODO: Tweak these values
@@ -204,7 +209,8 @@ public final class Constants
         }
 
 
-        public static class Limelight {
+        public static class Limelight 
+        {
             public static final int LED_MODE_CURRENT = 0;
             public static final int LED_MODE_FORCE_OFF = 1;
             public static final int LED_MODE_FORCE_BLINK = 2;
@@ -221,7 +227,7 @@ public final class Constants
 
         public static class Stinger 
         {
-            public static final int MOTOR_PORT = 0;
+            public static final int MOTOR_PORT = 17;
 
             public static final double
                 IN_OUT_KP = 1,

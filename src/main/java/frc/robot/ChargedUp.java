@@ -56,7 +56,9 @@ import com.kauailabs.navx.frc.AHRS;
 public class ChargedUp extends RobotContainer 
 {
     public static final Field2d field = new Field2d();
-    public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
+
+    // TODO: not break this
+    // public static final Compressor pneu = new Compressor(Pneu.COMPRESSOR_PORT, Pneu.MODULE_TYPE);
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -73,11 +75,12 @@ public class ChargedUp extends RobotContainer
     public static final LED        led        = new LED();
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
-    public static final Arm        arm        = new Arm();
     public static final Shwooper   shwooper   = new Shwooper();
     public static final Grabber    grabber    = new Grabber();
     public static final Stinger    stinger    = new Stinger();
     public static final Limelight  limelight  = new Limelight();
+    
+    public static final Arm arm = null;
 
     // MANAGERS //
     // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
@@ -158,7 +161,7 @@ public class ChargedUp extends RobotContainer
                 false);
             Robot.Stinger.JOY_ADJUSTER.adjustX(right);
             stinger.setSpeed(right.getX());
-        }));
+        }, stinger));
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
@@ -199,7 +202,7 @@ public class ChargedUp extends RobotContainer
                 false);
             Robot.Elevator.JOY_ADJUSTER.adjustY(left);
             elevator.setSpeed(left.getY());
-        }));
+        }, elevator));
 
         // HANDLE AUTO //
         GenericEntry entry = Shuffleboard.getTab("Main")

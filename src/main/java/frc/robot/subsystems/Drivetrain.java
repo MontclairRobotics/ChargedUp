@@ -102,6 +102,8 @@ public class Drivetrain extends SubsystemBase
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
 
+        // TODO: UNCOMMENT ALL OF THIS
+
         int i = 0;
         for(SwerveModuleSpec spec : Drive.MODULES)
         {
@@ -111,7 +113,6 @@ public class Drivetrain extends SubsystemBase
                     .withSize(2, 5)
                     .withPosition(2*i, 0)
             );
-            i++;
 
             assert Drive.STEER_TYPE == MotorType.NEO 
                  : "This code assumes that the steer type of the robot is a neo."
@@ -119,6 +120,8 @@ public class Drivetrain extends SubsystemBase
 
             CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
             mot.burnFlash();
+            
+            i++;
         }
 
         // Build Shuffleboard //
@@ -357,9 +360,9 @@ public class Drivetrain extends SubsystemBase
         thetaPID.setMeasurement(getRobotRotation().getDegrees());
 
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
+        
         driveFromChassisSpeeds(c);
     }
-
     
     public void setRobotPose(Pose2d pose)
     {
