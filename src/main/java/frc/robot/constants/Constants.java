@@ -45,8 +45,8 @@ public final class Constants
             false
         );
 
-        private static final MotorType DRIVE_TYPE = MotorType.FALCON;
-        private static final MotorType STEER_TYPE = MotorType.NEO;
+        public static final MotorType DRIVE_TYPE = MotorType.FALCON;
+        public static final MotorType STEER_TYPE = MotorType.NEO;
 
         private static final SwerveModuleSpec FRONT_LEFT = 
             new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  358.651157 - 90);

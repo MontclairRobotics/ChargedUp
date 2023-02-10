@@ -46,6 +46,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
+import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
@@ -111,6 +112,10 @@ public class Drivetrain extends SubsystemBase
                     .withPosition(2*i, 0)
             );
             i++;
+
+            assert Drive.STEER_TYPE == MotorType.NEO 
+                 : "This code assumes that the steer type of the robot is a neo."
+                 ;
 
             CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
             mot.burnFlash();
