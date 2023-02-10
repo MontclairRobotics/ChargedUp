@@ -45,6 +45,7 @@ import frc.robot.structure.vision.Limelight;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
@@ -110,6 +111,9 @@ public class Drivetrain extends SubsystemBase
                     .withPosition(2*i, 0)
             );
             i++;
+
+            CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
+            mot.burnFlash();
         }
 
         // Build Shuffleboard //
