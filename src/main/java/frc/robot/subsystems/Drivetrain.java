@@ -110,10 +110,10 @@ public class Drivetrain extends SubsystemBase
         // for(SwerveModuleSpec spec : Drive.MODULES)
         {
             modules[i] = Drive.MODULES[i].build(
-                Shuffleboard.getTab("Drivetrain")
-                    .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
-                    .withSize(2, 5)
-                    .withPosition(2*i, 0)
+                // Shuffleboard.getTab("Drivetrain")
+                //     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
+                //     .withSize(2, 5)
+                //     .withPosition(2*i, 0)
             );
 
             assert Drive.STEER_TYPE == MotorType.NEO 

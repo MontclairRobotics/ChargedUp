@@ -6,6 +6,7 @@ import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
 import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 public class SwerveModuleSpec 
@@ -36,18 +37,18 @@ public class SwerveModuleSpec
     /**
      * Get the builder object which contains all information about the swerve module.
      */
-    public MkSwerveModuleBuilder builder()
+    private MkSwerveModuleBuilder builder()
     {
         MkModuleConfiguration modConfig = MkModuleConfiguration.getDefaultSteerNEO();
         modConfig.setDriveCurrentLimit(40.0);
         modConfig.setSteerCurrentLimit(30.0);
         
         return new MkSwerveModuleBuilder(modConfig)
+            .withGearRatio(SdsModuleConfigurations.MK4I_L1)
             .withDriveMotor(driverType, driverPort)
             .withSteerMotor(steerType, steerPort)
             .withSteerEncoderPort(steerEncoderPort)
-            .withSteerOffset(steerOffsetRadians)
-            .withGearRatio(config);
+            .withSteerOffset(steerOffsetRadians);
     }
 
     public SwerveModule build()
