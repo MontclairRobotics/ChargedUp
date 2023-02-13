@@ -50,13 +50,13 @@ public final class Constants
         public static final MotorType STEER_TYPE = MotorType.NEO;
 
         private static final SwerveModuleSpec FRONT_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  87.451172  ); //fl
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  269.736328 + 90); //fl
         private static final SwerveModuleSpec FRONT_RIGHT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 1, STEER_TYPE, 18, 13,  308.496094); //fr
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 1, STEER_TYPE, 18, 13,  86.220703 + 90); //fr
         private static final SwerveModuleSpec BACK_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 28, 11,  295.400391 ); //bl
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 28, 11,  47.724609 -90 + 45); //bl
         private static final SwerveModuleSpec BACK_RIGHT =
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  41, STEER_TYPE,  29, 4,  157.236328); //br
+            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  41, STEER_TYPE,  29, 4,  82.001953 -90); //br
         /**
          * Rotator port first, driver port second
          * 
@@ -105,10 +105,10 @@ public final class Constants
         public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27); //TODO: CONFIRM WITH JOSH
         public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
 
-        private static Translation2d FLPosition = new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2); //FL
-        private static Translation2d FRPosition = new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2); //FR
-        private static Translation2d BLPosition = new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2); //BL
-        private static Translation2d BRPosition = new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2); //BR
+        private static Translation2d FLPosition = new Translation2d( Drive.WHEEL_BASE_H_M/2,  Drive.WHEEL_BASE_W_M/2); //FL
+        private static Translation2d FRPosition = new Translation2d( Drive.WHEEL_BASE_H_M/2, -Drive.WHEEL_BASE_W_M/2); //FR
+        private static Translation2d BLPosition = new Translation2d(-Drive.WHEEL_BASE_H_M/2,  Drive.WHEEL_BASE_W_M/2); //BL
+        private static Translation2d BRPosition = new Translation2d(-Drive.WHEEL_BASE_H_M/2, -Drive.WHEEL_BASE_W_M/2); //BR
         public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
             FLPosition, //FL
             FRPosition, //FR
