@@ -30,11 +30,6 @@ public final class Constants
 {
     private Constants() {}
 
-    static 
-    {
-        
-    }
-
     public static class Pneu
     {
         public static final int COMPRESSOR_PORT = 63;
@@ -44,19 +39,38 @@ public final class Constants
 
     public static class Drive
     {
-        public static final MechanicalConfiguration CONFIGURATION = SdsModuleConfigurations.MK4I_L1;
-
         public static final MotorType DRIVE_TYPE = MotorType.FALCON;
         public static final MotorType STEER_TYPE = MotorType.NEO;
 
         private static final SwerveModuleSpec FRONT_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 10, STEER_TYPE, 7,  12,  269.736328 + 90); //fl
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 10, false, 
+                STEER_TYPE, 7, false,  
+                12,  269.736328 + 90
+            ); //fl
         private static final SwerveModuleSpec FRONT_RIGHT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 1, STEER_TYPE, 18, 13,  86.220703 + 90); //fr
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 1, true, 
+                STEER_TYPE, 18, false, 
+                13,  86.220703 + 90
+            ); //fr
         private static final SwerveModuleSpec BACK_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 28, 11,  47.724609 -90 + 45); //bl
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 3, false, 
+                STEER_TYPE, 28, false, 
+                11,  47.724609 -90 + 45
+            ); //bl
         private static final SwerveModuleSpec BACK_RIGHT =
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  41, STEER_TYPE,  29, 4,  82.001953 -90); //br
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 41, false, 
+                STEER_TYPE,  29, false, 
+                4,  82.001953 -90
+            ); //br
+        
         /**
          * Rotator port first, driver port second
          * 

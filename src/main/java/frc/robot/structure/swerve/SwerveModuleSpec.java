@@ -19,9 +19,17 @@ public class SwerveModuleSpec
     public final MotorType driverType;
     public final MotorType steerType;
 
+    public final boolean driveInvert;
+    public final boolean steerInvert;
+
     public final MechanicalConfiguration config;
 
-    public SwerveModuleSpec(MechanicalConfiguration config, MotorType driverType, int driverPort, MotorType steerType, int steerPort, int steerEncoderPort, double steerOffsetDegrees)
+    public SwerveModuleSpec(
+        MechanicalConfiguration config, 
+        MotorType driverType, int driverPort, boolean driveInvert, 
+        MotorType steerType, int steerPort, boolean steerInvert, 
+        int steerEncoderPort, double steerOffsetDegrees
+    )
     {
         this.driverPort = driverPort;
         this.steerPort = steerPort;
@@ -32,6 +40,9 @@ public class SwerveModuleSpec
         this.steerType = steerType;
 
         this.config = config;
+
+        this.driveInvert = driveInvert;
+        this.steerInvert = steerInvert;
     }
 
     /**
@@ -42,9 +53,16 @@ public class SwerveModuleSpec
         MkModuleConfiguration modConfig = MkModuleConfiguration.getDefaultSteerNEO();
         modConfig.setDriveCurrentLimit(40.0);
         modConfig.setSteerCurrentLimit(30.0);
+
+        MechanicalConfiguration newConfig = new MechanicalConfiguration(
+            config.getWheelDiameter(), 
+            config.getDriveReduction(), 
+            config.isDriveInverted() ^ driveInvert, 
+            config.getSteerReduction(), 
+            config.isSteerInverted());
         
         return new MkSwerveModuleBuilder(modConfig)
-            .withGearRatio(SdsModuleConfigurations.MK4I_L1)
+            .withGearRatio(newConfig)
             .withDriveMotor(driverType, driverPort)
             .withSteerMotor(steerType, steerPort)
             .withSteerEncoderPort(steerEncoderPort)
