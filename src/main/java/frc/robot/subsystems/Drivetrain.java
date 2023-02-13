@@ -19,6 +19,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -46,6 +47,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -104,10 +106,10 @@ public class Drivetrain extends SubsystemBase
 
         // TODO: UNCOMMENT ALL OF THIS
 
-        int i = 0;
-        for(SwerveModuleSpec spec : Drive.MODULES)
+        for (int i = 0; i < Drive.MODULES.length; i++)
+        // for(SwerveModuleSpec spec : Drive.MODULES)
         {
-            modules[i] = spec.build(
+            modules[i] = Drive.MODULES[i].build(
                 Shuffleboard.getTab("Drivetrain")
                     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
                     .withSize(2, 5)
@@ -115,13 +117,10 @@ public class Drivetrain extends SubsystemBase
             );
 
             assert Drive.STEER_TYPE == MotorType.NEO 
-                 : "This code assumes that the steer type of the robot is a neo."
-                 ;
+                 : "This code assumes that the steer type of the robot is a neo.";
 
             CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
             mot.burnFlash();
-            
-            i++;
         }
 
         // Build Shuffleboard //
@@ -156,7 +155,7 @@ public class Drivetrain extends SubsystemBase
         odometry = new SwerveDriveOdometry(
             Drive.KINEMATICS, 
             getRobotRotation(), 
-            Drive.POSITIONS,
+            getModulePositions(),
             new Pose2d()
         );
 
@@ -243,13 +242,22 @@ public class Drivetrain extends SubsystemBase
      */
     public void set(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
-        vy_meter_per_second  = +MathUtils.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        vx_meter_per_second  = +MathUtils.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        omega_rad_per_second = -MathUtils.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        vx_meter_per_second  = +MathUtils.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        vy_meter_per_second  = +MathUtils.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        omega_rad_per_second = +MathUtils.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
         
         vx_meter_per_second  *= Drive.speeds[speedIndex][0];
         vy_meter_per_second  *= Drive.speeds[speedIndex][0];
         omega_rad_per_second *= Drive.speeds[speedIndex][1];
+
+        Logging.info("omega rad per sec = " + omega_rad_per_second);
+        
+        // Logging.info("Front Left: "  + Units.radiansToDegrees(modules[0].getSteerEncoder().getAbsoluteAngle()));
+        Logging.info("Front Right: " + Units.radiansToDegrees(modules[1].getSteerEncoder().getAbsoluteAngle()));
+        // Logging.info("back Left: "   + Units.radiansToDegrees(modules[2].getSteerEncoder().getAbsoluteAngle()));
+        // Logging.info("back right: "  + Units.radiansToDegrees(modules[3].getSteerEncoder().getAbsoluteAngle()));
+        
+
 
         xPID.setSpeed(vx_meter_per_second);
         yPID.setSpeed(vy_meter_per_second);
