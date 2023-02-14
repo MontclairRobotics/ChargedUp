@@ -112,7 +112,7 @@ public class ChargedUp extends RobotContainer
                 }
 
                 drivetrain.setInput(
-                    JoystickInput.getRight(driverController, true,  false),
+                    JoystickInput.getRight(driverController, false, false),
                     JoystickInput.getLeft (driverController, false, false)
                 );
             },

@@ -47,28 +47,28 @@ public final class Constants
                 SdsModuleConfigurations.MK4I_L1, 
                 DRIVE_TYPE, 10, false, 
                 STEER_TYPE, 7, false,  
-                12,  269.736328 + 90
+                12,  269.736328
             ); //fl
         private static final SwerveModuleSpec FRONT_RIGHT = 
             new SwerveModuleSpec(
                 SdsModuleConfigurations.MK4I_L1, 
                 DRIVE_TYPE, 1, true, 
                 STEER_TYPE, 18, false, 
-                13,  86.220703 + 90
+                13,  86.220703
             ); //fr
         private static final SwerveModuleSpec BACK_LEFT = 
             new SwerveModuleSpec(
                 SdsModuleConfigurations.MK4I_L1, 
                 DRIVE_TYPE, 3, false, 
                 STEER_TYPE, 28, false, 
-                11,  47.724609 -90 + 45
+                11,  47.724609 + 45
             ); //bl
         private static final SwerveModuleSpec BACK_RIGHT =
             new SwerveModuleSpec(
                 SdsModuleConfigurations.MK4I_L1, 
                 DRIVE_TYPE, 41, false, 
                 STEER_TYPE,  29, false, 
-                4,  82.001953 -90
+                4,  82.001953
             ); //br
         
         /**
