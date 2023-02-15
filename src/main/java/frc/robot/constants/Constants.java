@@ -52,7 +52,7 @@ public final class Constants
         private static final SwerveModuleSpec FRONT_RIGHT = 
             new SwerveModuleSpec(
                 SdsModuleConfigurations.MK4I_L1, 
-                DRIVE_TYPE, 1, true, 
+                DRIVE_TYPE, 1, false, 
                 STEER_TYPE, 18, false, 
                 13,  86.220703
             ); //fr

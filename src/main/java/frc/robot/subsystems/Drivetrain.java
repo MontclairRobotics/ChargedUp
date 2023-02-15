@@ -250,10 +250,10 @@ public class Drivetrain extends SubsystemBase
         vy_meter_per_second  *= Drive.speeds[speedIndex][0];
         omega_rad_per_second *= Drive.speeds[speedIndex][1];
 
-        Logging.info("omega rad per sec = " + omega_rad_per_second);
+        // Logging.info("omega rad per sec = " + omega_rad_per_second);
         
         // Logging.info("Front Left: "  + Units.radiansToDegrees(modules[0].getSteerEncoder().getAbsoluteAngle()));
-        Logging.info("Front Right: " + Units.radiansToDegrees(modules[1].getSteerEncoder().getAbsoluteAngle()));
+        // Logging.info("Front Right: " + Units.radiansToDegrees(modules[1].getSteerEncoder().getAbsoluteAngle()));
         // Logging.info("back Left: "   + Units.radiansToDegrees(modules[2].getSteerEncoder().getAbsoluteAngle()));
         // Logging.info("back right: "  + Units.radiansToDegrees(modules[3].getSteerEncoder().getAbsoluteAngle()));
         

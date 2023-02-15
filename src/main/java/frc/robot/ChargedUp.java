@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.fasterxml.jackson.databind.ser.std.StdArraySerializers.FloatArraySerializer;
 import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
@@ -74,16 +75,13 @@ public class ChargedUp extends RobotContainer
     // SUBSYSTEMS //
     public static final LED        led        = new LED();
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Elevator   elevator   = new Elevator();
+    public static final Elevator   elevator   = new Elevator(false);
     public static final Shwooper   shwooper   = new Shwooper();
     public static final Grabber    grabber    = new Grabber();
-    public static final Stinger    stinger    = new Stinger();
+    public static final Stinger    stinger    = new Stinger(false);
     public static final Limelight  limelight  = new Limelight();
     
     public static final Arm arm = null;
-
-    // MANAGERS //
-    // public static final AngularVelocityManager angularVelocityManager = new AngularVelocityManager();
 
     // AUTO COMMAND //
     private static Command autoCommand = Commands.none();
@@ -100,7 +98,7 @@ public class ChargedUp extends RobotContainer
         //Shuffleboard.getTab("Main")
         //  .add("Field", field)
         //    .withSize(4, 2)
-        //    .withPosition(0, 2);
+        //    .withPosition(0, 2);a
       
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() ->

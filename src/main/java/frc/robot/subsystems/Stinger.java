@@ -13,14 +13,24 @@ import frc.robot.structure.PIDMechanism;
 
 public class Stinger extends ManagerSubsystemBase
 {
-    private final CANSparkMax motor = new CANSparkMax(Robot.Stinger.MOTOR_PORT, MotorType.kBrushless);
-    PIDMechanism pidMech = new PIDMechanism(Robot.Stinger.inout());
-    RelativeEncoder encoder = motor.getEncoder();
+    private boolean exists;
 
-    public Stinger()
+    private CANSparkMax motor;
+    RelativeEncoder encoder;
+    
+    PIDMechanism pidMech = new PIDMechanism(Robot.Stinger.inout());
+
+    public Stinger(boolean exists)
     {
+        this.exists = exists;
+        if(!exists) return;
+
+        motor = new CANSparkMax(Robot.Stinger.MOTOR_PORT, MotorType.kBrushless);
+
+        encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(Robot.Stinger.IN_OUT_CONVERSION_FACTOR);
     }
+    public Stinger() {this(true);}
 
     /**
      * Extends Stinger to a desired length
@@ -112,6 +122,8 @@ public class Stinger extends ManagerSubsystemBase
     @Override
     public void always() 
     {
+        if(!exists) return;
+
         pidMech.setMeasurement(encoder.getPosition());
         pidMech.update();
         motor.set(pidMech.getSpeed());
