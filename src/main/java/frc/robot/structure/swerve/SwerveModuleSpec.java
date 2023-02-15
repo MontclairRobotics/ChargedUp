@@ -59,7 +59,7 @@ public class SwerveModuleSpec
             config.getDriveReduction(), 
             config.isDriveInverted() ^ driveInvert, 
             config.getSteerReduction(), 
-            config.isSteerInverted());
+            config.isSteerInverted() ^ steerInvert);
         
         return new MkSwerveModuleBuilder(modConfig)
             .withGearRatio(newConfig)
