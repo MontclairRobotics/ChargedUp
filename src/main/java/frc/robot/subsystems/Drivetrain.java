@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 
+import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
 import org.team555.math.MathUtils;
 
 import edu.wpi.first.math.controller.HolonomicDriveController;
@@ -59,7 +60,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Drivetrain extends SubsystemBase
+public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
     private final SwerveDriveOdometry odometry;
@@ -205,7 +206,7 @@ public class Drivetrain extends SubsystemBase
 
     public double getChargeStationAngle()
     {
-        return ChargedUp.gyroscope.getPitch();
+        return ChargedUp.gyroscope.getRoll();
     }
     /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
@@ -220,9 +221,9 @@ public class Drivetrain extends SubsystemBase
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
         set(
-            turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            drive.getY() * Drive.MAX_SPEED_MPS,
-            drive.getX() * Drive.MAX_SPEED_MPS
+            +turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
+            +drive.getY() * Drive.MAX_SPEED_MPS,
+            +drive.getX() * Drive.MAX_SPEED_MPS
         );
     }
     
@@ -359,13 +360,22 @@ public class Drivetrain extends SubsystemBase
     }
 
     @Override 
-    public void periodic() 
+    public void always() 
     {
         ChargedUp.field.setRobotPose(getRobotPose());
 
         xPID.setMeasurement(getRobotPose().getX());
         yPID.setMeasurement(getRobotPose().getY());
         thetaPID.setMeasurement(getRobotRotation().getDegrees());
+
+        xPID.update();
+        yPID.update();
+        thetaPID.update();
+
+        // System.out.println("x = " + xPID.getSpeed()
+        //                 + " y = " + yPID.getSpeed()
+        //                 + " t = " + thetaPID.getSpeed()
+        //                 + " xactive = " + xPID.active());
 
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
         

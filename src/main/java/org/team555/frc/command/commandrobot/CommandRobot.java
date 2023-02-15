@@ -29,7 +29,7 @@ public class CommandRobot extends TimedRobot
     private static RobotContainer container;
     private static Command autoCommand;
 
-    private static SendableChooser<Command> autoChooser;
+    private static SendableChooser<Supplier<Command>> autoChooser;
     private static List<Manager> managers = new ArrayList<Manager>();
 
     public static void registerManager(Manager manager) 
@@ -40,11 +40,6 @@ public class CommandRobot extends TimedRobot
     public static void unregisterManager(Manager manager)
     {
         managers.remove(manager);
-    }
-
-    public static Command autoCommand()
-    {
-        return autoCommand;
     }
 
     public static double deltaTime()
@@ -103,7 +98,7 @@ public class CommandRobot extends TimedRobot
     {
         reset();
 
-        autoCommand = autoChooser.getSelected();
+        autoCommand = autoChooser.getSelected().get();
         //System.out.println(autoCommand == null);
 
         if(autoCommand != null)

@@ -85,12 +85,20 @@ public class SequenceParser
             return null;
         }
 
+
+        System.out.println("CMD:");
+        for (String string : in) 
+        {
+            System.out.println("\t:"+string);
+        }
+
         // Parse
         ArrayList<String> arr = new ArrayList<String>();
 
-        for (int i = 0; i < in.size(); i++)
+        for (int i = 0; i < in.size()-1; i++)
         {
             String commd = in.get(i);
+            System.out.println(commd);
             String trans = in.get(i) + in.get(i+1);
 
             if(!commd.contains("!")) 

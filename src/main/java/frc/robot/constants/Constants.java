@@ -43,6 +43,9 @@ public final class Constants
         public static final MotorType DRIVE_TYPE = MotorType.FALCON;
         public static final MotorType STEER_TYPE = MotorType.NEO;
 
+          ////////////////////////////////////////////
+         // REBOOT THE ROBOT WHEN CHANGING OFFSETS //
+        ////////////////////////////////////////////
         private static final SwerveModuleSpec FRONT_LEFT = 
             new SwerveModuleSpec(
                 SdsModuleConfigurations.MK4I_L1, 
