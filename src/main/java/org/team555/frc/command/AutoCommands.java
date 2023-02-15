@@ -50,20 +50,20 @@ public final class AutoCommands
     {
         commands.put(name, command);
     }
-    public static Command get(String name)
+    public static Supplier<Command> get(String name)
     {
-        return commands.get(name).get();
+        return commands.get(name);
     }
 
-    private static SendableChooser<Command> chooserInternal;
-    public static SendableChooser<Command> chooser()
+    private static SendableChooser<Supplier<Command>> chooserInternal;
+    public static SendableChooser<Supplier<Command>> chooser()
     {
         if(chooserInternal != null)
         {
             return chooserInternal;
         }
 
-        var s = new SendableChooser<Command>();
+        var s = new SendableChooser<Supplier<Command>>();
 
         if(!commands.containsKey(defaultAutoCommand))
         {

@@ -83,9 +83,6 @@ public class ChargedUp extends RobotContainer
     
     public static final Arm arm = null;
 
-    // AUTO COMMAND //
-    private static Command autoCommand = Commands.none();
-
     // INITIALIZER //
     @Override 
     public void initialize() 
@@ -140,6 +137,9 @@ public class ChargedUp extends RobotContainer
                gyroscope.zeroYaw();
                Logging.info("Zeroed NavX!");
             }));
+
+        driverController.getButton(Button.Y_TRIANGLE)
+            .onTrue(Commands2023.balance());
 
         // OPERATOR CONTROLS //
 
@@ -208,19 +208,14 @@ public class ChargedUp extends RobotContainer
             .withWidget(BuiltInWidgets.kTextView)
             .getEntry();
 
-        entry.andThen(e -> 
+        AutoCommands.add("Auto", () -> 
         {
-            if(!e.isString())
-            {
-                Logging.error("Auto command was not a string. This appears to be a skill issue.");
-                return;
-            }
+            Command autoCommand = Commands2023.buildAuto(entry.getString(null));
 
-            autoCommand = Commands2023.buildAuto(e.getString());
+            Logging.info("Created the autonomous sequence!");
+
+            return autoCommand;
         });
-
-
-        AutoCommands.add("Auto", () -> autoCommand);
         AutoCommands.setDefaultCommand("Auto");
 
         // SETUP LOGGING //

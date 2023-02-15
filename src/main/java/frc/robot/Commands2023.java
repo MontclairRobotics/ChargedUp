@@ -474,6 +474,8 @@ public class Commands2023
             }
             speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
             
+            Logging.info("angle = " + angle + "; speed = " + speed);
+
             ChargedUp.drivetrain.set(0, 0, speed);
         });
     }
@@ -564,6 +566,7 @@ public class Commands2023
     {
         ArrayList<String> parts = SequenceParser.parse(p);
 
+        System.out.println("Auto String: " + p);
         if(parts == null) 
         {
             return none();
