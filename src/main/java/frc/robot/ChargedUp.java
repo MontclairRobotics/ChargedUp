@@ -36,6 +36,7 @@ import frc.robot.subsystems.Shwooper;
 import frc.robot.subsystems.Stinger;
 import frc.robot.subsystems.Grabber;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.RebootRequire;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.factories.HashMaps;
@@ -75,10 +76,10 @@ public class ChargedUp extends RobotContainer
     // SUBSYSTEMS //
     public static final LED        led        = new LED();
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Elevator   elevator   = new Elevator(false);
+    public static final Elevator   elevator   = new Elevator();
     public static final Shwooper   shwooper   = new Shwooper();
     public static final Grabber    grabber    = new Grabber();
-    public static final Stinger    stinger    = new Stinger(false);
+    public static final Stinger    stinger    = new Stinger();
     public static final Limelight  limelight  = new Limelight();
     
     public static final Arm arm = null;
@@ -90,6 +91,8 @@ public class ChargedUp extends RobotContainer
     @Override 
     public void initialize() 
     {
+        RebootRequire.checkAll();
+
         driverController.getButton(Button.X_SQUARE)
             .toggleOnTrue(Commands.runOnce(() -> {
                 led.add(new RainbowAnimation(2));
@@ -131,14 +134,16 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
 
-               if(DriverStation.isEnabled()) 
+                Logging.error("SHIT THE FUCL");
+
+                if(DriverStation.isEnabled()) 
                 {
                     Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
                     return;
                 }
 
-               gyroscope.zeroYaw();
-               Logging.info("Zeroed NavX!");
+                gyroscope.zeroYaw();
+                Logging.info("Zeroed NavX!");
             }));
 
         // OPERATOR CONTROLS //
