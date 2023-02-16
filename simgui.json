@@ -54,7 +54,21 @@
       "open": true
     },
     "transitory": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
       "Main": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "Main": {
+          "Field": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       }
     }

@@ -5,6 +5,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -17,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
 import frc.robot.framework.Math555;
+import frc.robot.framework.commandrobot.CommandRobot;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.PIDMechanism;
@@ -267,15 +270,8 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
-        if(RobotBase.isReal())
-        {
-            SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
-            driveFromStates(states);
-        }
-        else
-        {
-            estimatedPose = estimatedPose.plus(currentTransform);
-        }
+        SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
+        driveFromStates(states);
     }
 
     /**
@@ -285,24 +281,54 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     private void driveFromStates(SwerveModuleState[] states)
     {
-        // Only run this code if in real mode
-        if(RobotBase.isReal())
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+        
+        for(int i = 0; i < Drive.MODULE_COUNT; i++)
         {
-            SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+            states[i] = SwerveModuleState.optimize(
+                states[i], 
+                new Rotation2d(modules[i].getSteerAngle())
+            );
 
-            for(int i = 0; i < Drive.MODULE_COUNT; i++)
-            {
-                modules[i].set(
-                    states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
-                    states[i].angle.getRadians()
-                );
-            }
-            
-            odometry.update(
-                getRobotRotation(), 
-                getModulePositions()
+            modules[i].set(
+                states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
+                states[i].angle.getRadians()
             );
         }
+
+        if(RobotBase.isSimulation())
+        {
+            Rotation2d robotAngle = getRobotRotation();
+
+            Translation2d vel = null;
+            Rotation2d omega  = null;
+
+            for (int i = 0; i < states.length; i++) 
+            {
+                Translation2d pos2d = Drive.MOD_POSITIONS[i];
+                Rotation2d modAngle = states[i].angle;
+
+                Rotation2d relAngle = modAngle.minus(robotAngle);
+                vel = new Translation2d(states[i].speedMetersPerSecond, relAngle);
+
+                double omegaDbl = pos2d.getNorm() 
+                                * vel.getNorm() 
+                                * pos2d.minus(vel).getAngle().getSin();
+                            
+                omega = new Rotation2d(omegaDbl);
+            }
+
+            Transform2d transform = new Transform2d(vel, omega);
+                System.out.println(transform);  
+            transform = transform.times(CommandRobot.deltaTime());
+
+            estimatedPose = estimatedPose.plus(transform);
+        }
+        
+        odometry.update(
+            getRobotRotation(), 
+            getModulePositions()
+        );
     }
 
     /**

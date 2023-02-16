@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.StringSubscriber;
 import edu.wpi.first.networktables.StringTopic;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,7 +32,7 @@ public class AutoManager extends ManagerBase
             .getTable("Main")
             .getStringTopic("Auto");
 
-        subscriber = topic.subscribe("<ERR>"); // guys i have 1 sub on youtube dot commercial website this is so crazy
+        subscriber = topic.subscribe(null); // guys i have 1 sub on youtube dot commercial website this is so crazy
     }
 
     private String previous = null;
@@ -51,7 +52,7 @@ public class AutoManager extends ManagerBase
     private void updateAutoCommand()
     {
         String str = subscriber.get();
-        if(str.equals("<ERR>"))
+        if(str == null)
         {
             Logging.error("Auto command entry was empty!");
             return;

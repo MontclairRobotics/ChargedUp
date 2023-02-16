@@ -1,5 +1,6 @@
 package frc.robot.structure.swerve;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
@@ -66,7 +67,7 @@ public class SwerveModuleSpec
             .withDriveMotor(driverType, driverPort)
             .withSteerMotor(steerType, steerPort)
             .withSteerEncoderPort(steerEncoderPort)
-            .withSteerOffset(steerOffsetRadians);
+            .withSteerOffset(RobotBase.isReal() ? steerOffsetRadians : 0);
     }
 
     public SwerveModule build()

@@ -125,6 +125,12 @@ public final class Constants
         private static Translation2d FRPosition = new Translation2d( Drive.WHEEL_BASE_H_M/2, -Drive.WHEEL_BASE_W_M/2); //FR
         private static Translation2d BLPosition = new Translation2d(-Drive.WHEEL_BASE_H_M/2,  Drive.WHEEL_BASE_W_M/2); //BL
         private static Translation2d BRPosition = new Translation2d(-Drive.WHEEL_BASE_H_M/2, -Drive.WHEEL_BASE_W_M/2); //BR
+        public static final Translation2d[] MOD_POSITIONS = {
+            FLPosition,
+            FRPosition,
+            BLPosition,
+            BRPosition
+        };
         public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
             FLPosition, //FL
             FRPosition, //FR
