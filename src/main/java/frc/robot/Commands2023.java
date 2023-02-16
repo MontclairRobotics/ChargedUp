@@ -13,7 +13,6 @@ import frc.robot.structure.Trajectories;
 import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.constants.Drivebase;
 import frc.robot.constants.Constants.Auto;
 import frc.robot.constants.Constants.Drive;
 import frc.robot.constants.Constants.Field;
@@ -33,102 +32,102 @@ public class Commands2023
 
     // ARM COMMANDS
 
-    /*
-     * takes a length in meters as a double and moves the arm to that length
-     */
-    public static Command armGoToLength(double length)
-    {
-        return run(() -> ChargedUp.arm.extendTo(length), ChargedUp.arm)
-            .until(ChargedUp.arm::isUpDownPIDFree);
-    }
+    // /*
+    //  * takes a length in meters as a double and moves the arm to that length
+    //  */
+    // public static Command armGoToLength(double length)
+    // {
+    //     return run(() -> ChargedUp.arm.extendTo(length), ChargedUp.arm)
+    //         .until(ChargedUp.arm::isUpDownPIDFree);
+    // }
     
-    /** 
-     * takes an angle as a double and moves the arm to that angle
-     */
-    public static Command armGoToAngle(double angle)
-    {
-        return run(() -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm)
-            .until(ChargedUp.arm::isUpDownPIDFree);
-    }
-    /**
-     * arm returns to origin position in fully retracted and lowered position
-     */
-    public static Command returnArm()
-    {
-        CommandBase x = Commands.parallel 
-        (
-            armGoToAngle(Robot.Arm.RETURN_POSITION),
-            armGoToLength(0)
-        );
+    // /** 
+    //  * takes an angle as a double and moves the arm to that angle
+    //  */
+    // public static Command armGoToAngle(double angle)
+    // {
+    //     return run(() -> ChargedUp.arm.rotateTo(angle), ChargedUp.arm)
+    //         .until(ChargedUp.arm::isUpDownPIDFree);
+    // }
+    // /**
+    //  * arm returns to origin position in fully retracted and lowered position
+    //  */
+    // public static Command returnArm()
+    // {
+    //     CommandBase x = Commands.parallel 
+    //     (
+    //         armGoToAngle(Robot.Arm.RETURN_POSITION),
+    //         armGoToLength(0)
+    //     );
 
-        x.addRequirements(ChargedUp.arm);
+    //     x.addRequirements(ChargedUp.arm);
 
-        return x;
-    }
-    /**
-     * moves the arm to be above the mid peg so cones can drop and score
-     */
-    public static Command armToMidPeg()
-    {
-        CommandBase x = parallel 
-        (
-            armGoToAngle(Robot.Arm.MID_PEG_ANGLE),
-            armGoToLength(Robot.Arm.MID_LENGTH)
-        );
+    //     return x;
+    // }
+    // /**
+    //  * moves the arm to be above the mid peg so cones can drop and score
+    //  */
+    // public static Command armToMidPeg()
+    // {
+    //     CommandBase x = parallel 
+    //     (
+    //         armGoToAngle(Robot.Arm.MID_PEG_ANGLE),
+    //         armGoToLength(Robot.Arm.MID_LENGTH)
+    //     );
 
-        x.addRequirements(ChargedUp.arm);
+    //     x.addRequirements(ChargedUp.arm);
 
-        return x;
-    }
+    //     return x;
+    // }
 
-    /**
-     * moves the arm so the end of the arm is directly over the high peg and game pieces can be scored
-     */
-    public static Command armToHighPeg()
-    {
-        CommandBase x = parallel
-        (
-            armGoToAngle(Robot.Arm.HIGH_PEG_ANGLE),
-            armGoToLength(Robot.Arm.HIGH_LENGTH)
-        );
+    // /**
+    //  * moves the arm so the end of the arm is directly over the high peg and game pieces can be scored
+    //  */
+    // public static Command armToHighPeg()
+    // {
+    //     CommandBase x = parallel
+    //     (
+    //         armGoToAngle(Robot.Arm.HIGH_PEG_ANGLE),
+    //         armGoToLength(Robot.Arm.HIGH_LENGTH)
+    //     );
 
-        x.addRequirements(ChargedUp.arm);
+    //     x.addRequirements(ChargedUp.arm);
 
-        return x;
-    }
+    //     return x;
+    // }
 
-    /**
-     * moves the arm so the end is over the middle shelf and game pieces can be scored on that level
-     */
-    public static Command armToMidShelf()
-    {
-        CommandBase x = parallel
-        (
-            armGoToAngle(Robot.Arm.MID_SHELF_ANGLE),
-            armGoToLength(Robot.Arm.MID_LENGTH)
-        );
+    // /**
+    //  * moves the arm so the end is over the middle shelf and game pieces can be scored on that level
+    //  */
+    // public static Command armToMidShelf()
+    // {
+    //     CommandBase x = parallel
+    //     (
+    //         armGoToAngle(Robot.Arm.MID_SHELF_ANGLE),
+    //         armGoToLength(Robot.Arm.MID_LENGTH)
+    //     );
 
-        x.addRequirements(ChargedUp.arm);
+    //     x.addRequirements(ChargedUp.arm);
 
-        return x;
-    }
+    //     return x;
+    // }
 
-    /**
-     * moves the arm so that the end is directly over the high shelf and game pieces can be scored there
-     * @return
-     */
-    public static Command armToHighShelf()
-    {
-        CommandBase x = parallel
-        (
-            armGoToAngle(Robot.Arm.HIGH_SHELF_ANGLE),
-            armGoToLength(Robot.Arm.HIGH_LENGTH)
-        );
+    // /**
+    //  * moves the arm so that the end is directly over the high shelf and game pieces can be scored there
+    //  * @return
+    //  */
+    // public static Command armToHighShelf()
+    // {
+    //     CommandBase x = parallel
+    //     (
+    //         armGoToAngle(Robot.Arm.HIGH_SHELF_ANGLE),
+    //         armGoToLength(Robot.Arm.HIGH_LENGTH)
+    //     );
 
-        x.addRequirements(ChargedUp.arm);
+    //     x.addRequirements(ChargedUp.arm);
 
-        return x;
-    }
+    //     return x;
+    // }
    
     // STINGER COMMMANDS
 
@@ -544,13 +543,13 @@ public class Commands2023
      * 
      * @return The command, with none() inserted into places in the sequence where an error occured.
      */
-    public static Command buildAuto(ArrayList<String> list)
+    public static Command buildAuto(String[] list)
     {
-        Command[] commandList = new Command[list.size()];
+        Command[] commandList = new Command[list.length];
 
-        for (int i = 0; i < list.size(); i++)
+        for (int i = 0; i < list.length; i++)
         {
-            commandList[i] = fromStringToCommand(list.get(i));
+            commandList[i] = fromStringToCommand(list[i]);
         }
         
         return Commands.sequence(commandList);
@@ -564,9 +563,8 @@ public class Commands2023
      */
     public static Command buildAuto(String p) 
     {
-        ArrayList<String> parts = SequenceParser.parse(p);
+        String[] parts = SequenceParser.parse(p);
 
-        System.out.println("Auto String: " + p);
         if(parts == null) 
         {
             return none();

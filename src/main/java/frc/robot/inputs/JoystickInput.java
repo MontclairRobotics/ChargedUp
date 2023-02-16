@@ -1,7 +1,7 @@
 package frc.robot.inputs;
 
-import org.team555.frc.controllers.GameController;
-import org.team555.frc.controllers.GameController.Axis;
+import frc.robot.framework.GameController;
+import frc.robot.framework.GameController.Axis;
 
 public class JoystickInput 
 {

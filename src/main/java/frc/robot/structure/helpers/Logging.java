@@ -1,5 +1,9 @@
 package frc.robot.structure.helpers;
 
+import java.time.Instant;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * Handle general logging for the robot.
  */
@@ -18,6 +22,8 @@ public class Logging
      */
     private static void addLog(String s)
     {
+        s += " @" + Instant.now();
+
         if(currentLog < LOG_CAPACITY)
         {
             logs[currentLog] = s;
@@ -56,9 +62,9 @@ public class Logging
      */
     public static void info(String message)
     {
-        String s = "[INFO]: " + message;
+        String s = message;
 
-        System.out.println(ConsoleColors.WHITE_BRIGHT + s + ConsoleColors.RESET);
+        System.out.println(s);
         addLog(s);
     }
     
@@ -67,9 +73,9 @@ public class Logging
      */
     public static void warning(String message)
     {
-        String s = "[WARNING]: " + message;
+        String s = message;
 
-        System.out.println(ConsoleColors.YELLOW_UNDERLINED + s + ConsoleColors.RESET);
+        DriverStation.reportWarning(s, true);
         addLog(s);
     }
     
@@ -78,9 +84,9 @@ public class Logging
      */
     public static void error(String message)
     {
-        String s = "[ERROR]: " + message;
+        String s = message;
 
-        System.out.println(ConsoleColors.RED_UNDERLINED + s + ConsoleColors.RESET);
+        DriverStation.reportError(s, true);
         addLog(s);
     }
     
@@ -89,9 +95,9 @@ public class Logging
      */
     public static void fatal(String message)
     {
-        String s = "[FATAL]: " + message;
+        String s = message;
 
-        System.out.println(ConsoleColors.GREEN_BOLD_BRIGHT + s + ConsoleColors.RESET);
+        DriverStation.reportError(s, true);
         addLog(s);
     }
 }

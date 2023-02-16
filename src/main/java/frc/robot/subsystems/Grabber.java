@@ -1,8 +1,8 @@
 package frc.robot.subsystems;
 
-import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
-
 import frc.robot.constants.Constants;
+import frc.robot.framework.commandrobot.ManagerSubsystemBase;
+
 import static frc.robot.constants.Constants.*;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;

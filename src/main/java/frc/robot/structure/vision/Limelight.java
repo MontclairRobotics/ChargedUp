@@ -1,9 +1,7 @@
 package frc.robot.structure.vision;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-import org.team555.frc.command.commandrobot.ManagerBase;
-
+import frc.robot.framework.commandrobot.ManagerBase;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
@@ -37,45 +35,11 @@ public class Limelight extends ManagerBase
     private final NetworkTableEntry snapshot = table.getEntry("snapshot");
     private final NetworkTableEntry crop = table.getEntry("crop");
     private final NetworkTableEntry botpose = table.getEntry("botpose");
-
     
 
     // Getters //
     /**
      * if its detected, return true
-     * 
-     *   .   ___                 __                                
-     *   . /'___\               /\ \                               
-     *   ./\ \__/  __  __    ___\ \ \/'\   __  __    ___   __  __  
-     *   .\ \ ,__\/\ \/\ \  /'___\ \ , <  /\ \/\ \  / __`\/\ \/\ \ 
-     *   . \ \ \_/\ \ \_\ \/\ \__/\ \ \\`\\ \ \_\ \/\ \L\ \ \ \_\ \
-     *   .  \ \_\  \ \____/\ \____\\ \_\ \_\/`____ \ \____/\ \____/
-     *   .   \/_/   \/___/  \/____/ \/_/\/_/`/___/> \/___/  \/___/ 
-     *   .                                     /\___/              
-     *   . 
-     * 
-     *   .+"+.+"+.+"+.+"+.+"+.
-     *  ( JAVA DOCS ARE COOL  )
-     *   )                   (
-     *  (         !!!         )
-     *   "+.+"+.+"+.+"+.+"+.+"
-
-     * 
-     * What the actual fuck guys?!?!??!?!?!?!?
-     * 
-     * The fitness grahm pacer test is a multistage aerobic capacity test, that progressively gets more difficult as it continues
-     * 
-     * "alex play money so big by yeat"
-     * 
-     * ctrl + shit
-     * 
-     *                    _|<p>
-     * hello;)          _|<p>
-     *                _|<p>
-     *              _|<p>
-     *            _|<p>
-     *          _|<p>
-     * ________|<p>
      */    
     public boolean getDetected()    {return isDetected;}
     /**
@@ -280,6 +244,7 @@ public class Limelight extends ManagerBase
     {
         pipelineNum = pipelineNumInput;
     }
+
     @Override
     public void always() 
     {

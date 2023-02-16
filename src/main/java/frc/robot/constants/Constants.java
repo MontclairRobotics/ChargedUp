@@ -10,8 +10,6 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import java.text.FieldPosition;
 import java.util.ArrayList;
 
-import org.team555.frc.controllers.GameController;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -22,8 +20,8 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.framework.GameController;
 import frc.robot.inputs.JoystickAdjuster;
-import frc.robot.structure.RebootRequire;
 import frc.robot.structure.helpers.Units555;
 import frc.robot.structure.swerve.SwerveModuleSpec;
 

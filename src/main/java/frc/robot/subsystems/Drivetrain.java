@@ -1,54 +1,31 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Commands;
-
-import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
-import org.team555.math.MathUtils;
-
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
+import frc.robot.framework.Math555;
+import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.PIDMechanism;
 import frc.robot.structure.Tracking;
-import frc.robot.structure.Unimplemented;
-import frc.robot.structure.factories.PoseFactory;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.structure.swerve.SwerveModuleSpec;
-import frc.robot.structure.vision.Limelight;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
@@ -56,9 +33,6 @@ import static frc.robot.constants.Constants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class Drivetrain extends ManagerSubsystemBase
 {
@@ -76,8 +50,7 @@ public class Drivetrain extends ManagerSubsystemBase
     private Tracking objectTracked; 
     
     private Pose2d estimatedPose;
-    private double currentRelativeXVel, currentRelativeYVel, currentOmega;
-    private double currentSimulationX, currentSimulationY, currentSimulationTheta;
+    private Transform2d currentTransform;
 
     private boolean useFieldRelative = true;
 
@@ -94,13 +67,8 @@ public class Drivetrain extends ManagerSubsystemBase
 
     public Drivetrain()
     {
-        currentRelativeXVel = 0;
-        currentRelativeYVel = 0;
-        currentOmega = 0;
-
-        currentSimulationX = 0;
-        currentSimulationY = 0;
-        currentSimulationTheta = 0;
+        estimatedPose = new Pose2d(0, 0, new Rotation2d());
+        currentTransform = new Transform2d();
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
@@ -243,9 +211,9 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public void set(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
-        vx_meter_per_second  = +MathUtils.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        vy_meter_per_second  = +MathUtils.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        omega_rad_per_second = +MathUtils.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        vx_meter_per_second  = +Math555.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        vy_meter_per_second  = +Math555.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        omega_rad_per_second = +Math555.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
         
         vx_meter_per_second  *= Drive.speeds[speedIndex][0];
         vy_meter_per_second  *= Drive.speeds[speedIndex][0];
@@ -299,10 +267,6 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
-        currentRelativeXVel = speeds.vxMetersPerSecond;
-        currentRelativeYVel = speeds.vyMetersPerSecond;
-        currentOmega = speeds.omegaRadiansPerSecond;
-
         if(RobotBase.isReal())
         {
             SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
@@ -310,14 +274,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         else
         {
-            /*
-            var s = new Translation2d(currentRelativeXVel, currentRelativeYVel);
-            s = s.rotateBy(new Rotation2d(-currentSimulationTheta));
-
-            currentSimulationX += s.getX() * TimedRobot.kDefaultPeriod;
-            currentSimulationY += s.getY() * TimedRobot.kDefaultPeriod;
-            currentSimulationTheta += currentOmega * TimedRobot.kDefaultPeriod;
-            */
+            estimatedPose = estimatedPose.plus(currentTransform);
         }
     }
 
@@ -372,11 +329,6 @@ public class Drivetrain extends ManagerSubsystemBase
         yPID.update();
         thetaPID.update();
 
-        // System.out.println("x = " + xPID.getSpeed()
-        //                 + " y = " + yPID.getSpeed()
-        //                 + " t = " + thetaPID.getSpeed()
-        //                 + " xactive = " + xPID.active());
-
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
         
         driveFromChassisSpeeds(c);
@@ -389,10 +341,8 @@ public class Drivetrain extends ManagerSubsystemBase
             getModulePositions(),
             pose
         );
-
-        currentSimulationX = pose.getX();
-        currentSimulationY = pose.getY();
-        currentSimulationTheta = pose.getRotation().getRadians();
+        
+        estimatedPose = pose;
     }
 
     public Rotation2d getRobotRotation()
@@ -403,7 +353,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         else 
         {
-            return new Rotation2d(currentSimulationTheta);
+            return estimatedPose.getRotation();
         }
     }
 
@@ -420,7 +370,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         else 
         {
-            return new Pose2d(currentSimulationX, currentSimulationY, getRobotRotation());
+            return estimatedPose;
         }
     }
 
