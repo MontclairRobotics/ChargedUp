@@ -1,5 +1,14 @@
 {
   "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 5
+      },
+      "window": {
+        "name": "LED bitches",
+        "visible": true
+      }
+    },
     "Other Devices": {
       "SPARK MAX [1]": {
         "header": {
@@ -35,7 +44,6 @@
     },
     "windows": {
       "/Shuffleboard/Main/Field": {
-        "image": "C:\\Users\\dylan\\Downloads\\sex.png",
         "window": {
           "visible": true
         }

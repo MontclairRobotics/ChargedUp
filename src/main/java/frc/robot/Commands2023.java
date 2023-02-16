@@ -326,17 +326,17 @@ public class Commands2023
     //     });
     // }
 
-    /*public static Command setLEDColor(Color color) {
-        return Commands.runOnce(() -> {
-            ChargedUp.led.setColor(color);
-        });
-    }
-    public static Command setObjectHolding(GamePiece object) 
-    {
-        return Commands.runOnce(() -> {
-            ChargedUp.led.setHolding(object);
-        });
-    }*/
+    // public static Command setLEDColor(Color color) {
+    //     return Commands.runOnce(() -> {
+    //         ChargedUp.led.setColor(color);
+    //     });
+    // }
+    // public static Command setObjectHolding(GamePiece object) 
+    // {
+    //     return Commands.runOnce(() -> {
+    //         ChargedUp.led.setHolding(object);
+    //     });
+    // }
     
     /**
      * toggle the Shwooper

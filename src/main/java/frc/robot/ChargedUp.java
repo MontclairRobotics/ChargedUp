@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Drivetrain;
@@ -28,7 +29,9 @@ import frc.robot.framework.GameController.Button;
 import frc.robot.framework.GameController.DPad;
 import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.animation.FadeAnimation;
 import frc.robot.structure.animation.RainbowAnimation;
+import frc.robot.structure.animation.WipeAnimation;
 import frc.robot.structure.helpers.Logging;
 import frc.robot.structure.vision.Limelight;
 import frc.robot.subsystems.AutoManager;
@@ -36,6 +39,7 @@ import frc.robot.subsystems.AutoManager;
 import static frc.robot.constants.Constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.swervedrivespecialties.swervelib.DriveController;
 
 public class ChargedUp extends RobotContainer 
 {
@@ -86,6 +90,11 @@ public class ChargedUp extends RobotContainer
             drivetrain
         ));
 
+        driverController.getButton(Button.START_TOUCHPAD)
+            .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
+        driverController.getButton(Button.B_CIRCLE)
+            .onTrue(Commands.runOnce( () -> led.add(new WipeAnimation(2, Color.kBlue, Color.kGreen))));
+        
         driverController.getButton(Button.Y_TRIANGLE)
             .toggleOnTrue(Commands2023.balance());
     
