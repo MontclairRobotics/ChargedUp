@@ -2,6 +2,8 @@ package frc.robot.structure;
 
 import java.util.ArrayList;
 
+import frc.robot.structure.helpers.Logging;
+
 /**
  * A collection of static methods relating to the parsing of autonomous sequence strings.
  */
@@ -19,7 +21,7 @@ public class SequenceParser
      * @param str The autonomous sequence string
      * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
      */
-    public static ArrayList<String> lex(String str)
+    public static String[] lex(String str)
     {
         ArrayList<String> out = new ArrayList<String>();
         boolean isExclaimed = false;
@@ -34,8 +36,10 @@ public class SequenceParser
                 continue;
             }
             // If we have a valid position, add it
-            else if(c == '1' || c == '2' || c == '3' || c == 'A' || c == 'B' || c == 'C')
+            else if(c == '1' || c == '2' || c == '3' || c == 'A' || c == 'B' || c == 'C' || c == 'a' || c == 'b' || c == 'c')
             {
+                c = Character.toUpperCase(c);
+
                 if(isExclaimed) out.add("!" + c);
                 else            out.add(""  + c);
 
@@ -46,6 +50,7 @@ public class SequenceParser
             {
                 if(isExclaimed)
                 {
+                    Logging.error("Dual '!' present in command string! '" + str + "'");
                     return null;
                 }
 
@@ -54,11 +59,12 @@ public class SequenceParser
             // Error otherwise
             else 
             {
+                Logging.error("Unexpected character " + c + " in command string! '" + str + "'");
                 return null;
             }
         }
 
-        return out;
+        return out.toArray(String[]::new);
     }
     
     /**
@@ -74,38 +80,38 @@ public class SequenceParser
      * @return A list which contains identifiers for the commands which comprise the autonomous routine, 
      * or null if lexing or parsing fails
      */
-    public static ArrayList<String> parse(String str) 
+    public static String[] parse(String str) 
     {
         // Lex
-        ArrayList<String> in = lex(str);
+        String[] lex = lex(str);
 
         // Handle errors
-        if(in == null) 
+        if(lex == null) 
         {
             return null;
         }
 
         // Parse
-        ArrayList<String> arr = new ArrayList<String>();
+        ArrayList<String> output = new ArrayList<String>();
 
-        for (int i = 0; i < in.size(); i++)
+        for (int i = 0; i < lex.length-1; i++)
         {
-            String commd = in.get(i);
-            String trans = in.get(i) + in.get(i+1);
+            String commd = lex[i];
+            String trans = lex[i] + lex[i+1];
 
             if(!commd.contains("!")) 
             {
-                arr.add(commd);
+                output.add(commd);
             }
 
-            in.add(trans.replace("!", ""));
+            output.add(trans.replace("!", ""));
         }
 
-        if(!in.get(in.size()-1).contains("!"))
+        if(!lex[lex.length - 1].contains("!"))
         {
-            arr.add(in.get(in.size() - 1));
+            output.add(lex[lex.length - 1]);
         }
 
-        return arr;
+        return output.toArray(String[]::new);
     }
 }

@@ -1,8 +1,8 @@
 package frc.robot.structure.animation;
 
-import org.team555.util.color.RawColor;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.framework.color.RawColor;
 
 /**
  * An animation which fades the entire LED strip from one color to another.

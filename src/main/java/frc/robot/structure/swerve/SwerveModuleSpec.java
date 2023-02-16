@@ -1,10 +1,13 @@
 package frc.robot.structure.swerve;
 
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
+import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 public class SwerveModuleSpec 
@@ -17,9 +20,17 @@ public class SwerveModuleSpec
     public final MotorType driverType;
     public final MotorType steerType;
 
+    public final boolean driveInvert;
+    public final boolean steerInvert;
+
     public final MechanicalConfiguration config;
 
-    public SwerveModuleSpec(MechanicalConfiguration config, MotorType driverType, int driverPort, MotorType steerType, int steerPort, int steerEncoderPort, double steerOffsetDegrees)
+    public SwerveModuleSpec(
+        MechanicalConfiguration config, 
+        MotorType driverType, int driverPort, boolean driveInvert, 
+        MotorType steerType, int steerPort, boolean steerInvert, 
+        int steerEncoderPort, double steerOffsetDegrees
+    )
     {
         this.driverPort = driverPort;
         this.steerPort = steerPort;
@@ -30,19 +41,33 @@ public class SwerveModuleSpec
         this.steerType = steerType;
 
         this.config = config;
+
+        this.driveInvert = driveInvert;
+        this.steerInvert = steerInvert;
     }
 
     /**
      * Get the builder object which contains all information about the swerve module.
      */
-    public MkSwerveModuleBuilder builder()
+    private MkSwerveModuleBuilder builder()
     {
-        return new MkSwerveModuleBuilder()
+        MkModuleConfiguration modConfig = MkModuleConfiguration.getDefaultSteerNEO();
+        modConfig.setDriveCurrentLimit(40.0);
+        modConfig.setSteerCurrentLimit(30.0);
+
+        MechanicalConfiguration newConfig = new MechanicalConfiguration(
+            config.getWheelDiameter(), 
+            config.getDriveReduction(), 
+            config.isDriveInverted() ^ driveInvert, 
+            config.getSteerReduction(), 
+            config.isSteerInverted() ^ steerInvert);
+        
+        return new MkSwerveModuleBuilder(modConfig)
+            .withGearRatio(newConfig)
             .withDriveMotor(driverType, driverPort)
-            .withSteerMotor(steerType, driverPort)
+            .withSteerMotor(steerType, steerPort)
             .withSteerEncoderPort(steerEncoderPort)
-            .withSteerOffset(steerOffsetRadians)
-            .withGearRatio(config);
+            .withSteerOffset(RobotBase.isReal() ? steerOffsetRadians : 0);
     }
 
     public SwerveModule build()

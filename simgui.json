@@ -1,11 +1,6 @@
 {
   "HALProvider": {
     "Other Devices": {
-      "SPARK MAX [0]": {
-        "header": {
-          "open": true
-        }
-      },
       "SPARK MAX [1]": {
         "header": {
           "open": true
@@ -39,11 +34,6 @@
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
-      "/Shuffleboard/Main/Auto Commands": {
-        "window": {
-          "visible": true
-        }
-      },
       "/Shuffleboard/Main/Field": {
         "window": {
           "visible": true
@@ -57,10 +47,36 @@
     },
     "SmartDashboard": {
       "open": true
+    },
+    "transitory": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
+      "Main": {
+        "open": true
+      },
+      "Shuffleboard": {
+        "Main": {
+          "Field": {
+            "open": true
+          },
+          "open": true
+        }
+      }
     }
   },
-  "NetworkTables View": {
-    "visible": false
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Connections": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    }
   },
   "Plot": {
     "Plot <0>": {

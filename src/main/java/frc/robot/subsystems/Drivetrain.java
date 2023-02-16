@@ -1,58 +1,43 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Commands;
-import org.team555.math.MathUtils;
-
-import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.IterativeRobotBase;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.ChargedUp;
+import frc.robot.framework.Math555;
+import frc.robot.framework.commandrobot.CommandRobot;
+import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.PIDMechanism;
-import frc.robot.structure.Unimplemented;
-import frc.robot.structure.factories.PoseFactory;
+import frc.robot.structure.Tracking;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.structure.swerve.SwerveModuleSpec;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+import com.revrobotics.CANSparkMax;
+import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-public class Drivetrain extends SubsystemBase
+public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
     private final SwerveDriveOdometry odometry;
@@ -64,12 +49,14 @@ public class Drivetrain extends SubsystemBase
     public final PIDMechanism xPID;
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
+
+    private Tracking objectTracked; 
     
     private Pose2d estimatedPose;
-    private double currentRelativeXVel, currentRelativeYVel, currentOmega;
-    private double currentSimulationX, currentSimulationY, currentSimulationTheta;
+    private Transform2d currentTransform;
 
     private boolean useFieldRelative = true;
+
 
     //sets the speedIndex to speeds length
     private static int speedIndex = Drive.speeds.length-1;
@@ -83,27 +70,29 @@ public class Drivetrain extends SubsystemBase
 
     public Drivetrain()
     {
-        currentRelativeXVel = 0;
-        currentRelativeYVel = 0;
-        currentOmega = 0;
-
-        currentSimulationX = 0;
-        currentSimulationY = 0;
-        currentSimulationTheta = 0;
+        estimatedPose = new Pose2d(0, 0, new Rotation2d());
+        currentTransform = new Transform2d();
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
 
-        int i = 0;
-        for(SwerveModuleSpec spec : Drive.MODULES)
+        // TODO: UNCOMMENT ALL OF THIS
+
+        for (int i = 0; i < Drive.MODULES.length; i++)
+        // for(SwerveModuleSpec spec : Drive.MODULES)
         {
-            modules[i] = spec.build(
+            modules[i] = Drive.MODULES[i].build(
                 Shuffleboard.getTab("Drivetrain")
                     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
                     .withSize(2, 5)
                     .withPosition(2*i, 0)
             );
-            i++;
+
+            assert Drive.STEER_TYPE == MotorType.NEO 
+                 : "This code assumes that the steer type of the robot is a neo.";
+
+            CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
+            mot.burnFlash();
         }
 
         // Build Shuffleboard //
@@ -138,7 +127,7 @@ public class Drivetrain extends SubsystemBase
         odometry = new SwerveDriveOdometry(
             Drive.KINEMATICS, 
             getRobotRotation(), 
-            Drive.POSITIONS,
+            getModulePositions(),
             new Pose2d()
         );
 
@@ -188,7 +177,7 @@ public class Drivetrain extends SubsystemBase
 
     public double getChargeStationAngle()
     {
-        return ChargedUp.gyroscope.getPitch();
+        return ChargedUp.gyroscope.getRoll();
     }
     /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
@@ -203,9 +192,9 @@ public class Drivetrain extends SubsystemBase
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
         set(
-            turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            drive.getX() * Drive.MAX_SPEED_MPS,
-            drive.getY() * Drive.MAX_SPEED_MPS
+            +turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
+            +drive.getY() * Drive.MAX_SPEED_MPS,
+            +drive.getX() * Drive.MAX_SPEED_MPS
         );
     }
     
@@ -225,13 +214,22 @@ public class Drivetrain extends SubsystemBase
      */
     public void set(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
-        vy_meter_per_second  = +MathUtils.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        vx_meter_per_second  = +MathUtils.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        omega_rad_per_second = -MathUtils.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        vx_meter_per_second  = +Math555.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        vy_meter_per_second  = +Math555.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
+        omega_rad_per_second = +Math555.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
         
         vx_meter_per_second  *= Drive.speeds[speedIndex][0];
         vy_meter_per_second  *= Drive.speeds[speedIndex][0];
         omega_rad_per_second *= Drive.speeds[speedIndex][1];
+
+        // Logging.info("omega rad per sec = " + omega_rad_per_second);
+        
+        // Logging.info("Front Left: "  + Units.radiansToDegrees(modules[0].getSteerEncoder().getAbsoluteAngle()));
+        // Logging.info("Front Right: " + Units.radiansToDegrees(modules[1].getSteerEncoder().getAbsoluteAngle()));
+        // Logging.info("back Left: "   + Units.radiansToDegrees(modules[2].getSteerEncoder().getAbsoluteAngle()));
+        // Logging.info("back right: "  + Units.radiansToDegrees(modules[3].getSteerEncoder().getAbsoluteAngle()));
+        
+
 
         xPID.setSpeed(vx_meter_per_second);
         yPID.setSpeed(vy_meter_per_second);
@@ -272,26 +270,8 @@ public class Drivetrain extends SubsystemBase
      */
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
-        currentRelativeXVel = speeds.vxMetersPerSecond;
-        currentRelativeYVel = speeds.vyMetersPerSecond;
-        currentOmega = speeds.omegaRadiansPerSecond;
-
-        if(RobotBase.isReal())
-        {
-            SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
-            driveFromStates(states);
-        }
-        else
-        {
-            /*
-            var s = new Translation2d(currentRelativeXVel, currentRelativeYVel);
-            s = s.rotateBy(new Rotation2d(-currentSimulationTheta));
-
-            currentSimulationX += s.getX() * TimedRobot.kDefaultPeriod;
-            currentSimulationY += s.getY() * TimedRobot.kDefaultPeriod;
-            currentSimulationTheta += currentOmega * TimedRobot.kDefaultPeriod;
-            */
-        }
+        SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
+        driveFromStates(states);
     }
 
     /**
@@ -301,24 +281,54 @@ public class Drivetrain extends SubsystemBase
      */
     private void driveFromStates(SwerveModuleState[] states)
     {
-        // Only run this code if in real mode
-        if(RobotBase.isReal())
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+        
+        for(int i = 0; i < Drive.MODULE_COUNT; i++)
         {
-            SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+            states[i] = SwerveModuleState.optimize(
+                states[i], 
+                new Rotation2d(modules[i].getSteerAngle())
+            );
 
-            for(int i = 0; i < Drive.MODULE_COUNT; i++)
-            {
-                modules[i].set(
-                    states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
-                    states[i].angle.getRadians()
-                );
-            }
-            
-            odometry.update(
-                getRobotRotation(), 
-                getModulePositions()
+            modules[i].set(
+                states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
+                states[i].angle.getRadians()
             );
         }
+
+        if(RobotBase.isSimulation())
+        {
+            Rotation2d robotAngle = getRobotRotation();
+
+            Translation2d vel = null;
+            Rotation2d omega  = null;
+
+            for (int i = 0; i < states.length; i++) 
+            {
+                Translation2d pos2d = Drive.MOD_POSITIONS[i];
+                Rotation2d modAngle = states[i].angle;
+
+                Rotation2d relAngle = modAngle.minus(robotAngle);
+                vel = new Translation2d(states[i].speedMetersPerSecond, relAngle);
+
+                double omegaDbl = pos2d.getNorm() 
+                                * vel.getNorm() 
+                                * pos2d.minus(vel).getAngle().getSin();
+                            
+                omega = new Rotation2d(omegaDbl);
+            }
+
+            Transform2d transform = new Transform2d(vel, omega);
+                // System.out.println(transform);  
+            transform = transform.times(CommandRobot.deltaTime());
+
+            estimatedPose = estimatedPose.plus(transform);
+        }
+        
+        odometry.update(
+            getRobotRotation(), 
+            getModulePositions()
+        );
     }
 
     /**
@@ -333,7 +343,7 @@ public class Drivetrain extends SubsystemBase
     }
 
     @Override 
-    public void periodic() 
+    public void always() 
     {
         ChargedUp.field.setRobotPose(getRobotPose());
 
@@ -341,10 +351,14 @@ public class Drivetrain extends SubsystemBase
         yPID.setMeasurement(getRobotPose().getY());
         thetaPID.setMeasurement(getRobotRotation().getDegrees());
 
+        xPID.update();
+        yPID.update();
+        thetaPID.update();
+
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
+        
         driveFromChassisSpeeds(c);
     }
-
     
     public void setRobotPose(Pose2d pose)
     {
@@ -353,10 +367,8 @@ public class Drivetrain extends SubsystemBase
             getModulePositions(),
             pose
         );
-
-        currentSimulationX = pose.getX();
-        currentSimulationY = pose.getY();
-        currentSimulationTheta = pose.getRotation().getRadians();
+        
+        estimatedPose = pose;
     }
 
     public Rotation2d getRobotRotation()
@@ -367,7 +379,7 @@ public class Drivetrain extends SubsystemBase
         }
         else 
         {
-            return new Rotation2d(currentSimulationTheta);
+            return estimatedPose.getRotation();
         }
     }
 
@@ -384,8 +396,19 @@ public class Drivetrain extends SubsystemBase
         }
         else 
         {
-            return new Pose2d(currentSimulationX, currentSimulationY, getRobotRotation());
+            return estimatedPose;
         }
+    }
+
+    public void trackObject(Tracking object) 
+    {
+        ChargedUp.limelight.setPipeline(object.getPipelineNum());
+        objectTracked = object;
+    }
+
+    public void stopTracking() 
+    {
+        objectTracked = Tracking.NONE;
     }
     
     public void increaseMaxSpeed()
@@ -402,6 +425,12 @@ public class Drivetrain extends SubsystemBase
         return !thetaPID.active();
     }
 
+
+    public double getObjectAngle() 
+    {
+        if (objectTracked == Tracking.NONE) return 0;
+        return getRobotRotation().getDegrees() + ChargedUp.limelight.getX(); 
+    }
 
     public final DriveCommands commands = this.new DriveCommands();
     public class DriveCommands 
@@ -441,6 +470,23 @@ public class Drivetrain extends SubsystemBase
             return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
+        // VISION COMMANDS
+        public Command turnToTarget() 
+        {
+            return Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(getObjectAngle()))
+                .until(() -> isThetaPIDFree());
+        }
+
+        /**
+         * Goes towards the object on the x-axis.
+         * @return
+         */
+        public Command moveToObjectSideways()
+        {
+            return Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(getRobotPose().getX() + 0.05 * ChargedUp.drivetrain.getObjectAngle()))
+                .until(() -> !xPID.active());
+        }
+
         public Command follow(PathPlannerTrajectory trajectory)
         {
             return new PPSwerveControllerCommand(
@@ -478,5 +524,6 @@ public class Drivetrain extends SubsystemBase
             return Commands.run(() -> Drivetrain.this.setTargetAngle(angle), Drivetrain.this)
                 .until(Drivetrain.this::isThetaPIDFree);
         }
+
     }
 }

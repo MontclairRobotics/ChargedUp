@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -9,20 +7,30 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ChargedUp;
 import frc.robot.constants.Constants.*;
+import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.structure.PIDMechanism;
 
 public class Elevator extends ManagerSubsystemBase 
 {
-    private CANSparkMax motor = new CANSparkMax(Robot.Elevator.MOTOR_PORT, MotorType.kBrushless);
+    private boolean exists;
+
+    private CANSparkMax motor;
 
     PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.updown());
-    RelativeEncoder elevatorEncoder = motor.getEncoder();
+    RelativeEncoder elevatorEncoder;
     
-    public Elevator()
+    public Elevator(boolean exists)
     {
+        this.exists = exists;
+        if(!exists) return;
+
+        motor = new CANSparkMax(Robot.Elevator.MOTOR_PORT, MotorType.kBrushless);
         motor.setInverted(Robot.Elevator.INVERTED);
+
+        elevatorEncoder = motor.getEncoder();
         elevatorEncoder.setPositionConversionFactor(Robot.Elevator.UP_DOWN_CONVERSION_FACTOR);
     }
+    public Elevator() {this(true);}
 
     /**
      * Set elevator to a desired height
@@ -114,6 +122,8 @@ public class Elevator extends ManagerSubsystemBase
     @Override
     public void always() 
     {
+        if(!exists) return;
+
         if (ChargedUp.shwooper.isShwooperOut() && elevatorEncoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) {
             elevatorPID.cancel();
             if (elevatorPID.getSpeed() < 0) {

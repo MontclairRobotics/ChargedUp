@@ -2,9 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.Stack;
 
-import org.team555.frc.command.commandrobot.ManagerBase;
-import org.team555.frc.command.commandrobot.ManagerSubsystemBase;
-
 import com.ctre.phoenix.led.RainbowAnimation;
 
 import edu.wpi.first.wpilibj.AddressableLED;
@@ -14,6 +11,8 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.ChargedUp; 
 import frc.robot.constants.Constants;
+import frc.robot.framework.commandrobot.ManagerBase;
+import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.structure.GamePiece;
 import frc.robot.structure.animation.*;
 

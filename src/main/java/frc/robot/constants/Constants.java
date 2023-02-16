@@ -2,60 +2,77 @@ package frc.robot.constants;
 
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
+import com.swervedrivespecialties.swervelib.MkModuleConfiguration;
 import com.swervedrivespecialties.swervelib.MkSwerveModuleBuilder;
 import com.swervedrivespecialties.swervelib.MotorType;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
 import java.text.FieldPosition;
 import java.util.ArrayList;
-
-import org.team555.frc.controllers.GameController;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import frc.robot.framework.GameController;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.structure.helpers.Units555;
 import frc.robot.structure.swerve.SwerveModuleSpec;
 
 public final class Constants 
 {
-
     private Constants() {}
 
     public static class Pneu
     {
-        public static final int COMPRESSOR_PORT = 0;
+        public static final int COMPRESSOR_PORT = 63;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int GRABBER_SOLENOID_PORT = 0;
     }
 
     public static class Drive
     {
-        public static final MechanicalConfiguration CONFIGURATION = new MechanicalConfiguration(
-            Drivebase.WHEEL_DIAMETER_METER, 
-            8.14, 
-            false, 
-            8.14, 
-            false
-        );
+        public static final MotorType DRIVE_TYPE = MotorType.FALCON;
+        public static final MotorType STEER_TYPE = MotorType.NEO;
 
-        private static final MotorType DRIVE_TYPE = MotorType.FALCON;
-        private static final MotorType STEER_TYPE = MotorType.NEO;
-
+          ////////////////////////////////////////////
+         // REBOOT THE ROBOT WHEN CHANGING OFFSETS //
+        ////////////////////////////////////////////
         private static final SwerveModuleSpec FRONT_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 29, STEER_TYPE, 5,  12,  358.651157 - 90);
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 10, false, 
+                STEER_TYPE, 7, false,  
+                12, 268.242188
+            ); //fl
         private static final SwerveModuleSpec FRONT_RIGHT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE, 30, STEER_TYPE, 28, 10,  087.078116 - 90);
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 1, false, 
+                STEER_TYPE, 18, false, 
+                13, 305.771484
+            ); //fr
         private static final SwerveModuleSpec BACK_LEFT = 
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  3, STEER_TYPE, 14, 13,  219.871863 - 90);
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 3, false, 
+                STEER_TYPE, 28, false, 
+                11, 250.048828
+            ); //bl
         private static final SwerveModuleSpec BACK_RIGHT =
-            new SwerveModuleSpec(CONFIGURATION, DRIVE_TYPE,  7, STEER_TYPE,  4, 11,  250.479320 - 90);
+            new SwerveModuleSpec(
+                SdsModuleConfigurations.MK4I_L1, 
+                DRIVE_TYPE, 41, false, 
+                STEER_TYPE,  29, false, 
+                4, 149.765625
+            ); //br
+        
         /**
          * Rotator port first, driver port second
          * 
@@ -104,29 +121,22 @@ public final class Constants
         public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27); //TODO: CONFIRM WITH JOSH
         public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
 
-        private static Translation2d FLPosition = new Translation2d(-Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2); //FL
-        private static Translation2d FRPosition = new Translation2d( Drive.WHEEL_BASE_W_M/2,  Drive.WHEEL_BASE_H_M/2); //FR
-        private static Translation2d BLPosition = new Translation2d(-Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2); //BL
-        private static Translation2d BRPosition = new Translation2d( Drive.WHEEL_BASE_W_M/2, -Drive.WHEEL_BASE_H_M/2); //BR
+        private static Translation2d FLPosition = new Translation2d( Drive.WHEEL_BASE_H_M/2,  Drive.WHEEL_BASE_W_M/2); //FL
+        private static Translation2d FRPosition = new Translation2d( Drive.WHEEL_BASE_H_M/2, -Drive.WHEEL_BASE_W_M/2); //FR
+        private static Translation2d BLPosition = new Translation2d(-Drive.WHEEL_BASE_H_M/2,  Drive.WHEEL_BASE_W_M/2); //BL
+        private static Translation2d BRPosition = new Translation2d(-Drive.WHEEL_BASE_H_M/2, -Drive.WHEEL_BASE_W_M/2); //BR
+        public static final Translation2d[] MOD_POSITIONS = {
+            FLPosition,
+            FRPosition,
+            BLPosition,
+            BRPosition
+        };
         public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
             FLPosition, //FL
             FRPosition, //FR
             BLPosition, //BL
             BRPosition  //BR
         );
-
-        public static final SwerveModulePosition FL_SWERVE_POS = new SwerveModulePosition(FLPosition.getNorm(), FLPosition.getAngle());
-        public static final SwerveModulePosition FR_SWERVE_POS = new SwerveModulePosition(FRPosition.getNorm(), FRPosition.getAngle());
-        public static final SwerveModulePosition BL_SWERVE_POS = new SwerveModulePosition(BLPosition.getNorm(), BLPosition.getAngle());
-        public static final SwerveModulePosition BR_SWERVE_POS = new SwerveModulePosition(BRPosition.getNorm(), BRPosition.getAngle());
-
-        public static final SwerveModulePosition[] POSITIONS = 
-        {
-            FL_SWERVE_POS,
-            FR_SWERVE_POS,
-            BL_SWERVE_POS,
-            BR_SWERVE_POS
-        };
 
         public static final double[][] speeds  = {{0.25, 0.25}, {0.5, 0.5}, {0.75, 0.75}, {1.0, 1.0}};  
         // 1st element is drive speed, 2nd is angular speed
@@ -152,7 +162,7 @@ public final class Constants
 
         public static class Elevator 
         {
-            public static final int MOTOR_PORT = 4;
+            public static final int MOTOR_PORT = 5;
             public static final boolean INVERTED = false;
 
             public static final double SPEED = 0.1;  //TODO: Tweak these values
@@ -203,9 +213,26 @@ public final class Constants
             public static final int PWM_PORT = 9;
         }
 
+
+        public static class Limelight 
+        {
+            public static final int LED_MODE_CURRENT = 0;
+            public static final int LED_MODE_FORCE_OFF = 1;
+            public static final int LED_MODE_FORCE_BLINK = 2;
+            public static final int LED_MODE_FORCE_ON = 3;
+            public static final int CAM_MODE_VISION_PROCESSOR = 0;
+            public static final int CAM_MODE_DRIVER_CAMERA = 1;
+            public static final int STREAM_STANDARD = 0;
+            public static final int STREAM_PIP_MAIN = 1;
+            public static final int STREAM_PIP_SECONDARY = 2;
+            public static final int SNAPSHOT_MODE_RESET = 0;
+            public static final int SNAPSHOT_TAKE_EXACTLY_ONE = 1;
+            public static final double[] CROP_VALUES = {-1, 1, -1, 1};
+        }
+
         public static class Stinger 
         {
-            public static final int MOTOR_PORT = 0;
+            public static final int MOTOR_PORT = 17;
 
             public static final double
                 IN_OUT_KP = 1,
@@ -301,4 +328,6 @@ public final class Constants
         public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???
         public static final double CHARGE_ANGLE_DEADBAND = 2.5;
     }
+
+    public static final String DYLAN = "DYLAN";
 }
