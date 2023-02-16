@@ -319,7 +319,7 @@ public class Drivetrain extends ManagerSubsystemBase
             }
 
             Transform2d transform = new Transform2d(vel, omega);
-                System.out.println(transform);  
+                // System.out.println(transform);  
             transform = transform.times(CommandRobot.deltaTime());
 
             estimatedPose = estimatedPose.plus(transform);
