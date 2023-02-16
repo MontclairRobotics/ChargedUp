@@ -463,10 +463,13 @@ public class Commands2023
      */
     public static Command balance()
     {
-        return Commands.run(() -> 
+        return Commands.runEnd(() -> 
         {
+            ChargedUp.drivetrain.disableFieldRelative();
+
             double angle = ChargedUp.drivetrain.getChargeStationAngle();
-            double speed = Drive.MAX_SPEED_MPS * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+            double speed = Drive.MAX_SPEED_MPS / 14 * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+
             if (angle <= Field.CHARGE_ANGLE_DEADBAND && angle >= -Field.CHARGE_ANGLE_DEADBAND) 
             {
                 speed = 0;
@@ -475,8 +478,9 @@ public class Commands2023
             
             Logging.info("angle = " + angle + "; speed = " + speed);
 
-            ChargedUp.drivetrain.set(0, 0, speed);
-        });
+            ChargedUp.drivetrain.set(0, speed, 0);
+        }, 
+        () -> ChargedUp.drivetrain.enableFieldRelative());
     }
 
     /**

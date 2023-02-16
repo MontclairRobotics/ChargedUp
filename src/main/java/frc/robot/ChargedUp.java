@@ -20,6 +20,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
 import frc.robot.subsystems.Stinger;
+import frc.robot.subsystems.Drivetrain.DriveCommands;
 import frc.robot.subsystems.Grabber;
 import frc.robot.framework.GameController;
 import frc.robot.framework.GameController.Axis;
@@ -84,6 +85,9 @@ public class ChargedUp extends RobotContainer
             },
             drivetrain
         ));
+
+        driverController.getButton(Button.Y_TRIANGLE)
+            .toggleOnTrue(Commands2023.balance());
     
         // Buttons for Field Relative and Speed
         driverController.getButton(Button.A_CROSS)
@@ -161,11 +165,17 @@ public class ChargedUp extends RobotContainer
             elevator.setSpeed(left.getY());
         }, elevator));
 
+        driverController.getDPad(DPad.UP).onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+        driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+        driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+        driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
+
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
             .addString("Logs", Logging::logString)
             .withWidget(BuiltInWidgets.kTextView);
     }
+
     
     // AUTO //
     public static final AutoManager auto = new AutoManager();
