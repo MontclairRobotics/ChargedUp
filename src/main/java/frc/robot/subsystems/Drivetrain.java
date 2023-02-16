@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -32,7 +31,7 @@ import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import static frc.robot.constants.Constants.*;
+import static frc.robot.Constants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -51,8 +50,6 @@ public class Drivetrain extends ManagerSubsystemBase
     public final PIDMechanism thetaPID;
 
     private Tracking objectTracked; 
-    
-    private Pose2d estimatedPose;
 
     private boolean useFieldRelative = true;
 
@@ -67,17 +64,29 @@ public class Drivetrain extends ManagerSubsystemBase
         "BR"
     };
 
+    
+    private static class SimulationData
+    {
+        private ChassisSpeeds targetSpeeds = new ChassisSpeeds();
+        private ChassisSpeeds currentSpeeds = new ChassisSpeeds();
+
+        private Pose2d resetPose = new Pose2d();
+        private Pose2d accumulatedPose = new Pose2d();
+    }
+    private SimulationData simulation;
+
     public Drivetrain()
     {
-        estimatedPose = new Pose2d(5, 5, new Rotation2d());
+        if(RobotBase.isSimulation())
+        {
+            simulation = new SimulationData();
+            simulation.accumulatedPose = new Pose2d(5, 5, new Rotation2d());
+        }
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
 
-        // TODO: UNCOMMENT ALL OF THIS
-
-        for (int i = 0; i < Drive.MODULES.length; i++)
-        // for(SwerveModuleSpec spec : Drive.MODULES)
+        for (int i = 0; i < Drive.MODULE_COUNT; i++)
         {
             modules[i] = Drive.MODULES[i].build(
                 Shuffleboard.getTab("Drivetrain")
@@ -86,7 +95,7 @@ public class Drivetrain extends ManagerSubsystemBase
                     .withPosition(2*i, 0)
             );
 
-            assert Drive.STEER_TYPE == MotorType.NEO 
+            assert Drive.STEER_TYPE == MotorType.NEO
                  : "This code assumes that the steer type of the robot is a neo.";
 
             CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
@@ -220,15 +229,6 @@ public class Drivetrain extends ManagerSubsystemBase
         vy_meter_per_second  *= Drive.speeds[speedIndex][0];
         omega_rad_per_second *= Drive.speeds[speedIndex][1];
 
-        // Logging.info("omega rad per sec = " + omega_rad_per_second);
-        
-        // Logging.info("Front Left: "  + Units.radiansToDegrees(modules[0].getSteerEncoder().getAbsoluteAngle()));
-        // Logging.info("Front Right: " + Units.radiansToDegrees(modules[1].getSteerEncoder().getAbsoluteAngle()));
-        // Logging.info("back Left: "   + Units.radiansToDegrees(modules[2].getSteerEncoder().getAbsoluteAngle()));
-        // Logging.info("back right: "  + Units.radiansToDegrees(modules[3].getSteerEncoder().getAbsoluteAngle()));
-        
-
-
         xPID.setSpeed(vx_meter_per_second);
         yPID.setSpeed(vy_meter_per_second);
         thetaPID.setSpeed(omega_rad_per_second);
@@ -296,15 +296,33 @@ public class Drivetrain extends ManagerSubsystemBase
 
         if(RobotBase.isSimulation())
         {
-            ChassisSpeeds speeds = Drive.KINEMATICS.toChassisSpeeds(states);
+            simulation.targetSpeeds = Drive.KINEMATICS.toChassisSpeeds(states);
+
+            final double targetX = simulation.targetSpeeds.vxMetersPerSecond;
+            final double targetY = simulation.targetSpeeds.vxMetersPerSecond;
+            final double targetO = simulation.targetSpeeds.vxMetersPerSecond;
+            
+            double currentX = simulation.currentSpeeds.vxMetersPerSecond;
+            double currentY = simulation.currentSpeeds.vxMetersPerSecond;
+            double currentO = simulation.currentSpeeds.vxMetersPerSecond;
+
+            double dt = CommandRobot.deltaTime();
+            double acc = Drive.MAX_ACCEL_MPS2 * dt;
+            double alp = Drive.MAX_TURN_ACCEL_RAD_PER_S2 * dt;
+
+            currentX = Math555.clamp(targetX, currentX - acc, currentX + acc);
+            currentY = Math555.clamp(targetY, currentY - acc, currentY + acc);
+            currentO = Math555.clamp(targetO, currentO - alp, currentO + alp);
+
+            simulation.currentSpeeds = new ChassisSpeeds(currentX, currentY, currentO);
 
             Transform2d transform = new Transform2d(
-                new Translation2d(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond), 
-                new Rotation2d(-speeds.omegaRadiansPerSecond)
+                new Translation2d(currentX, currentY), 
+                new Rotation2d(currentO)
             );
-            transform = transform.times(CommandRobot.deltaTime()); //multiply
+            transform = transform.times(dt); //multiply
 
-            estimatedPose = estimatedPose.plus(transform); // update
+            simulation.accumulatedPose = simulation.accumulatedPose.plus(transform); // update
         }
         
         odometry.update(
@@ -350,7 +368,10 @@ public class Drivetrain extends ManagerSubsystemBase
             pose
         );
         
-        estimatedPose = pose;
+        if(RobotBase.isSimulation())
+        {
+            simulation.resetPose = pose;    
+        }
     }
 
     public Rotation2d getRobotRotation()
@@ -361,7 +382,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         else 
         {
-            return estimatedPose.getRotation();
+            return simulation.accumulatedPose.getRotation();
         }
     }
 
@@ -378,7 +399,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         else 
         {
-            return estimatedPose;
+            return new Pose2d().plus(simulation.accumulatedPose.minus(simulation.resetPose));
         }
     }
 

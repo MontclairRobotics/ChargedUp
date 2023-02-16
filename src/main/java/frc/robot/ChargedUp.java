@@ -5,23 +5,19 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.networktables.NTSendableBuilder;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilderImpl;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
 import frc.robot.subsystems.Stinger;
-import frc.robot.subsystems.Drivetrain.DriveCommands;
+import frc.robot.subsystems.managers.Auto;
+import frc.robot.subsystems.managers.LED;
+import frc.robot.subsystems.managers.Limelight;
 import frc.robot.subsystems.Grabber;
 import frc.robot.framework.GameController;
 import frc.robot.framework.GameController.Axis;
@@ -29,17 +25,13 @@ import frc.robot.framework.GameController.Button;
 import frc.robot.framework.GameController.DPad;
 import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
-import frc.robot.structure.animation.FadeAnimation;
 import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.animation.WipeAnimation;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.structure.vision.Limelight;
-import frc.robot.subsystems.AutoManager;
 
-import static frc.robot.constants.Constants.*;
+import static frc.robot.Constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.swervedrivespecialties.swervelib.DriveController;
 
 public class ChargedUp extends RobotContainer 
 {
@@ -54,9 +46,7 @@ public class ChargedUp extends RobotContainer
         ControlScheme.OPERATOR_CONTROLLER_PORT);
 
     // COMPONENTS //
-    public static final AHRS gyroscope = new AHRS();
-
-    // SUBSYSTEMS //
+    public static final AHRS       gyroscope  = new AHRS();
     public static final LED        led        = new LED();
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
@@ -187,7 +177,7 @@ public class ChargedUp extends RobotContainer
 
     
     // AUTO //
-    public static final AutoManager auto = new AutoManager();
+    public static final Auto auto = new Auto();
 
     @Override
     public Command getAuto() 

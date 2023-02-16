@@ -1,33 +1,22 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.managers;
 
 import frc.robot.framework.commandrobot.ManagerBase;
 import frc.robot.structure.helpers.Logging;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.PubSubOption;
-import edu.wpi.first.networktables.StringSubscriber;
-import edu.wpi.first.networktables.StringTopic;
-import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.ChargedUp;
 import frc.robot.Commands2023;
 
 /**
  * AutoCommandsManager
  */
-public class AutoManager extends ManagerBase
+public class Auto extends ManagerBase
 {
     private NetworkTableEntry subscriber;
     
-    public AutoManager()
+    public Auto()
     {
         subscriber = NetworkTableInstance.getDefault()
             .getTable("Main")

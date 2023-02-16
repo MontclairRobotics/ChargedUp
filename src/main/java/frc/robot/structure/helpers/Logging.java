@@ -78,6 +78,16 @@ public class Logging
         DriverStation.reportWarning(s, true);
         addLog(s);
     }
+    /**
+     * Print and store a warning log without any trace.
+     */
+    public static void warningnt(String message)
+    {
+        String s = message;
+
+        DriverStation.reportWarning(s, false);
+        addLog(s);
+    }
     
     /**
      * Print and store an erroneous log.
@@ -89,6 +99,16 @@ public class Logging
         DriverStation.reportError(s, true);
         addLog(s);
     }
+    /**
+     * Print and store an erroneous log without any trace.
+     */
+    public static void errornt(String message)
+    {
+        String s = message;
+
+        DriverStation.reportError(s, false);
+        addLog(s);
+    }
     
     /**
      * Print and store a fatal log.
@@ -98,6 +118,16 @@ public class Logging
         String s = message;
 
         DriverStation.reportError(s, true);
+        addLog(s);
+    }
+    /**
+     * Print and store a fatal log without any trace.
+     */
+    public static void fatalnt(String message)
+    {
+        String s = message;
+
+        DriverStation.reportError(s, false);
         addLog(s);
     }
 }

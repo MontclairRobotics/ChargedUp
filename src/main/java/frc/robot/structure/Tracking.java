@@ -1,15 +1,10 @@
 package frc.robot.structure;
 
-import edu.wpi.first.networktables.NetworkTable;
-import frc.robot.ChargedUp;
-
 /**
  * An enum containing the thing the robot is currently tracking
  */
-public enum Tracking {
-
-    //TODO: Get actual pipeline values
-
+public enum Tracking 
+{
     NONE(-1),
     CUBE(1),
     CONE(2),

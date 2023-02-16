@@ -5,8 +5,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.*;
+import frc.robot.Constants;
+import frc.robot.Constants.*;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 
 

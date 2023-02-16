@@ -1,4 +1,4 @@
-package frc.robot.constants;
+package frc.robot;
 
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.MechanicalConfiguration;
@@ -325,7 +325,7 @@ public final class Constants
 
     public static class Field
     {
-        public static final double CHARGE_ANGLE_RANGE_DEG = 15; //TODO: what should this be???
+        public static final double CHARGE_ANGLE_RANGE_DEG = 15;
         public static final double CHARGE_ANGLE_DEADBAND = 2.5;
     }
 

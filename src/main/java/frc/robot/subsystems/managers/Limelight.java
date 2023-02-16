@@ -1,6 +1,5 @@
-package frc.robot.structure.vision;
+package frc.robot.subsystems.managers;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.framework.commandrobot.ManagerBase;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;

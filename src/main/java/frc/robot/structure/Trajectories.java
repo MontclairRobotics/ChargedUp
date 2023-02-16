@@ -1,22 +1,10 @@
 package frc.robot.structure;
 
 import java.util.HashMap;
-import java.util.Map;
-
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
-
-import edu.wpi.first.wpilibj2.command.Commands;
-
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import frc.robot.ChargedUp;
-import frc.robot.structure.factories.PoseFactory;
-import frc.robot.structure.helpers.Logging;
 /**
  * Class which holds the trajectories which may be used by the robot
  */
