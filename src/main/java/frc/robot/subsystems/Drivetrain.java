@@ -53,7 +53,6 @@ public class Drivetrain extends ManagerSubsystemBase
     private Tracking objectTracked; 
     
     private Pose2d estimatedPose;
-    private Transform2d currentTransform;
 
     private boolean useFieldRelative = true;
 
@@ -70,8 +69,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
     public Drivetrain()
     {
-        estimatedPose = new Pose2d(0, 0, new Rotation2d());
-        currentTransform = new Transform2d();
+        estimatedPose = new Pose2d(5, 5, new Rotation2d());
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
@@ -298,31 +296,15 @@ public class Drivetrain extends ManagerSubsystemBase
 
         if(RobotBase.isSimulation())
         {
-            Rotation2d robotAngle = getRobotRotation();
+            ChassisSpeeds speeds = Drive.KINEMATICS.toChassisSpeeds(states);
 
-            Translation2d vel = null;
-            Rotation2d omega  = null;
+            Transform2d transform = new Transform2d(
+                new Translation2d(-speeds.vxMetersPerSecond, -speeds.vyMetersPerSecond), 
+                new Rotation2d(-speeds.omegaRadiansPerSecond)
+            );
+            transform = transform.times(CommandRobot.deltaTime()); //multiply
 
-            for (int i = 0; i < states.length; i++) 
-            {
-                Translation2d pos2d = Drive.MOD_POSITIONS[i];
-                Rotation2d modAngle = states[i].angle;
-
-                Rotation2d relAngle = modAngle.minus(robotAngle);
-                vel = new Translation2d(states[i].speedMetersPerSecond, relAngle);
-
-                double omegaDbl = pos2d.getNorm() 
-                                * vel.getNorm() 
-                                * pos2d.minus(vel).getAngle().getSin();
-                            
-                omega = new Rotation2d(omegaDbl);
-            }
-
-            Transform2d transform = new Transform2d(vel, omega);
-                // System.out.println(transform);  
-            transform = transform.times(CommandRobot.deltaTime());
-
-            estimatedPose = estimatedPose.plus(transform);
+            estimatedPose = estimatedPose.plus(transform); // update
         }
         
         odometry.update(
