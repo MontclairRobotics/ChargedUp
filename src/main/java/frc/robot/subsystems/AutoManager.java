@@ -5,6 +5,7 @@ import frc.robot.structure.helpers.Logging;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.DoubleSubscriber;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.PubSubOption;
 import edu.wpi.first.networktables.StringSubscriber;
@@ -24,18 +25,18 @@ import frc.robot.Commands2023;
  */
 public class AutoManager extends ManagerBase
 {
-    private StringSubscriber subscriber;
+    private NetworkTableEntry subscriber;
     
     public AutoManager()
     {
-        StringTopic topic = NetworkTableInstance.getDefault()
+        subscriber = NetworkTableInstance.getDefault()
             .getTable("Main")
-            .getStringTopic("Auto");
-
-        subscriber = topic.subscribe(null); // guys i have 1 sub on youtube dot commercial website this is so crazy
+            .getEntry("Auto");
+        subscriber.setString("");
+        // guys i have 1 sub on youtube dot commercial website this is so crazy
     }
 
-    private String previous = null;
+    private String previous = "";
     private Command command = null;
 
     public Command get()
@@ -51,12 +52,7 @@ public class AutoManager extends ManagerBase
 
     private void updateAutoCommand()
     {
-        String str = subscriber.get();
-        if(str == null)
-        {
-            Logging.error("Auto command entry was empty!");
-            return;
-        }
+        String str = subscriber.getString("");
 
         command = Commands2023.buildAuto(str);
 
@@ -66,9 +62,9 @@ public class AutoManager extends ManagerBase
     @Override
     public void always() 
     {
-        String current = subscriber.get();
+        String current = subscriber.getString("");
 
-        if(!(current == null && previous == null || current.equals(previous)))
+        if(!current.equals(previous))
         {
             updateAutoCommand();
         }

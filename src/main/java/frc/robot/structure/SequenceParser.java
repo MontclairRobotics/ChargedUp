@@ -23,6 +23,12 @@ public class SequenceParser
      */
     public static String[] lex(String str)
     {
+        if(str.length() == 0)
+        {
+            Logging.error("Empty auto command provided.");
+            return null;
+        }
+
         ArrayList<String> out = new ArrayList<String>();
         boolean isExclaimed = false;
 
