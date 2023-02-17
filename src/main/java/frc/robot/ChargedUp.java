@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -27,7 +26,6 @@ import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.animation.FlameAnimation;
 import frc.robot.structure.animation.RainbowAnimation;
-import frc.robot.structure.animation.WipeTransition;
 import frc.robot.structure.helpers.Logging;
 
 import static frc.robot.Constants.*;
@@ -81,7 +79,7 @@ public class ChargedUp extends RobotContainer
             drivetrain
         ));
 
-        driverController.getButton(Button.START_TOUCHPAD)
+        driverController.getButton(Button.A_CROSS)
             .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
         driverController.getButton(Button.B_CIRCLE)
             .onTrue(Commands.runOnce( () -> led.add(new FlameAnimation(7))));

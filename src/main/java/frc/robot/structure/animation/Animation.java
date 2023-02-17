@@ -2,7 +2,6 @@ package frc.robot.structure.animation;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * The base class for an LED animation.

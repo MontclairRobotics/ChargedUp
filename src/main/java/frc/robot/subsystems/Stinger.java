@@ -4,8 +4,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.Constants.Robot;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.structure.PIDMechanism;

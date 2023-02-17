@@ -1,5 +1,4 @@
 package frc.robot.structure.animation;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 @FunctionalInterface
 public interface TransitionConstructor 

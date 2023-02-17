@@ -18,7 +18,7 @@ public class RainbowAnimation extends Animation
     public void run(AddressableLEDBuffer ledBuffer) 
     {
         // Calculate strip offset
-        final int offset = (int)(timer.get() % CYCLE_TIME * ledBuffer.getLength());
+        final int offset = (int)(timer.get() / CYCLE_TIME * ledBuffer.getLength()) % ledBuffer.getLength();
 
         // For every pixel
         for (int i = 0; i < ledBuffer.getLength(); i++)
@@ -27,7 +27,7 @@ public class RainbowAnimation extends Animation
             // shape is a circle so only one value needs to precess
             final int hue = (offset + (i * 180 / ledBuffer.getLength())) % 180;
             // Set the value
-            ledBuffer.setHSV(i, hue, 255, 128);
+            ledBuffer.setHSV(i, hue, 255, 255);
         }
     }
 }

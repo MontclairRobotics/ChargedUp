@@ -4,27 +4,17 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.Auto;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.Field;
 import frc.robot.Constants.Robot;
-import frc.robot.structure.GamePiece;
 import frc.robot.structure.SequenceParser;
 import frc.robot.structure.Trajectories;
-import frc.robot.structure.Unimplemented;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.Grabber;
-import frc.robot.subsystems.Stinger;
-
 import static frc.robot.ChargedUp.elevator;
-import static frc.robot.ChargedUp.stinger;
-
-import java.util.ArrayList;
 
 public class Commands2023 
 {   
