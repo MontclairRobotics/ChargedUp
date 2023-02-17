@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
@@ -24,8 +25,12 @@ import frc.robot.framework.GameController.Button;
 import frc.robot.framework.GameController.DPad;
 import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
-import frc.robot.structure.animation.FlameAnimation;
+import frc.robot.structure.animation.FadeTransition;
+import frc.robot.structure.animation.MagicAnimation;
+// import frc.robot.structure.animation.GalaxyAnimation;
 import frc.robot.structure.animation.RainbowAnimation;
+import frc.robot.structure.animation.SolidAnimation;
+import frc.robot.structure.animation.WipeTransition;
 import frc.robot.structure.helpers.Logging;
 
 import static frc.robot.Constants.*;
@@ -58,6 +63,8 @@ public class ChargedUp extends RobotContainer
     @Override 
     public void initialize() 
     { 
+        led.setTransition(FadeTransition::new);
+
         Shuffleboard
             .getTab("Main")
             .add("Field", field);
@@ -79,19 +86,23 @@ public class ChargedUp extends RobotContainer
             drivetrain
         ));
 
-        driverController.getButton(Button.A_CROSS)
-            .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
+        // driverController.getButton(Button.A_CROSS)
+        //     .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
         driverController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands.runOnce( () -> led.add(new FlameAnimation(7))));
+            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
+        driverController.getButton(Button.A_CROSS)
+            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
+        driverController.getButton(Button.X_SQUARE)
+            .onTrue(Commands.runOnce( () -> led.add(new SolidAnimation(3, Color.kPaleGoldenrod))));
         
         driverController.getButton(Button.Y_TRIANGLE)
             .toggleOnTrue(Commands2023.balance());
     
         // Buttons for Field Relative and Speed
-        driverController.getButton(Button.A_CROSS)
-            .onTrue(drivetrain.commands.enableFieldRelative());
-        driverController.getButton(Button.X_SQUARE)
-            .onTrue(drivetrain.commands.disableFieldRelative());
+        // driverController.getButton(Button.A_CROSS)
+        //     .onTrue(drivetrain.commands.enableFieldRelative());
+        // driverController.getButton(Button.X_SQUARE)
+        //     .onTrue(drivetrain.commands.disableFieldRelative());
         driverController.getButton(Button.RIGHT_BUMPER)
             .onTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
