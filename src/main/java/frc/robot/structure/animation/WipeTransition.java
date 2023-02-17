@@ -6,27 +6,22 @@ import edu.wpi.first.wpilibj.util.Color;
 /**
  * An animation which wipes from one color to another (without any blurring).
  */
-public class WipeAnimation extends Animation 
+public class WipeTransition extends Transition 
 {
-    private Color oldColor;
-    private Color newColor;
-
-    public WipeAnimation(double time, Color oldColor, Color newColor) 
+    public WipeTransition(double length, AddressableLEDBuffer old, AddressableLEDBuffer newb) 
     {
-        super(time);
-        this.oldColor = oldColor;
-        this.newColor = newColor;
+        super(length, old, newb);
     }
 
     public void run(AddressableLEDBuffer ledBuffer) 
     {
         final int wipeOffset = (int)(ledBuffer.getLength() * percentFinished());
 
-        fill(ledBuffer, oldColor);
+        LEDBuffer.copy(oldBuffer, ledBuffer);
 
         for (int i = 0; i < wipeOffset; i++) 
         {
-            ledBuffer.setLED(i, newColor);
+            LEDBuffer.copy(i, newBuffer, ledBuffer);
         }
     }
 }

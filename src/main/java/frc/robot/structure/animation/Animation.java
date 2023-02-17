@@ -34,6 +34,11 @@ public abstract class Animation
         return timer.get() / length;
     }
 
+    public double timeElapsed()
+    {
+        return timer.get();
+    }
+
     /**
      * Starts the execution of this animation
      */
@@ -69,14 +74,6 @@ public abstract class Animation
         return timer.hasElapsed(length);
     }
 
-    /**
-     * Fills the given {@link AddressableLEDBuffer} with the given {@link Color}
-     */
-    public static void fill(AddressableLEDBuffer ledBuffer, Color color)
-    {
-        for (int i = 0; i < ledBuffer.getLength(); i++) 
-        {
-            ledBuffer.setLED(i,color);
-        }
-    }
+    public double length() {return length;}
+    public void length(double n) {length = n;}
 }

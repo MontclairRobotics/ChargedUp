@@ -19,6 +19,6 @@ public class SolidAnimation extends Animation
     @Override
     public void run(AddressableLEDBuffer ledBuffer) 
     {
-        fill(ledBuffer, color);
+        LEDBuffer.fill(ledBuffer, color);
     }
 }

@@ -37,7 +37,7 @@ public class Math555
     public static int lerp(int a, int b, double t)
     {
         t = clamp01(t);
-        return (int)(t*(b-a))+a;
+        return (int)(t*(b-a)+a);
     }
 
     public static Color lerp(Color a, Color b, double t) 

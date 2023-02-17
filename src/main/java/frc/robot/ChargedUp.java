@@ -27,7 +27,7 @@ import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.animation.FlameAnimation;
 import frc.robot.structure.animation.RainbowAnimation;
-import frc.robot.structure.animation.WipeAnimation;
+import frc.robot.structure.animation.WipeTransition;
 import frc.robot.structure.helpers.Logging;
 
 import static frc.robot.Constants.*;

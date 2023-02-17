@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
+import frc.robot.framework.Math555;
 import frc.robot.framework.commandrobot.ManagerBase;
 import frc.robot.structure.GamePiece;
 import frc.robot.structure.animation.*;
@@ -13,11 +14,18 @@ import frc.robot.structure.animation.*;
 public class LED extends ManagerBase 
 {
     private AddressableLED led = new AddressableLED(Constants.Robot.LED.PWM_PORT);
-    private AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(150);
+    private AddressableLEDBuffer displayBuffer = new AddressableLEDBuffer(LED_COUNT);
+    private AddressableLEDBuffer oldBuffer = new AddressableLEDBuffer(LED_COUNT);
+    private AddressableLEDBuffer newBuffer = new AddressableLEDBuffer(LED_COUNT);
 
     private GamePiece gamePiece = GamePiece.NONE;
 
     private Stack<Animation> animationStack;
+    private TransitionConstructor transitionConstructor;
+    private Transition currentTransition;
+
+    public static final double TRANSITION_LENGTH = 1;
+    public static final int LED_COUNT = 150;
 
     /**
      * Check if the led driver currently has an animation playing
@@ -33,29 +41,63 @@ public class LED extends ManagerBase
     {
         return animationStack.peek();
     }
+    public Animation previous() 
+    {
+        return animationStack.get(1);
+    }
 
     public LED()
     {
-        led.setLength(ledBuffer.getLength());
-        led.setData(ledBuffer);
+        led.setLength(LED_COUNT);
+        led.setData(displayBuffer);
         led.start();
         
         animationStack = new Stack<Animation>();
         animationStack.add(new DefaultAnimation());
+
+        transitionConstructor = FadeTransition::new;
     }
    
     @Override
     public void always()
     {
         // While the top is finished, cancel it
-        while(hasCurrent() && current().isFinished()) cancel();
+        while(hasCurrent() && current().isFinished()) 
+        {
+            cancel();
+        }
 
         // After this, if the top still exists, run it
-        if(hasCurrent()) current().run(ledBuffer);
+        if(hasCurrent()) 
+        {
+            if(currentTransition == null)
+            {
+                current().run(displayBuffer);
 
-        //setAllianceColor();
-        led.setData(ledBuffer);
-        //System.out.println("We set the coloooorooroor");
+                if(current().timeElapsed() > current().length() - TRANSITION_LENGTH)
+                {
+                    currentTransition = transitionConstructor.construct(TRANSITION_LENGTH, oldBuffer, newBuffer);
+                    currentTransition.begin();
+                }
+            }
+            else 
+            {
+                current().run(oldBuffer);
+                previous().run(newBuffer);
+
+                currentTransition.run(displayBuffer);
+
+                if(currentTransition.isFinished())
+                {
+                    currentTransition.pause();
+                    currentTransition = null;
+                }
+
+                System.out.println("TRANSITION");
+            }
+        }
+
+        led.setData(displayBuffer);
     }
 
     /**
@@ -63,6 +105,8 @@ public class LED extends ManagerBase
      */
     public void add(Animation animation, boolean shouldPause) 
     {
+        animation.length(Math.max(animation.length(), TRANSITION_LENGTH * 2));
+
         if(hasCurrent() && shouldPause)
         {
             current().pause();
@@ -70,6 +114,9 @@ public class LED extends ManagerBase
 
         animationStack.add(animation);
         animation.begin();
+
+        currentTransition = transitionConstructor.construct(TRANSITION_LENGTH, newBuffer, oldBuffer);
+        currentTransition.begin();
     }
 
     /**
@@ -87,6 +134,7 @@ public class LED extends ManagerBase
     public Animation cancel() 
     {
         Animation animPop = animationStack.pop();
+        currentTransition = null;
 
         if(hasCurrent())
         {

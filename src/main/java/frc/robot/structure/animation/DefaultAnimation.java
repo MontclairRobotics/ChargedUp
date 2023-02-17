@@ -25,6 +25,7 @@ public class DefaultAnimation extends Animation
         if (alliance == Alliance.Blue) color = Color.kBlue; 
         else if (alliance == Alliance.Red) color = Color.kRed;
         else if (alliance == Alliance.Invalid) color = Color.kWhite;
-        fill(ledBuffer, color);
+        
+        LEDBuffer.fill(ledBuffer, color);
     }
 }
