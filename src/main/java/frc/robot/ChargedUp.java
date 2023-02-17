@@ -91,8 +91,8 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.B_CIRCLE)
             .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
         driverController.getButton(Button.A_CROSS)
-        driverController.getButton(Button.Y_TRIANGLE)
             .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
+        driverController.getButton(Button.Y_TRIANGLE)
             .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
         driverController.getButton(Button.X_SQUARE)
             .onTrue(Commands.runOnce( () -> led.add(new SolidAnimation(3, Color.kPaleGoldenrod))));
