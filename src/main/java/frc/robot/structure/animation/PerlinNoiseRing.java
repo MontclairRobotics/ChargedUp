@@ -8,29 +8,32 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import frc.robot.framework.Math555;
 import frc.robot.framework.PerlinNoise;
 
-public class FlameAnimation extends Animation
+public class PerlinNoiseRing 
 {
-    public FlameAnimation(double length) 
+    public PerlinNoiseRing(double length, int step, int size) 
     {
-        super(length);
-
         // Get a random movement direction
         movementDir = new Rotation2d(new Random().nextDouble(Math.PI));
+
+        this.size = size;
+        this.step = step;
+    }
+
+    public PerlinNoiseRing(double length)
+    {
+        this(length, 40, 70);
     }
 
     // Constants //
     // The amount of movement in one second
-    public static final double STEP = 40;
+    public double step;
     // The size of the circle in Perlin space
-    public static final double SIZE = 70;
+    public double size;
     
     private Rotation2d movementDir;
     private PerlinNoise noise = new PerlinNoise();
 
-    @Override
-    public void run(AddressableLEDBuffer ledBuffer) 
-    {
-        /**
+    /**
          * The way that this algorithm works is not self-explanatory, so I will explain it here:
          * 
          * In order to simulate flames, we can use randomness to generate a "heat" value, which
@@ -78,39 +81,34 @@ public class FlameAnimation extends Animation
          * We can then pipe the results of the two lerps for hue and val into ledBuffer.setHSV to render
          * our current animation pixel, for every pixel.
          */
+    public double get(double time, int i, int bufferLen) 
+    {
+        Translation2d center = new Translation2d(step * time, movementDir);
 
+        // Get the "normalized" buffer index (between 0 and 1)
+        double inorm = (1.0 * i) / bufferLen;
 
-        // Get the center of the circle in Perlin noise space
-        Translation2d center = new Translation2d(STEP * timer.get(), movementDir);
+        // Get the angle offset of this pixel (between 0 and 2pi)
+        Rotation2d angle = new Rotation2d(2.0 * Math.PI * inorm);
 
-        // Render each pixel
-        for(int i = 0; i < ledBuffer.getLength(); i++)
-        {
-            // Get the "normalized" buffer index (between 0 and 1)
-            double inorm = (1.0 * i) / ledBuffer.getLength();
+        // Get the vector offset of this pixel and calculate its position by adding this offset
+        // to the center of the circle
+        Translation2d offset = new Translation2d(size, angle);
+        Translation2d position = center.plus(offset);
 
-            // Get the angle offset of this pixel (between 0 and 2pi)
-            Rotation2d angle = new Rotation2d(2.0 * Math.PI * inorm);
+        // Get the heat value for the position found above
+        double heat = noise.noise(position.getX(), position.getY());
 
-            // Get the vector offset of this pixel and calculate its position by adding this offset
-            // to the center of the circle
-            Translation2d offset = new Translation2d(SIZE, angle);
-            Translation2d position = center.plus(offset);
+        // Remap this value
+        double heatRemap = heat / 2.0 + 0.5;
 
-            // Get the heat value for the position found above
-            double heat = noise.noise(position.getX(), position.getY());
+        return heatRemap;
 
-            // Remap this value
-            double heatRemap = heat / 2.0 + 0.5;
-
-            // Perform the linear interpolations needed to get the hue and value,
-            // using (0 -> 10) as the hue range and (0 -> 255) for the value range.
-            // To change the color of the flames, modify these values.
-            int hue = Math555.lerp(0, 10,  Math.pow(heatRemap, 2.0));
-            int val = Math555.lerp(0, 255, Math.pow(heatRemap, 4.0));
-
-            // Push the pixel color to the led buffer
-            ledBuffer.setHSV(i, hue, 255, val);
-        }   
+        // Perform the linear interpolations needed to get the hue and value,
+        // using (0 -> 10) as the hue range and (0 -> 255) for the value range.
+        // To change the color of the flames, modify these values.
+        // int hue = Math555.lerp(0, 20,  Math.pow(heatRemap, 2.0));
+        // int val = Math555.lerp(0, 255, Math.pow(heatRemap, 4.0));
+        
     } 
 }
