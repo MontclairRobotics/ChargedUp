@@ -54,7 +54,7 @@ public class LED extends ManagerBase
         animationStack = new Stack<Animation>();
         animationStack.add(new DefaultAnimation());
 
-        transitionConstructor = WipeTransition::new;
+        transitionConstructor = FadeTransition::new;
     }
    
     @Override
@@ -111,7 +111,7 @@ public class LED extends ManagerBase
     /**
      * Add a command to the stack, interrupting the previous command
      */
-    public void add(Animation animation, boolean shouldPause) 
+    public void add(Animation animation, boolean shouldPause, boolean force) 
     {
         animation.length(Math.max(animation.length(), TRANSITION_LENGTH * 2));
 
@@ -123,8 +123,11 @@ public class LED extends ManagerBase
         animationStack.add(animation);
         animation.begin();
 
-        currentTransition = transitionConstructor.construct(TRANSITION_LENGTH);
-        currentTransition.begin();
+        if(!force)
+        {
+            currentTransition = transitionConstructor.construct(TRANSITION_LENGTH);
+            currentTransition.begin();
+        }
     }
 
     /**
@@ -132,7 +135,7 @@ public class LED extends ManagerBase
      */
     public void add(Animation animation) 
     {
-        add(animation, true);
+        add(animation, true, false);
     }
 
     /**
