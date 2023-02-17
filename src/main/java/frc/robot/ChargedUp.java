@@ -24,6 +24,7 @@ import frc.robot.framework.GameController.Button;
 import frc.robot.framework.GameController.DPad;
 import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.animation.CircusAnimation;
 import frc.robot.structure.animation.FlameAnimation;
 import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.helpers.Logging;
@@ -83,6 +84,8 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
         driverController.getButton(Button.B_CIRCLE)
             .onTrue(Commands.runOnce( () -> led.add(new FlameAnimation(7))));
+        driverController.getButton(Button.Y_TRIANGLE)
+            .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
         
         driverController.getButton(Button.Y_TRIANGLE)
             .toggleOnTrue(Commands2023.balance());
