@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
 import frc.robot.framework.Math555;
@@ -36,6 +37,8 @@ import static frc.robot.Constants.*;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.xml.crypto.dsig.Transform;
+
 public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
@@ -52,6 +55,8 @@ public class Drivetrain extends ManagerSubsystemBase
     private Tracking objectTracked; 
 
     private boolean useFieldRelative = true;
+
+    private final FieldObject2d moduleObject;
 
 
     //sets the speedIndex to speeds length
@@ -85,6 +90,9 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
+        moduleObject = ChargedUp.field.getObject("Swerve Modules");
+
+        Pose2d[] modPoses = new Pose2d[Drive.MODULE_COUNT];
 
         for (int i = 0; i < Drive.MODULE_COUNT; i++)
         {
@@ -95,12 +103,16 @@ public class Drivetrain extends ManagerSubsystemBase
                     .withPosition(2*i, 0)
             );
 
+            modPoses[i] = getRobotPose().plus(new Transform2d(Drive.MOD_POSITIONS[i], new Rotation2d()));
+
             assert Drive.STEER_TYPE == MotorType.NEO
                  : "This code assumes that the steer type of the robot is a neo.";
 
             CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
             mot.burnFlash();
         }
+
+        moduleObject.setPoses(modPoses);
 
         // Build Shuffleboard //
         Shuffleboard.getTab("Main")
@@ -283,10 +295,13 @@ public class Drivetrain extends ManagerSubsystemBase
         
         for(int i = 0; i < Drive.MODULE_COUNT; i++)
         {
-            states[i] = SwerveModuleState.optimize(
-                states[i], 
-                new Rotation2d(modules[i].getSteerAngle())
-            );
+            if(RobotBase.isReal())
+            {
+                states[i] = SwerveModuleState.optimize(
+                    states[i], 
+                    new Rotation2d(modules[i].getSteerAngle())
+                );
+            }
 
             modules[i].set(
                 states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
@@ -299,20 +314,24 @@ public class Drivetrain extends ManagerSubsystemBase
             simulation.targetSpeeds = Drive.KINEMATICS.toChassisSpeeds(states);
 
             final double targetX = simulation.targetSpeeds.vxMetersPerSecond;
-            final double targetY = simulation.targetSpeeds.vxMetersPerSecond;
-            final double targetO = simulation.targetSpeeds.vxMetersPerSecond;
+            final double targetY = simulation.targetSpeeds.vyMetersPerSecond;
+            final double targetO = simulation.targetSpeeds.omegaRadiansPerSecond;
             
             double currentX = simulation.currentSpeeds.vxMetersPerSecond;
-            double currentY = simulation.currentSpeeds.vxMetersPerSecond;
-            double currentO = simulation.currentSpeeds.vxMetersPerSecond;
+            double currentY = simulation.currentSpeeds.vyMetersPerSecond;
+            double currentO = simulation.currentSpeeds.omegaRadiansPerSecond;
 
-            double dt = CommandRobot.deltaTime();
-            double acc = Drive.MAX_ACCEL_MPS2 * dt;
-            double alp = Drive.MAX_TURN_ACCEL_RAD_PER_S2 * dt;
+            final double dt = CommandRobot.deltaTime();
 
-            currentX = Math555.clamp(targetX, currentX - acc, currentX + acc);
-            currentY = Math555.clamp(targetY, currentY - acc, currentY + acc);
-            currentO = Math555.clamp(targetO, currentO - alp, currentO + alp);
+            final double acc = Drive.MAX_ACCEL_MPS2 * dt;
+            final double dec = acc * 3;
+
+            final double alp = Drive.MAX_TURN_ACCEL_RAD_PER_S2 * dt;
+            final double dlp = alp * 3;
+
+            currentX = Math555.accClamp(targetX, currentX, acc, dec);
+            currentY = Math555.accClamp(targetY, currentY, acc, dec);
+            currentO = Math555.accClamp(targetO, currentO, alp, dlp);
 
             simulation.currentSpeeds = new ChassisSpeeds(currentX, currentY, currentO);
 
@@ -320,9 +339,20 @@ public class Drivetrain extends ManagerSubsystemBase
                 new Translation2d(currentX, currentY), 
                 new Rotation2d(currentO)
             );
-            transform = transform.times(dt); //multiply
+            transform = transform.times(dt);
 
-            simulation.accumulatedPose = simulation.accumulatedPose.plus(transform); // update
+            simulation.accumulatedPose = simulation.accumulatedPose.plus(transform);
+
+            Pose2d[] modPoses = new Pose2d[Drive.MODULE_COUNT];
+
+            for(int i = 0; i < Drive.MODULE_COUNT; i++)
+            {
+                modPoses[i] = simulation.accumulatedPose.plus(
+                    new Transform2d(Drive.MOD_POSITIONS[i], states[i].angle)
+                );
+            }
+
+            moduleObject.setPoses(modPoses);
         }
         
         odometry.update(
@@ -345,8 +375,6 @@ public class Drivetrain extends ManagerSubsystemBase
     @Override 
     public void always() 
     {
-        ChargedUp.field.setRobotPose(getRobotPose());
-
         xPID.setMeasurement(getRobotPose().getX());
         yPID.setMeasurement(getRobotPose().getY());
         thetaPID.setMeasurement(getRobotRotation().getDegrees());
@@ -358,6 +386,9 @@ public class Drivetrain extends ManagerSubsystemBase
         ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
         
         driveFromChassisSpeeds(c);
+        
+        Pose2d pose = getRobotPose();
+        ChargedUp.field.setRobotPose(pose);
     }
     
     public void setRobotPose(Pose2d pose)

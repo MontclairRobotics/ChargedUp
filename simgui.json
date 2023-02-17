@@ -45,6 +45,29 @@
     },
     "windows": {
       "/Shuffleboard/Main/Field": {
+        "Robot": {
+          "length": 0.7799999713897705
+        },
+        "Swerve Modules": {
+          "arrowColor": [
+            0.9950248599052429,
+            0.7475061416625977,
+            0.16583743691444397,
+            255.0
+          ],
+          "arrowSize": 66,
+          "color": [
+            0.23529739677906036,
+            0.3540933132171631,
+            0.4203979969024658,
+            255.0
+          ],
+          "length": 0.25,
+          "selectable": false,
+          "style": "Box/Image",
+          "width": 0.25
+        },
+        "units": "meters",
         "window": {
           "visible": true
         }

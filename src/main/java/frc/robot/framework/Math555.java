@@ -24,6 +24,18 @@ public class Math555
         return v;
     }
 
+    public static double accClamp(double target, double current, double maxAcc, double maxDec)
+    {
+        if(Math.abs(current) > Math.abs(target))
+        {
+            return Math555.clamp(target, current - maxDec, current + maxDec);
+        }
+        else 
+        {
+            return Math555.clamp(target, current - maxAcc, current + maxAcc);
+        }
+    }
+
     public static double clamp01(double v)
     {
         return clamp(v, 0, 1);
