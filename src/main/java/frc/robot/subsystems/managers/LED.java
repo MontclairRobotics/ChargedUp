@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
-import frc.robot.framework.Math555;
 import frc.robot.framework.commandrobot.ManagerBase;
 import frc.robot.structure.GamePiece;
 import frc.robot.structure.animation.*;
@@ -24,7 +23,7 @@ public class LED extends ManagerBase
     private TransitionConstructor transitionConstructor;
     private Transition currentTransition;
 
-    public static final double TRANSITION_LENGTH = 1;
+    public static final double TRANSITION_LENGTH = 0.2;
     public static final int LED_COUNT = 150;
 
     /**
@@ -43,7 +42,7 @@ public class LED extends ManagerBase
     }
     public Animation previous() 
     {
-        return animationStack.get(1);
+        return animationStack.get(animationStack.size() - 2);
     }
 
     public LED()
@@ -55,7 +54,7 @@ public class LED extends ManagerBase
         animationStack = new Stack<Animation>();
         animationStack.add(new DefaultAnimation());
 
-        transitionConstructor = FadeTransition::new;
+        transitionConstructor = WipeTransition::new;
     }
    
     @Override
@@ -65,6 +64,12 @@ public class LED extends ManagerBase
         while(hasCurrent() && current().isFinished()) 
         {
             cancel();
+        }
+        
+        // Cancel the current transition if needed
+        if(currentTransition != null && currentTransition.isFinished())
+        {
+            currentTransition = null;
         }
 
         // After this, if the top still exists, run it
@@ -76,24 +81,27 @@ public class LED extends ManagerBase
 
                 if(current().timeElapsed() > current().length() - TRANSITION_LENGTH)
                 {
-                    currentTransition = transitionConstructor.construct(TRANSITION_LENGTH, oldBuffer, newBuffer);
+                    currentTransition = transitionConstructor.construct(TRANSITION_LENGTH);
                     currentTransition.begin();
                 }
             }
             else 
             {
-                current().run(oldBuffer);
-                previous().run(newBuffer);
-
-                currentTransition.run(displayBuffer);
-
-                if(currentTransition.isFinished())
+                if(current().timeElapsed() > TRANSITION_LENGTH)
                 {
-                    currentTransition.pause();
-                    currentTransition = null;
+                    current ().run(oldBuffer);
+                    previous().run(newBuffer);
+                }
+                else 
+                {
+                    current ().run(newBuffer);
+                    previous().run(oldBuffer);
                 }
 
-                System.out.println("TRANSITION");
+                currentTransition.setOld(oldBuffer);
+                currentTransition.setNew(newBuffer);
+
+                currentTransition.run(displayBuffer);
             }
         }
 
@@ -115,7 +123,7 @@ public class LED extends ManagerBase
         animationStack.add(animation);
         animation.begin();
 
-        currentTransition = transitionConstructor.construct(TRANSITION_LENGTH, newBuffer, oldBuffer);
+        currentTransition = transitionConstructor.construct(TRANSITION_LENGTH);
         currentTransition.begin();
     }
 
@@ -180,4 +188,8 @@ public class LED extends ManagerBase
         }
     }
 
+    public void setTransition(TransitionConstructor cons)
+    {
+        transitionConstructor = cons;
+    }
 }

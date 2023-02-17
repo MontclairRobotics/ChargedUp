@@ -9,9 +9,9 @@ import frc.robot.framework.Math555;
  */
 public class FadeTransition extends Transition 
 {
-    public FadeTransition(double length, AddressableLEDBuffer old, AddressableLEDBuffer newb) 
+    public FadeTransition(double length) 
     {
-        super(length, old, newb);
+        super(length);
     }
 
     public void run(AddressableLEDBuffer ledBuffer) 

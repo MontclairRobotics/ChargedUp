@@ -1,16 +1,15 @@
 package frc.robot.structure.animation;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.util.Color;
 
 /**
  * An animation which wipes from one color to another (without any blurring).
  */
 public class WipeTransition extends Transition 
 {
-    public WipeTransition(double length, AddressableLEDBuffer old, AddressableLEDBuffer newb) 
+    public WipeTransition(double length) 
     {
-        super(length, old, newb);
+        super(length);
     }
 
     public void run(AddressableLEDBuffer ledBuffer) 

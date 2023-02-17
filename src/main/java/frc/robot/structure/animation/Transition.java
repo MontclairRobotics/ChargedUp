@@ -4,14 +4,21 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 
 public abstract class Transition extends Animation
 {
-    public Transition(double length, AddressableLEDBuffer old, AddressableLEDBuffer newb) 
+    public Transition(double length) 
     {
         super(length);
-
-        oldBuffer = old;
-        newBuffer = newb;
     }
     
-    protected final AddressableLEDBuffer oldBuffer;
-    protected final AddressableLEDBuffer newBuffer;
+    protected AddressableLEDBuffer oldBuffer;
+    protected AddressableLEDBuffer newBuffer;
+
+    public void setOld(AddressableLEDBuffer buf)
+    {
+        oldBuffer = buf;
+    }
+
+    public void setNew(AddressableLEDBuffer buf)
+    {
+        newBuffer = buf;
+    }
 }
