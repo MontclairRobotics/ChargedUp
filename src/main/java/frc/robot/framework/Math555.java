@@ -24,12 +24,19 @@ public class Math555
         return v;
     }
 
+    public static double clamp01(double v)
+    {
+        return clamp(v, 0, 1);
+    }
+
     public static double lerp(double a, double b, double t)
     {
+        t = clamp01(t);
         return t*(b-a)+a;
     }
     public static int lerp(int a, int b, double t)
     {
+        t = clamp01(t);
         return (int)(t*(b-a))+a;
     }
 
