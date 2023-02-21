@@ -13,7 +13,7 @@ public class PerlinNoiseRing
     public PerlinNoiseRing(double length, int step, int size) 
     {
         // Get a random movement direction
-        movementDir = new Rotation2d(new Random().nextDouble(Math.PI));
+        movementDir = new Rotation2d(new Random().nextDouble() * Math.PI);
 
         this.size = size;
         this.step = step;

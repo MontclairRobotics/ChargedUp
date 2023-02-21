@@ -17,7 +17,7 @@ public class DeathAnimation extends Animation
         for(int i = 0; i < ledBuffer.getLength(); i++)
         {
             Random random = new Random();
-            ledBuffer.setHSV(i, random.nextInt(0, 255), random.nextInt(0, 255), random.nextInt(0, 255));
+            ledBuffer.setHSV(i, random.nextInt(256), random.nextInt(256), random.nextInt(256));
         }
     }
 }
