@@ -2,7 +2,7 @@
   "HALProvider": {
     "Addressable LEDs": {
       "0": {
-        "columns": 23,
+        "columns": 25,
         "order": 1
       },
       "window": {
@@ -67,6 +67,23 @@
           "style": "Box/Image",
           "width": 0.25
         },
+        "trajectory": {
+          "arrowColor": [
+            0.40392157435417175,
+            0.250980406999588,
+            0.250980406999588,
+            255.0
+          ],
+          "arrowSize": 11,
+          "arrowWeight": 10.0,
+          "color": [
+            0.4029850959777832,
+            0.25161507725715637,
+            0.25161507725715637,
+            255.0
+          ],
+          "style": "Line"
+        },
         "units": "meters",
         "window": {
           "visible": true
@@ -99,7 +116,8 @@
             "open": true
           },
           "open": true
-        }
+        },
+        "open": true
       }
     }
   },

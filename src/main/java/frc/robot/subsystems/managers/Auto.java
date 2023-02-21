@@ -32,7 +32,7 @@ public class Auto extends ManagerBase
     {
         if(command == null)
         {
-            Logging.error("Tried to get an auto command when none was created!");
+            Logging.errornt("Tried to get an auto command when none was created!");
             return Commands.none();
         }
 

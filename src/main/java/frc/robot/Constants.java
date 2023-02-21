@@ -83,7 +83,7 @@ public final class Constants
 
         public static class PosPID
         {
-            public static final double KP = 1;
+            public static final double KP = 0.1;
             public static final double KI = 0;
             public static final double KD = 0;
 
@@ -91,7 +91,7 @@ public final class Constants
         }
         public static class ThetaPID
         {
-            public static final double KP = 1;
+            public static final double KP = 0.1;
             public static final double KI = 0;
             public static final double KD = 0;
             

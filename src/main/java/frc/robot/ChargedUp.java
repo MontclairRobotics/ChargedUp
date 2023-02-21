@@ -88,23 +88,23 @@ public class ChargedUp extends RobotContainer
 
         // driverController.getButton(Button.A_CROSS)
         //     .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
-        driverController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
-        driverController.getButton(Button.A_CROSS)
-            .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
-        driverController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
-        driverController.getButton(Button.X_SQUARE)
-            .onTrue(Commands.runOnce( () -> led.add(new SolidAnimation(3, Color.kPaleGoldenrod))));
+        // driverController.getButton(Button.B_CIRCLE)
+        //     .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
+        // driverController.getButton(Button.A_CROSS)
+        //     .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
+        // driverController.getButton(Button.Y_TRIANGLE)
+        //     .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
+        // driverController.getButton(Button.X_SQUARE)
+        //     .onTrue(Commands.runOnce( () -> led.add(new SolidAnimation(3, Color.kPaleGoldenrod))));
         
         driverController.getButton(Button.Y_TRIANGLE)
             .toggleOnTrue(Commands2023.balance());
     
         // Buttons for Field Relative and Speed
-        // driverController.getButton(Button.A_CROSS)
-        //     .onTrue(drivetrain.commands.enableFieldRelative());
-        // driverController.getButton(Button.X_SQUARE)
-        //     .onTrue(drivetrain.commands.disableFieldRelative());
+        driverController.getButton(Button.A_CROSS)
+            .onTrue(drivetrain.commands.enableFieldRelative());
+        driverController.getButton(Button.X_SQUARE)
+            .onTrue(drivetrain.commands.disableFieldRelative());
         driverController.getButton(Button.RIGHT_BUMPER)
             .onTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)

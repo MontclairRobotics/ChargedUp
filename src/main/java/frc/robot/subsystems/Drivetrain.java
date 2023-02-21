@@ -11,6 +11,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -57,6 +58,12 @@ public class Drivetrain extends ManagerSubsystemBase
     private boolean useFieldRelative = true;
 
     private final FieldObject2d moduleObject;
+
+    /**
+     * Store whether or not the drivetrain has already piped values into its motors, signalling an autonomous command
+     * if control reaches "periodic" and this is true.
+     */
+    private boolean hasDrivenThisUpdate = false;
 
 
     //sets the speedIndex to speeds length
@@ -292,6 +299,7 @@ public class Drivetrain extends ManagerSubsystemBase
     private void driveFromStates(SwerveModuleState[] states)
     {
         SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+        hasDrivenThisUpdate = true;
         
         for(int i = 0; i < Drive.MODULE_COUNT; i++)
         {
@@ -312,6 +320,8 @@ public class Drivetrain extends ManagerSubsystemBase
         if(RobotBase.isSimulation())
         {
             simulation.targetSpeeds = Drive.KINEMATICS.toChassisSpeeds(states);
+
+            // System.out.println(simulation.targetSpeeds);
 
             final double targetX = simulation.targetSpeeds.vxMetersPerSecond;
             final double targetY = simulation.targetSpeeds.vyMetersPerSecond;
@@ -336,8 +346,8 @@ public class Drivetrain extends ManagerSubsystemBase
             simulation.currentSpeeds = new ChassisSpeeds(currentX, currentY, currentO);
 
             Transform2d transform = new Transform2d(
-                new Translation2d(currentX, currentY), 
-                new Rotation2d(currentO)
+                new Translation2d(currentX, currentY),//.unaryMinus(), 
+                new Rotation2d(currentO)//.unaryMinus()
             );
             transform = transform.times(dt);
 
@@ -373,22 +383,27 @@ public class Drivetrain extends ManagerSubsystemBase
     }
 
     @Override 
-    public void always() 
+    public void periodic() 
     {
-        xPID.setMeasurement(getRobotPose().getX());
-        yPID.setMeasurement(getRobotPose().getY());
-        thetaPID.setMeasurement(getRobotRotation().getDegrees());
+        if(!hasDrivenThisUpdate)
+        {
+            xPID.setMeasurement(getRobotPose().getX());
+            yPID.setMeasurement(getRobotPose().getY());
+            thetaPID.setMeasurement(getRobotRotation().getDegrees());
 
-        xPID.update();
-        yPID.update();
-        thetaPID.update();
+            xPID.update();
+            yPID.update();
+            thetaPID.update();
 
-        ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
+            ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
+            
+            driveFromChassisSpeeds(c);
+        }
         
-        driveFromChassisSpeeds(c);
-        
-        Pose2d pose = getRobotPose();
+        Pose2d pose = getRobotDisplayPose();
         ChargedUp.field.setRobotPose(pose);
+
+        hasDrivenThisUpdate = false;
     }
     
     public void setRobotPose(Pose2d pose)
@@ -413,7 +428,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         else 
         {
-            return simulation.accumulatedPose.getRotation();
+            return getRobotPose().getRotation();
         }
     }
 
@@ -431,6 +446,18 @@ public class Drivetrain extends ManagerSubsystemBase
         else 
         {
             return new Pose2d().plus(simulation.accumulatedPose.minus(simulation.resetPose));
+        }
+    }
+    
+    public Pose2d getRobotDisplayPose()
+    {
+        if(RobotBase.isReal())
+        {
+            return odometry.getPoseMeters();
+        }
+        else 
+        {
+            return simulation.accumulatedPose;
         }
     }
 
@@ -523,15 +550,18 @@ public class Drivetrain extends ManagerSubsystemBase
 
         public Command follow(PathPlannerTrajectory trajectory)
         {
-            return new PPSwerveControllerCommand(
-                trajectory, 
-                Drivetrain.this::getRobotPose,
-                Drive.KINEMATICS, 
-                xController, 
-                yController, 
-                thetaController,
-                Drivetrain.this::driveFromStates, 
-                Drivetrain.this
+            return Commands.race(
+                new PPSwerveControllerCommand(
+                    trajectory, 
+                    Drivetrain.this::getRobotPose,
+                    Drive.KINEMATICS, 
+                    xController, 
+                    yController, 
+                    thetaController,
+                    Drivetrain.this::driveFromStates, 
+                    Drivetrain.this
+                ),
+                Commands.run(() -> ChargedUp.field.getObject("trajectory").setTrajectory(trajectory))
             );
         }
 
@@ -544,13 +574,17 @@ public class Drivetrain extends ManagerSubsystemBase
                 Drive.PosPID.KConsts, 
                 Drive.ThetaPID.KConsts,
                 Drivetrain.this::driveFromStates,
-                markers
+                markers,
+                true,
+                Drivetrain.this
             );
         }
 
         public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
             SwerveAutoBuilder b = autoBuilder(markers);
+            Trajectory displayTrajectory = trajectory.transformBy(new Transform2d(trajectory.getInitialPose(), getRobotDisplayPose().plus(new Transform2d(new Translation2d(), getRobotRotation().unaryMinus()))));
+            ChargedUp.field.getObject("trajectory").setTrajectory(displayTrajectory);
             return b.fullAuto(trajectory);
         }
         public Command goToAngle(double angle)
