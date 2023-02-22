@@ -186,6 +186,20 @@ public class Commands2023
             .until(elevator::isPIDFree);
     }
 
+    /**
+     * Moves the elevator downwards until it reaches the start position
+     * @return the command
+     */
+    public static Command elevatorInitialize() 
+    {
+        return Commands.sequence(
+            run(elevator::delevate, elevator)
+                .until(elevator::isAtStartPosition),
+
+            run(elevator::resetElevatorEncoder, elevator) 
+        );
+    }
+
     // ELEVATOR + STINGER COMMANDS 
 
     /**

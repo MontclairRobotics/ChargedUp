@@ -158,11 +158,17 @@ public final class Constants
             public static final int MOTOR_PORT = 5;
             public static final boolean INVERTED = false;
 
+            //TODO: Get actual digital inputs
+            public static final int TOP_LIMIT_SWITCH = 0;
+            public static final int BOTTOM_LIMIT_SWITCH = 1;
+            public static final int START_LIMIT_SWITCH = 2;
+
             public static final double SPEED = 0.1;  //TODO: Tweak these values
 
             public static final double MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
             public static final double MID_HEIGHT = 0.5;
             public static final double HIGH_HEIGHT = 1;
+            public static final double START_HEIGHT = 0.2;
 
             public static final double UP_DOWN_CONVERSION_FACTOR = -1;
 
@@ -237,6 +243,10 @@ public final class Constants
         public static class Stinger 
         {
             public static final int MOTOR_PORT = 17;
+
+            //TODO: Get actual digital inputs
+            public static final int OUTER_LIMIT_SWITCH = 3;
+            public static final int INNER_LIMIT_SWITCH = 4;
 
             public static final double
                 IN_OUT_KP = 1,
