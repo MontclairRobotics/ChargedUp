@@ -181,10 +181,15 @@ public class ChargedUp extends RobotContainer
         driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
         driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
+        //Auto Score
+        operatorController.getButton(Button.Y_TRIANGLE)
+            .onTrue(Commands2023.score());
+
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
             .addString("Logs", Logging::logString)
             .withWidget(BuiltInWidgets.kTextView);
+
     }
 
     
