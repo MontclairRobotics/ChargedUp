@@ -1,3 +1,5 @@
+package frc.robot.subsystems.managers;
+
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -10,6 +12,12 @@ public class ColorSensor extends ManagerBase
 {
     ColorSensorV3 colorSensor = new ColorSensorV3(Robot.Grabber.COLOR_SENSOR_PORT);
     ColorMatch colorMatch = new ColorMatch();
+
+    boolean previousCubeSeen;
+    boolean previousConeSeen;
+
+    boolean currentCubeSeen;
+    boolean currentConeSeen;
 
     public ColorSensor() 
     {
@@ -49,5 +57,23 @@ public class ColorSensor extends ManagerBase
     public boolean seesCone()
     {
         return closestColor().equals(Robot.ColorSensing.CONE_COLOR);
+    }
+
+    public boolean coneEnteredView() {return currentConeSeen && !previousConeSeen;}
+    public boolean cubeEnteredView() {return currentCubeSeen && !previousCubeSeen;}
+    public boolean objectEnteredView() {return coneEnteredView() || cubeEnteredView();}
+    
+    public boolean coneExitedView() {return !currentConeSeen && previousConeSeen;}
+    public boolean cubeExitedView() {return !currentCubeSeen && previousCubeSeen;}
+    public boolean objectExitedView() {return coneExitedView() || cubeExitedView();}
+
+    @Override
+    public void always() 
+    {
+        previousCubeSeen = currentCubeSeen;
+        currentCubeSeen = seesCube();
+
+        previousConeSeen = currentConeSeen;
+        currentConeSeen = seesCone();
     }
 }
