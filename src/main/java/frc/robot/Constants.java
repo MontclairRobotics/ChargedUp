@@ -196,14 +196,17 @@ public final class Constants
             public static final double SUCK_TIME_FOR_PICKUP_AUTO = 1;
         }  
 
-        public static class Grabber 
+        public static class ColorSensing
         {
-            public static final I2C.Port COLOR_SENSOR_PORT = I2C.Port.kMXP;
-
             public static final Color CONE_COLOR = Color.kYellow;
             public static final Color CUBE_COLOR = Color.kPurple;
 
             public static final double COLOR_CONFIDENCE = 0.7;
+        }
+
+        public static class Grabber 
+        {
+            public static final I2C.Port COLOR_SENSOR_PORT = I2C.Port.kMXP;
 
             public static final boolean SOLENOID_DEFAULT_STATE = false;
 			public static final boolean PSI_SOLENOID_DEFAULT_STATE = false;

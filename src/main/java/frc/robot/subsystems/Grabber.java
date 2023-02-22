@@ -26,33 +26,6 @@ public class Grabber extends ManagerSubsystemBase
 {
     Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_SOLENOID_PORT);
     Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_PSI_SOLENOID_PORT);
-
-    ColorSensorV3 colorSensor = new ColorSensorV3(Robot.Grabber.COLOR_SENSOR_PORT);
-    ColorMatch colorMatch = new ColorMatch();
-
-    public Grabber() 
-    {
-        colorMatch.addColorMatch(Robot.Grabber.CONE_COLOR);
-        colorMatch.addColorMatch(Robot.Grabber.CUBE_COLOR);
-
-        colorMatch.setConfidenceThreshold(Robot.Grabber.COLOR_CONFIDENCE);
-    }
-
-    public ColorMatchResult colorResult()
-    {
-        return colorMatch.matchClosestColor(colorSensor.getColor());
-    }
-    public Color color()
-    {
-        return colorResult().color;
-    }
-    public double colorConfidence()
-    {
-        return colorResult().confidence;
-    }
-
-    public 
-
     
     /**
      * Sets pneumatic state of grabber to <b>grabbed</b> (<b>non-default</b> state of solenoid)
