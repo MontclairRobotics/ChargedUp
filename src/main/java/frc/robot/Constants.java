@@ -9,7 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.framework.GameController;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.structure.helpers.Units555;
@@ -24,6 +26,7 @@ public final class Constants
         public static final int COMPRESSOR_PORT = 63;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int GRABBER_SOLENOID_PORT = 0;
+        public static final int GRABBER_PSI_SOLENOID_PORT = -90;
     }
 
     public static class Drive
@@ -155,11 +158,17 @@ public final class Constants
             public static final int MOTOR_PORT = 5;
             public static final boolean INVERTED = false;
 
+            //TODO: Get actual digital inputs
+            public static final int TOP_LIMIT_SWITCH = 0;
+            public static final int BOTTOM_LIMIT_SWITCH = 1;
+            public static final int START_LIMIT_SWITCH = 2;
+
             public static final double SPEED = 0.1;  //TODO: Tweak these values
 
             public static final double MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
             public static final double MID_HEIGHT = 0.5;
             public static final double HIGH_HEIGHT = 1;
+            public static final double START_HEIGHT = 0.2;
 
             public static final double UP_DOWN_CONVERSION_FACTOR = -1;
 
@@ -182,20 +191,37 @@ public final class Constants
 
         public static class Shwooper 
         {
-            public static final int PORT = 0;
+            public static final int LEFT_MOTOR_PORT = 0;
+            public static final int RIGHT_MOTOR_PORT = 0;
+            public static final int CENTER_MOTOR_PORT = 0;
+
             public static final int PNEU_PORT = 2;
 
             public static final boolean SOLENOID_DEFAULT_STATE = false;
 
             public static final double SPEED = 0.5;
-            public static final boolean INVERSION = false;
+
+            public static final boolean LEFT_INVERSION = false;
+            public static final boolean RIGHT_INVERSION = false;
+            public static final boolean CENTER_INVERSION = false;
 
             public static final double SUCK_TIME_FOR_PICKUP_AUTO = 1;
         }  
 
+        public static class ColorSensing
+        {
+            public static final Color CONE_COLOR = Color.kYellow;
+            public static final Color CUBE_COLOR = Color.kPurple;
+
+            public static final double COLOR_CONFIDENCE = 0.7;
+        }
+
         public static class Grabber 
         {
+            public static final I2C.Port COLOR_SENSOR_PORT = I2C.Port.kMXP;
+
             public static final boolean SOLENOID_DEFAULT_STATE = false;
+			public static final boolean PSI_SOLENOID_DEFAULT_STATE = false;
         }
 
         public static class LED 
@@ -223,6 +249,10 @@ public final class Constants
         public static class Stinger 
         {
             public static final int MOTOR_PORT = 17;
+
+            //TODO: Get actual digital inputs
+            public static final int OUTER_LIMIT_SWITCH = 3;
+            public static final int INNER_LIMIT_SWITCH = 4;
 
             public static final double
                 IN_OUT_KP = 1,

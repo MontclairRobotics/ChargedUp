@@ -16,6 +16,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shwooper;
 import frc.robot.subsystems.Stinger;
 import frc.robot.subsystems.managers.Auto;
+import frc.robot.subsystems.managers.ColorSensor;
 import frc.robot.subsystems.managers.LED;
 import frc.robot.subsystems.managers.Limelight;
 import frc.robot.subsystems.Grabber;
@@ -50,14 +51,15 @@ public class ChargedUp extends RobotContainer
         ControlScheme.OPERATOR_CONTROLLER_PORT);
 
     // COMPONENTS //
-    public static final AHRS       gyroscope  = new AHRS();
-    public static final LED        led        = new LED();
-    public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Elevator   elevator   = new Elevator();
-    public static final Shwooper   shwooper   = new Shwooper();
-    public static final Grabber    grabber    = new Grabber();
-    public static final Stinger    stinger    = new Stinger();
-    public static final Limelight  limelight  = new Limelight();
+    public static final AHRS        gyroscope   = new AHRS();
+    public static final LED         led         = new LED();
+    public static final Drivetrain  drivetrain  = new Drivetrain();
+    public static final Elevator    elevator    = new Elevator();
+    public static final Shwooper    shwooper    = new Shwooper();
+    public static final Grabber     grabber     = new Grabber();
+    public static final Stinger     stinger     = new Stinger();
+    public static final Limelight   limelight   = new Limelight();
+    public static final ColorSensor colorSensor = new ColorSensor();
 
     // INITIALIZER //
     @Override 
@@ -181,10 +183,15 @@ public class ChargedUp extends RobotContainer
         driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
         driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
+        //Auto Score
+        operatorController.getButton(Button.Y_TRIANGLE)
+            .onTrue(Commands2023.score());
+
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
             .addString("Logs", Logging::logString)
             .withWidget(BuiltInWidgets.kTextView);
+
     }
 
     

@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.Robot;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.structure.PIDMechanism;
@@ -12,10 +13,15 @@ public class Stinger extends ManagerSubsystemBase
 {
     private boolean exists;
 
+    private boolean shouldStop; 
+
     private CANSparkMax motor;
     RelativeEncoder encoder;
+
+    private DigitalInput outerlimitSwitch = new DigitalInput(Robot.Stinger.OUTER_LIMIT_SWITCH);
+    private DigitalInput innerlimitSwitch = new DigitalInput(Robot.Stinger.INNER_LIMIT_SWITCH);
     
-    PIDMechanism pidMech = new PIDMechanism(Robot.Stinger.inout());
+    PIDMechanism stingerPID = new PIDMechanism(Robot.Stinger.inout());
 
     public Stinger(boolean exists)
     {
@@ -39,7 +45,7 @@ public class Stinger extends ManagerSubsystemBase
         {
             length = Robot.Stinger.EXT_LENGTH;
         }
-        pidMech.setTarget(length);
+        stingerPID.setTarget(length);
     }
 
     /**
@@ -63,7 +69,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void fullyRetract()
     {
-        pidMech.setTarget(0);
+        stingerPID.setTarget(0);
     }
 
     /**
@@ -71,7 +77,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void startExtending()
     {
-        pidMech.setSpeed(Robot.Stinger.SPEED);
+        stingerPID.setSpeed(Robot.Stinger.SPEED);
     }
 
     /**
@@ -79,7 +85,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void startRetracting()
     {
-        pidMech.setSpeed(-Robot.Stinger.SPEED);
+        stingerPID.setSpeed(-Robot.Stinger.SPEED);
     }
 
     /**
@@ -87,7 +93,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void stop()
     {
-        pidMech.setSpeed(0);
+        stingerPID.setSpeed(0);
     }
 
     /**
@@ -96,7 +102,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void setSpeed(double speed) 
     {
-        pidMech.setSpeed(speed);
+        stingerPID.setSpeed(speed);
     }
     
     /**
@@ -105,7 +111,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public boolean isPIDFree()
     {
-        return !pidMech.active();
+        return !stingerPID.active();
     }
 
     /**
@@ -113,16 +119,37 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void stopPIDing()
     {
-        pidMech.cancel();
+        stingerPID.cancel();
     }
 
     @Override
     public void always() 
     {
+        shouldStop = false;
+
         if(!exists) return;
 
-        pidMech.setMeasurement(encoder.getPosition());
-        pidMech.update();
-        motor.set(pidMech.getSpeed());
+        if (stingerPID.getSpeed() > 0) 
+        {
+            if (outerlimitSwitch.get()) 
+            {
+                shouldStop = true;
+                stingerPID.setSpeed(0);
+            }
+        } 
+        else 
+        {
+            if (innerlimitSwitch.get()) 
+            {
+                shouldStop = true;
+                stingerPID.setSpeed(0);
+            }
+        }
+
+        stingerPID.setMeasurement(encoder.getPosition());
+        stingerPID.update();
+        
+        if(shouldStop) motor.set(0);
+        else motor.set(stingerPID.getSpeed());
     }
 }
