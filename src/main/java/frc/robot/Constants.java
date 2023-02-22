@@ -9,7 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.framework.GameController;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.structure.helpers.Units555;
@@ -24,6 +26,7 @@ public final class Constants
         public static final int COMPRESSOR_PORT = 63;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int GRABBER_SOLENOID_PORT = 0;
+        public static final int GRABBER_PSI_SOLENOID_PORT = -90;
     }
 
     public static class Drive
@@ -195,7 +198,15 @@ public final class Constants
 
         public static class Grabber 
         {
+            public static final I2C.Port COLOR_SENSOR_PORT = I2C.Port.kMXP;
+
+            public static final Color CONE_COLOR = Color.kYellow;
+            public static final Color CUBE_COLOR = Color.kPurple;
+
+            public static final double COLOR_CONFIDENCE = 0.7;
+
             public static final boolean SOLENOID_DEFAULT_STATE = false;
+			public static final boolean PSI_SOLENOID_DEFAULT_STATE = false;
         }
 
         public static class LED 
