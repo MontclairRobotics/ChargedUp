@@ -191,13 +191,19 @@ public final class Constants
 
         public static class Shwooper 
         {
-            public static final int PORT = 0;
+            public static final int LEFT_MOTOR_PORT = 0;
+            public static final int RIGHT_MOTOR_PORT = 0;
+            public static final int CENTER_MOTOR_PORT = 0;
+
             public static final int PNEU_PORT = 2;
 
             public static final boolean SOLENOID_DEFAULT_STATE = false;
 
             public static final double SPEED = 0.5;
-            public static final boolean INVERSION = false;
+
+            public static final boolean LEFT_INVERSION = false;
+            public static final boolean RIGHT_INVERSION = false;
+            public static final boolean CENTER_INVERSION = false;
 
             public static final double SUCK_TIME_FOR_PICKUP_AUTO = 1;
         }  

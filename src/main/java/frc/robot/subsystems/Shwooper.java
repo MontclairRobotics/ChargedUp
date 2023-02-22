@@ -5,6 +5,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import frc.robot.Constants.*;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 
@@ -14,11 +16,21 @@ public class Shwooper extends ManagerSubsystemBase {
 
     private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Robot.Shwooper.PNEU_PORT);
 
-    private final CANSparkMax intakeMotor = new CANSparkMax(Robot.Shwooper.PORT, MotorType.kBrushless);
-        // INTAKE PORT HAS NO VALUE
+    private final CANSparkMax motorLeft = new CANSparkMax(Robot.Shwooper.LEFT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorRight = new CANSparkMax(Robot.Shwooper.RIGHT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorCenter = new CANSparkMax(Robot.Shwooper.CENTER_MOTOR_PORT, MotorType.kBrushless);
+
+    private final MotorControllerGroup motors = new MotorControllerGroup(new MotorController[] {
+        motorLeft,
+        motorRight,
+        motorCenter
+    });
+    
     public Shwooper() 
     {
-        intakeMotor.setInverted(Robot.Shwooper.INVERSION);
+        motorLeft.setInverted(Robot.Shwooper.LEFT_INVERSION);
+        motorRight.setInverted(Robot.Shwooper.RIGHT_INVERSION);
+        motorCenter.setInverted(Robot.Shwooper.CENTER_INVERSION);
     }
 
     /**
@@ -26,7 +38,7 @@ public class Shwooper extends ManagerSubsystemBase {
      */
     public void suck() 
     {
-        intakeMotor.set(Robot.Shwooper.SPEED);
+        motors.set(Robot.Shwooper.SPEED);
     }
 
     /**
@@ -34,7 +46,7 @@ public class Shwooper extends ManagerSubsystemBase {
      */
     public void spit() 
     {
-        intakeMotor.set(-Robot.Shwooper.SPEED);
+        motors.set(-Robot.Shwooper.SPEED);
     }
 
     /**
@@ -42,7 +54,7 @@ public class Shwooper extends ManagerSubsystemBase {
      */
     public void stop() 
     {
-        intakeMotor.set(0);
+        motors.set(0);
     }
 
     /**
