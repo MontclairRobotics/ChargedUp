@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
@@ -15,8 +16,13 @@ public class Elevator extends ManagerSubsystemBase
 {
     private boolean exists;
 
+    private boolean shouldStop;
+
     private CANSparkMax motor;
 
+    private DigitalInput toplimitSwitch = new DigitalInput(Robot.Elevator.TOP_LIMIT_SWITCH);
+    private DigitalInput bottomlimitSwitch = new DigitalInput(Robot.Elevator.BOTTOM_LIMIT_SWITCH);
+    private DigitalInput startlimitSwitch = new DigitalInput(Robot.Elevator.START_LIMIT_SWITCH);
 
     // does not work, copied off https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/physics-sim.html
     private ElevatorSim elevatorSim =
@@ -117,6 +123,22 @@ private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
         elevatorPID.setSpeed(0);
     }
 
+    /** 
+     * Resets the elevator encoder to 0
+     */
+    public void resetElevatorEncoder() {
+        elevatorEncoder.setPosition(0);
+    }
+
+    /**
+     * returns if the limit switch for the starting position of the elevator is triggered
+     * @return boolean
+     */
+    public boolean isAtStartPosition() 
+    {
+        return startlimitSwitch.get(); 
+    }
+
     /**
      * returns if the elevator is currently not using {@link Elevator#elevatorPID PID}
      * @return boolean
@@ -138,16 +160,39 @@ private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
     @Override
     public void always() 
     {
+        shouldStop = false;
+
         if(!exists) return;
 
         if (ChargedUp.shwooper.isShwooperOut() && elevatorEncoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) {
             elevatorPID.cancel();
-            if (elevatorPID.getSpeed() < 0) {
+            if (elevatorPID.getSpeed() < 0) 
+            {
                 elevatorPID.setSpeed(0);
             }
         }
+
+        if (elevatorPID.getSpeed() > 0) 
+        {
+            if (toplimitSwitch.get()) 
+            {
+                shouldStop = true;
+                elevatorPID.setSpeed(0);
+            }
+        } 
+        else 
+        {
+            if (bottomlimitSwitch.get()) 
+            {
+                shouldStop = true;
+                elevatorPID.setSpeed(0);
+            }
+        }
+
         elevatorPID.setMeasurement(elevatorEncoder.getPosition());
         elevatorPID.update();
-        motor.set(elevatorPID.getSpeed());
+        
+        if(shouldStop) motor.set(0);
+        else motor.set(elevatorPID.getSpeed());
     }
 }
