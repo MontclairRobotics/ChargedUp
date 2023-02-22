@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
