@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.ChargedUp;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -28,6 +29,21 @@ public class Grabber extends ManagerSubsystemBase
     Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_PSI_SOLENOID_PORT);
     
     /**
+     * Update the pressure of the airflow to respect current readings.
+     */
+    public void updatePressure()
+    {
+        if(ChargedUp.colorSensor.seesCone())
+        {
+            setPSIHigh();
+        }
+        else 
+        {
+            setPSINormal();
+        }
+    }
+
+    /**
      * Sets pneumatic state of grabber to <b>grabbed</b> (<b>non-default</b> state of solenoid)
      */
     public void grab() 
@@ -52,6 +68,7 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void toggle()
     {
+        if (!outputSolenoid.get()) updatePressure();
         outputSolenoid.toggle();
     }
 
