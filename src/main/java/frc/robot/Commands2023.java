@@ -14,7 +14,12 @@ import frc.robot.structure.SequenceParser;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.helpers.Logging;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Drivetrain.DriveCommands;
+
 import static frc.robot.ChargedUp.elevator;
+
+import java.util.Arrays;
 
 public class Commands2023 
 {   
@@ -207,7 +212,7 @@ public class Commands2023
      */
     public static Command elevatorStingerToHigh()
     {
-        CommandBase c = parallel(
+        CommandBase c = sequence(
             run(() -> ChargedUp.elevator.setHigh())
                 .until(ChargedUp.elevator::isPIDFree),
             run(() -> ChargedUp.stinger.toHigh())
@@ -441,6 +446,10 @@ public class Commands2023
     public static Command score()
     {
         CommandBase c = Commands.sequence(
+            Commands.runOnce(() -> Logging.info("score!!!")),
+            //move sideways to the target
+            ChargedUp.drivetrain.commands.moveToObjectSideways(),
+
             //Prepare position
             elevatorStingerToHigh(), 
 

@@ -7,6 +7,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
@@ -25,18 +26,18 @@ public class Elevator extends ManagerSubsystemBase
     private DigitalInput startlimitSwitch = new DigitalInput(Robot.Elevator.START_LIMIT_SWITCH);
 
     // does not work, copied off https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/physics-sim.html
-    private ElevatorSim elevatorSim =
-        new ElevatorSim(
-        gearbox,
-        40,
-        15,
-        0.939,
-        0,
-        2,
-        false,
-        VecBuilder.fill(0.01));
+    // private ElevatorSim elevatorSim =
+    //     new ElevatorSim(
+    //     gearbox,
+    //     40,
+    //     15,
+    //     0.939,
+    //     0,
+    //     2,
+    //     false,
+    //     VecBuilder.fill(0.01));
 
-private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
+    // private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
 
     PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.updown());
     RelativeEncoder elevatorEncoder;
