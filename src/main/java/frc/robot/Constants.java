@@ -169,6 +169,7 @@ public final class Constants
             public static final double MID_HEIGHT = 0.5;
             public static final double HIGH_HEIGHT = 1;
             public static final double START_HEIGHT = 0.2;
+            public static final double MIN_HEIGHT = 0;
 
             public static final double UP_DOWN_CONVERSION_FACTOR = -1;
 

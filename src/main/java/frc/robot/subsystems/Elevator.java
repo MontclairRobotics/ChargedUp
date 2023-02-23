@@ -10,8 +10,10 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
+import frc.robot.framework.Math555;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.structure.PIDMechanism;
+import frc.robot.structure.helpers.Logging;
 
 public class Elevator extends ManagerSubsystemBase 
 {
@@ -61,9 +63,16 @@ public class Elevator extends ManagerSubsystemBase
      */
     private void setHeight(double height)
     {
-        if (height > Robot.Elevator.MAX_HEIGHT) {
-            height = Robot.Elevator.MAX_HEIGHT;
+        if(height > Robot.Elevator.MAX_HEIGHT || height < Robot.Elevator.MIN_HEIGHT)
+        {
+            Logging.info(
+                "Invalid height [" + height + " m] provided to Elevator.setHeight, clamping to acceptable range" +
+                "[" + Robot.Elevator.MIN_HEIGHT + " m, " + Robot.Elevator.MAX_HEIGHT + " m]"
+            );
         }
+
+        height = Math555.clamp(height, Robot.Elevator.MIN_HEIGHT, Robot.Elevator.MAX_HEIGHT);
+
         elevatorPID.setTarget(height);
     }
 
@@ -127,7 +136,8 @@ public class Elevator extends ManagerSubsystemBase
     /** 
      * Resets the elevator encoder to 0
      */
-    public void resetElevatorEncoder() {
+    public void resetElevatorEncoder() 
+    {
         elevatorEncoder.setPosition(0);
     }
 
@@ -165,7 +175,8 @@ public class Elevator extends ManagerSubsystemBase
 
         if(!exists) return;
 
-        if (ChargedUp.shwooper.isShwooperOut() && elevatorEncoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) {
+        if (ChargedUp.shwooper.isShwooperOut() && elevatorEncoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) 
+        {
             elevatorPID.cancel();
             if (elevatorPID.getSpeed() < 0) 
             {
