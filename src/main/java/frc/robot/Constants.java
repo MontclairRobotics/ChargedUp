@@ -6,6 +6,7 @@ import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -248,6 +249,26 @@ public final class Constants
             public static final int SNAPSHOT_MODE_RESET = 0;
             public static final int SNAPSHOT_TAKE_EXACTLY_ONE = 1;
             public static final double[] CROP_VALUES = {-1, 1, -1, 1};
+        }
+
+        public static class PhotonVision 
+        {
+            //TODO: Get actual camera specs
+
+            // Constants such as camera and target height stored. Change per robot and goal!
+            public static final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(24);
+            public static final double TARGET_HEIGHT_METERS = Units.feetToMeters(5);
+           
+            // Angle between horizontal and the camera.
+            public static final double CAMERA_PITCH_RADIANS = Units.degreesToRadians(0);
+
+            // How far from the target we want to be
+            public static final double GOAL_RANGE_METERS = Units.feetToMeters(3);
+
+            public static final String CAMERA_NAME = "photonvision";
+
+            //Distance between center of robot and camera position
+            public static final Transform3d ROBOT_TO_CAM = new Transform3d(); 
         }
 
         public static class Stinger 
