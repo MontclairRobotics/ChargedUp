@@ -56,6 +56,14 @@ public class Logging
 
         return s.toString();
     }
+    public static String mostRecentLog()
+    {
+        StringBuilder s = new StringBuilder();
+        
+        int idx = currentLog-1 >=0 && currentLog-1 < LOG_CAPACITY ? currentLog-1 : 0;
+        s.append(logs[idx]);
+        return s.toString();
+    }
 
     /**
      * Print and store an informational log.

@@ -11,6 +11,32 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public class DefaultAnimation extends Animation
 {
+    private static boolean shouldYellow = false;
+    private static boolean shouldViolet = false;
+    private static boolean shouldDefault = true;
+  
+    public static void setYellow()
+    {
+        shouldYellow = true;
+        shouldViolet = false;
+        shouldDefault = false;
+    }
+
+    public static void setViolet()
+    {
+        shouldViolet = true;
+        shouldYellow = false;
+        shouldDefault = false;
+    }
+
+    public static void setDefault()
+    {
+        shouldDefault = true;
+        shouldYellow = false;
+        shouldViolet = false;
+    }
+
+
     public DefaultAnimation()
     {
         super(Double.POSITIVE_INFINITY);
@@ -21,11 +47,20 @@ public class DefaultAnimation extends Animation
     {
         Alliance alliance = DriverStation.getAlliance();
         Color color = Color.kGray;
-
-        if (alliance == Alliance.Blue) color = Color.kBlue; 
-        else if (alliance == Alliance.Red) color = Color.kRed;
-        else if (alliance == Alliance.Invalid) color = Color.kWhite;
-        
+        if(shouldDefault == true) 
+        {
+            if (alliance == Alliance.Blue) color = Color.kBlue; 
+            else if (alliance == Alliance.Red) color = Color.kRed;
+            else if (alliance == Alliance.Invalid) color = Color.kWhite;
+        }
+        if(shouldYellow == true)
+        {
+            color = Color.kYellow;
+        }
+        if(shouldViolet == true)
+        {
+            color = Color.kViolet;
+        }
         LEDBuffer.fill(ledBuffer, color);
     }
 }

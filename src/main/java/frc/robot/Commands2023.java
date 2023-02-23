@@ -31,10 +31,10 @@ public class Commands2023
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    // public static Command activatePurple() 
-    // {
-    //     return Commands.runOnce(() -> DefaultAnimation.setPurple());
-    // }
+    public static Command activatePurple() 
+    {
+        return Commands.runOnce(() -> DefaultAnimation.setViolet());
+    }
 
     /**
      * Displays solid yellow on the LEDs
@@ -55,19 +55,19 @@ public class Commands2023
     //     return Commands.runOnce(() -> DefaultAnimation.setDefault());
     // }
 
-    /**
-     * Flashes twice quickly and twice slowly in yellow: * * -- --
-     * Signals to the HUMAN PLAYER that they need to enter a cone into play
-     */
+    // /**
+    //  * Flashes twice quickly and twice slowly in yellow: * * -- --
+    //  * Signals to the HUMAN PLAYER that they need to enter a cone into play
+    //  */
     // public static Command quickSlowFlashYellow() 
     // {
     //     return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)));
     // }
 
-    /**
-     * Flashes twice quickly and twice slowly in purple: * * -- --
-     * Signals to the HUMAN PLAYER that they need to enter a cone into play
-     */
+    // /**
+    //  * Flashes twice quickly and twice slowly in purple: * * -- --
+    //  * Signals to the HUMAN PLAYER that they need to enter a cone into play
+    //  */
     // public static Command quickSlowFlashPurple()
     // {
     //     return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)));

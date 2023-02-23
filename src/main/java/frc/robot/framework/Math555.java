@@ -51,6 +51,15 @@ public class Math555
         t = clamp01(t);
         return (int)(t*(b-a)+a);
     }
+    
+    public static double invlerp(double v, double a, double b)
+    {
+        return (v-a) / (b-a);
+    }
+    public static double invlerp(int v, int a, int b)
+    {
+        return (double)(v-a) / (b-a);
+    }
 
     public static Color lerp(Color a, Color b, double t) 
     {

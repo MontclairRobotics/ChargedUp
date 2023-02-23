@@ -26,7 +26,7 @@ public final class Constants
         public static final int COMPRESSOR_PORT = 63;
         public static final PneumaticsModuleType MODULE_TYPE = PneumaticsModuleType.REVPH;
         public static final int GRABBER_SOLENOID_PORT = 0;
-        public static final int GRABBER_PSI_SOLENOID_PORT = -90;
+        public static final int GRABBER_PSI_SOLENOID_PORT = 15;
     }
 
     public static class Drive
@@ -195,9 +195,9 @@ public final class Constants
 
         public static class Shwooper 
         {
-            public static final int LEFT_MOTOR_PORT = 0;
-            public static final int RIGHT_MOTOR_PORT = 0;
-            public static final int CENTER_MOTOR_PORT = 0;
+            public static final int LEFT_MOTOR_PORT = 91;
+            public static final int RIGHT_MOTOR_PORT = 90;
+            public static final int CENTER_MOTOR_PORT = 92;
 
             public static final int PNEU_PORT = 2;
 
