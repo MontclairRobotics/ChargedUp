@@ -248,7 +248,7 @@ public class Commands2023
     // ELEVATOR + STINGER COMMANDS 
 
     /**
-     * Moves the Elevator and Stinger to High position simultaneously
+     * Moves the Elevator and Stinger to High position to sequence
      * <p>
      * Elevator goes to {@link Robot#HIGH_HEIGHT High Height Constant}
      * <p>
@@ -258,16 +258,16 @@ public class Commands2023
     public static Command elevatorStingerToHigh()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.elevator.setHigh())
-                .until(ChargedUp.elevator::isPIDFree),
             run(() -> ChargedUp.stinger.toHigh())
-                .until(ChargedUp.stinger::isPIDFree)
+                .until(ChargedUp.stinger::isPIDFree),
+            run(() -> ChargedUp.elevator.setHigh())
+                .until(ChargedUp.elevator::isPIDFree)
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
     }
     /**
-     * Moves the Elevator and Stinger to MID position simultaneously
+     * Moves the Elevator and Stinger to MID position in sequence
      * <p>
      * Elevator goes to {@link Robot#MID_HEIGHT High Height Constant}
      * <p>
@@ -276,18 +276,19 @@ public class Commands2023
      */
     public static Command elevatorStingerToMid()
     {
-        CommandBase c = parallel(
-            run(() -> ChargedUp.elevator.setMid())
-                .until(ChargedUp.elevator::isPIDFree),
+        CommandBase c = sequence(
             run(() -> ChargedUp.stinger.toMid())
-                .until(ChargedUp.stinger::isPIDFree)
+                .until(ChargedUp.stinger::isPIDFree),
+            run(() -> ChargedUp.elevator.setMid())
+                .until(ChargedUp.elevator::isPIDFree)
         );
 
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
     }
+
     /**
-     * Moves the Elevator and Stinger to LOW position simultaneously
+     * Moves the Elevator and Stinger to LOW position in sequence
      * <p>
      * Elevator goes to 0
      * <p>
@@ -296,11 +297,11 @@ public class Commands2023
      */
     public static Command elevatorStingerToLow()
     {
-        CommandBase c = parallel(
-            run(() -> ChargedUp.elevator.setLow())
-                .until(ChargedUp.elevator::isPIDFree),
+        CommandBase c = sequence(
             run(() -> ChargedUp.stinger.fullyRetract())
-                .until(ChargedUp.stinger::isPIDFree)
+                .until(ChargedUp.stinger::isPIDFree),
+            run(() -> ChargedUp.elevator.setLow())
+                .until(ChargedUp.elevator::isPIDFree)
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -614,7 +615,10 @@ public class Commands2023
             commandList[i] = fromStringToCommand(list[i]);
         }
         
-        return Commands.sequence(commandList);
+        return Commands.sequence(
+            elevatorInitialize(), 
+            Commands.sequence(commandList)
+        );
     }
     
     /**
