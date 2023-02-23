@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.ChargedUp;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
+import frc.robot.structure.animation.DefaultAnimation;
 
 import static frc.robot.Constants.*;
 
@@ -43,6 +44,9 @@ public class Grabber extends ManagerSubsystemBase
     public void grab() 
     {
         outputSolenoid.set(!Robot.Grabber.SOLENOID_DEFAULT_STATE);
+        
+        if (ChargedUp.colorSensor.seesCone()) DefaultAnimation.setYellow();
+        if (ChargedUp.colorSensor.seesCube()) DefaultAnimation.setViolet();
     }
 
     /**
@@ -51,6 +55,8 @@ public class Grabber extends ManagerSubsystemBase
     public void release() 
     {
         outputSolenoid.set(Robot.Grabber.SOLENOID_DEFAULT_STATE);
+
+        DefaultAnimation.setDefault();
     }
 
     /**

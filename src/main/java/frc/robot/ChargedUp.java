@@ -28,8 +28,10 @@ import frc.robot.framework.GameController.DPad;
 import frc.robot.framework.commandrobot.RobotContainer;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.animation.CircusAnimation;
+import frc.robot.structure.animation.DefaultAnimation;
 import frc.robot.structure.animation.FadeTransition;
 import frc.robot.structure.animation.MagicAnimation;
+import frc.robot.structure.animation.QuickSlowFlash;
 import frc.robot.structure.animation.RainbowAnimation;
 import frc.robot.structure.animation.SolidAnimation;
 import frc.robot.structure.animation.WipeTransition;
@@ -92,29 +94,29 @@ public class ChargedUp extends RobotContainer
             drivetrain
         ));
 
-        // driverController.getButton(Button.A_CROSS)
-        //     .onTrue(Commands.runOnce( () -> led.add(new RainbowAnimation(7))));
-        // driverController.getButton(Button.B_CIRCLE)
-        //     .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
+        driverController.getButton(Button.A_CROSS)
+            .onTrue(Commands.runOnce( () -> DefaultAnimation.setViolet()));
+        driverController.getButton(Button.B_CIRCLE)
+            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
         // driverController.getButton(Button.A_CROSS)
         //     .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
-        // driverController.getButton(Button.Y_TRIANGLE)
-        //     .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
-        // driverController.getButton(Button.X_SQUARE)
-        //     .onTrue(Commands.runOnce( () -> led.add(new SolidAnimation(3, Color.kPaleGoldenrod))));
-        
         driverController.getButton(Button.Y_TRIANGLE)
-            .toggleOnTrue(Commands2023.balance());
+            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
+        driverController.getButton(Button.X_SQUARE)
+            .onTrue(Commands.runOnce( () -> led.add(new QuickSlowFlash(Color.kYellow))));
+        
+        // driverController.getButton(Button.Y_TRIANGLE)
+        //     .toggleOnTrue(Commands2023.balance());
     
         // Buttons for Field Relative and Speed
-        driverController.getButton(Button.A_CROSS)
-            .onTrue(drivetrain.commands.enableFieldRelative());
-        driverController.getButton(Button.X_SQUARE)
-            .onTrue(drivetrain.commands.disableFieldRelative());
-        driverController.getButton(Button.RIGHT_BUMPER)
-            .onTrue(drivetrain.commands.increaseSpeed());
-        driverController.getButton(Button.LEFT_BUMPER)
-            .onTrue(drivetrain.commands.decreaseSpeed());
+        // driverController.getButton(Button.A_CROSS)
+        //     .onTrue(drivetrain.commands.enableFieldRelative());
+        // driverController.getButton(Button.X_SQUARE)
+        //     .onTrue(drivetrain.commands.disableFieldRelative());
+        // driverController.getButton(Button.RIGHT_BUMPER)
+        //     .onTrue(drivetrain.commands.increaseSpeed());
+        // driverController.getButton(Button.LEFT_BUMPER)
+        //     .onTrue(drivetrain.commands.decreaseSpeed());
         
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
@@ -193,6 +195,12 @@ public class ChargedUp extends RobotContainer
 
         operatorController.getButton(Button.B_CIRCLE)
             .onTrue(Commands2023.scoreMid());
+        
+        //LEDs
+        operatorController.getButton(Button.RIGHT_BUMPER)
+            .onTrue(Commands2023.quickSlowFlashYellow());
+        operatorController.getButton(Button.LEFT_BUMPER)
+            .onTrue(Commands2023.quickSlowFlashPurple());
 
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")

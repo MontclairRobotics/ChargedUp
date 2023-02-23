@@ -9,9 +9,9 @@ public class QuickSlowFlash extends Animation
     private Color flashColor;
     private double proportionQuick;
 
-    public QuickSlowFlash(int length, Color color)
+    public QuickSlowFlash(Color color)
     {
-        super(length);
+        super(5);
         flashColor = color;
         proportionQuick = 0.33;
     }
