@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -19,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
+import frc.robot.Constants.Drive;
 import frc.robot.framework.Math555;
 import frc.robot.framework.commandrobot.CommandRobot;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
@@ -26,6 +28,7 @@ import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.PIDMechanism;
 import frc.robot.structure.Tracking;
 import frc.robot.structure.helpers.Logging;
+
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
@@ -37,11 +40,13 @@ import static frc.robot.Constants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 
 public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
-    private final SwerveDriveOdometry odometry;
 
     public final PIDController xController;
     public final PIDController yController;
@@ -56,6 +61,9 @@ public class Drivetrain extends ManagerSubsystemBase
     private boolean useFieldRelative = true;
 
     private final FieldObject2d moduleObject;
+
+    private final Photon photonVisionWrapper = new Photon();
+    private final SwerveDrivePoseEstimator poseEstimator;
 
     /**
      * Store whether or not the drivetrain has already piped values into its motors, signalling an autonomous command
@@ -148,10 +156,10 @@ public class Drivetrain extends ManagerSubsystemBase
             .withPosition(4, 2);
 
         // Build Odometry //
-        odometry = new SwerveDriveOdometry(
+        poseEstimator = new SwerveDrivePoseEstimator(
             Drive.KINEMATICS, 
             getRobotRotation(), 
-            getModulePositions(),
+            getModulePositions(), 
             new Pose2d()
         );
 
@@ -362,11 +370,21 @@ public class Drivetrain extends ManagerSubsystemBase
 
             moduleObject.setPoses(modPoses);
         }
-        
-        odometry.update(
+
+        poseEstimator.update(
             getRobotRotation(), 
             getModulePositions()
         );
+
+        Optional<EstimatedRobotPose> result = photonVisionWrapper.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+
+        if(result.isPresent())
+        {
+            poseEstimator.addVisionMeasurement(
+                result.get().estimatedPose.toPose2d(), 
+                result.get().timestampSeconds
+            );
+        }
     }
 
     /**
@@ -406,7 +424,7 @@ public class Drivetrain extends ManagerSubsystemBase
     
     public void setRobotPose(Pose2d pose)
     {
-        odometry.resetPosition(
+        poseEstimator.resetPosition(
             getRobotRotation(),
             getModulePositions(),
             pose
@@ -439,7 +457,7 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         if(RobotBase.isReal())
         {
-            return odometry.getPoseMeters();
+            return poseEstimator.getEstimatedPosition();
         }
         else 
         {
@@ -451,7 +469,7 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         if(RobotBase.isReal())
         {
-            return odometry.getPoseMeters();
+            return poseEstimator.getEstimatedPosition();
         }
         else 
         {
