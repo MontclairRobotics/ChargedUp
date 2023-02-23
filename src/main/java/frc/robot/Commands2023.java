@@ -388,9 +388,9 @@ public class Commands2023
         );
     }
     /**
-     * Moves stinger to the highest pole and opens the grabber
+     * Moves stinger to the highest score place and opens the grabber
      */
-    public static Command score()
+    public static Command scoreHigh()
     {
         CommandBase c = Commands.sequence(
             Commands.runOnce(() -> Logging.info("score!!!")),
@@ -399,6 +399,32 @@ public class Commands2023
 
             //Prepare position
             elevatorStingerToHigh(), 
+
+            //Drop grabber
+            openGrabber(), 
+
+            //Return to position 
+            Commands.parallel(
+                retractStinger(), 
+                elevatorToMid()
+            )
+        );
+        //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
+        return c;
+    }
+
+    /**
+     * Moves stinger to the middle score place and opens the grabber
+     */
+    public static Command scoreMid()
+    {
+        CommandBase c = Commands.sequence(
+            Commands.runOnce(() -> Logging.info("score!!!")),
+            //move sideways to the target
+            ChargedUp.drivetrain.commands.moveToObjectSideways(),
+
+            //Prepare position
+            elevatorStingerToMid(), 
 
             //Drop grabber
             openGrabber(), 
@@ -461,7 +487,7 @@ public class Commands2023
 
                 case "1":
                 case "2":
-                case "3": return score();
+                case "3": return scoreHigh();
 
                 case "B": return balance();
 

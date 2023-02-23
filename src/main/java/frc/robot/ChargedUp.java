@@ -185,11 +185,14 @@ public class ChargedUp extends RobotContainer
 
         //Auto Score
         operatorController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands2023.score());
+            .onTrue(Commands2023.scoreHigh());
+
+        operatorController.getButton(Button.B_CIRCLE)
+            .onTrue(Commands2023.scoreMid());
 
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
-            .addString("Logs", Logging::logString)
+            .addString("Logs", Logging::mostRecentLog)
             .withWidget(BuiltInWidgets.kTextView);
 
     }
