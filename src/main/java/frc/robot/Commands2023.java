@@ -13,7 +13,7 @@ import frc.robot.Constants.Robot;
 import frc.robot.structure.SequenceParser;
 import frc.robot.structure.Trajectories;
 import frc.robot.structure.animation.DefaultAnimation;
-import frc.robot.structure.animation.QuickSlowFlash;
+// import frc.robot.structure.animation.QuickSlowFlash;
 import frc.robot.structure.animation.SolidAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.helpers.Logging;
@@ -31,47 +31,47 @@ public class Commands2023
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activatePurple() 
-    {
-        return Commands.runOnce(() -> DefaultAnimation.setPurple());
-    }
+    // public static Command activatePurple() 
+    // {
+    //     return Commands.runOnce(() -> DefaultAnimation.setPurple());
+    // }
 
     /**
      * Displays solid yellow on the LEDs
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activateYellow() 
-    {
-        return Commands.runOnce(() -> DefaultAnimation.setYellow());
-    }
+    // public static Command activateYellow() 
+    // {
+    //     return Commands.runOnce(() -> DefaultAnimation.setYellow());
+    // }
 
     /**
      * Displays the alliance color in solid on the LEDs. Will run until another LED is called.
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activateAlliance() 
-    {
-        return Commands.runOnce(() -> DefaultAnimation.setDefault());
-    }
+    // public static Command activateAlliance() 
+    // {
+    //     return Commands.runOnce(() -> DefaultAnimation.setDefault());
+    // }
 
     /**
      * Flashes twice quickly and twice slowly in yellow: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static Command quickSlowFlashYellow() 
-    {
-        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)));
-    }
+    // public static Command quickSlowFlashYellow() 
+    // {
+    //     return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)));
+    // }
 
     /**
      * Flashes twice quickly and twice slowly in purple: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static Command quickSlowFlashPurple()
-    {
-        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)));
-    }
+    // public static Command quickSlowFlashPurple()
+    // {
+    //     return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)));
+    // }
    
     // STINGER COMMMANDS
 

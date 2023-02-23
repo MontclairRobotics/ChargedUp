@@ -72,7 +72,7 @@ public class ChargedUp extends RobotContainer
             .add("Field", field);
 
         // HANDLE DRIVING //
-        drivetrain.setDefaultCommand(Commands.run(() ->
+        drivetrain.setDefaultCommand(Commands.run(() -> 
             {
                 if(!DriverStation.isTeleop())
                 {

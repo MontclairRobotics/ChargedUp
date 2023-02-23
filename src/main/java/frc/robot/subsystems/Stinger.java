@@ -6,6 +6,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.Robot;
+import frc.robot.framework.Math555;
 import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.structure.PIDMechanism;
 
@@ -31,7 +32,7 @@ public class Stinger extends ManagerSubsystemBase
         motor = new CANSparkMax(Robot.Stinger.MOTOR_PORT, MotorType.kBrushless);
 
         encoder = motor.getEncoder();
-        encoder.setPositionConversionFactor(Robot.Stinger.IN_OUT_CONVERSION_FACTOR);
+        encoder.setPositionConversionFactor(Robot.Stinger.LEAD_SCREW_FACTOR);
     }
     public Stinger() {this(true);}
 
@@ -41,11 +42,17 @@ public class Stinger extends ManagerSubsystemBase
      */
     private void extendToLength(double length)
     {
-        if (length > Robot.Stinger.EXT_LENGTH)
-        {
-            length = Robot.Stinger.EXT_LENGTH;
-        }
-        stingerPID.setTarget(length);
+        length = Math555.clamp(length, Robot.Stinger.MIN_LENGTH, Robot.Stinger.EXT_LENGTH);
+
+        stingerPID.setTarget(Robot.Stinger.stngDistToLeadDist(length));
+    }
+
+    /**
+     * Get the current distance outward which the stinger is extended.
+     */
+    public double getLength()
+    {
+        return Robot.Stinger.leadDistToStngDist(encoder.getPosition());
     }
 
     /**

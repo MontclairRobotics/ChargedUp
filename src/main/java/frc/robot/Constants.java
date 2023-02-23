@@ -141,20 +141,20 @@ public final class Constants
     }
     public static class Robot 
     {
-        public static final double ROBOT_MASS_KG      = Units.lbsToKilograms(60);
-        public static final double ROBOT_MOMENT_KG_M2 = 1.0/12.0 * ROBOT_MASS_KG * Math.pow((Drive.WHEEL_BASE_H_M*1.1),2) * 2;
-
-        public static final double TREAD_STATIC_FRICTION_COEF  = 0.60;
-        public static final double TREAD_KINETIC_FRICTION_COEF = 0.45;
-
-        public static final double NORMAL_FORCE_ON_MODULE_N = Units.lbsToKilograms(45) * 9.81 / 4;
-
-        public static final Rotation2d NAVX_OFFSET = Rotation2d.fromDegrees(0);
-
         public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
+        
+        public static final double GRABBER_HEIGHT_NO_OBJECT = Units.feetToMeters(19.0/12);
+        public static final double GRABBER_OBJECT_DANGLE = Units.feetToMeters(5.0/12);
+
+        public static final double GRABBER_HEIGHT_WITH_OBJECT = GRABBER_HEIGHT_NO_OBJECT + GRABBER_OBJECT_DANGLE;
 
         public static class Elevator 
         {
+            // GEAR RATIO  :=  40 in : 1 out
+            // PULLY SIZE  :=  4 in.
+
+
+
             public static final int MOTOR_PORT = 5;
             public static final boolean INVERTED = false;
 
@@ -163,20 +163,23 @@ public final class Constants
             public static final int BOTTOM_LIMIT_SWITCH = 1;
             public static final int START_LIMIT_SWITCH = 2;
 
-            public static final double SPEED = 0.1;  //TODO: Tweak these values
+            public static final double SPEED = 0.1;  
+            //TODO: Tweak these values
+            
+            public static final double ELEVATOR_MIN_TO_FLOOR = Units.feetToMeters(6.0/12);
 
-            public static final double MAX_HEIGHT = Units.feetToMeters(73.0/12);  // 73 inches
-            public static final double MID_HEIGHT = 0.5;
-            public static final double HIGH_HEIGHT = 1;
-            public static final double START_HEIGHT = 0.2;
+            public static final double MAX_HEIGHT = Units.feetToMeters(78.0/12);
+            
+            public static final double HIGH_HEIGHT = Units.feetToMeters(3.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
+            public static final double MID_HEIGHT  = Units.feetToMeters(2.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
+
+            public static final double BUFFER_SPACE_TO_INTAKE = Units.feetToMeters(12.0/12);
             public static final double MIN_HEIGHT = 0;
 
             public static final double UP_DOWN_CONVERSION_FACTOR = -1;
 
             public static final double DEADBAND = 0.05;
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
-
-            public static final double BUFFER_SPACE_TO_INTAKE = 0.75; //in meters
 
             public static final double 
                 UP_DOWN_KP = 1,
@@ -266,68 +269,55 @@ public final class Constants
                 return new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
             }
 
-            public static final double IN_OUT_CONVERSION_FACTOR = -1;
+            public static final double MID_LENGTH_MUL = 0.65;
+            public static final double HIGH_LENGTH_MUL = 0.95;
 
-            public static final double MID_LENGTH_MUL = 0.5;
-            public static final double HIGH_LENGTH_MUL = 1;
+            public static final double MIN_LENGTH = Units.feetToMeters(10.0/12); // 10 inches
+            public static final double MAX_LENGTH = Units.feetToMeters(60.0/12); // 60 inches
 
-            public static final double EXT_LENGTH = Units.feetToMeters(52.0/12); // 52 inches
+            public static final double EXT_LENGTH = MAX_LENGTH - MIN_LENGTH;
 
             public static final double SPEED = 1;
             public static final double DEADBAND = 0.05;
 
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2);
-        }
 
-        public static class Arm 
-        {
-            public static final double UP_DOWN_SPEED = 0.5;
-            public static final double IN_OUT_SPEED = 0.5;
-            
-            public static final int UP_DOWN_PORT = 4;
-            public static final int IN_OUT_PORT = -1;
 
-            public static final double 
-                IN_OUT_KP = 1,
-                IN_OUT_KI = 0,
-                IN_OUT_KD = 0
-            ;
 
-            public static final double IN_OUT_POSITION_CONVERSION_FACTOR = -1;
+            public static final double SEGMENT_COUNT = 8.5;
+            public static final double SEGMENT_LENGTH = Units.inchesToMeters(9.139);
 
-            public static final PIDController inout()
+            public static final double SEGMENT_COUNT_SQ = SEGMENT_COUNT*SEGMENT_COUNT;
+            public static final double SEGMENT_LENGTH_SQ = SEGMENT_LENGTH*SEGMENT_LENGTH;
+
+            public static final double LEAD_SCREW_FACTOR = 0.5;
+
+            public static double leadDistToStngDist(final double leadDist)
             {
-                return new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
+                /**
+                 * S := 8.5    //The number of segments
+                 * W := 9.139  //The length of one segment
+                 * T := input  //The distance the lead screw has travelled
+                 * 
+                 * output := S * sqrt(W^2 + T^2)
+                 */
+
+                return SEGMENT_COUNT * Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(leadDist + MIN_LENGTH, 2));
             }
 
-            public static final double 
-                UP_DOWN_KP = 1,
-                UP_DOWN_KI = 0,
-                UP_DOWN_KD = 0
-            ;
-
-            public static final double UP_DOWN_POSITION_CONVERSION_FACTOR = -1;
-
-            public static PIDController updown()
+            public static double stngDistToLeadDist(final double elevDist) 
             {
-                PIDController pid = new PIDController(UP_DOWN_KP, UP_DOWN_KI, UP_DOWN_KD);
-                pid.enableContinuousInput(-Math.PI, Math.PI);
-                return pid;
+                /**
+                 * S := 8.5    //The number of segments
+                 * W := 9.139  //The length of one segment
+                 * T := input  //The distance the elevator has travelled
+                 * 
+                 * output := sqrt(W^2 - (T / W)^2)
+                 */
+
+                return Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(elevDist - MIN_LENGTH, 2) / SEGMENT_COUNT_SQ);
             }
-
-            //arm commands angles and lengths 
-            public static final double RETURN_POSITION = 0;
-
-            //in theory the length extension should be the same for pegs and shelves
-            public static final double MID_LENGTH = 0.5; //to be changed when arm is constructed (currently in m)
-            public static final double HIGH_LENGTH = 1; // ^^^^
-
-            public static final double MID_PEG_ANGLE = Rotation2d.fromDegrees(90).getRadians();
-            public static final double MID_SHELF_ANGLE = Rotation2d.fromDegrees(95).getRadians();
-
-            public static final double HIGH_PEG_ANGLE = Rotation2d.fromDegrees(120).getRadians();
-            public static final double HIGH_SHELF_ANGLE = Rotation2d.fromDegrees(125).getRadians();
-        }       
+        } 
     }
     
     public static class ControlScheme
@@ -349,6 +339,4 @@ public final class Constants
         public static final double CHARGE_ANGLE_RANGE_DEG = 15;
         public static final double CHARGE_ANGLE_DEADBAND = 2.5;
     }
-
-    public static final String DYLAN = "DYLAN";
 }

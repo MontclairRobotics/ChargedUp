@@ -12,8 +12,8 @@ import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 
 
 
-public class Shwooper extends ManagerSubsystemBase {
-
+public class Shwooper extends ManagerSubsystemBase 
+{
     private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Robot.Shwooper.PNEU_PORT);
 
     private final CANSparkMax motorLeft = new CANSparkMax(Robot.Shwooper.LEFT_MOTOR_PORT, MotorType.kBrushless);
