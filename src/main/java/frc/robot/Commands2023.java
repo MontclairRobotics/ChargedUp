@@ -31,7 +31,8 @@ public class Commands2023
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activatePurple() {
+    public static Command activatePurple() 
+    {
         return Commands.runOnce(() -> DefaultAnimation.setPurple());
     }
 
