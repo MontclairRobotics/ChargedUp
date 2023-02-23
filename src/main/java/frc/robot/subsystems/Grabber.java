@@ -33,14 +33,8 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void updatePressure()
     {
-        if(ChargedUp.colorSensor.seesCone())
-        {
-            setPSIHigh();
-        }
-        else 
-        {
-            setPSINormal();
-        }
+        if(ChargedUp.colorSensor.seesCone()) setPSIHigh();
+        else                                 setPSINormal();
     }
 
     /**

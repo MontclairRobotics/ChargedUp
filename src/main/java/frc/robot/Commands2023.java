@@ -40,7 +40,8 @@ public class Commands2023
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activateYellow() {
+    public static Command activateYellow() 
+    {
         return Commands.runOnce(() -> DefaultAnimation.setYellow());
     }
 
@@ -48,7 +49,8 @@ public class Commands2023
      * Displays the alliance color in solid on the LEDs. Will run until another LED is called.
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activateAlliance() {
+    public static Command activateAlliance() 
+    {
         return Commands.runOnce(() -> DefaultAnimation.setDefault());
     }
 
@@ -56,7 +58,8 @@ public class Commands2023
      * Flashes twice quickly and twice slowly in yellow: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static Command quickSlowFlashYellow() {
+    public static Command quickSlowFlashYellow() 
+    {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)));
     }
 
@@ -64,7 +67,8 @@ public class Commands2023
      * Flashes twice quickly and twice slowly in purple: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static Command quickSlowFlashPurple() {
+    public static Command quickSlowFlashPurple()
+    {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)));
     }
    
@@ -228,19 +232,17 @@ public class Commands2023
     /**
      * Closes the Grabber
      */ 
-    public static Command closeGrabber() {
-        return Commands.runOnce(() -> {
-            ChargedUp.grabber.grab();
-        });
+    public static Command closeGrabber() 
+    {
+        return Commands.runOnce(ChargedUp.grabber::grab);
 
      }
      /**
       * Opens the grabber
       */
-    public static Command openGrabber() {
-        return Commands.runOnce(() -> {
-            ChargedUp.grabber.release();
-        });
+    public static Command openGrabber() 
+    {
+        return Commands.runOnce(ChargedUp.grabber::release);
     }
 
     /**
