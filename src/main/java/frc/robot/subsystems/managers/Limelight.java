@@ -1,18 +1,22 @@
 package frc.robot.subsystems.managers;
 
 import frc.robot.framework.commandrobot.ManagerBase;
+import frc.robot.structure.Unimplemented;
+import frc.robot.structure.VisionProvider;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class Limelight extends ManagerBase 
+public class Limelight extends ManagerBase implements VisionProvider
 {
     boolean isDetected;
     double x;
     double y;
     double area;
+    double timestamp;
     private double pipelineNum = 0;
 
     private final NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");;
@@ -20,6 +24,7 @@ public class Limelight extends ManagerBase
     private final NetworkTableEntry tx = table.getEntry("tx");
     private final NetworkTableEntry ty = table.getEntry("ty");
     private final NetworkTableEntry ta = table.getEntry("ta");  
+    private final NetworkTableEntry ts = table.getEntry("ts");  
     private final NetworkTableEntry pipeline = table.getEntry("pipeline");
     private final NetworkTableEntry latency = table.getEntry("tl"); // pipeine's latency contribution
     private final NetworkTableEntry tshort = table.getEntry("tshort");
@@ -54,9 +59,13 @@ public class Limelight extends ManagerBase
      */
     public double getArea()         {return area;}
     /**
+     * Get the timestamp of the limelight's usage
+     */
+    public double getTimestamp()    {return timestamp;}
+    /**
      * Get True active pipeline index of the camera (0 .. 9)
      */
-    public double getPipelineNum()  {return (double) pipeline.getInteger(0);}
+    public double getPipeline()     {return (int) pipeline.getInteger(0);}
     /**
      * Get The pipeline’s latency contribution (ms) Add at least 11ms for image capture latency.
      */
@@ -253,5 +262,22 @@ public class Limelight extends ManagerBase
         x = tx.getDouble(0.0);
         y = ty.getDouble(0.0);
         area = ta.getDouble(0.0);
+        timestamp = ts.getDouble(0.0);
     }
+
+    public void updateEstimatedPose(Pose2d previous)
+    {
+        Unimplemented.here();
+    }
+
+    public Pose2d getEstimatedPose()
+    {
+        return getBotpose().toPose2d();
+    }
+    public double getTimestampSeconds()
+    {
+        return getTimestamp() / 1000;
+    }
+    public double getObjectAX() {return getX();}
+    public double getObjectAY() {return getY();}
 }

@@ -27,6 +27,7 @@ import frc.robot.framework.commandrobot.ManagerSubsystemBase;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.PIDMechanism;
 import frc.robot.structure.Tracking;
+import frc.robot.structure.VisionProvider;
 import frc.robot.structure.helpers.Logging;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -62,7 +63,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
     private final FieldObject2d moduleObject;
 
-    private final Photon photonVisionWrapper = new Photon();
+    private final VisionProvider visionProvider;
     private final SwerveDrivePoseEstimator poseEstimator;
 
     /**
@@ -93,13 +94,15 @@ public class Drivetrain extends ManagerSubsystemBase
     }
     private SimulationData simulation;
 
-    public Drivetrain()
+    public Drivetrain(VisionProvider visionProvider)
     {
         if(RobotBase.isSimulation())
         {
             simulation = new SimulationData();
             simulation.accumulatedPose = new Pose2d(5, 5, new Rotation2d());
         }
+
+        this.visionProvider = visionProvider;
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
@@ -376,15 +379,12 @@ public class Drivetrain extends ManagerSubsystemBase
             getModulePositions()
         );
 
-        Optional<EstimatedRobotPose> result = photonVisionWrapper.getEstimatedGlobalPose(poseEstimator.getEstimatedPosition());
+        visionProvider.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-        if(result.isPresent())
-        {
-            poseEstimator.addVisionMeasurement(
-                result.get().estimatedPose.toPose2d(), 
-                result.get().timestampSeconds
-            );
-        }
+        poseEstimator.addVisionMeasurement(
+            visionProvider.getEstimatedPose(), 
+            visionProvider.getTimestampSeconds()
+        );
     }
 
     /**
@@ -479,7 +479,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
     public void trackObject(Tracking object) 
     {
-        ChargedUp.limelight.setPipeline(object.getPipelineNum());
+        visionProvider.setPipeline(object.getPipelineNum());
         objectTracked = object;
     }
 
@@ -506,7 +506,7 @@ public class Drivetrain extends ManagerSubsystemBase
     public double getObjectAngle() 
     {
         if (objectTracked == Tracking.NONE) return 0;
-        return getRobotRotation().getDegrees() + ChargedUp.limelight.getX(); 
+        return getRobotRotation().getDegrees() + visionProvider.getObjectAX(); 
     }
 
     public final DriveCommands commands = this.new DriveCommands();

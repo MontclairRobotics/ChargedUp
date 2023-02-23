@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SynchronousInterrupt;
 import frc.robot.Constants.*;
 import frc.robot.framework.commandrobot.ManagerBase;
+import frc.robot.structure.VisionProvider;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -14,13 +15,17 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
 
-public class PhotonVisionWrapper 
+public class Photon extends ManagerBase implements VisionProvider
 {
     PhotonCamera photonCamera = new PhotonCamera(Robot.PhotonVision.CAMERA_NAME);
     PhotonPoseEstimator photonPoseEstimator;
 
-    public PhotonVisionWrapper() 
+    EstimatedRobotPose lastPose;
+    PhotonPipelineResult lastResult;
+
+    public Photon() 
     {
         // Change the name of your camera here to whatever it is in the PhotonVision UI.
         try 
@@ -47,13 +52,43 @@ public class PhotonVisionWrapper
         }
     }
 
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Pose2d prevEstimatedRobotPose) 
+    public void updateEstimatedPose(Pose2d prev) 
     {
-        if (photonPoseEstimator == null) {
-            // The field layout failed to load, so we cannot estimate poses.
-            return Optional.empty();
-        }
-        photonPoseEstimator.setReferencePose(prevEstimatedRobotPose);
-        return photonPoseEstimator.update();
+        if (photonPoseEstimator == null) {return;}
+
+        photonPoseEstimator.setReferencePose(prev);
+        lastPose = photonPoseEstimator.update().orElseThrow();
+    }
+
+    public Pose2d getEstimatedPose()
+    {
+        return lastPose.estimatedPose.toPose2d();
+    }
+    public double getTimestampSeconds()
+    {
+        return lastPose.timestampSeconds;
+    }
+
+    public double getObjectAX() 
+    {
+        return lastResult.getBestTarget().getPitch();
+    }
+    public double getObjectAY()
+    {
+        return lastResult.getBestTarget().getYaw();
+    }
+    public double getPipeline()
+    {
+        return photonCamera.getPipelineIndex();
+    }
+    public void setPipeline(double pipeline)
+    {
+        photonCamera.setPipelineIndex((int) pipeline);
+    }
+
+    @Override
+    public void always() 
+    {
+        lastResult = photonCamera.getLatestResult();
     }
 }
