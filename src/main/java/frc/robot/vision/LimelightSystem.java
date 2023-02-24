@@ -12,9 +12,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightSystem extends ManagerBase implements VisionSystem
 {
-    private final LimelightWrapper limelight = new LimelightWrapper();
+    private LimelightHelpers.Results results;
     private DetectionType target = DetectionType.NONE;
-
+    
     public static final int CONE_CUBE_PIPE  = 0;
     public static final int TAPE_RETRO_PIPE = 1;
     public static final int APRIL_TAG_PIPE  = 2;
@@ -26,33 +26,30 @@ public class LimelightSystem extends ManagerBase implements VisionSystem
     @Override
     public void always() 
     {
-        limelight.update();
+        results = LimelightHelpers.getLatestResults("");
     }
 
     @Override
-    public void updateEstimatedPose(Pose2d prev) 
-    {
-        Unimplemented.here();
-    }
+    public void updateEstimatedPose(Pose2d prev) {}
 
     @Override
-    public Pose2d getEstimatedPose() {return limelight.getBotpose().toPose2d();}
+    public Pose2d getEstimatedPose() {return LimelightHelpers.getBotPose2d("");}
 
     @Override
-    public double getTimestampSeconds() {return limelight.getTimestamp() / 1000.0;}
+    public double getTimestampSeconds() {return results.targetingResults.timestamp_LIMELIGHT_publish;}
 
     @Override
-    public boolean hasObject() {return limelight.getDetected();}
+    public boolean hasObject() {return LimelightHelpers.getTV("");}
 
     @Override
     public DetectionType getCurrentType() 
     {
-        int pipe = (int) limelight.getPipeline();
+        int pipe = (int) LimelightHelpers.getCurrentPipelineIndex("");
         if      (pipe == TAPE_RETRO_PIPE)           return DetectionType.TAPE;
         else if (pipe == APRIL_TAG_PIPE)            return DetectionType.APRIL_TAG;
         
-        else if (limelight.getClassID() == CUBE_ID) return DetectionType.CUBE;
-        else if (limelight.getClassID() == CONE_ID) return DetectionType.CONE;
+        else if (LimelightHelpers.getNeuralClassID("") == CUBE_ID) return DetectionType.CUBE;
+        else if (LimelightHelpers.getNeuralClassID("") == CONE_ID) return DetectionType.CONE;
         else                                        return DetectionType.NONE;
     }
 
@@ -64,24 +61,21 @@ public class LimelightSystem extends ManagerBase implements VisionSystem
     {
         target = type;
 
-        if     (type == DetectionType.CUBE || type == DetectionType.CONE) limelight.setPipeline(CONE_CUBE_PIPE);
-        else if(type == DetectionType.TAPE                              ) limelight.setPipeline(TAPE_RETRO_PIPE);
-        else if(type == DetectionType.APRIL_TAG                         ) limelight.setPipeline(APRIL_TAG_PIPE);
+        if     (type == DetectionType.CUBE || type == DetectionType.CONE) setPipeline(CONE_CUBE_PIPE);
+        else if(type == DetectionType.TAPE                              ) setPipeline(TAPE_RETRO_PIPE);
+        else if(type == DetectionType.APRIL_TAG                         ) setPipeline(APRIL_TAG_PIPE);
     }
 
     @Override
-    public double getObjectAX() {return limelight.getX();}
+    public double getObjectAX() {return LimelightHelpers.getTX("");}
     @Override
-    public double getObjectAY() {return limelight.getX();}
+    public double getObjectAY() {return LimelightHelpers.getTY("");}
     @Override
-    public double getPipeline() {return limelight.getPipeline();}
+    public double getPipeline() {return LimelightHelpers.getCurrentPipelineIndex("");}
     @Override
-    public void setPipeline(double value) {limelight.setPipeline(value);}
+    public void setPipeline(double value) {LimelightHelpers.setPipelineIndex("", (int)value);}
 
     @Override
-    public void resetPose(Pose2d pose) {
-        limelight.
-    }
-
-    
+    public void resetPose(Pose2d pose) 
+    {}    
 }

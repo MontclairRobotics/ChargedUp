@@ -58,13 +58,9 @@ public class Drivetrain extends ManagerSubsystemBase
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
 
-    private Tracking objectTracked; 
-
     private boolean useFieldRelative = true;
 
     private final FieldObject2d moduleObject;
-
-    private final VisionSystem visionSystem;
     private final SwerveDrivePoseEstimator poseEstimator;
 
     /**
@@ -95,15 +91,13 @@ public class Drivetrain extends ManagerSubsystemBase
     }
     private SimulationData simulation;
 
-    public Drivetrain(VisionSystem visionProvider)
+    public Drivetrain()
     {
         if(RobotBase.isSimulation())
         {
             simulation = new SimulationData();
             simulation.accumulatedPose = new Pose2d(5, 5, new Rotation2d());
         }
-
-        this.visionSystem = visionProvider;
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
@@ -380,15 +374,15 @@ public class Drivetrain extends ManagerSubsystemBase
             getModulePositions()
         );
 
-        if(visionSystem.getTargetType() == DetectionType.APRIL_TAG)
+        if(ChargedUp.vision.getTargetType() == DetectionType.APRIL_TAG)
         {
-            visionSystem.updateEstimatedPose(poseEstimator.getEstimatedPosition());
+            ChargedUp.vision.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-            if(poseEstimator.getEstimatedPosition().minus(visionSystem.getEstimatedPose()).getTranslation().getNorm() <= Drive.VISION_MAX_DIST)
+            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= Drive.POSE_MAX_OFFSET)
             {
                 poseEstimator.addVisionMeasurement(
-                    visionSystem.getEstimatedPose(), 
-                    visionSystem.getTimestampSeconds()
+                    ChargedUp.vision.getEstimatedPose(), 
+                    ChargedUp.vision.getTimestampSeconds()
                 );
             }
         }
@@ -437,7 +431,7 @@ public class Drivetrain extends ManagerSubsystemBase
             pose
         );
 
-        visionSystem.resetPose(pose);
+        ChargedUp.vision.resetPose(pose);
         
         if(RobotBase.isSimulation())
         {
@@ -485,17 +479,6 @@ public class Drivetrain extends ManagerSubsystemBase
             return simulation.accumulatedPose;
         }
     }
-
-    public void trackObject(Tracking object) 
-    {
-        visionSystem.setPipeline(object.getPipelineNum());
-        objectTracked = object;
-    }
-
-    public void stopTracking() 
-    {
-        objectTracked = Tracking.NONE;
-    }
     
     public void increaseMaxSpeed()
     {
@@ -511,11 +494,9 @@ public class Drivetrain extends ManagerSubsystemBase
         return !thetaPID.active();
     }
 
-
     public double getObjectAngle() 
     {
-        if (objectTracked == Tracking.NONE) return 0;
-        return getRobotRotation().getDegrees() + visionSystem.getObjectAX(); 
+        return getRobotRotation().getDegrees() + ChargedUp.vision.getObjectAX() * 20; 
     }
 
     public final DriveCommands commands = this.new DriveCommands();
@@ -556,22 +537,6 @@ public class Drivetrain extends ManagerSubsystemBase
             return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
 
-        // VISION COMMANDS
-        public Command turnToTarget() 
-        {
-            return Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(getObjectAngle()))
-                .until(() -> isThetaPIDFree());
-        }
-
-        /**
-         * Goes towards the object on the x-axis.
-         * @return
-         */
-        public Command moveToObjectSideways()
-        {
-            return Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(getRobotPose().getX() + 0.05 * ChargedUp.drivetrain.getObjectAngle()))
-                .until(() -> !xPID.active());
-        }
 
         public Command follow(PathPlannerTrajectory trajectory)
         {

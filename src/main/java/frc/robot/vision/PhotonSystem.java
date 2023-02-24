@@ -17,7 +17,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-public class Photon extends ManagerBase implements VisionSystem
+public class PhotonSystem extends ManagerBase implements VisionSystem
 {
     PhotonCamera photonCamera = new PhotonCamera(Robot.PhotonVision.CAMERA_NAME);
     PhotonPoseEstimator photonPoseEstimator;
@@ -25,14 +25,14 @@ public class Photon extends ManagerBase implements VisionSystem
     EstimatedRobotPose lastPose;
     PhotonPipelineResult lastResult;
 
-
+    private DetectionType target = DetectionType.NONE;
     public static final int CUBE_PIPE = 0;
     public static final int CONE_PIPE = 1;
-    public static final int TAPE_PIPE = 2;
-    public static final int APRIL_TAG_PIPE = 3;
+    public static final int APRIL_TAG_PIPE = 2;
+    public static final int TAPE_PIPE = 3;
 
 
-    public Photon() 
+    public PhotonSystem() 
     {
         // Change the name of your camera here to whatever it is in the PhotonVision UI.
         try 
@@ -84,6 +84,12 @@ public class Photon extends ManagerBase implements VisionSystem
     {
         return lastResult.getBestTarget().getPitch();
     }
+
+    public void resetPose(Pose2d pose)
+    {
+        photonPoseEstimator.setLastPose(pose);
+    }
+
     @Override
     public double getObjectAY()
     {
@@ -107,20 +113,38 @@ public class Photon extends ManagerBase implements VisionSystem
     }
 
     @Override
-    public DetectionType getCurrentType() {
-        // TODO Auto-generated method stub
-        return null;
+    public DetectionType getCurrentType() 
+    {
+        if(hasObject()) return target;
+        return DetectionType.NONE;
     }
 
     @Override
-    public DetectionType getTargetType() {
-        // TODO Auto-generated method stub
-        return null;
+    public DetectionType getTargetType() 
+    {
+        return target;
     }
 
     @Override
-    public void setTargetType(DetectionType type) {
-        // TODO Auto-generated method stub
-        
+    public void setTargetType(DetectionType type) 
+    {
+        target = type;
+
+        if(type == DetectionType.APRIL_TAG)
+        {
+            setPipeline(APRIL_TAG_PIPE);
+        }
+        else if(type == DetectionType.CUBE)
+        {
+            setPipeline(CUBE_PIPE);
+        }
+        else if(type == DetectionType.CONE)
+        {
+            setPipeline(CONE_PIPE);
+        }
+        else if(type == DetectionType.TAPE)
+        {
+            setPipeline(TAPE_PIPE);
+        }
     }
 }

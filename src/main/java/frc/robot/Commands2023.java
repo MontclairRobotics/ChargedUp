@@ -15,8 +15,10 @@ import frc.robot.components.managers.Auto;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Drivetrain.DriveCommands;
 import frc.robot.util.HashMaps;
+import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
+import frc.robot.vision.DetectionType;
 
 import static frc.robot.ChargedUp.elevator;
 
@@ -386,18 +388,20 @@ public class Commands2023
             retractSchwooper()
         );
     }
+
     /**
      * Moves stinger to the highest score place and opens the grabber
      */
-    public static Command scoreHigh()
+    public static Command scoreFromHeightAndType(Height height, PegOrShelf type)
     {
         CommandBase c = Commands.sequence(
             Commands.runOnce(() -> Logging.info("score!!!")),
+
             //move sideways to the target
-            ChargedUp.drivetrain.commands.moveToObjectSideways(),
+            Commands2023.moveToObjectSideways(type.getType()),
 
             //Prepare position
-            elevatorStingerToHigh(), 
+            height.getPositioner(), 
 
             //Drop grabber
             openGrabber(), 
@@ -408,35 +412,44 @@ public class Commands2023
                 elevatorToMid()
             )
         );
-        //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
+        
         return c;
     }
 
-    /**
-     * Moves stinger to the middle score place and opens the grabber
-     */
-    public static Command scoreMid()
+    public static enum PegOrShelf 
     {
-        CommandBase c = Commands.sequence(
-            Commands.runOnce(() -> Logging.info("score!!!")),
-            //move sideways to the target
-            ChargedUp.drivetrain.commands.moveToObjectSideways(),
-
-            //Prepare position
-            elevatorStingerToMid(), 
-
-            //Drop grabber
-            openGrabber(), 
-
-            //Return to position 
-            Commands.parallel(
-                retractStinger(), 
-                elevatorToMid()
-            )
-        );
-        //c.addRequirements(ChargedUp.elevator, ChargedUp.stinger, ChargedUp.grabber);
-        return c;
+        PEG, SHELF;
+        
+        public DetectionType getType()
+        {
+            if (this == PEG)    return DetectionType.TAPE;
+            if (this == SHELF)  return DetectionType.APRIL_TAG;
+            return DetectionType.NONE;
+        }
     }
+    public static enum Height
+    {
+        HIGH, MID, LOW; 
+
+        public Command getPositioner()
+        {
+            if(this == HIGH) return elevatorStingerToHigh();
+            if(this == MID)  return elevatorStingerToMid();
+            if(this == LOW)  return elevatorStingerToLow();
+            
+            return Commands.none();     
+        }
+    }
+
+    public static Command scoreMidPeg()
+    {return scoreFromHeightAndType(Height.MID, PegOrShelf.PEG);}
+    public static Command scoreMidShelf()
+    {return scoreFromHeightAndType(Height.MID, PegOrShelf.SHELF);}
+    
+    public static Command scoreHighPeg()
+    {return scoreFromHeightAndType(Height.HIGH, PegOrShelf.PEG);}
+    public static Command scoreHighShelf()
+    {return scoreFromHeightAndType(Height.HIGH, PegOrShelf.SHELF);}
 
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 
@@ -468,6 +481,53 @@ public class Commands2023
         () -> ChargedUp.drivetrain.enableFieldRelative());
     }
 
+    /**
+     * Turns to the object.
+     * @return
+     */
+    public static Command turnToObject() 
+    {
+        return Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
+            .until(() -> ChargedUp.drivetrain.isThetaPIDFree());
+    }
+
+    /**
+     * Goes towards the object on the x-axis.
+     * @return
+     */
+    public static Command moveToObjectSideways()
+    {
+        return Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(ChargedUp.drivetrain.getRobotPose().getX() + ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
+            .until(() -> !ChargedUp.drivetrain.xPID.active());
+    }
+
+    /**
+     * Turns to the object.
+     * @return
+     */
+    public static Command turnToObject(DetectionType type)
+    {
+        return Commands.sequence(
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type)),
+            turnToObject(),
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.APRIL_TAG))
+        );
+    }
+
+    /**
+     * Goes towards the object on the x-axis.
+     * @return
+     */
+    public static Command moveToObjectSideways(DetectionType type)
+    {
+        return Commands.sequence(
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type)),
+            moveToObjectSideways(),
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.APRIL_TAG))
+        );
+    }
+
+    
     /**
      * Get the action command which corresponds to the given auto sequence string segment. 
      * This method can either take in transitions or actions.

@@ -30,7 +30,9 @@ import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.commandrobot.RobotContainer;
-import frc.robot.vision.Photon;
+import frc.robot.vision.DetectionType;
+import frc.robot.vision.PhotonSystem;
+import frc.robot.vision.VisionSystem;
 
 import static frc.robot.Constants.*;
 
@@ -53,10 +55,10 @@ public class ChargedUp extends RobotContainer
     public static final LED  led       = new LED();
 
     // public static final Limelight   limelight   = new Limelight();
-    public static final Photon      photon      = new Photon();
-    public static final ColorSensor colorSensor = new ColorSensor();
+    public static final VisionSystem vision      = new PhotonSystem();
+    public static final ColorSensor  colorSensor = new ColorSensor();
 
-    public static final Drivetrain drivetrain = new Drivetrain(photon);
+    public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
     public static final Shwooper   shwooper   = new Shwooper();
     public static final Grabber    grabber    = new Grabber();
@@ -71,6 +73,8 @@ public class ChargedUp extends RobotContainer
         Shuffleboard
             .getTab("Main")
             .add("Field", field);
+
+        vision.setTargetType(DetectionType.APRIL_TAG);
 
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() -> 
