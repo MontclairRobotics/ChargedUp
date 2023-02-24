@@ -16,11 +16,6 @@ public class QuickSlowFlash extends Animation
         proportionQuick = 0.33;
     }
 
-    public static int repeatingCycle(double value, double minimum, double maximum, int cycles, int cycleLength)
-    {
-        return (int)(Math555.invlerp(value, minimum, maximum) * cycles * cycleLength) % cycleLength;
-    }
-
     @Override
     public void run(AddressableLEDBuffer ledBuffer) 
     {
@@ -29,13 +24,13 @@ public class QuickSlowFlash extends Animation
 
         if (percentFinished < proportionQuick)
         {
-            int state = repeatingCycle(percentFinished, 0, proportionQuick, 2, 200000);
-            color = Math555.lerp(Color.kBlack, flashColor, state / 200000.0);
+            int state = Math555.repeatingCycle(percentFinished, 0, proportionQuick, 2, 200);
+            color = Math555.lerp(Color.kBlack, flashColor, state / 200.0);
         }
         else 
         {
-            int state = repeatingCycle(percentFinished, proportionQuick, 1, 2, 200000);
-            color = Math555.lerp(Color.kBlack, flashColor, state / 200000.0);
+            int state = Math555.repeatingCycle(percentFinished, proportionQuick, 1, 2, 200);
+            color = Math555.lerp(Color.kBlack, flashColor, state / 200.0);
         }
 
         LEDBuffer.fill(ledBuffer, color);

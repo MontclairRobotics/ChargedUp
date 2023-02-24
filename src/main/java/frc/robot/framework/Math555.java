@@ -115,6 +115,11 @@ public class Math555
         return new Color8Bit(lerp(a.red, b.red, t), lerp(a.green, b.green, t), lerp(a.blue, b.blue, t));
     }
 
+    public static int repeatingCycle(double value, double minimum, double maximum, int cycles, int cycleLength)
+    {
+        return (int)(Math555.invlerp(value, minimum, maximum) * cycles * cycleLength) % cycleLength;
+    }
+
     public static double max(double... ds)
     {
         return Arrays.stream(ds)
