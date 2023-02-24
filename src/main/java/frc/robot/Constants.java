@@ -13,10 +13,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.framework.GameController;
 import frc.robot.inputs.JoystickAdjuster;
-import frc.robot.structure.helpers.Units555;
+import frc.robot.math.Units555;
 import frc.robot.structure.swerve.SwerveModuleSpec;
+import frc.robot.util.frc.GameController;
 
 public final class Constants 
 {

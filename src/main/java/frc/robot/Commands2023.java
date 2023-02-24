@@ -10,16 +10,16 @@ import frc.robot.Constants.Auto;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.Field;
 import frc.robot.Constants.Robot;
+import frc.robot.components.subsystems.Drivetrain;
+import frc.robot.components.subsystems.Drivetrain.DriveCommands;
 import frc.robot.structure.SequenceParser;
-import frc.robot.structure.Trajectories;
 import frc.robot.structure.animation.DefaultAnimation;
 import frc.robot.structure.animation.QuickSlowFlash;
 // import frc.robot.structure.animation.QuickSlowFlash;
 import frc.robot.structure.animation.SolidAnimation;
 import frc.robot.structure.factories.HashMaps;
 import frc.robot.structure.helpers.Logging;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Drivetrain.DriveCommands;
+import frc.robot.util.frc.Trajectories;
 
 import static frc.robot.ChargedUp.elevator;
 

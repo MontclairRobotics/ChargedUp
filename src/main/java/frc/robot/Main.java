@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import frc.robot.framework.commandrobot.CommandRobot;
+import frc.robot.util.frc.commandrobot.CommandRobot;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all. Unless you know what
