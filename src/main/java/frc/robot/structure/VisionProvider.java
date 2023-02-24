@@ -9,6 +9,9 @@ public interface VisionProvider
     Pose2d getEstimatedPose();
     double getTimestampSeconds();
 
+    boolean hasObject();
+    // DetectionType getType();
+
     double getObjectAX();
     double getObjectAY();
 

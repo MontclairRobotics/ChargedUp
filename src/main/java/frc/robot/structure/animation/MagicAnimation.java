@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.framework.Math555;
 import frc.robot.framework.PerlinNoise;
+import frc.robot.framework.PerlinNoiseRing;
 
 public class MagicAnimation extends Animation
 {

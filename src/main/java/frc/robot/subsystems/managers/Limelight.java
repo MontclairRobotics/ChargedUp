@@ -280,4 +280,5 @@ public class Limelight extends ManagerBase implements VisionProvider
     }
     public double getObjectAX() {return getX();}
     public double getObjectAY() {return getY();}
+    public boolean hasObject() {return getDetected();}
 }

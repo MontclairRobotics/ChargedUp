@@ -154,7 +154,10 @@ public final class Constants
             // GEAR RATIO  :=  40 in : 1 out
             // PULLY SIZE  :=  4 in.
 
+            public static final double GEAR_RATIO_OUT_OVER_IN = 1.0 / 40.0;
+            public static final double SPROCKET_DIAMETER = Units.inchesToMeters(8);
 
+            public static final double ENCODER_CONVERSION_FACTOR = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI;
 
             public static final int MOTOR_PORT = 5;
             public static final boolean INVERTED = false;
@@ -177,20 +180,18 @@ public final class Constants
             public static final double BUFFER_SPACE_TO_INTAKE = Units.feetToMeters(12.0/12);
             public static final double MIN_HEIGHT = 0;
 
-            public static final double UP_DOWN_CONVERSION_FACTOR = -1;
-
             public static final double DEADBAND = 0.05;
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
             public static final double 
-                UP_DOWN_KP = 1,
-                UP_DOWN_KI = 1,
-                UP_DOWN_KD = 1
+                KP = 1,
+                KI = 1,
+                KD = 1
             ;
 
             public static final PIDController updown() 
             {
-                return new PIDController(UP_DOWN_KP, UP_DOWN_KI, UP_DOWN_KD);
+                return new PIDController(KP, KI, KD);
             }
         }
 

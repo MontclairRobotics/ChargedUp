@@ -53,7 +53,7 @@ public class Elevator extends ManagerSubsystemBase
         motor.setInverted(Robot.Elevator.INVERTED);
 
         elevatorEncoder = motor.getEncoder();
-        elevatorEncoder.setPositionConversionFactor(Robot.Elevator.UP_DOWN_CONVERSION_FACTOR);
+        elevatorEncoder.setPositionConversionFactor(Robot.Elevator.ENCODER_CONVERSION_FACTOR);
     }
     public Elevator() {this(true);}
 

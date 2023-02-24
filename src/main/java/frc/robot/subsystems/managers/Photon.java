@@ -69,6 +69,10 @@ public class Photon extends ManagerBase implements VisionProvider
         return lastPose.timestampSeconds;
     }
 
+    public boolean hasObject()
+    {
+        return lastResult.hasTargets();
+    }
     public double getObjectAX() 
     {
         return lastResult.getBestTarget().getPitch();
