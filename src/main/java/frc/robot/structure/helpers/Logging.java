@@ -1,8 +1,8 @@
 package frc.robot.structure.helpers;
 
 import java.time.Instant;
-
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.framework.StackTrace555;
 
 /**
  * Handle general logging for the robot.
@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class Logging 
 {
     /**
-     * The amount of logs that can be reported by {@link #logString()} into a single message.
+     * The amount of logs that can be reported by {@link #allLogs()} into a single message.
      */
     public static final int LOG_CAPACITY = 100;
 
@@ -22,7 +22,7 @@ public class Logging
      */
     private static void addLog(String s)
     {
-        s += " @" + Instant.now();
+        s += " @" + Instant.now().toEpochMilli();
 
         if(currentLog < LOG_CAPACITY)
         {
@@ -44,7 +44,7 @@ public class Logging
      * Get a report of the most recent logs, capped at {@link #LOG_CAPACITY}.
      * Seperates each log by a newline.
      */
-    public static String logString()
+    public static String allLogs()
     {
         StringBuilder s = new StringBuilder();
 
@@ -58,11 +58,8 @@ public class Logging
     }
     public static String mostRecentLog()
     {
-        StringBuilder s = new StringBuilder();
-        
         int idx = currentLog-1 >=0 && currentLog-1 < LOG_CAPACITY ? currentLog-1 : 0;
-        s.append(logs[idx]);
-        return s.toString();
+        return logs[idx];
     }
 
     /**
@@ -82,14 +79,15 @@ public class Logging
     public static void warning(String message)
     {
         String s = message;
+        StackTraceElement[] trace = StackTrace555.trace(1);
 
-        DriverStation.reportWarning(s, true);
+        DriverStation.reportWarning(s, trace);
         addLog(s);
     }
     /**
      * Print and store a warning log without any trace.
      */
-    public static void warningnt(String message)
+    public static void warningNoTrace(String message)
     {
         String s = message;
 
@@ -103,14 +101,15 @@ public class Logging
     public static void error(String message)
     {
         String s = message;
+        StackTraceElement[] trace = StackTrace555.trace(1);
 
-        DriverStation.reportError(s, true);
+        DriverStation.reportError(s, trace);
         addLog(s);
     }
     /**
      * Print and store an erroneous log without any trace.
      */
-    public static void errornt(String message)
+    public static void errorNoTrace(String message)
     {
         String s = message;
 
@@ -124,14 +123,15 @@ public class Logging
     public static void fatal(String message)
     {
         String s = message;
+        StackTraceElement[] trace = StackTrace555.trace(1);
 
-        DriverStation.reportError(s, true);
+        DriverStation.reportError(s, trace);
         addLog(s);
     }
     /**
      * Print and store a fatal log without any trace.
      */
-    public static void fatalnt(String message)
+    public static void fatalNoTrace(String message)
     {
         String s = message;
 

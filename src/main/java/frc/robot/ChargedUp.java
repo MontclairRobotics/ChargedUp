@@ -204,7 +204,7 @@ public class ChargedUp extends RobotContainer
 
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
-            .addString("Logs", Logging::logString)
+            .addString("Logs", Logging::allLogs)
             .withWidget(BuiltInWidgets.kTextView);
 
     }
