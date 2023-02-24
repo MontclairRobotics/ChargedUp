@@ -41,26 +41,71 @@ public class Math555
         return clamp(v, 0, 1);
     }
 
+    /**
+     * @param a minimum value
+     * @param b maximum value
+     * @param t fraction
+     * @return a value between a and b, based on a fraction t
+     */
     public static double lerp(double a, double b, double t)
     {
         t = clamp01(t);
         return t*(b-a)+a;
     }
+    /**
+     * @param a minimum value
+     * @param b maximum value
+     * @param t fraction
+     * @return a value between a and b, based on a fraction t
+     */
     public static int lerp(int a, int b, double t)
     {
         t = clamp01(t);
         return (int)(t*(b-a)+a);
     }
     
+    /**
+     * returns a fraction based on the value from a to b.
+     * <p>
+     * If the value is less than the minimum, it returns 0
+     * If the value is greater than the maximum, it returns 1
+     * 
+     * @param v value
+     * @param a mininum
+     * @param b maximum
+     * 
+     * @return a fraction based on a value between a and b
+     */
     public static double invlerp(double v, double a, double b)
     {
-        return (v-a) / (b-a);
+        return clamp01((v-a) / (b-a));
     }
+    /**
+     * returns a fraction based on the value from a to b.
+     * <p>
+     * If the value is less than the minimum, it returns 0
+     * If the value is greater than the maximum, it returns 1
+     * 
+     * @param v value
+     * @param a mininum
+     * @param b maximum
+     * 
+     * @return a fraction based on a value between a and b
+     */
     public static double invlerp(int v, int a, int b)
     {
-        return (double)(v-a) / (b-a);
+        return clamp01((double)(v-a) / (b-a));
     }
 
+    /**
+     * This method does a linear interpolation between 2 colors by lerping between each of the RGB values.
+     * It uses this {@link Math555#lerp(int, int, double) Lerp Function}
+     * 
+     * @param a Start Color
+     * @param b End Color
+     * @param t fraction
+     * @return a Color between a and b, based on a fraction t
+     */
     public static Color lerp(Color a, Color b, double t) 
     {
         return new Color(lerp(a.red, b.red, t), lerp(a.green, b.green, t), lerp(a.blue, b.blue, t));
