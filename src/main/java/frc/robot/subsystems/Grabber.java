@@ -44,6 +44,7 @@ public class Grabber extends ManagerSubsystemBase
     public void grab() 
     {
         outputSolenoid.set(!Robot.Grabber.SOLENOID_DEFAULT_STATE);
+        updatePressure();
         
         if (ChargedUp.colorSensor.seesCone()) DefaultAnimation.setYellow();
         if (ChargedUp.colorSensor.seesCube()) DefaultAnimation.setViolet();
