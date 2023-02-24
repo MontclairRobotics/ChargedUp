@@ -32,53 +32,53 @@ public class PerlinNoiseRing
     private PerlinNoise noise = new PerlinNoise();
 
     /**
-         * The way that this algorithm works is not self-explanatory, so I will explain it here:
-         * 
-         * In order to simulate flames, we can use randomness to generate a "heat" value, which
-         * can then be translated into a color and a brightness.
-         * 
-         * This "heat" value needs to be random yet smooth, and changeable smoothly over time.
-         * For this reason, Perlin noise is perfect, since it
-         *   - is deterministic for a given seed
-         *   - is "smooth"
-         *   - is "random"
-         * 
-         * In order to get a pattern which "wraps" around the edges of the LED strip though, we 
-         * will need to somehow make our input coordinates to the perlin noise generator similar for
-         * opposing ends of the strip.
-         * 
-         * We can do this by treating the current led index as an "angle" around a circle of leds,
-         * where 0 -> 0 radians and N -> 2pi radians if the LED strip is N LEDs long.
-         * 
-         * We can therefore sample each LED's "heat" value using the following pseudo-code:
-         *    heat = noise(center + vec2D.fromMagnitude(SIZE).rotate(ledIndex / ledLength))
-         * 
-         * Implementing this is a matter of translating these operations into both wpilib and integer
-         * or double math.
-         * 
-         * In order to make our flames evolve over time though, we must move our circle around the 
-         * perlin noise space as time advances.
-         * 
-         * The simplest way to do this--which fortunately does not rely on persistent, mutable fields--
-         * is to store a "movement direction" vector and multiply it by the time elapsed since the 
-         * animation's start (timer.get()) in order to get the center position.
-         * 
-         * This movement direction can be initialized alongside the animation using java's Random class.
-         * 
-         * Finally, to go from our "heat" value to an actual color value, we need to linearly interpolate
-         * between a "cool" flame color and a "hot" flame color as well as a dim brightness and high brightness,
-         * giving us the components of an HSV color (assuming saturation is always 255).
-         * 
-         * Because of the nature of linear interpolation, this means that we must re-map our generated "heat" value
-         * from [-1, 1], the range provided by PerlinNoise, to [0, 1]. This can be done with
-         *    x = x / 2.0 + 0.5
-         * 
-         * In order to make our flames appear more distinct, we raise this remapped heat value to some power,
-         * effectively increasing the threshold of heat values which will produce visibly hot pixels.
-         * 
-         * We can then pipe the results of the two lerps for hue and val into ledBuffer.setHSV to render
-         * our current animation pixel, for every pixel.
-         */
+     * The way that this algorithm works is not self-explanatory, so I will explain it here:
+     * 
+     * In order to simulate flames, we can use randomness to generate a "heat" value, which
+     * can then be translated into a color and a brightness.
+     * 
+     * This "heat" value needs to be random yet smooth, and changeable smoothly over time.
+     * For this reason, Perlin noise is perfect, since it
+     *   - is deterministic for a given seed
+     *   - is "smooth"
+     *   - is "random"
+     * 
+     * In order to get a pattern which "wraps" around the edges of the LED strip though, we 
+     * will need to somehow make our input coordinates to the perlin noise generator similar for
+     * opposing ends of the strip.
+     * 
+     * We can do this by treating the current led index as an "angle" around a circle of leds,
+     * where 0 -> 0 radians and N -> 2pi radians if the LED strip is N LEDs long.
+     * 
+     * We can therefore sample each LED's "heat" value using the following pseudo-code:
+     *    heat = noise(center + vec2D.fromMagnitude(SIZE).rotate(ledIndex / ledLength))
+     * 
+     * Implementing this is a matter of translating these operations into both wpilib and integer
+     * or double math.
+     * 
+     * In order to make our flames evolve over time though, we must move our circle around the 
+     * perlin noise space as time advances.
+     * 
+     * The simplest way to do this--which fortunately does not rely on persistent, mutable fields--
+     * is to store a "movement direction" vector and multiply it by the time elapsed since the 
+     * animation's start (timer.get()) in order to get the center position.
+     * 
+     * This movement direction can be initialized alongside the animation using java's Random class.
+     * 
+     * Finally, to go from our "heat" value to an actual color value, we need to linearly interpolate
+     * between a "cool" flame color and a "hot" flame color as well as a dim brightness and high brightness,
+     * giving us the components of an HSV color (assuming saturation is always 255).
+     * 
+     * Because of the nature of linear interpolation, this means that we must re-map our generated "heat" value
+     * from [-1, 1], the range provided by PerlinNoise, to [0, 1]. This can be done with
+     *    x = x / 2.0 + 0.5
+     * 
+     * In order to make our flames appear more distinct, we raise this remapped heat value to some power,
+     * effectively increasing the threshold of heat values which will produce visibly hot pixels.
+     * 
+     * We can then pipe the results of the two lerps for hue and val into ledBuffer.setHSV to render
+     * our current animation pixel, for every pixel.
+     */
     public double get(double time, int i, int bufferLen) 
     {
         Translation2d center = new Translation2d(step * time, movementDir);

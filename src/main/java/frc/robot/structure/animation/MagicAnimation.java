@@ -32,7 +32,6 @@ public class MagicAnimation extends Animation
         // Render each pixel
         for(int i = 0; i < ledBuffer.getLength(); i++)
         {
-
             // Remap this value
             double heatRemap = noiseRing.get(timer.get(), i, ledBuffer.getLength());
 
