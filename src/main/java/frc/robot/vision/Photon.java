@@ -1,4 +1,4 @@
-package frc.robot.components.managers;
+package frc.robot.vision;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -24,6 +24,13 @@ public class Photon extends ManagerBase implements VisionSystem
 
     EstimatedRobotPose lastPose;
     PhotonPipelineResult lastResult;
+
+
+    public static final int CUBE_PIPE = 0;
+    public static final int CONE_PIPE = 1;
+    public static final int TAPE_PIPE = 2;
+    public static final int APRIL_TAG_PIPE = 3;
+
 
     public Photon() 
     {

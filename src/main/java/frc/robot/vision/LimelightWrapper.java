@@ -1,4 +1,4 @@
-package frc.robot.components.managers;
+package frc.robot.vision;
 
 import frc.robot.util.frc.commandrobot.ManagerBase;
 import frc.robot.vision.VisionSystem;

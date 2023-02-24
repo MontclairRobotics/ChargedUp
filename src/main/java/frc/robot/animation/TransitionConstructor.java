@@ -1,4 +1,4 @@
-package frc.robot.structure.animation;
+package frc.robot.animation;
 
 @FunctionalInterface
 public interface TransitionConstructor 

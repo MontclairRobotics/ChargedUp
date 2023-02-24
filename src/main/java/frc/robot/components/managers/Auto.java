@@ -1,7 +1,10 @@
 package frc.robot.components.managers;
 
-import frc.robot.structure.helpers.Logging;
+import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.commandrobot.ManagerBase;
+
+import java.util.ArrayList;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;

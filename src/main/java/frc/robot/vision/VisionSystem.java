@@ -11,6 +11,7 @@ public interface VisionSystem extends Manager
 
     Pose2d getEstimatedPose();
     double getTimestampSeconds();
+    void resetPose(Pose2d pose);
 
     boolean hasObject();
 

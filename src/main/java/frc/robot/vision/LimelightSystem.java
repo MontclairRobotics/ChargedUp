@@ -1,4 +1,4 @@
-package frc.robot.components.managers;
+package frc.robot.vision;
 
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.commandrobot.ManagerBase;
@@ -77,6 +77,11 @@ public class LimelightSystem extends ManagerBase implements VisionSystem
     public double getPipeline() {return limelight.getPipeline();}
     @Override
     public void setPipeline(double value) {limelight.setPipeline(value);}
+
+    @Override
+    public void resetPose(Pose2d pose) {
+        limelight.
+    }
 
     
 }

@@ -23,10 +23,11 @@ import frc.robot.ChargedUp;
 import frc.robot.Constants.Drive;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
-import frc.robot.structure.PIDMechanism;
-import frc.robot.structure.helpers.Logging;
+import frc.robot.util.frc.Logging;
+import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.commandrobot.CommandRobot;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
+import frc.robot.vision.DetectionType;
 import frc.robot.vision.Tracking;
 import frc.robot.vision.VisionSystem;
 
@@ -63,7 +64,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
     private final FieldObject2d moduleObject;
 
-    private final VisionSystem visionProvider;
+    private final VisionSystem visionSystem;
     private final SwerveDrivePoseEstimator poseEstimator;
 
     /**
@@ -102,7 +103,7 @@ public class Drivetrain extends ManagerSubsystemBase
             simulation.accumulatedPose = new Pose2d(5, 5, new Rotation2d());
         }
 
-        this.visionProvider = visionProvider;
+        this.visionSystem = visionProvider;
 
         // Build Modules //
         modules = new SwerveModule[Drive.MODULE_COUNT];
@@ -379,12 +380,18 @@ public class Drivetrain extends ManagerSubsystemBase
             getModulePositions()
         );
 
-        visionProvider.updateEstimatedPose(poseEstimator.getEstimatedPosition());
+        if(visionSystem.getTargetType() == DetectionType.APRIL_TAG)
+        {
+            visionSystem.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-        poseEstimator.addVisionMeasurement(
-            visionProvider.getEstimatedPose(), 
-            visionProvider.getTimestampSeconds()
-        );
+            if(poseEstimator.getEstimatedPosition().minus(visionSystem.getEstimatedPose()).getTranslation().getNorm() <= Drive.VISION_MAX_DIST)
+            {
+                poseEstimator.addVisionMeasurement(
+                    visionSystem.getEstimatedPose(), 
+                    visionSystem.getTimestampSeconds()
+                );
+            }
+        }
     }
 
     /**
@@ -429,6 +436,8 @@ public class Drivetrain extends ManagerSubsystemBase
             getModulePositions(),
             pose
         );
+
+        visionSystem.resetPose(pose);
         
         if(RobotBase.isSimulation())
         {
@@ -479,7 +488,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
     public void trackObject(Tracking object) 
     {
-        visionProvider.setPipeline(object.getPipelineNum());
+        visionSystem.setPipeline(object.getPipelineNum());
         objectTracked = object;
     }
 
@@ -506,7 +515,7 @@ public class Drivetrain extends ManagerSubsystemBase
     public double getObjectAngle() 
     {
         if (objectTracked == Tracking.NONE) return 0;
-        return getRobotRotation().getDegrees() + visionProvider.getObjectAX(); 
+        return getRobotRotation().getDegrees() + visionSystem.getObjectAX(); 
     }
 
     public final DriveCommands commands = this.new DriveCommands();

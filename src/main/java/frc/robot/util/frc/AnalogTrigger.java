@@ -1,13 +1,13 @@
 package frc.robot.util.frc;
 
 import java.util.function.DoubleBinaryOperator;
+import java.util.function.DoublePredicate;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.structure.function.DoubleDualPredicate;
-import frc.robot.structure.function.DoublePredicate;
-import frc.robot.structure.function.DoubleTriPredicate;
+import frc.robot.util.function.DoubleDualPredicate;
+import frc.robot.util.function.DoubleTriPredicate;
 
 public class AnalogTrigger
 {
@@ -181,7 +181,7 @@ public class AnalogTrigger
     //////////////////////////////////
     public Trigger when(DoublePredicate predicate)
     {
-        return new Trigger(() -> predicate.evaluate(axis.getAsDouble()));
+        return new Trigger(() -> predicate.test(axis.getAsDouble()));
     }
 
     public Trigger when(DoubleDualPredicate predicate, double other)

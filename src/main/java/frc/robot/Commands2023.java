@@ -6,19 +6,16 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.Auto;
 import frc.robot.Constants.Drive;
 import frc.robot.Constants.Field;
 import frc.robot.Constants.Robot;
+import frc.robot.animation.DefaultAnimation;
+import frc.robot.animation.QuickSlowFlash;
+import frc.robot.components.managers.Auto;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Drivetrain.DriveCommands;
-import frc.robot.structure.SequenceParser;
-import frc.robot.structure.animation.DefaultAnimation;
-import frc.robot.structure.animation.QuickSlowFlash;
-// import frc.robot.structure.animation.QuickSlowFlash;
-import frc.robot.structure.animation.SolidAnimation;
-import frc.robot.structure.factories.HashMaps;
-import frc.robot.structure.helpers.Logging;
+import frc.robot.util.HashMaps;
+import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
 
 import static frc.robot.ChargedUp.elevator;
@@ -507,8 +504,8 @@ public class Commands2023
             {
                 return Trajectories.auto(
                     str, 
-                    Auto.MAX_VEL, 
-                    Auto.MAX_ACC, 
+                    Constants.Auto.MAX_VEL, 
+                    Constants.Auto.MAX_ACC, 
                     HashMaps.of(
                         "Elevator Mid",  elevatorToMid(),
                         "Elevator High", elevatorToHigh(),
@@ -558,7 +555,7 @@ public class Commands2023
      */
     public static Command buildAuto(String p) 
     {
-        String[] parts = SequenceParser.parse(p);
+        String[] parts = Auto.parse(p);
 
         if(parts == null) 
         {

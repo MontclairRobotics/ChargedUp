@@ -1,4 +1,4 @@
-package frc.robot.structure.animation;
+package frc.robot.animation;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;

@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
 import frc.robot.math.Math555;
-import frc.robot.structure.PIDMechanism;
-import frc.robot.structure.helpers.Logging;
+import frc.robot.util.frc.Logging;
+import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Elevator extends ManagerSubsystemBase 

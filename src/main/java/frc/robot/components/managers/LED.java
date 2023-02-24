@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
-import frc.robot.structure.animation.*;
+import frc.robot.animation.*;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 import frc.robot.vision.GamePiece;
 

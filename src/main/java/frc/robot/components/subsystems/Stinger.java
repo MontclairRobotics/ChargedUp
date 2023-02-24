@@ -7,7 +7,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.Constants.Robot;
 import frc.robot.math.Math555;
-import frc.robot.structure.PIDMechanism;
+import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Stinger extends ManagerSubsystemBase

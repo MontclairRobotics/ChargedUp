@@ -1,7 +1,7 @@
 package frc.robot.components.subsystems;
 
 import frc.robot.ChargedUp;
-import frc.robot.structure.animation.DefaultAnimation;
+import frc.robot.animation.DefaultAnimation;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.Constants.*;

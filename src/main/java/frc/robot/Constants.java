@@ -15,8 +15,8 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.math.Units555;
-import frc.robot.structure.swerve.SwerveModuleSpec;
 import frc.robot.util.frc.GameController;
+import frc.robot.util.frc.SwerveModuleSpec;
 
 public final class Constants 
 {
