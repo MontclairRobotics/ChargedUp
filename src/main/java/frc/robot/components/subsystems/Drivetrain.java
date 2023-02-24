@@ -378,7 +378,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             ChargedUp.vision.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= Drive.POSE_MAX_OFFSET)
+            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= Drive.POSE_MAX_DISPLACEMENT)
             {
                 poseEstimator.addVisionMeasurement(
                     ChargedUp.vision.getEstimatedPose(), 

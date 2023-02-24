@@ -34,7 +34,7 @@ public final class Constants
     {
         public static final MotorType DRIVE_TYPE = MotorType.FALCON;
         public static final MotorType STEER_TYPE = MotorType.NEO;
-        public static final double POSE_MAX_OFFSET = 1;
+        public static final double POSE_MAX_DISPLACEMENT = 1;
 
           ////////////////////////////////////////////
          // REBOOT THE ROBOT WHEN CHANGING OFFSETS //
