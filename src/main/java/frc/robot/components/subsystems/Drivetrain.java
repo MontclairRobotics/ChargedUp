@@ -384,7 +384,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             visionSystem.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-            if(poseEstimator.getEstimatedPosition().minus(visionSystem.getEstimatedPose()).getTranslation().getNorm() <= Drive.VISION_MAX_DIST)
+            if(poseEstimator.getEstimatedPosition().minus(visionSystem.getEstimatedPose()).getTranslation().getNorm() <= Drive.POSE_MAX_DISPLACEMENT)
             {
                 poseEstimator.addVisionMeasurement(
                     visionSystem.getEstimatedPose(), 
