@@ -57,7 +57,7 @@ public class ChargedUp extends RobotContainer
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
     public static ShuffleboardTab getDebugTab() {return debugTab;}
-    private static final ShuffleboardTab mainTab = Shuffleboard.getTab("Main");
+    private static final ShuffleboardTab mainTab = Shuffleboard.getTab("Main Tab");
     public static ShuffleboardTab getMainTab() {return mainTab;}
 
     // COMPONENTS //
@@ -234,7 +234,7 @@ public class ChargedUp extends RobotContainer
 
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
             .withPosition(0+2+2+2, 3)
-            .withSize(4, 2);
+            .withSize(2, 2);
     }
 
     // SHUFFLEBOARD //
@@ -243,22 +243,23 @@ public class ChargedUp extends RobotContainer
         // SETUP FIELD //
         mainTab
             .add("Field", field)
-            .withPosition(0, 0);
-        
-        // SETUP LOGGING //
+            .withSize(4, 3)
+            .withPosition(2, 0);
 
         // IS USING FIELD RELATIVE //
-        mainTab
-            .addBoolean("Field Relative", drivetrain::usingFieldRelative)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 0);
+        final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
+            .withSize(2, 4)
+            .withPosition(9, 0);
+        
+        info.addBoolean("Field Relative", drivetrain::usingFieldRelative)
+            .withWidget(BuiltInWidgets.kBooleanBox);
 
         // LOGGING LOG RECENT //
         mainTab
             .addString("Recent Log", Logging::mostRecentLog)
-            .withSize(3, 1)
-            .withPosition(0, 2);
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(4, 1)
+            .withPosition(2, 3);
 
         // CAMERAS //
         // mainTab
@@ -269,31 +270,27 @@ public class ChargedUp extends RobotContainer
         // GYROSCOPE VALUE //
         mainTab
             .addNumber("Gyroscope", () -> {
-                double y = gyroscope.getYaw();
+                double y = drivetrain.getRobotRotation().getDegrees();
                 return y > 0 ? y : 360+y; 
             })
             .withWidget(BuiltInWidgets.kGyro)
             .withSize(2, 2)
-            .withPosition(2, 0);
+            .withPosition(0, 0);
         
         // MAX LINEAR SPEED //
-        mainTab
-            .addNumber("Max Linear Speed (m/s)", () -> drivetrain.getCurrentSpeedLimits()[0] * Drive.MAX_SPEED_MPS)
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(2, 2)
-            .withPosition(4, 0);
+        info.addNumber("Max Linear Speed (mps)", () -> drivetrain.getCurrentSpeedLimits()[0] * Drive.MAX_SPEED_MPS)
+            .withWidget(BuiltInWidgets.kTextView);
+        
         // MAX ANGULAR SPEED //
-        mainTab
-            .addNumber("Max Angular Speed (rad/s)", () -> drivetrain.getCurrentSpeedLimits()[1] * Drive.MAX_TURN_SPEED_RAD_PER_S)
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(2, 2)
-            .withPosition(4, 2);
+        info.addNumber("Max Angular Speed (rps)", () -> drivetrain.getCurrentSpeedLimits()[1] * Drive.MAX_TURN_SPEED_RAD_PER_S)
+            .withWidget(BuiltInWidgets.kTextView);
         
         // HELD OBJECT //
         mainTab
             .addString("Held Object", grabber::getHeldObjectName)
-            .withSize(1, 1)
-            .withPosition(4, 4);
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(2, 1)
+            .withPosition(0, 2);
 
         //TODO: Fixed Cameras, Field View, Auto Input
     }
