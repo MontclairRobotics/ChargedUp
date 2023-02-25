@@ -26,6 +26,10 @@ import java.util.Arrays;
 
 public class Commands2023 
 {   
+
+    /////////////////////// LED COMMANDS /////////////////////////
+
+
     /**
      * Displays solid purple on the LEDs
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
@@ -55,25 +59,26 @@ public class Commands2023
         return Commands.runOnce(() -> DefaultAnimation.setDefault());
     }
 
-    // /**
-    //  * Flashes twice quickly and twice slowly in yellow: * * -- --
-    //  * Signals to the HUMAN PLAYER that they need to enter a cone into play
-    //  */
+    /**
+     * Flashes twice quickly and twice slowly in yellow: * * -- --
+     * Signals to the HUMAN PLAYER that they need to enter a cone into play
+     */
     public static Command quickSlowFlashYellow() 
     {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)));
     }
 
-    // /**
-    //  * Flashes twice quickly and twice slowly in purple: * * -- --
-    //  * Signals to the HUMAN PLAYER that they need to enter a cone into play
-    //  */
+    /**
+     * Flashes twice quickly and twice slowly in purple: * * -- --
+     * Signals to the HUMAN PLAYER that they need to enter a cube into play
+     */
     public static Command quickSlowFlashPurple()
     {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)));
     }
    
-    // STINGER COMMMANDS
+
+    /////////////////// STINGER COMMMANDS //////////////////////
 
     /**
      * fully retracts the stinger 
@@ -103,7 +108,7 @@ public class Commands2023
             .until(ChargedUp.stinger::isPIDFree);
     }
 
-    // ELEVATOR COMMANDS
+    //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
 
     /**
      * Sets the elevator its lowest height
@@ -149,7 +154,7 @@ public class Commands2023
         );
     }
 
-    // ELEVATOR + STINGER COMMANDS 
+    ///////////////// ELEVATOR + STINGER COMMANDS /////////////////////////////
 
     /**
      * Moves the Elevator and Stinger to High position to sequence
@@ -228,7 +233,7 @@ public class Commands2023
 
     
 
-    // GRABBER COMMANDS
+    /////////////////////// GRABBER COMMANDS ////////////////////////////////////////////
     
     /**
      * Closes the Grabber
@@ -269,31 +274,7 @@ public class Commands2023
         return Commands.runOnce(ChargedUp.grabber::release);
     }
 
-    // SHWOOPER COMMMANDS
-
-    // public static Command extendShwooper() {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.shwooper.extend();
-    //     });
-    // }
-
-    // public static Command retractShwooper() {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.shwooper.retract();
-    //     });
-    // }
-
-    // public static Command setLEDColor(Color color) {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.led.setColor(color);
-    //     });
-    // }
-    // public static Command setObjectHolding(GamePiece object) 
-    // {
-    //     return Commands.runOnce(() -> {
-    //         ChargedUp.led.setHolding(object);
-    //     });
-    // }
+    /////////////////////////////// SHWOOPER COMMMANDS ///////////////////////////
     
     /**
      * toggle the Shwooper
@@ -348,23 +329,12 @@ public class Commands2023
     {
         return Commands.runOnce(ChargedUp.shwooper::stop);
     }
+
+    ////////////////////// AUTO COMMANDS //////////////////////////
     
     // picks up objects and raises the elevator to the middle after picking the object up
     public static Command pickup() 
     {
-        // SEQUENCE //
-            // PARALLEL //
-                //grabber toggle
-                //retract stinger
-            // END PARALLEL //
-            //elevator low
-            // FOR (Robot.SUCK_TIME) SECONDS //
-                //suck
-            // END FOR SECONDS //
-            //stop sucking
-            //elevator mid 
-        // END SEQUENCE 
-
         return Commands.sequence(
             // Ensure grabber released
             releaseGrabber(),
@@ -390,7 +360,9 @@ public class Commands2023
     }
 
     /**
-     * Moves stinger to the highest score place and opens the grabber
+     * Moves stinger/elevator to the specfied score place and opens the grabber
+     * 
+     * retracts the stinger and bring the elevator to mid
      */
     public static Command scoreFromHeightAndType(Height height, PegOrShelf type)
     {
