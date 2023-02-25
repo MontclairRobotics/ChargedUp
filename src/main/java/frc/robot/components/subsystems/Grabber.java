@@ -2,6 +2,7 @@ package frc.robot.components.subsystems;
 
 import frc.robot.ChargedUp;
 import frc.robot.animation.DefaultAnimation;
+import frc.robot.structure.GamePiece;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -16,18 +17,22 @@ import edu.wpi.first.wpilibj.util.Color;
 
 
 /**
- *    ^         // Output
- *    |
- *    [#####]
- *    ^     #   // Select between input or none
- *    |
+ *      /\      // Output
+ *      ||
+ *    [####]
+ *    /\  \/    // Select between input or none
+ *    ||
  *   [######]   // Select between "low" and "high" pressure inputs
- *   ^      ^
+ *   /\    /\
  */
 public class Grabber extends ManagerSubsystemBase 
 {
     Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_SOLENOID_PORT);
     Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_PSI_SOLENOID_PORT);
+
+    GamePiece heldObject = GamePiece.NONE;
+
+    public GamePiece getHeldObject() {return heldObject;}
     
     /**
      * Update the pressure of the airflow to respect current readings.
@@ -46,8 +51,8 @@ public class Grabber extends ManagerSubsystemBase
         outputSolenoid.set(!Robot.Grabber.SOLENOID_DEFAULT_STATE);
         updatePressure();
         
-        if (ChargedUp.colorSensor.seesCone()) DefaultAnimation.setYellow();
-        if (ChargedUp.colorSensor.seesCube()) DefaultAnimation.setViolet();
+        if (ChargedUp.colorSensor.seesCone()) heldObject = GamePiece.CONE;
+        if (ChargedUp.colorSensor.seesCube()) heldObject = GamePiece.CUBE;
     }
 
     /**
@@ -56,8 +61,7 @@ public class Grabber extends ManagerSubsystemBase
     public void release() 
     {
         outputSolenoid.set(Robot.Grabber.SOLENOID_DEFAULT_STATE);
-
-        DefaultAnimation.setDefault();
+        heldObject = GamePiece.NONE;
     }
 
     /**
@@ -96,10 +100,20 @@ public class Grabber extends ManagerSubsystemBase
      * <p>
      * - if it is normal pressure, then <b>high pressure</b> 
      */
-
     public void togglePressure() 
     {
         pressureSolenoid.toggle();
+    }
+
+    @Override
+    public void always() 
+    {
+        switch(heldObject)
+        {
+            case CONE: DefaultAnimation.setYellow();  break;
+            case CUBE: DefaultAnimation.setViolet();  break;
+            case NONE: DefaultAnimation.setDefault(); break;
+        }
     }
 }
 

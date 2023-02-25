@@ -1,5 +1,6 @@
 package frc.robot.vision;
 
+import frc.robot.structure.DetectionType;
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 import frc.robot.vision.VisionSystem;

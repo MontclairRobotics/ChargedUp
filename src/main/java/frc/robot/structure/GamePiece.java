@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.structure;
 
 /**
  * An enum containing the three possible objects that the robot would be holding
