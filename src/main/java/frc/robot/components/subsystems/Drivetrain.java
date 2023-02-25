@@ -108,9 +108,9 @@ public class Drivetrain extends ManagerSubsystemBase
         for (int i = 0; i < Drive.MODULE_COUNT; i++)
         {
             modules[i] = Drive.MODULES[i].build(
-                Shuffleboard.getTab("Drivetrain")
+                ChargedUp.getDebugTab()
                     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
-                    .withSize(2, 5)
+                    .withSize(2, 3)
                     .withPosition(2*i, 0)
             );
 

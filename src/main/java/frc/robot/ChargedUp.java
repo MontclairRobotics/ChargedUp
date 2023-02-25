@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,6 +32,7 @@ import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.commandrobot.RobotContainer;
+import frc.robot.vision.LimelightSystem;
 import frc.robot.vision.PhotonSystem;
 import frc.robot.vision.VisionSystem;
 
@@ -50,11 +52,15 @@ public class ChargedUp extends RobotContainer
         ControlScheme.OPERATOR_CONTROLLER_TYPE,
         ControlScheme.OPERATOR_CONTROLLER_PORT);
 
+    // SHUFFLEBOARD //
+    private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
+    public static ShuffleboardTab getDebugTab() {return debugTab;}
+
     // COMPONENTS //
     public static final AHRS gyroscope = new AHRS();
     public static final LED  led       = new LED();
 
-    // public static final Limelight   limelight   = new Limelight();
+    // public static final Limelight   limelight   = new ();
     public static final VisionSystem vision      = new PhotonSystem();
     public static final ColorSensor  colorSensor = new ColorSensor();
 
@@ -73,6 +79,8 @@ public class ChargedUp extends RobotContainer
         Shuffleboard
             .getTab("Main")
             .add("Field", field);
+
+        setupDebug();
 
         vision.setTargetType(DetectionType.APRIL_TAG);
 
@@ -203,7 +211,7 @@ public class ChargedUp extends RobotContainer
 
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
-            .addString("Logs", Logging::allLogs)
+            .addString("Logs", Logging::mostRecentLog)
             .withWidget(BuiltInWidgets.kTextView);
 
     }
@@ -217,11 +225,23 @@ public class ChargedUp extends RobotContainer
     {
         return auto.get();
     }
-
-
+    
     public void setupDebug()
     {
-        
+        debugTab.add("X-PID Controller", drivetrain.xController)
+            .withPosition(0, 3)
+            .withSize(2, 3);
+        debugTab.add("Y-PID Controller", drivetrain.yController)
+            .withPosition(0+2, 3)
+            .withSize(2, 3);
+        debugTab.add("θ-PID Controller", drivetrain.thetaController)
+            .withPosition(0+2+2, 3)
+            .withSize(2, 3);
+
+        debugTab.addString("Logs", Logging::allLogs)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withPosition(0+2+2+2, 3)
+            .withSize(4, 2);
     }
 
     // SHUFFLEBOARD //

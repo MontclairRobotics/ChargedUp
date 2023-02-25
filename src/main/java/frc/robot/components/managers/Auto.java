@@ -88,7 +88,7 @@ public class Auto extends ManagerBase
     {
         if(str.length() == 0)
         {
-            Logging.error("Empty auto command provided.");
+            Logging.errorNoTrace("Empty auto command provided.");
             return null;
         }
 
@@ -119,7 +119,7 @@ public class Auto extends ManagerBase
             {
                 if(isExclaimed)
                 {
-                    Logging.error("Dual '!' present in command string! '" + str + "'");
+                    Logging.errorNoTrace("Dual '!' present in command string! '" + str + "'");
                     return null;
                 }
 
@@ -128,9 +128,15 @@ public class Auto extends ManagerBase
             // Error otherwise
             else 
             {
-                Logging.error("Unexpected character " + c + " in command string! '" + str + "'");
+                Logging.errorNoTrace("Unexpected character " + c + " in command string! '" + str + "'");
                 return null;
             }
+        }
+
+        if(isExclaimed)
+        {
+            Logging.errorNoTrace("Unterminated exclamation expression in command string '" + str + "'");
+            return null;
         }
 
         return out.toArray(String[]::new);

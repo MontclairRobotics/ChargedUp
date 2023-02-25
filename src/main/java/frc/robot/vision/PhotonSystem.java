@@ -10,6 +10,7 @@ import frc.robot.Constants.*;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 import frc.robot.vision.VisionSystem;
+import edu.wpi.first.wpilibj.Timer;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -66,29 +67,34 @@ public class PhotonSystem extends ManagerBase implements VisionSystem
         if (photonPoseEstimator == null) {return;}
 
         photonPoseEstimator.setReferencePose(prev);
-        lastPose = photonPoseEstimator.update().orElseThrow();
+        lastPose = photonPoseEstimator.update().orElse(null);
     }
 
     public Pose2d getEstimatedPose()
     {
+        if (lastPose == null) return new Pose2d();
         return lastPose.estimatedPose.toPose2d();
     }
     public double getTimestampSeconds()
     {
+        if (lastPose == null) return Timer.getFPGATimestamp();
         return lastPose.timestampSeconds;
     }
 
     public boolean hasObject()
     {
+        if (lastResult == null) return false;
         return lastResult.hasTargets();
     }
     public double getObjectAX() 
     {
+        if (lastResult == null) return 0;
         return lastResult.getBestTarget().getPitch();
     }
 
     public void resetPose(Pose2d pose)
     {
+        if (photonPoseEstimator == null) return;
         photonPoseEstimator.setLastPose(pose);
     }
 
@@ -100,16 +106,19 @@ public class PhotonSystem extends ManagerBase implements VisionSystem
     @Override
     public double getObjectAY()
     {
+        if (lastResult == null) return 0;
         return lastResult.getBestTarget().getYaw();
     }
     @Override
     public double getPipeline()
     {
+        if (photonCamera == null) return 0;
         return photonCamera.getPipelineIndex();
     }
     @Override
     public void setPipeline(double pipeline)
     {
+        if (photonCamera == null) return;
         photonCamera.setPipelineIndex((int) pipeline);
     }
 
