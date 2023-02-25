@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -12,6 +13,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.animation.DefaultAnimation;
@@ -44,7 +47,9 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
 {
+    // SIMULATION //
     public static final Field2d field = new Field2d();
+    public static final Mechanism2d mainMechanism = new Mechanism2d(5, 5);
 
     // CONTROLLERS //
     public static final GameController driverController = GameController.from(
@@ -235,6 +240,8 @@ public class ChargedUp extends RobotContainer
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
             .withPosition(0+2+2+2, 3)
             .withSize(2, 2);
+
+        debugTab.add("Mechanism", mainMechanism);
     }
 
     // SHUFFLEBOARD //
@@ -269,8 +276,7 @@ public class ChargedUp extends RobotContainer
 
         // GYROSCOPE VALUE //
         mainTab
-            .addNumber("Gyroscope", () -> {
-                double y = drivetrain.getRobotRotation().getDegrees();
+            .addNumber("Gyroscope", () -> {               double y = drivetrain.getRobotRotation().getDegrees();
                 return y > 0 ? y : 360+y; 
             })
             .withWidget(BuiltInWidgets.kGyro)

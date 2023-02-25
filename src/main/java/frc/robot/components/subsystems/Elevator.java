@@ -8,6 +8,11 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
 import frc.robot.math.Math555;
@@ -43,6 +48,10 @@ public class Elevator extends ManagerSubsystemBase
 
     PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.updown());
     RelativeEncoder elevatorEncoder;
+
+    MechanismLigament2d ligament;
+
+    public MechanismObject2d getMechanismObject() {return ligament;}
     
     public Elevator(boolean exists)
     {
@@ -54,6 +63,10 @@ public class Elevator extends ManagerSubsystemBase
 
         elevatorEncoder = motor.getEncoder();
         elevatorEncoder.setPositionConversionFactor(Robot.Elevator.ENCODER_CONVERSION_FACTOR);
+
+        MechanismRoot2d elevatorRoot = ChargedUp.mainMechanism.getRoot("Elevator::root", 2.5, 0.5);
+        ligament = elevatorRoot.append(new MechanismLigament2d("Elevator::length", 0, 90));
+        ligament.setColor(new Color8Bit(Simulation.ELEVATOR_COLOR));
     }
     public Elevator() {this(true);}
 
@@ -206,5 +219,10 @@ public class Elevator extends ManagerSubsystemBase
         
         if(shouldStop) motor.set(0);
         else motor.set(elevatorPID.getSpeed());
+
+        // TODO: actual simulation
+        double len = ligament.getLength() + 0.02;
+        if(len > Robot.Elevator.MAX_HEIGHT) len = 0;
+        ligament.setLength(len);
     }
 }

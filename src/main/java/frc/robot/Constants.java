@@ -29,6 +29,12 @@ public final class Constants
         public static final int GRABBER_SOLENOID_PORT = 0;
         public static final int GRABBER_PSI_SOLENOID_PORT = 15;
     }
+    
+    public static class Simulation
+    {
+        public static final Color ELEVATOR_COLOR = Color.kSilver;
+        public static final Color STINGER_COLOR  = Color.kWhite;
+    }
 
     public static class Drive
     {

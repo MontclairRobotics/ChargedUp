@@ -37,12 +37,23 @@
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
+      "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
+      "/Shuffleboard/Debug/The Machanism": "Mechanism2d",
+      "/Shuffleboard/Debug/X-PID Controller": "PIDController",
+      "/Shuffleboard/Debug/Y-PID Controller": "PIDController",
+      "/Shuffleboard/Debug/θ-PID Controller": "PIDController",
+      "/Shuffleboard/Main Tab/Field": "Field2d",
       "/Shuffleboard/Main/Field": "Field2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
+      "/Shuffleboard/Debug/Mechanism": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Main/Field": {
         "Robot": {
           "length": 0.7799999713897705
