@@ -23,12 +23,12 @@ import frc.robot.ChargedUp;
 import frc.robot.Constants.Drive;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
+import frc.robot.structure.DetectionType;
+import frc.robot.structure.Tracking;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.commandrobot.CommandRobot;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
-import frc.robot.vision.DetectionType;
-import frc.robot.vision.Tracking;
 import frc.robot.vision.VisionSystem;
 
 import com.pathplanner.lib.PathPlannerTrajectory;

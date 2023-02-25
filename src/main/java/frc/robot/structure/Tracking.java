@@ -1,4 +1,4 @@
-package frc.robot.vision;
+package frc.robot.structure;
 
 /**
  * An enum containing the thing the robot is currently tracking

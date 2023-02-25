@@ -3,6 +3,8 @@ package frc.robot;
 import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -14,11 +16,14 @@ import frc.robot.animation.QuickSlowFlash;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Drivetrain.DriveCommands;
+import frc.robot.structure.DetectionType;
+import frc.robot.structure.GamePiece;
+import frc.robot.structure.ScoreHeight;
+import frc.robot.structure.ScoringType;
 import frc.robot.util.HashMaps;
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
-import frc.robot.vision.DetectionType;
 
 import static frc.robot.ChargedUp.elevator;
 
@@ -364,7 +369,7 @@ public class Commands2023
      * 
      * retracts the stinger and bring the elevator to mid
      */
-    public static Command scoreFromHeightAndType(Height height, PegOrShelf type)
+    public static Command scoreFromHeightAndType(ScoreHeight height, ScoringType type)
     {
         CommandBase c = Commands.sequence(
             Commands.runOnce(() -> Logging.info("score!!!")),
@@ -388,40 +393,20 @@ public class Commands2023
         return c;
     }
 
-    public static enum PegOrShelf 
-    {
-        PEG, SHELF;
-        
-        public DetectionType getType()
-        {
-            if (this == PEG)    return DetectionType.TAPE;
-            if (this == SHELF)  return DetectionType.APRIL_TAG;
-            return DetectionType.NONE;
-        }
-    }
-    public static enum Height
-    {
-        HIGH, MID, LOW; 
-
-        public Command getPositioner()
-        {
-            if(this == HIGH) return elevatorStingerToHigh();
-            if(this == MID)  return elevatorStingerToMid();
-            if(this == LOW)  return elevatorStingerToLow();
-            
-            return Commands.none();     
-        }
-    }
-
     public static Command scoreMidPeg()
-    {return scoreFromHeightAndType(Height.MID, PegOrShelf.PEG);}
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG);}
     public static Command scoreMidShelf()
-    {return scoreFromHeightAndType(Height.MID, PegOrShelf.SHELF);}
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF);}
     
     public static Command scoreHighPeg()
-    {return scoreFromHeightAndType(Height.HIGH, PegOrShelf.PEG);}
+    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.PEG);}
     public static Command scoreHighShelf()
-    {return scoreFromHeightAndType(Height.HIGH, PegOrShelf.SHELF);}
+    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.SHELF);}
+    
+    public static Command scoreMid()
+    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.MID,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
+    public static Command scoreHigh()
+    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
 
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 
@@ -433,24 +418,24 @@ public class Commands2023
      */
     public static Command balance()
     {
-        return Commands.runEnd(() -> 
-        {
-            ChargedUp.drivetrain.disableFieldRelative();
-
-            double angle = ChargedUp.drivetrain.getChargeStationAngle();
-            double speed = Drive.MAX_SPEED_MPS / 14 * angle / Field.CHARGE_ANGLE_RANGE_DEG;
-
-            if (angle <= Field.CHARGE_ANGLE_DEADBAND && angle >= -Field.CHARGE_ANGLE_DEADBAND) 
+        return Commands.sequence(
+            Commands.runOnce(ChargedUp.drivetrain::disableFieldRelative),
+            Commands.run(() -> 
             {
-                speed = 0;
-            }
-            speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
-            
-            Logging.info("angle = " + angle + "; speed = " + speed);
+                ChargedUp.drivetrain.disableFieldRelative();
 
-            ChargedUp.drivetrain.set(0, speed, 0);
-        }, 
-        () -> ChargedUp.drivetrain.enableFieldRelative());
+                double angle = ChargedUp.drivetrain.getChargeStationAngle();
+                double speed = Drive.MAX_SPEED_MPS / 14 * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+
+                if (angle <= Field.CHARGE_ANGLE_DEADBAND && angle >= -Field.CHARGE_ANGLE_DEADBAND) 
+                {
+                    speed = 0;
+                }
+                speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+
+                ChargedUp.drivetrain.set(0, speed, 0);
+            })
+        ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
     }
 
     /**

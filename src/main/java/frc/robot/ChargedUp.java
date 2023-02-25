@@ -24,13 +24,13 @@ import frc.robot.components.subsystems.Grabber;
 import frc.robot.components.subsystems.Shwooper;
 import frc.robot.components.subsystems.Stinger;
 import frc.robot.inputs.JoystickInput;
+import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.commandrobot.RobotContainer;
-import frc.robot.vision.DetectionType;
 import frc.robot.vision.PhotonSystem;
 import frc.robot.vision.VisionSystem;
 

@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.Constants;
 import frc.robot.animation.*;
+import frc.robot.structure.GamePiece;
 import frc.robot.util.frc.commandrobot.ManagerBase;
-import frc.robot.vision.GamePiece;
 
 public class LED extends ManagerBase 
 {

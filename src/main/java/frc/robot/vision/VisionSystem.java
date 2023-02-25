@@ -1,6 +1,7 @@
 package frc.robot.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.commandrobot.Manager;
 
 public interface VisionSystem extends Manager
@@ -32,18 +33,18 @@ public interface VisionSystem extends Manager
     boolean hasObject();
 
     /**
-     * @return the {@link frc.robot.vision.DetectionType Detection Type} that vision system has found
-     * returns {@link frc.robot.vision.DetectionType#NONE NONE} if not found
+     * @return the {@link frc.robot.structure.DetectionType Detection Type} that vision system has found
+     * returns {@link frc.robot.structure.DetectionType#NONE NONE} if not found
      */
     DetectionType getCurrentType();
 
     /**
-     * @return the {@link frc.robot.vision.DetectionType Detection Type} that vision system is searching for
+     * @return the {@link frc.robot.structure.DetectionType Detection Type} that vision system is searching for
      */
     DetectionType getTargetType();
 
     /**
-     * Set pipeline so that it targets this kind of Field element {@link frc.robot.vision.DetectionType DetectionType}
+     * Set pipeline so that it targets this kind of Field element {@link frc.robot.structure.DetectionType DetectionType}
      */
     void setTargetType(DetectionType type);
 
