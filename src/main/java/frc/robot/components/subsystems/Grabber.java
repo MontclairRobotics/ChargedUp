@@ -33,6 +33,7 @@ public class Grabber extends ManagerSubsystemBase
     GamePiece heldObject = GamePiece.NONE;
 
     public GamePiece getHeldObject() {return heldObject;}
+    public String getHeldObjectName() {return heldObject.toString().toLowerCase();}
     
     /**
      * Update the pressure of the airflow to respect current readings.

@@ -5,8 +5,11 @@ import frc.robot.util.frc.commandrobot.ManagerBase;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Commands2023;
@@ -16,15 +19,16 @@ import frc.robot.Commands2023;
  */
 public class Auto extends ManagerBase
 {
-    private NetworkTableEntry subscriber;
+    private GenericEntry subscriber;
     
     public Auto()
     {
-        subscriber = NetworkTableInstance.getDefault()
-            .getTable("Main")
-            .getEntry("Auto");
-        subscriber.setString("");
-        // guys i have 1 sub on youtube dot commercial website this is so crazy
+        subscriber = Shuffleboard.getTab("Main")
+            .add("Auto Command", "<ERROR>")
+            .withPosition(0, 0)
+            .withSize(2, 1)
+            .withWidget(BuiltInWidgets.kTextView)
+            .getEntry();
     }
 
     private String previous = "";

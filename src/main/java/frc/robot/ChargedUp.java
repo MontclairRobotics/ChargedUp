@@ -78,11 +78,8 @@ public class ChargedUp extends RobotContainer
     { 
         led.setTransition(FadeTransition::new);
 
-        Shuffleboard
-            .getTab("Main")
-            .add("Field", field);
-
-        setupDebug();
+        setupDebugTab();
+        setupMainTab();
 
         vision.setTargetType(DetectionType.APRIL_TAG);
 
@@ -103,29 +100,28 @@ public class ChargedUp extends RobotContainer
             drivetrain
         ));
 
-        driverController.getButton(Button.A_CROSS)
-            .onTrue(Commands.runOnce( () -> DefaultAnimation.setViolet()));
-        driverController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.fire(4))));
+        // driverController.getButton(Button.A_CROSS)
+        //     .onTrue(Commands.runOnce(() -> DefaultAnimation.setViolet()));
+        // driverController.getButton(Button.B_CIRCLE)
+        //     .onTrue(Commands.runOnce(() -> led.add(MagicAnimation.fire(4))));
         // driverController.getButton(Button.A_CROSS)
         //     .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
-        driverController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands.runOnce( () -> led.add(MagicAnimation.galaxy(5))));
-        driverController.getButton(Button.X_SQUARE)
-            .onTrue(Commands.runOnce( () -> led.add(new QuickSlowFlash(Color.kYellow))));
-        
         // driverController.getButton(Button.Y_TRIANGLE)
-        //     .toggleOnTrue(Commands2023.balance());
+        //     .onTrue(Commands.runOnce(() -> led.add(MagicAnimation.galaxy(5))));
+        // driverController.getButton(Button.X_SQUARE)
+        //     .onTrue(Commands.runOnce(() -> led.add(new QuickSlowFlash(Color.kYellow))));
     
         // Buttons for Field Relative and Speed
-        // driverController.getButton(Button.A_CROSS)
-        //     .onTrue(drivetrain.commands.enableFieldRelative());
-        // driverController.getButton(Button.X_SQUARE)
-        //     .onTrue(drivetrain.commands.disableFieldRelative());
-        // driverController.getButton(Button.RIGHT_BUMPER)
-        //     .onTrue(drivetrain.commands.increaseSpeed());
-        // driverController.getButton(Button.LEFT_BUMPER)
-        //     .onTrue(drivetrain.commands.decreaseSpeed());
+        driverController.getButton(Button.A_CROSS)
+            .onTrue(drivetrain.commands.enableFieldRelative());
+        driverController.getButton(Button.X_SQUARE)
+            .onTrue(drivetrain.commands.disableFieldRelative());
+        driverController.getButton(Button.Y_TRIANGLE)
+            .toggleOnTrue(Commands2023.balance());
+        driverController.getButton(Button.RIGHT_BUMPER)
+            .onTrue(drivetrain.commands.increaseSpeed());
+        driverController.getButton(Button.LEFT_BUMPER)
+            .onTrue(drivetrain.commands.decreaseSpeed());
         
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
@@ -210,12 +206,6 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands2023.quickSlowFlashYellow());
         operatorController.getButton(Button.LEFT_BUMPER)
             .onTrue(Commands2023.quickSlowFlashPurple());
-
-        // SETUP LOGGING //
-        Shuffleboard.getTab("Main")
-            .addString("Logs", Logging::mostRecentLog)
-            .withWidget(BuiltInWidgets.kTextView);
-
     }
 
     
@@ -227,7 +217,8 @@ public class ChargedUp extends RobotContainer
     {
         return auto.get();
     }
-    public void setupDebug()
+
+    public void setupDebugTab()
     {
         debugTab.add("X-PID Controller", drivetrain.xController)
             .withPosition(0, 3)
@@ -239,19 +230,22 @@ public class ChargedUp extends RobotContainer
             .withPosition(0+2+2, 3)
             .withSize(2, 3);
 
-        // debugTab.addStringArray("Logs", Logging::allLogsArr)
-        //     .withPosition(0+2+2+2, 3)
-        //     .withSize(4, 2);
-
-        
+        debugTab.addStringArray("All Logs", Logging::allLogsArr)
+            .withPosition(0+2+2+2, 3)
+            .withSize(4, 2);
     }
 
     // SHUFFLEBOARD //
-    public void setUpMainTab()
+    public void setupMainTab()
     {
+        // SETUP FIELD //
+        Shuffleboard.getTab("Main")
+            .add("Field", field)
+            .withPosition(0, 0);
+        
         // SETUP LOGGING //
         Shuffleboard.getTab("Main")
-            .addString("Logs", Logging::allLogs)
+            .addString("Logs", Logging::mostRecentLog)
             .withWidget(BuiltInWidgets.kTextView);
 
         // SETUP AUTO //
@@ -260,29 +254,52 @@ public class ChargedUp extends RobotContainer
 
         // IS USING FIELD RELATIVE //
         Shuffleboard.getTab("Main")
-        .addBoolean("Field Relative", () -> drivetrain.usingFieldRelative())
-        .withWidget(BuiltInWidgets.kBooleanBox)
-        .withSize(2, 1)
-        .withPosition(0, 0);
+            .addBoolean("Field Relative", drivetrain::usingFieldRelative)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(2, 1)
+            .withPosition(0, 0);
 
-        //LOGGING LOG RECENT//
+        // LOGGING LOG RECENT //
         Shuffleboard.getTab("Main")
-        .addString("Log:", () -> Logging.mostRecentLog())
-        .withSize(3, 1)
-        .withPosition(0, 2);
+            .addString("Recent Log", Logging::mostRecentLog)
+            .withSize(3, 1)
+            .withPosition(0, 2);
 
-        //CAMERAS//
+        // CAMERAS //
         Shuffleboard.getTab("Main")
-        .addCamera("", "", vision.getCameraStreamURL())
-        .withSize(3, 2)
-        .withPosition(0, 3);
+            .addCamera("Cameras", "Vision Camera", vision.getCameraStreamURL())
+            .withSize(3, 2)
+            .withPosition(0, 3);
 
-        //MAX SPEED//
+        // GYROSCOPE VALUE //
         Shuffleboard.getTab("Main")
-        .addString("Max Speed", () -> "" + Drive.MAX_SPEED_MPS)
-        .withSize(1, 1)
-        .withPosition(3, 1);
+            .addNumber("Gyroscope", () -> {
+                double y = gyroscope.getYaw();
+                return y > 0 ? y : 360+y; 
+            })
+            .withWidget(BuiltInWidgets.kGyro)
+            .withSize(2, 2)
+            .withPosition(2, 0);
+        
+        // MAX LINEAR SPEED //
+        Shuffleboard.getTab("Main")
+            .addNumber("Max Linear Speed (m/s)", () -> drivetrain.getCurrentSpeedLimits()[0] * Drive.MAX_SPEED_MPS)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(2, 2)
+            .withPosition(4, 0);
+        // MAX ANGULAR SPEED //
+        Shuffleboard.getTab("Main")
+            .addNumber("Max Angular Speed (rad/s)", () -> drivetrain.getCurrentSpeedLimits()[1] * Drive.MAX_TURN_SPEED_RAD_PER_S)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(2, 2)
+            .withPosition(4, 2);
+        
+        // HELD OBJECT //
+        Shuffleboard.getTab("Main")
+            .addString("Held Object", grabber::getHeldObjectName)
+            .withSize(1, 1)
+            .withPosition(4, 4);
 
-        //TODO: Gyro, Currently Holding, Field Relative, Fixed Cameras, Field View, Auto Input
+        //TODO: Fixed Cameras, Field View, Auto Input
     }
 }

@@ -69,7 +69,7 @@ public class Logging
             list.add(line);
         }
 
-        if (list.size() == 0) list.add("lol");
+        if (list.size() == 0) list.add("<none here!>");
         return list.toArray(String[]::new);
     }
     public static String mostRecentLog()
