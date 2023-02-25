@@ -126,11 +126,7 @@ public class Drivetrain extends ManagerSubsystemBase
         moduleObject.setPoses(modPoses);
 
         // Build Shuffleboard //
-        Shuffleboard.getTab("Main")
-            .addBoolean("Field Relative", () -> useFieldRelative)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 0);
+
 
         Shuffleboard.getTab("Main")
             .addNumber("Gyroscope", () -> {
@@ -203,6 +199,13 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         useFieldRelative = false;
         Logging.info("Field relative disabled");
+    }
+
+    /**
+     * Gets if field relative is enabled
+     */
+    public boolean usingFieldRelative() {
+        return useFieldRelative;
     }
 
     public double getChargeStationAngle()
