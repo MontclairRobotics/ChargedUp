@@ -25,7 +25,7 @@ public class Auto extends ManagerBase
     public Auto()
     {
         subscriber = ChargedUp.getMainTab()
-            .add("Auto Command", "")
+            .add("Auto Command", "<ERROR>")
             .withPosition(0, 0)
             .withSize(2, 1)
             .withWidget(BuiltInWidgets.kTextView)
