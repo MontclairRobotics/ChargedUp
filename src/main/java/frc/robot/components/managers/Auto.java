@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.ChargedUp;
 import frc.robot.Commands2023;
 
 /**
@@ -23,8 +24,8 @@ public class Auto extends ManagerBase
     
     public Auto()
     {
-        subscriber = Shuffleboard.getTab("Main")
-            .add("Auto Command", "<ERROR>")
+        subscriber = ChargedUp.getMainTab()
+            .add("Auto Command", "")
             .withPosition(0, 0)
             .withSize(2, 1)
             .withWidget(BuiltInWidgets.kTextView)

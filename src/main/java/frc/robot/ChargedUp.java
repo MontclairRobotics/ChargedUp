@@ -57,6 +57,8 @@ public class ChargedUp extends RobotContainer
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
     public static ShuffleboardTab getDebugTab() {return debugTab;}
+    private static final ShuffleboardTab mainTab = Shuffleboard.getTab("Main");
+    public static ShuffleboardTab getMainTab() {return mainTab;}
 
     // COMPONENTS //
     public static final AHRS gyroscope = new AHRS();
@@ -239,40 +241,33 @@ public class ChargedUp extends RobotContainer
     public void setupMainTab()
     {
         // SETUP FIELD //
-        Shuffleboard.getTab("Main")
+        mainTab
             .add("Field", field)
             .withPosition(0, 0);
         
         // SETUP LOGGING //
-        Shuffleboard.getTab("Main")
-            .addString("Logs", Logging::mostRecentLog)
-            .withWidget(BuiltInWidgets.kTextView);
-
-        // SETUP AUTO //
-        // Shuffleboard.getTab("Main")
-        // .addString()
 
         // IS USING FIELD RELATIVE //
-        Shuffleboard.getTab("Main")
+        mainTab
             .addBoolean("Field Relative", drivetrain::usingFieldRelative)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withSize(2, 1)
             .withPosition(0, 0);
 
         // LOGGING LOG RECENT //
-        Shuffleboard.getTab("Main")
+        mainTab
             .addString("Recent Log", Logging::mostRecentLog)
             .withSize(3, 1)
             .withPosition(0, 2);
 
         // CAMERAS //
-        Shuffleboard.getTab("Main")
-            .addCamera("Cameras", "Vision Camera", vision.getCameraStreamURL())
-            .withSize(3, 2)
-            .withPosition(0, 3);
+        // mainTab
+        //     .addCamera("Cameras", "Vision Camera", vision.getCameraStreamURL())
+        //     .withSize(3, 2)
+        //     .withPosition(0, 3);
 
         // GYROSCOPE VALUE //
-        Shuffleboard.getTab("Main")
+        mainTab
             .addNumber("Gyroscope", () -> {
                 double y = gyroscope.getYaw();
                 return y > 0 ? y : 360+y; 
@@ -282,20 +277,20 @@ public class ChargedUp extends RobotContainer
             .withPosition(2, 0);
         
         // MAX LINEAR SPEED //
-        Shuffleboard.getTab("Main")
+        mainTab
             .addNumber("Max Linear Speed (m/s)", () -> drivetrain.getCurrentSpeedLimits()[0] * Drive.MAX_SPEED_MPS)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(2, 2)
             .withPosition(4, 0);
         // MAX ANGULAR SPEED //
-        Shuffleboard.getTab("Main")
+        mainTab
             .addNumber("Max Angular Speed (rad/s)", () -> drivetrain.getCurrentSpeedLimits()[1] * Drive.MAX_TURN_SPEED_RAD_PER_S)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(2, 2)
             .withPosition(4, 2);
         
         // HELD OBJECT //
-        Shuffleboard.getTab("Main")
+        mainTab
             .addString("Held Object", grabber::getHeldObjectName)
             .withSize(1, 1)
             .withPosition(4, 4);

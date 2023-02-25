@@ -510,7 +510,7 @@ public class Commands2023
                 default: 
                 {
                     Logging.error("Invalid path point! Please be better.");
-                    return none();
+                    return null;
                 }
             }
         }
@@ -532,15 +532,15 @@ public class Commands2023
             }
             catch (Exception e)
             {
-                Logging.error("Error finding path transition " + str + ": is it valid? Are you dumb? Who knows!\n" + e);
-                return none();
+                Logging.errorNoTrace("Error finding path transition '" + str + "'");
+                return null;
             }
         }
         // Error
         else 
         {
-            Logging.error("(> 2 || == 0) characters in received string! Please cry about it.");
-            return none();
+            Logging.errorNoTrace("More than two or zero characters in received string!");
+            return null;
         }
     }
 
@@ -556,6 +556,11 @@ public class Commands2023
         for (int i = 0; i < list.length; i++)
         {
             commandList[i] = fromStringToCommand(list[i]);
+
+            if(commandList[i] == null)
+            {
+                return null;
+            }
         }
         
         return Commands.sequence(
