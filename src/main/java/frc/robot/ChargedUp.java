@@ -223,4 +223,44 @@ public class ChargedUp extends RobotContainer
     {
         
     }
+
+    // SHUFFLEBOARD //
+    public void setUpMainTab()
+    {
+        // SETUP LOGGING //
+        Shuffleboard.getTab("Main")
+            .addString("Logs", Logging::allLogs)
+            .withWidget(BuiltInWidgets.kTextView);
+
+        // SETUP AUTO //
+        // Shuffleboard.getTab("Main")
+        // .addString()
+
+        // IS USING FIELD RELATIVE //
+        Shuffleboard.getTab("Main")
+        .addBoolean("Field Relative", () -> drivetrain.usingFieldRelative())
+        .withWidget(BuiltInWidgets.kBooleanBox)
+        .withSize(2, 1)
+        .withPosition(0, 0);
+
+        //LOGGING LOG RECENT//
+        Shuffleboard.getTab("Main")
+        .addString("Log:", () -> Logging.mostRecentLog())
+        .withSize(3, 1)
+        .withPosition(0, 2);
+
+        //CAMERAS//
+        Shuffleboard.getTab("Main")
+        .addCamera("", "", vision.getCameraStreamURL())
+        .withSize(3, 2)
+        .withPosition(0, 3);
+
+        //MAX SPEED//
+        Shuffleboard.getTab("Main")
+        .addString("Max Speed", () -> "" + Drive.MAX_SPEED_MPS)
+        .withSize(1, 1)
+        .withPosition(3, 1);
+
+        //TODO: Gyro, Currently Holding, Field Relative, Fixed Cameras, Field View, Auto Input
+    }
 }

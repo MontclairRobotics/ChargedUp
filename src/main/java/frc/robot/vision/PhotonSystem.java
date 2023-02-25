@@ -5,6 +5,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SynchronousInterrupt;
+import frc.robot.Constants;
 import frc.robot.Constants.*;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.commandrobot.ManagerBase;
@@ -89,6 +90,11 @@ public class PhotonSystem extends ManagerBase implements VisionSystem
     public void resetPose(Pose2d pose)
     {
         photonPoseEstimator.setLastPose(pose);
+    }
+
+    public String getCameraStreamURL()
+    {
+        return Robot.PhotonVision.PHOTON_URL;
     }
 
     @Override
