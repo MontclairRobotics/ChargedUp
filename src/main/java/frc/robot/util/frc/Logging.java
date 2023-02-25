@@ -1,7 +1,10 @@
 package frc.robot.util.frc;
 
 import java.time.Instant;
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.ChargedUp;
 import frc.robot.util.StackTrace555;
 
 /**
@@ -55,6 +58,19 @@ public class Logging
         }
 
         return s.toString();
+    }
+    public static String[] allLogsArr()
+    {
+        ArrayList<String> list = new ArrayList<String>();
+
+        for(String line : logs)
+        {
+            if(line == null) break;
+            list.add(line);
+        }
+
+        if (list.size() == 0) list.add("lol");
+        return list.toArray(String[]::new);
     }
     public static String mostRecentLog()
     {

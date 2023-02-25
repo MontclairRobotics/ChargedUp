@@ -6,8 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.util.Color;
@@ -225,7 +227,6 @@ public class ChargedUp extends RobotContainer
     {
         return auto.get();
     }
-    
     public void setupDebug()
     {
         debugTab.add("X-PID Controller", drivetrain.xController)
@@ -238,9 +239,10 @@ public class ChargedUp extends RobotContainer
             .withPosition(0+2+2, 3)
             .withSize(2, 3);
 
-        debugTab.addString("Logs", Logging::allLogs)
-            .withWidget(BuiltInWidgets.kTextView)
-            .withPosition(0+2+2+2, 3)
-            .withSize(4, 2);
+        // debugTab.addStringArray("Logs", Logging::allLogsArr)
+        //     .withPosition(0+2+2+2, 3)
+        //     .withSize(4, 2);
+
+        
     }
 }
