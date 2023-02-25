@@ -604,7 +604,7 @@ public class Commands2023
 
         if(parts == null) 
         {
-            return none();
+            return null;
         }
 
         return buildAuto(parts);

@@ -217,4 +217,10 @@ public class ChargedUp extends RobotContainer
     {
         return auto.get();
     }
+
+
+    public void setupDebug()
+    {
+        
+    }
 }

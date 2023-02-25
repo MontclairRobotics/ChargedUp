@@ -47,7 +47,14 @@ public class Auto extends ManagerBase
 
         command = Commands2023.buildAuto(str);
 
-        Logging.info("Created the autonomous sequence '" + str + "'");
+        if(command != null)
+        {
+            Logging.info("Created the autonomous sequence '" + str + "' successfully!");
+        }
+        else 
+        {
+            command = Commands.none();
+        }
     }
 
     @Override
