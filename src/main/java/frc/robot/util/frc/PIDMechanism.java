@@ -1,14 +1,20 @@
 package frc.robot.util.frc;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import frc.robot.math.Math555;
 
 
-public class PIDMechanism
+public class PIDMechanism implements Sendable
 {
     private PIDController pidController;
     private boolean usingPID;
     private double measurement;
     private double speed;
+    private double directSpeed;
+    
+    private boolean clampOutput = true;
 
     public PIDMechanism(PIDController pidController)
     {
@@ -23,6 +29,11 @@ public class PIDMechanism
     public PIDController getPIDController()
     {
         return pidController;
+    }
+
+    public void disableOutputClamping()
+    {
+        clampOutput = false;
     }
 
     /**
@@ -52,13 +63,19 @@ public class PIDMechanism
     {
         this.measurement = measurement;
     }
+
+    public double getMeasurement()
+    {
+        return measurement;
+    }
+
     /**
      * Set the speed manually (without PID)
      * @param speed
      */
     public void setSpeed(double speed) //duck you fylan
     {
-        this.speed = speed;
+        this.directSpeed = speed;
     }
     /**
      * Updates the calculated speed
@@ -70,8 +87,23 @@ public class PIDMechanism
      */
     public void update()
     {
-        //value = boolean ? if true set to this : else set to this
-        speed = usingPID ? pidController.calculate(measurement) : speed;
+        if(usingPID)
+        {
+            double calulation = pidController.calculate(measurement);
+
+            if(clampOutput)
+            {
+                speed = Math555.clamp1(calulation);
+            }
+            else 
+            {
+                speed = calulation;
+            }
+        }
+        else 
+        {
+            speed = directSpeed;
+        }
 
         if(pidController.atSetpoint())
         {
@@ -98,6 +130,23 @@ public class PIDMechanism
     public boolean active()
     {
         return usingPID;
+    }
+    public boolean free()
+    {
+        return !usingPID;
+    }
+
+    @Override
+    public void initSendable(SendableBuilder builder) 
+    {
+        builder.addDoubleProperty ("P", pidController::getP, pidController::setP);
+        builder.addDoubleProperty ("I", pidController::getI, pidController::setI);
+        builder.addDoubleProperty ("D", pidController::getD, pidController::setD);
+        builder.addDoubleProperty ("Setpoint", pidController::getSetpoint, pidController::setSetpoint);
+        builder.addBooleanProperty("At Setpoint", pidController::atSetpoint, x -> {});
+        builder.addDoubleProperty ("Speed", () -> speed, x -> {});
+
+        builder.setSmartDashboardType("ShuffleboardLayout");
     }
 }
 

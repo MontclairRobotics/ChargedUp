@@ -191,14 +191,16 @@ public final class Constants
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
             public static final double 
-                KP = 1,
-                KI = 1,
-                KD = 1
+                KP = 0.25,
+                KI = 0.1,
+                KD = 0
             ;
 
             public static final PIDController updown() 
             {
-                return new PIDController(KP, KI, KD);
+                PIDController p = new PIDController(KP, KI, KD);
+                p.setTolerance(0.04);
+                return p;
             }
         }
 
@@ -294,14 +296,16 @@ public final class Constants
             public static final int INNER_LIMIT_SWITCH = 4;
 
             public static final double
-                IN_OUT_KP = 1,
-                IN_OUT_KI = 0,
+                IN_OUT_KP = 0.2,
+                IN_OUT_KI = 0.1,
                 IN_OUT_KD = 0
             ;
             
             public static final PIDController inout()
             {
-                return new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
+                PIDController p = new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
+                p.setTolerance(0.01);
+                return p;
             }
 
             public static final double MID_LENGTH_MUL = 0.65;
@@ -325,7 +329,7 @@ public final class Constants
             public static final double SEGMENT_COUNT_SQ = SEGMENT_COUNT*SEGMENT_COUNT;
             public static final double SEGMENT_LENGTH_SQ = SEGMENT_LENGTH*SEGMENT_LENGTH;
 
-            public static final double LEAD_SCREW_FACTOR = 0.5;
+            public static final double LEAD_SCREW_FACTOR = 0.1;
 
             public static double leadDistToStngDist(final double leadDist)
             {

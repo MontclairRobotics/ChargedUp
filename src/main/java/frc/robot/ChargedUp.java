@@ -24,6 +24,7 @@ import frc.robot.animation.QuickSlowFlash;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.managers.ColorSensor;
 import frc.robot.components.managers.LED;
+import frc.robot.components.managers.SimulationHooks;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
@@ -69,7 +70,6 @@ public class ChargedUp extends RobotContainer
     public static final AHRS gyroscope = new AHRS();
     public static final LED  led       = new LED();
 
-    // public static final Limelight   limelight   = new ();
     public static final VisionSystem vision      = new PhotonSystem();
     public static final ColorSensor  colorSensor = new ColorSensor();
 
@@ -78,6 +78,9 @@ public class ChargedUp extends RobotContainer
     public static final Shwooper   shwooper   = new Shwooper();
     public static final Grabber    grabber    = new Grabber();
     public static final Stinger    stinger    = new Stinger();
+
+    //TODO: needing to create an object for this is kidna dumb
+    public static final SimulationHooks simHooks = new SimulationHooks();
 
     // INITIALIZER //
     @Override 
@@ -121,8 +124,10 @@ public class ChargedUp extends RobotContainer
         // Buttons for Field Relative and Speed
         driverController.getButton(Button.A_CROSS)
             .onTrue(drivetrain.commands.enableFieldRelative());
+        // driverController.getButton(Button.X_SQUARE)
+        //     .onTrue(drivetrain.commands.disableFieldRelative());
         driverController.getButton(Button.X_SQUARE)
-            .onTrue(drivetrain.commands.disableFieldRelative());
+            .onTrue(Commands2023.scoreHigh());
         driverController.getButton(Button.Y_TRIANGLE)
             .toggleOnTrue(Commands2023.balance());
         driverController.getButton(Button.RIGHT_BUMPER)
@@ -227,14 +232,21 @@ public class ChargedUp extends RobotContainer
 
     public void setupDebugTab()
     {
-        debugTab.add("X-PID Controller", drivetrain.xController)
+        debugTab.add("X-PID Controller", drivetrain.xPID)
             .withPosition(0, 3)
             .withSize(2, 3);
-        debugTab.add("Y-PID Controller", drivetrain.yController)
+        debugTab.add("Y-PID Controller", drivetrain.yPID)
             .withPosition(0+2, 3)
             .withSize(2, 3);
-        debugTab.add("θ-PID Controller", drivetrain.thetaController)
+        debugTab.add("θ-PID Controller", drivetrain.thetaPID)
             .withPosition(0+2+2, 3)
+            .withSize(2, 3);
+
+        debugTab.add("Elevator PID", elevator.PID)
+            .withPosition(0, 3)
+            .withSize(2, 3);
+        debugTab.add("Stinger PID", stinger.PID)
+            .withPosition(0, 3)
             .withSize(2, 3);
 
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
@@ -276,7 +288,8 @@ public class ChargedUp extends RobotContainer
 
         // GYROSCOPE VALUE //
         mainTab
-            .addNumber("Gyroscope", () -> {               double y = drivetrain.getRobotRotation().getDegrees();
+            .addNumber("Gyroscope", () -> {               
+                double y = drivetrain.getRobotRotation().getDegrees();
                 return y > 0 ? y : 360+y; 
             })
             .withWidget(BuiltInWidgets.kGyro)
@@ -297,7 +310,5 @@ public class ChargedUp extends RobotContainer
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(2, 1)
             .withPosition(0, 2);
-
-        //TODO: Fixed Cameras, Field View, Auto Input
     }
 }

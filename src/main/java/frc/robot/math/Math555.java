@@ -151,4 +151,9 @@ public class Math555
         if(v > 0) return +Math.pow(+v, pow);
         else      return -Math.pow(-v, pow);
     }
+
+    public static double clamp1(double v) 
+    {
+        return clamp(v, -1, 1);
+    }
 }
