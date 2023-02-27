@@ -23,6 +23,7 @@ import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
 import frc.robot.components.subsystems.Shwooper;
+import frc.robot.components.subsystems.ComplexShwooper;
 import frc.robot.components.subsystems.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
@@ -66,7 +67,7 @@ public class ChargedUp extends RobotContainer
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
-    public static final Shwooper   shwooper   = new Shwooper();
+    public static final Shwooper   shwooper   = new ComplexShwooper();
     public static final Grabber    grabber    = new Grabber();
     public static final Stinger    stinger    = new Stinger();
 
