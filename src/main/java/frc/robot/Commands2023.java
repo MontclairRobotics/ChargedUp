@@ -301,21 +301,21 @@ public class Commands2023
      */
     public static Command toggleShwooper() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::toggle);
+        return Commands.runOnce(ChargedUp.shwooper::toggleShwooper);
     }
     /**
      * retracts shwooper
      */ 
     public static Command retractSchwooper()
     {
-        return Commands.runOnce(ChargedUp.shwooper::retract);
+        return Commands.runOnce(ChargedUp.shwooper::retractShwooper);
     }
     /** 
      * extends shwooper
      */  
     public static Command extendSchwooper()
     {
-        return Commands.runOnce(ChargedUp.shwooper::extend);
+        return Commands.runOnce(ChargedUp.shwooper::extendShwooper);
     }
 
     /**

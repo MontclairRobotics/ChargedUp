@@ -221,6 +221,8 @@ public final class Constants
             public static final boolean CENTER_INVERSION = false;
 
             public static final double SUCK_TIME_FOR_PICKUP_AUTO = 1;
+
+            public static final int INVERT_SIMPLE_SCHWOOPER = 1; // or -1
         }  
 
         public static class ColorSensing
