@@ -32,6 +32,11 @@ import java.util.Arrays;
 public class Commands2023 
 {   
 
+    public static Command log(String str) 
+    {
+        return Commands.runOnce(() -> Logging.info(str));
+    }
+
     /////////////////////// LED COMMANDS /////////////////////////
 
 
@@ -172,10 +177,10 @@ public class Commands2023
     public static Command elevatorStingerToHigh()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.stinger.toHigh())
-                .until(ChargedUp.stinger::isPIDFree),
             run(() -> ChargedUp.elevator.setHigh())
-                .until(ChargedUp.elevator::isPIDFree)
+                .until(ChargedUp.elevator.PID::free),
+            run(() -> ChargedUp.stinger.toHigh())
+                .until(ChargedUp.stinger.PID::free)
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -192,9 +197,9 @@ public class Commands2023
     {
         CommandBase c = sequence(
             run(() -> ChargedUp.stinger.toMid())
-                .until(ChargedUp.stinger::isPIDFree),
+                .until(ChargedUp.stinger.PID::free),
             run(() -> ChargedUp.elevator.setMid())
-                .until(ChargedUp.elevator::isPIDFree)
+                .until(ChargedUp.elevator.PID::free)
         );
 
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
@@ -213,9 +218,9 @@ public class Commands2023
     {
         CommandBase c = sequence(
             run(() -> ChargedUp.stinger.fullyRetract())
-                .until(ChargedUp.stinger::isPIDFree),
+                .until(ChargedUp.stinger.PID::free),
             run(() -> ChargedUp.elevator.setLow())
-                .until(ChargedUp.elevator::isPIDFree)
+                .until(ChargedUp.elevator.PID::free)
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -372,22 +377,27 @@ public class Commands2023
     public static Command scoreFromHeightAndType(ScoreHeight height, ScoringType type)
     {
         CommandBase c = Commands.sequence(
-            Commands.runOnce(() -> Logging.info("score!!!")),
+            log("[SCORE] Beginning score sequence . . ."),
 
             //move sideways to the target
             Commands2023.moveToObjectSideways(type.getType()),
 
             //Prepare position
+            log("[SCORE] Positioning elevator and stinger . . ."),
             height.getPositioner(), 
 
             //Drop grabber
+            log("[SCORE] Dropping . . ."),
             openGrabber(), 
 
             //Return to position 
-            Commands.parallel(
+            log("[SCORE] Returning elevator and stinger to internal state . . ."),
+            Commands.sequence(
                 retractStinger(), 
                 elevatorToMid()
-            )
+            ),
+            
+            log("[SCORE] Done!")
         );
         
         return c;
@@ -438,14 +448,21 @@ public class Commands2023
         ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
     }
 
+    public static Command ifHasTarget(Command cmd)
+    {
+        return cmd.until(() -> !ChargedUp.vision.hasObject()).unless(() -> !ChargedUp.vision.hasObject());
+    }
+
     /**
      * Turns to the object.
      * @return
      */
     public static Command turnToObject() 
     {
-        return Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
-            .until(() -> ChargedUp.drivetrain.isThetaPIDFree());
+        return ifHasTarget(
+            Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
+                .until(() -> ChargedUp.drivetrain.isThetaPIDFree())
+        );
     }
 
     /**
@@ -454,8 +471,10 @@ public class Commands2023
      */
     public static Command moveToObjectSideways()
     {
-        return Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(ChargedUp.drivetrain.getRobotPose().getX() + ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
-            .until(() -> !ChargedUp.drivetrain.xPID.active());
+        return ifHasTarget(
+            Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(ChargedUp.drivetrain.getRobotPose().getX() + ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
+            .until(() -> !ChargedUp.drivetrain.xPID.active())
+        );
     }
 
     /**
@@ -510,7 +529,7 @@ public class Commands2023
                 default: 
                 {
                     Logging.error("Invalid path point! Please be better.");
-                    return none();
+                    return null;
                 }
             }
         }
@@ -532,15 +551,15 @@ public class Commands2023
             }
             catch (Exception e)
             {
-                Logging.error("Error finding path transition " + str + ": is it valid? Are you dumb? Who knows!\n" + e);
-                return none();
+                Logging.errorNoTrace("Error finding path transition '" + str + "'");
+                return null;
             }
         }
         // Error
         else 
         {
-            Logging.error("(> 2 || == 0) characters in received string! Please cry about it.");
-            return none();
+            Logging.errorNoTrace("More than two or zero characters in received string!");
+            return null;
         }
     }
 
@@ -556,6 +575,11 @@ public class Commands2023
         for (int i = 0; i < list.length; i++)
         {
             commandList[i] = fromStringToCommand(list[i]);
+
+            if(commandList[i] == null)
+            {
+                return null;
+            }
         }
         
         return Commands.sequence(

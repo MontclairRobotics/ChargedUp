@@ -1,61 +1,68 @@
 package frc.robot.components.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.hal.SimDevice;
+import edu.wpi.first.hal.SimDeviceJNI;
+import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
 import frc.robot.Constants.*;
 import frc.robot.math.Math555;
+import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
+import frc.robot.util.frc.SimulationUtility;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Elevator extends ManagerSubsystemBase 
 {
-    private boolean exists;
-
     private boolean shouldStop;
 
     private CANSparkMax motor;
+    RelativeEncoder encoder;
 
-    private DigitalInput toplimitSwitch = new DigitalInput(Robot.Elevator.TOP_LIMIT_SWITCH);
-    private DigitalInput bottomlimitSwitch = new DigitalInput(Robot.Elevator.BOTTOM_LIMIT_SWITCH);
-    private DigitalInput startlimitSwitch = new DigitalInput(Robot.Elevator.START_LIMIT_SWITCH);
+    SimDeviceSim motorSim;
 
-    // does not work, copied off https://docs.wpilib.org/en/stable/docs/software/wpilib-tools/robot-simulation/physics-sim.html
-    // private ElevatorSim elevatorSim =
-    //     new ElevatorSim(
-    //     gearbox,
-    //     40,
-    //     15,
-    //     0.939,
-    //     0,
-    //     2,
-    //     false,
-    //     VecBuilder.fill(0.01));
+    private LimitSwitch toplimitSwitch = new LimitSwitch(Robot.Elevator.TOP_LIMIT_SWITCH);
+    private LimitSwitch bottomlimitSwitch = new LimitSwitch(Robot.Elevator.BOTTOM_LIMIT_SWITCH);
+    private LimitSwitch startlimitSwitch = new LimitSwitch(Robot.Elevator.START_LIMIT_SWITCH);
 
-    // private final EncoderSim m_encoderSim = new EncoderSim(m_encoder);
+    public final PIDMechanism PID = new PIDMechanism(Robot.Elevator.updown());
 
-    PIDMechanism elevatorPID = new PIDMechanism(Robot.Elevator.updown());
-    RelativeEncoder elevatorEncoder;
+    MechanismLigament2d ligament;
+
+    public MechanismObject2d getMechanismObject() {return ligament;}
     
-    public Elevator(boolean exists)
+    public Elevator()
     {
-        this.exists = exists;
-        if(!exists) return;
-
         motor = new CANSparkMax(Robot.Elevator.MOTOR_PORT, MotorType.kBrushless);
         motor.setInverted(Robot.Elevator.INVERTED);
 
-        elevatorEncoder = motor.getEncoder();
-        elevatorEncoder.setPositionConversionFactor(Robot.Elevator.ENCODER_CONVERSION_FACTOR);
+        encoder = motor.getEncoder();
+        encoder.setPositionConversionFactor(Robot.Elevator.ENCODER_CONVERSION_FACTOR);
+
+        motorSim = new SimDeviceSim("SPARK MAX [" + motor.getDeviceId() + "]");
+
+        MechanismRoot2d elevatorRoot = ChargedUp.mainMechanism.getRoot("Elevator::root", 2.5, 0.5);
+        ligament = elevatorRoot.append(new MechanismLigament2d("Elevator::length", 0, 90));
+        ligament.setColor(new Color8Bit(Simulation.ELEVATOR_COLOR));
     }
-    public Elevator() {this(true);}
 
     /**
      * Set elevator to a desired height
@@ -73,7 +80,7 @@ public class Elevator extends ManagerSubsystemBase
 
         height = Math555.clamp(height, Robot.Elevator.MIN_HEIGHT, Robot.Elevator.MAX_HEIGHT);
 
-        elevatorPID.setTarget(height);
+        PID.setTarget(height);
     }
 
     /**
@@ -97,7 +104,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void setLow()
     {
-        elevatorPID.setTarget(0);
+        setHeight(0);
     }
 
     /**
@@ -105,7 +112,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void delevate()
     {
-        elevatorPID.setSpeed(-Robot.Elevator.SPEED);
+        PID.setSpeed(-Robot.Elevator.SPEED);
     }
 
     /**
@@ -113,7 +120,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void elevate()
     {
-        elevatorPID.setSpeed(Robot.Elevator.SPEED);
+        PID.setSpeed(Robot.Elevator.SPEED);
     }
 
     /**
@@ -122,7 +129,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void setSpeed(double speed) 
     {
-        elevatorPID.setSpeed(speed);
+        PID.setSpeed(speed);
     }
 
     /** 
@@ -130,7 +137,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void stop()
     {
-        elevatorPID.setSpeed(0);
+        PID.setSpeed(0);
     }
 
     /** 
@@ -138,7 +145,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void resetElevatorEncoder() 
     {
-        elevatorEncoder.setPosition(0);
+        encoder.setPosition(0);
     }
 
     /**
@@ -151,20 +158,20 @@ public class Elevator extends ManagerSubsystemBase
     }
 
     /**
-     * returns if the elevator is currently not using {@link Elevator#elevatorPID PID}
+     * returns if the elevator is currently not using {@link Elevator#PID PID}
      * @return boolean
      */
     public boolean isPIDFree()
     {
-        return !elevatorPID.active();
+        return !PID.active();
     }
 
     /**
-     * Cancel the elevator PIDing using {@link Elevator#elevatorPID}
+     * Cancel the elevator PIDing using {@link Elevator#PID}
      */
     public void stopPIDing()
     {
-        elevatorPID.cancel();
+        PID.cancel();
     }
 
     
@@ -173,23 +180,21 @@ public class Elevator extends ManagerSubsystemBase
     {
         shouldStop = false;
 
-        if(!exists) return;
-
-        if (ChargedUp.shwooper.isShwooperOut() && elevatorEncoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) 
+        if (ChargedUp.shwooper.isShwooperOut() && encoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) 
         {
-            elevatorPID.cancel();
-            if (elevatorPID.getSpeed() < 0) 
+            if (PID.getSpeed() < 0) 
             {
-                elevatorPID.setSpeed(0);
+                PID.cancel();
+                PID.setSpeed(0);
             }
         }
 
-        if (elevatorPID.getSpeed() > 0) 
+        if (PID.getSpeed() > 0) 
         {
             if (toplimitSwitch.get()) 
             {
                 shouldStop = true;
-                elevatorPID.setSpeed(0);
+                PID.setSpeed(0);
             }
         } 
         else 
@@ -197,14 +202,32 @@ public class Elevator extends ManagerSubsystemBase
             if (bottomlimitSwitch.get()) 
             {
                 shouldStop = true;
-                elevatorPID.setSpeed(0);
+                PID.setSpeed(0);
             }
         }
 
-        elevatorPID.setMeasurement(elevatorEncoder.getPosition());
-        elevatorPID.update();
+        PID.setMeasurement(encoder.getPosition());
+        PID.update();
+
+        // System.out.println("----------------------------------------------");
+        // System.out.println("Elevator::measurement = " + PID.getMeasurement());
+        // System.out.println("Elevator::error       = " + PID.getPIDController().getPositionError());
+        // System.out.println("Elevator::setpoint    = " + PID.getPIDController().getSetpoint());
+        // System.out.println("Elevator::speed       = " + PID.getSpeed());
+        // System.out.println("Elevator::position    = " + encoder.getPosition());
+        // System.out.println("Elevator::raw_speed   = " + PID.getPIDController().calculate(PID.getMeasurement()));
+        // System.out.println("Elevator::pid_on = " + PID.active());
+        // System.out.println("Stinger::pid_on  = " + ChargedUp.stinger.PID.active());
         
         if(shouldStop) motor.set(0);
-        else motor.set(elevatorPID.getSpeed());
+        else           motor.set(PID.getSpeed());
+
+
+        if(RobotBase.isSimulation())
+        {
+            SimulationUtility.simulateNEO(motor, encoder);
+        }
+
+        ligament.setLength(encoder.getPosition());
     }
 }

@@ -1,5 +1,6 @@
 package frc.robot.vision;
 
+import frc.robot.Constants;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.commandrobot.ManagerBase;
@@ -23,6 +24,11 @@ public class LimelightSystem extends ManagerBase implements VisionSystem
     public static final int NONE_ID = 0;
     public static final int CONE_ID = 1;
     public static final int CUBE_ID = 2;
+
+    public String getCameraStreamURL()
+    {
+        return Constants.Robot.PhotonVision.PHOTON_URL;
+    }
 
     @Override
     public void always() 

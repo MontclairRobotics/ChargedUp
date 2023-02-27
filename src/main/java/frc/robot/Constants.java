@@ -29,6 +29,12 @@ public final class Constants
         public static final int GRABBER_SOLENOID_PORT = 0;
         public static final int GRABBER_PSI_SOLENOID_PORT = 15;
     }
+    
+    public static class Simulation
+    {
+        public static final Color ELEVATOR_COLOR = Color.kSilver;
+        public static final Color STINGER_COLOR  = Color.kWhite;
+    }
 
     public static class Drive
     {
@@ -185,14 +191,16 @@ public final class Constants
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
             public static final double 
-                KP = 1,
-                KI = 1,
-                KD = 1
+                KP = 0.25,
+                KI = 0.1,
+                KD = 0
             ;
 
             public static final PIDController updown() 
             {
-                return new PIDController(KP, KI, KD);
+                PIDController p = new PIDController(KP, KI, KD);
+                p.setTolerance(0.04);
+                return p;
             }
         }
 
@@ -273,6 +281,12 @@ public final class Constants
 
             //Distance between center of robot and camera position
             public static final Transform3d ROBOT_TO_CAM = new Transform3d(); 
+
+            //The URL that shuffleboard gets video from for PhotonVision
+            public static final String PHOTON_URL = "http://10.55.5.11:1182/stream.mjpg";
+
+            public static final String LIMELIGHT_URL = "http://10.55.5.11:5800";
+
         }
 
         public static class Stinger 
@@ -284,14 +298,16 @@ public final class Constants
             public static final int INNER_LIMIT_SWITCH = 4;
 
             public static final double
-                IN_OUT_KP = 1,
-                IN_OUT_KI = 0,
+                IN_OUT_KP = 0.2,
+                IN_OUT_KI = 0.1,
                 IN_OUT_KD = 0
             ;
             
             public static final PIDController inout()
             {
-                return new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
+                PIDController p = new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
+                p.setTolerance(0.01);
+                return p;
             }
 
             public static final double MID_LENGTH_MUL = 0.65;
@@ -315,7 +331,7 @@ public final class Constants
             public static final double SEGMENT_COUNT_SQ = SEGMENT_COUNT*SEGMENT_COUNT;
             public static final double SEGMENT_LENGTH_SQ = SEGMENT_LENGTH*SEGMENT_LENGTH;
 
-            public static final double LEAD_SCREW_FACTOR = 0.5;
+            public static final double LEAD_SCREW_FACTOR = 0.1;
 
             public static double leadDistToStngDist(final double leadDist)
             {

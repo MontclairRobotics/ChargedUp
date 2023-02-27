@@ -67,4 +67,9 @@ public interface VisionSystem extends Manager
      * @param value number which corresponds to the pipeline
      */
     void setPipeline(double value);
+
+    /**
+     * Gets the URL for the camera streams
+     */
+    String getCameraStreamURL();
 }

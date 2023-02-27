@@ -1,5 +1,7 @@
 package frc.robot.structure;
 
+import frc.robot.util.frc.Logging;
+
 public enum ScoringType 
 {
     PEG, SHELF;
@@ -25,7 +27,7 @@ public enum ScoringType
         if(gamePeice == GamePiece.CUBE) return SHELF;
         if(gamePeice == GamePiece.CONE) return PEG;
 
-        assert false: "Cannot get a scoring type from a 'NONE' GamePeice";
-        return null;
+        Logging.error("Attempted to score while not holding a game piece: this is bad! Defaulting to peg mode.");
+        return PEG;
     }
 }

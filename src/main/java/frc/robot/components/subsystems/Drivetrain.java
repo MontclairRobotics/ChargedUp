@@ -125,34 +125,6 @@ public class Drivetrain extends ManagerSubsystemBase
 
         moduleObject.setPoses(modPoses);
 
-        // Build Shuffleboard //
-        Shuffleboard.getTab("Main")
-            .addBoolean("Field Relative", () -> useFieldRelative)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 0);
-
-        Shuffleboard.getTab("Main")
-            .addNumber("Gyroscope", () -> {
-                double y = ChargedUp.gyroscope.getYaw();
-                return y > 0 ? y : 360+y; 
-            })
-            .withWidget(BuiltInWidgets.kGyro)
-            .withSize(2, 2)
-            .withPosition(2, 0);
-        
-        Shuffleboard.getTab("Main")
-            .addNumber("Max linear speed: ", () -> Drive.speeds[speedIndex][0])
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(2, 2)
-            .withPosition(4, 0);
-        
-        Shuffleboard.getTab("Main")
-            .addNumber("Max angular speed: ", () -> Drive.speeds[speedIndex][1])
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(2, 2)
-            .withPosition(4, 2);
-
         // Build Odometry //
         poseEstimator = new SwerveDrivePoseEstimator(
             Drive.KINEMATICS, 
@@ -203,6 +175,13 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         useFieldRelative = false;
         Logging.info("Field relative disabled");
+    }
+
+    /**
+     * Gets if field relative is enabled
+     */
+    public boolean usingFieldRelative() {
+        return useFieldRelative;
     }
 
     public double getChargeStationAngle()
@@ -488,6 +467,8 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         speedIndex = (speedIndex == 0) ? 0 : speedIndex - 1;
     }
+
+    public double[] getCurrentSpeedLimits() {return Drive.speeds[speedIndex];}
 
     public boolean isThetaPIDFree()
     {

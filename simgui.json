@@ -11,12 +11,22 @@
       }
     },
     "Other Devices": {
+      "SPARK MAX [17]": {
+        "header": {
+          "open": true
+        }
+      },
       "SPARK MAX [1]": {
         "header": {
           "open": true
         }
       },
       "SPARK MAX [3]": {
+        "header": {
+          "open": true
+        }
+      },
+      "SPARK MAX [5]": {
         "header": {
           "open": true
         }
@@ -37,13 +47,25 @@
       "/LiveWindow/Ungrouped/PIDController[4]": "PIDController",
       "/LiveWindow/Ungrouped/PIDController[5]": "PIDController",
       "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro",
-      "/Shuffleboard/Main/Auto Commands": "String Chooser",
+      "/Shuffleboard/Debug/Elevator PID": "PIDController",
+      "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
+      "/Shuffleboard/Debug/Stinger PID": "PIDController",
+      "/Shuffleboard/Debug/The Machanism": "Mechanism2d",
+      "/Shuffleboard/Debug/X-PID Controller": "PIDController",
+      "/Shuffleboard/Debug/Y-PID Controller": "PIDController",
+      "/Shuffleboard/Debug/θ-PID Controller": "PIDController",
+      "/Shuffleboard/Main Tab/Field": "Field2d",
       "/Shuffleboard/Main/Field": "Field2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
+      "/Shuffleboard/Debug/Mechanism": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Main/Field": {
         "Robot": {
           "length": 0.7799999713897705
@@ -111,6 +133,12 @@
         "open": true
       },
       "Shuffleboard": {
+        "Debug": {
+          "Elevator PID": {
+            "open": true
+          },
+          "open": true
+        },
         "Main": {
           "Field": {
             "open": true
