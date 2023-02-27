@@ -23,6 +23,7 @@ import frc.robot.Constants.Robot;
 import frc.robot.Constants.Simulation;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
+import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.SimulationUtility;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
@@ -53,6 +54,8 @@ public class Stinger extends ManagerSubsystemBase
 
         encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(Robot.Stinger.LEAD_SCREW_FACTOR);
+        encoder.setPosition(Robot.Stinger.stngDistToLeadDist(Robot.Stinger.MIN_LENGTH));
+
 
         ligaments = new MechanismLigament2d[9][2];
 
@@ -93,17 +96,9 @@ public class Stinger extends ManagerSubsystemBase
      */
     private void extendToLength(double length)
     {
-        length = Math555.clamp(length, 0, Robot.Stinger.EXT_LENGTH);
+        length = Math555.clamp(length, Robot.Stinger.MIN_LENGTH, Robot.Stinger.MAX_LENGTH);
 
-        PID.setTarget(Robot.Stinger.stngDistToLeadDist(length));
-    }
-
-    /**
-     * Get the current distance outward which the stinger is extended.
-     */
-    public double getLength()
-    {
-        return Robot.Stinger.leadDistToStngDist(encoder.getPosition());
+        PID.setTarget(length);
     }
 
     /**
@@ -111,7 +106,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void toHigh()
     {
-        extendToLength(Robot.Stinger.HIGH_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
+        extendToLength(Robot.Stinger.MIN_LENGTH + Robot.Stinger.HIGH_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
     }
 
     /**
@@ -119,15 +114,15 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void toMid()
     {
-        extendToLength(Robot.Stinger.MID_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
+        extendToLength(Robot.Stinger.MIN_LENGTH + Robot.Stinger.MID_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
     }
 
     /**
      *  Fully Retracts Stinger
      */
-    public void fullyRetract()
+    public void toRetract()
     {
-        PID.setTarget(0);
+        extendToLength(Robot.Stinger.MIN_LENGTH);
     }
 
     /**
@@ -180,6 +175,43 @@ public class Stinger extends ManagerSubsystemBase
         PID.cancel();
     }
 
+    /**
+     * Get the extension of the stinger
+     */
+    public double getExtension()
+    {
+        return Robot.Stinger.leadDistToStngDist(encoder.getPosition());
+    }
+    
+    /**
+     * Set the motor based on the inputed Stinger extension velocity
+     */
+    public void setMotor(double stingerVel)
+    {
+        double speed;
+
+        if(encoder.getPosition() > Robot.Stinger.SEGMENT_LENGTH - 0.01)
+        {
+            //this number has origins from within my rectal cavity
+            speed = -Math.signum(stingerVel) * 0.05;
+        }
+        else 
+        {
+            speed = Robot.Stinger.stingerVelToMotorVel(encoder.getPosition(), stingerVel);
+
+            // make sure the thing isn't doing what we don't want it to do
+            // set the motor speed to a really tiny number when the desired speed is a really small ass value
+            if(Math.abs(speed) < 0.05 && Math.abs(stingerVel) > 0.01)
+            {
+                speed = -Math.signum(stingerVel) * 0.05;
+            }
+        }
+
+        speed = Math555.clamp1(speed);
+
+        motor.set(speed);
+    }
+
     @Override
     public void always() 
     {
@@ -203,21 +235,30 @@ public class Stinger extends ManagerSubsystemBase
             }
         }
 
-        PID.setMeasurement(encoder.getPosition());
+        PID.setMeasurement(getExtension());
         PID.update();
         
         if(shouldStop) motor.set(0);
-        else motor.set(PID.getSpeed());
+        else setMotor(PID.getSpeed());
+        // Logging.info("" + PID.getSpeed());
+
+        // Logging.info("--------------------------------------------------");
+        // Logging.info("speed = " + PID.getSpeed());
+        // Logging.info("pos   = " + getExtension());
+        // Logging.info("rapos = " + encoder.getPosition());
+        
+
 
         if(RobotBase.isSimulation())
         {
             SimulationUtility.simulateNEO(motor, encoder);
+            encoder.setPosition(Math555.clamp(encoder.getPosition(), 0.001, Robot.Stinger.SEGMENT_LENGTH-0.001));
+            // Logging.info("positione: " + encoder.getPosition());
+
         }
 
         // UPDATE SIMULATION IMAGES //
-        // TODO: reason through this! what makes the stinger "in" or "out"
-        double currentPosition = 
-            Robot.Stinger.SEGMENT_LENGTH - encoder.getPosition();
+        double currentPosition = encoder.getPosition();
 
         widthLigament.setLength(currentPosition);
         double mechAngle = Math.toDegrees(Math.asin(currentPosition / Robot.Stinger.SEGMENT_LENGTH));

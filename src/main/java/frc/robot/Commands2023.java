@@ -96,7 +96,7 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return run(() -> ChargedUp.stinger.fullyRetract(), ChargedUp.stinger)
+        return run(() -> ChargedUp.stinger.toRetract(), ChargedUp.stinger)
             .until(ChargedUp.stinger::isPIDFree);
     }
     /**
@@ -179,8 +179,13 @@ public class Commands2023
         CommandBase c = sequence(
             run(() -> ChargedUp.elevator.setHigh())
                 .until(ChargedUp.elevator.PID::free),
+            runOnce(() -> Logging.info("Finished the ELeVaToR pid")),
+            waitSeconds(1),
+            runOnce(() -> Logging.info("!!!!!!!!PLS WAIT!!!!!!!!!!!!!")),
+            waitSeconds(1),
             run(() -> ChargedUp.stinger.toHigh())
-                .until(ChargedUp.stinger.PID::free)
+                .until(ChargedUp.stinger.PID::free),
+            runOnce(() -> Logging.info("Finished the Stinger pid"))
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -217,7 +222,7 @@ public class Commands2023
     public static Command elevatorStingerToLow()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.stinger.fullyRetract())
+            run(() -> ChargedUp.stinger.toRetract())
                 .until(ChargedUp.stinger.PID::free),
             run(() -> ChargedUp.elevator.setLow())
                 .until(ChargedUp.elevator.PID::free)
@@ -394,6 +399,7 @@ public class Commands2023
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
             Commands.sequence(
                 retractStinger(), 
+                waitSeconds(1),
                 elevatorToMid()
             ),
             

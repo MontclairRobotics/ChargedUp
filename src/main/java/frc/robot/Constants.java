@@ -199,7 +199,7 @@ public final class Constants
             public static final PIDController updown() 
             {
                 PIDController p = new PIDController(KP, KI, KD);
-                p.setTolerance(0.04);
+                // p.setTolerance(0.04);
                 return p;
             }
         }
@@ -304,7 +304,7 @@ public final class Constants
             public static final PIDController inout()
             {
                 PIDController p = new PIDController(IN_OUT_KP, IN_OUT_KI, IN_OUT_KD);
-                p.setTolerance(0.01);
+                // p.setTolerance(0.01);
                 return p;
             }
 
@@ -321,15 +321,19 @@ public final class Constants
 
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2);
 
-
-
             public static final double SEGMENT_COUNT = 8.5;
             public static final double SEGMENT_LENGTH = Units.inchesToMeters(9.139);
 
             public static final double SEGMENT_COUNT_SQ = SEGMENT_COUNT*SEGMENT_COUNT;
             public static final double SEGMENT_LENGTH_SQ = SEGMENT_LENGTH*SEGMENT_LENGTH;
 
-            public static final double LEAD_SCREW_FACTOR = 0.1;
+            public static final double LEAD_SCREW_FACTOR = Units.inchesToMeters(0.1);
+
+            static
+            {
+                assert MAX_LENGTH < SEGMENT_LENGTH * SEGMENT_COUNT
+                     : "The maximum extension of the stinger must be less than the combined length of each segment";
+            }
 
             public static double leadDistToStngDist(final double leadDist)
             {
@@ -341,8 +345,9 @@ public final class Constants
                  * output := S * sqrt(W^2 + T^2)
                  */
 
-                return SEGMENT_COUNT * Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(leadDist + MIN_LENGTH, 2));
+                return SEGMENT_COUNT * Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(leadDist, 2));
             }
+
 
             public static double stngDistToLeadDist(final double elevDist) 
             {
@@ -354,7 +359,20 @@ public final class Constants
                  * output := sqrt(W^2 - (T / W)^2)
                  */
 
-                return Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(elevDist - MIN_LENGTH, 2) / SEGMENT_COUNT_SQ);
+                return Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(elevDist, 2) / SEGMENT_COUNT_SQ);
+            }
+
+            public static double stingerFactor(double leadDist)
+            {
+                return - SEGMENT_COUNT * leadDist / Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(leadDist, 2.0));
+            }
+            public static double stingerVelToMotorVel(double leadDist, double stingerVel)
+            {
+                return stingerVel / stingerFactor(leadDist);
+            }
+            public static double motorVelToStingerVel(double leadDist, double motorVel)
+            {
+                return motorVel * stingerFactor(leadDist);
             }
         } 
     }

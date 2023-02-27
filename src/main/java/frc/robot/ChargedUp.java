@@ -129,7 +129,7 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.X_SQUARE)
             .onTrue(Commands2023.scoreHigh());
         driverController.getButton(Button.Y_TRIANGLE)
-            .toggleOnTrue(Commands2023.balance());
+            .toggleOnTrue(Commands2023.elevatorStingerToLow());
         driverController.getButton(Button.RIGHT_BUMPER)
             .onTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
@@ -147,6 +147,12 @@ public class ChargedUp extends RobotContainer
                 gyroscope.zeroYaw();
                 Logging.info("Zeroed NavX!");
             }));
+        
+        
+        driverController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+        driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+        driverController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+        driverController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
         // OPERATOR CONTROLS //
 
@@ -154,7 +160,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.UP)
             .onTrue(Commands2023.elevatorStingerToHigh());
         operatorController.getDPad(DPad.LEFT)
-            .onTrue(Commands2023.elevatorStingerToMid());
+            .onTrue(Commands2023.elevatorStingerToHigh());
         operatorController.getDPad(DPad.DOWN)
             .onTrue(Commands2023.elevatorStingerToLow());
 
@@ -179,7 +185,7 @@ public class ChargedUp extends RobotContainer
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSuck())
             .onFalse(Commands2023.stopShwooper());
-        // button to spit/stop schwooper
+        // button to spit schwooper
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSpit())
@@ -200,11 +206,6 @@ public class ChargedUp extends RobotContainer
 
             elevator.setSpeed(left.getY());
         }, elevator));
-
-        driverController.getDPad(DPad.UP).onTrue(drivetrain.commands.goToAngle(Math.PI/2));
-        driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-        driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
-        driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
         //Auto Score
         operatorController.getButton(Button.Y_TRIANGLE)

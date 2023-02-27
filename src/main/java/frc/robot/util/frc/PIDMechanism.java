@@ -44,7 +44,7 @@ public class PIDMechanism implements Sendable
     public void setTarget(double target)
     {
         pidController.setSetpoint(target);
-        usingPID = true;
+        usingPID = !pidController.atSetpoint();
     }
 
     /**
@@ -143,8 +143,8 @@ public class PIDMechanism implements Sendable
         builder.addDoubleProperty ("I", pidController::getI, pidController::setI);
         builder.addDoubleProperty ("D", pidController::getD, pidController::setD);
         builder.addDoubleProperty ("Setpoint", pidController::getSetpoint, pidController::setSetpoint);
-        builder.addBooleanProperty("At Setpoint", pidController::atSetpoint, x -> {});
-        builder.addDoubleProperty ("Speed", () -> speed, x -> {});
+        builder.addBooleanProperty("At Setpoint", pidController::atSetpoint, x -> usingPID = !x);
+        builder.addDoubleProperty ("Speed", () -> speed, x -> speed = x);
 
         builder.setSmartDashboardType("ShuffleboardLayout");
     }
