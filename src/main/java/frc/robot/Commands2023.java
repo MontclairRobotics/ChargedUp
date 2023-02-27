@@ -181,8 +181,6 @@ public class Commands2023
                 .until(ChargedUp.elevator.PID::free),
             runOnce(() -> Logging.info("Finished the ELeVaToR pid")),
             waitSeconds(1),
-            runOnce(() -> Logging.info("!!!!!!!!PLS WAIT!!!!!!!!!!!!!")),
-            waitSeconds(1),
             run(() -> ChargedUp.stinger.toHigh())
                 .until(ChargedUp.stinger.PID::free),
             runOnce(() -> Logging.info("Finished the Stinger pid"))
@@ -394,6 +392,10 @@ public class Commands2023
             //Drop grabber
             log("[SCORE] Dropping . . ."),
             openGrabber(), 
+            
+            waitSeconds(1),
+            runOnce(() -> Logging.info("!!!!!!!!PLS WAIT!!!!!!!!!!!!!")),
+            waitSeconds(1),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),

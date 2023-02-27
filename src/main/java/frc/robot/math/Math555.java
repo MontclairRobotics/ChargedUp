@@ -9,6 +9,13 @@ public class Math555
 {
     private Math555() {}
 
+    /**
+     * Clamp the Value between the min and max
+     * @param v
+     * @param min
+     * @param max
+     * @return
+     */
     public static double clamp(double v, double min, double max)
     {
         if(v < min) return min;
@@ -16,6 +23,13 @@ public class Math555
 
         return v;
     }
+    /**
+     * Clamp the Value between min and max
+     * @param v
+     * @param min
+     * @param max
+     * @return
+     */
     public static int clamp(int v, int min, int max)
     {
         if(v < min) return min;
@@ -23,7 +37,14 @@ public class Math555
 
         return v;
     }
-
+    /**
+     * Clamp Target between the current minus maxDec and current plus maxDec
+     * @param target
+     * @param current
+     * @param maxAcc
+     * @param maxDec
+     * @return
+     */
     public static double accClamp(double target, double current, double maxAcc, double maxDec)
     {
         if(Math.abs(current) > Math.abs(target))
@@ -36,6 +57,11 @@ public class Math555
         }
     }
 
+    /**
+     * Clamp the value between 0 and 1
+     * @param v
+     * @return
+     */
     public static double clamp01(double v)
     {
         return clamp(v, 0, 1);
@@ -152,6 +178,11 @@ public class Math555
         else      return -Math.pow(-v, pow);
     }
 
+    /**
+     * clamp value between -1 and 1
+     * @param v
+     * @return
+     */
     public static double clamp1(double v) 
     {
         return clamp(v, -1, 1);
