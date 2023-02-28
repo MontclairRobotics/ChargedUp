@@ -182,6 +182,11 @@ public class Stinger extends ManagerSubsystemBase
     {
         return Robot.Stinger.leadDistToStngDist(encoder.getPosition());
     }
+
+    public double getRawSpeed()
+    {
+        return motor.get();
+    }
     
     /**
      * Set the motor based on the inputed Stinger extension velocity
@@ -192,18 +197,17 @@ public class Stinger extends ManagerSubsystemBase
 
         if(encoder.getPosition() > Robot.Stinger.SEGMENT_LENGTH - 0.01)
         {
-            //this number has origins from within my rectal cavity
-            speed = -Math.signum(stingerVel) * 0.05;
+            speed = -Math.signum(stingerVel) * 0.01;
         }
         else 
         {
             speed = Robot.Stinger.stingerVelToMotorVel(encoder.getPosition(), stingerVel);
 
             // make sure the thing isn't doing what we don't want it to do
-            // set the motor speed to a really tiny number when the desired speed is a really small ass value
-            if(Math.abs(speed) < 0.05 && Math.abs(stingerVel) > 0.01)
+            // set the motor speed to a really tiny number when the desired speed is a really small value
+            if(Math.abs(speed) < 0.01 && Math.abs(stingerVel) > 0.01)
             {
-                speed = -Math.signum(stingerVel) * 0.05;
+                speed = -Math.signum(stingerVel) * 0.01;
             }
         }
 

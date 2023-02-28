@@ -256,6 +256,16 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 2);
 
         debugTab.add("Mechanism", mainMechanism);
+
+        debugTab.addDouble("Stinger Extension", stinger::getExtension)
+            .withPosition(0+2+2+2+2, 0)
+            .withSize(2, 1);
+        debugTab.addDouble("Stinger Extension Velocity", stinger.PID::getSpeed)
+            .withPosition(0+2+2+2+2, 0)
+            .withSize(2, 1);
+        debugTab.addDouble("Stinger Lead Velocity", stinger::getRawSpeed)
+            .withPosition(0+2+2+2+2, 0)
+            .withSize(2, 1);
     }
 
     // SHUFFLEBOARD //
