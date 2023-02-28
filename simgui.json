@@ -160,6 +160,9 @@
       "open": true
     }
   },
+  "NetworkTables View": {
+    "visible": false
+  },
   "Plot": {
     "Plot <0>": {
       "plots": [
@@ -209,7 +212,7 @@
               "min": -0.1
             }
           ],
-          "height": 307,
+          "height": 305,
           "name": "Stinger Position",
           "series": [
             {
@@ -224,13 +227,28 @@
           ]
         },
         {
+          "height": 305,
+          "name": "Lead Position",
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Debug/Stinger Lead Position"
+            }
+          ]
+        },
+        {
           "axis": [
             {
               "max": 0.5,
               "min": -0.5
             }
           ],
-          "height": 307,
+          "height": 305,
           "name": "Stinger Velocity",
           "series": [
             {
@@ -251,7 +269,7 @@
               "min": -0.1
             }
           ],
-          "height": 307,
+          "height": 305,
           "name": "Motor Velocity",
           "series": [
             {

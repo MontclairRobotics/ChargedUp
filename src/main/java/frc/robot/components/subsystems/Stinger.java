@@ -47,14 +47,15 @@ public class Stinger extends ManagerSubsystemBase
     {
         motor = new CANSparkMax(Robot.Stinger.MOTOR_PORT, MotorType.kBrushless);
 
+        PID.disableOutputClamping();
+
         if(RobotBase.isSimulation())
         {
             REVPhysicsSim.getInstance().addSparkMax(motor, DCMotor.getNEO(1));
         }
 
         encoder = motor.getEncoder();
-        encoder.setPositionConversionFactor(Robot.Stinger.LEAD_SCREW_FACTOR);
-        encoder.setPosition(Robot.Stinger.stngDistToLeadDist(Robot.Stinger.MIN_LENGTH));
+        encoder.setPosition(StingerMath.leadToMotor(StingerMath.stingerToLead(Robot.Stinger.MIN_LENGTH)));
 
 
         ligaments = new MechanismLigament2d[9][2];
@@ -76,8 +77,8 @@ public class Stinger extends ManagerSubsystemBase
             else if(i % 2 == 0) {angle[0] = +mechAngle * 2; angle[1] = -mechAngle * 2;}
             else                {angle[0] = -mechAngle * 2; angle[1] = +mechAngle * 2;}
 
-            lastObjectUp   = lastObjectUp  .append(new MechanismLigament2d("Stinger::up::segment " + i,   Robot.Stinger.SEGMENT_LENGTH, angle[0]));
-            lastObjectDown = lastObjectDown.append(new MechanismLigament2d("Stinger::down::segment " + i, Robot.Stinger.SEGMENT_LENGTH, angle[1]));
+            lastObjectUp   = lastObjectUp  .append(new MechanismLigament2d("Stinger::up::segment " + i,   StingerMath.SEGMENT_LENGTH, angle[0]));
+            lastObjectDown = lastObjectDown.append(new MechanismLigament2d("Stinger::down::segment " + i, StingerMath.SEGMENT_LENGTH, angle[1]));
             
             ligaments[i][0] = lastObjectUp;
             ligaments[i][1] = lastObjectDown;
@@ -180,12 +181,31 @@ public class Stinger extends ManagerSubsystemBase
      */
     public double getExtension()
     {
-        return Robot.Stinger.leadDistToStngDist(encoder.getPosition());
+        return StingerMath.leadToStinger(getLeadScrewPosition());
     }
 
-    public double getRawSpeed()
+    /**
+     * Get the position of the lead screw, where (x == 0) is close and (x > 0) is far
+     */
+    public double getLeadScrewPosition()
     {
-        return motor.get();
+        return StingerMath.motorToLead(encoder.getPosition());
+    }
+
+    /**
+     * Get the speed at which the lead screw is moving
+     */
+    public double getLeadScrewSpeed()
+    {
+        return StingerMath.motorNormToLead(motor.get());
+    }
+
+    /**
+     * Get the speed at which the stinger is moving
+     */
+    public double getStingerSpeed()
+    {
+        return StingerMath.leadVelToStingerVel(getLeadScrewPosition(), getLeadScrewSpeed());
     }
     
     /**
@@ -195,22 +215,24 @@ public class Stinger extends ManagerSubsystemBase
     {
         double speed;
 
-        if(encoder.getPosition() > Robot.Stinger.SEGMENT_LENGTH - 0.01)
+        if(getLeadScrewPosition() > StingerMath.SEGMENT_LENGTH - 0.01)
         {
-            speed = -Math.signum(stingerVel) * 0.01;
+            speed = Math.signum(stingerVel) * -Robot.Stinger.MAX_STINGER_VEL * 0.5;
         }
         else 
         {
-            speed = Robot.Stinger.stingerVelToMotorVel(encoder.getPosition(), stingerVel);
+            speed = StingerMath.stingerVelToLeadVel(getLeadScrewPosition(), stingerVel);
+            speed = StingerMath.leadToMotorNorm(speed);
 
             // make sure the thing isn't doing what we don't want it to do
             // set the motor speed to a really tiny number when the desired speed is a really small value
             if(Math.abs(speed) < 0.01 && Math.abs(stingerVel) > 0.01)
             {
-                speed = -Math.signum(stingerVel) * 0.01;
+                speed = Math.signum(stingerVel) * -0.01;
             }
         }
-
+        
+        // Convert from lead screw speed to motor speed
         speed = Math555.clamp1(speed);
 
         motor.set(speed);
@@ -243,29 +265,23 @@ public class Stinger extends ManagerSubsystemBase
         PID.update();
         
         if(shouldStop) motor.set(0);
-        else setMotor(PID.getSpeed());
-        // Logging.info("" + PID.getSpeed());
-
+        else setMotor(Math555.clamp(PID.getSpeed(), -Robot.Stinger.MAX_STINGER_VEL, Robot.Stinger.MAX_STINGER_VEL));
+    
         // Logging.info("--------------------------------------------------");
         // Logging.info("speed = " + PID.getSpeed());
         // Logging.info("pos   = " + getExtension());
         // Logging.info("rapos = " + encoder.getPosition());
-        
-
 
         if(RobotBase.isSimulation())
         {
             SimulationUtility.simulateNEO(motor, encoder);
-            encoder.setPosition(Math555.clamp(encoder.getPosition(), 0.001, Robot.Stinger.SEGMENT_LENGTH-0.001));
-            // Logging.info("positione: " + encoder.getPosition());
-
         }
 
         // UPDATE SIMULATION IMAGES //
-        double currentPosition = encoder.getPosition();
+        double currentPosition = getLeadScrewPosition();
 
         widthLigament.setLength(currentPosition);
-        double mechAngle = Math.toDegrees(Math.asin(currentPosition / Robot.Stinger.SEGMENT_LENGTH));
+        double mechAngle = Math.toDegrees(Math.asin(currentPosition / StingerMath.SEGMENT_LENGTH));
 
         for(int i = 0; i < ligaments.length; i++)
         {

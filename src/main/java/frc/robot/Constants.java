@@ -313,8 +313,8 @@ public final class Constants
             public static final double MID_LENGTH_MUL = 0.65;
             public static final double HIGH_LENGTH_MUL = 0.95;
 
-            public static final double MIN_LENGTH = Units.feetToMeters(10.0/12); // 10 inches
-            public static final double MAX_LENGTH = Units.feetToMeters(60.0/12); // 60 inches
+            public static final double MIN_LENGTH = Units.inchesToMeters(10.0); // 10 inches
+            public static final double MAX_LENGTH = Units.inchesToMeters(60.0); // 60 inches
 
             public static final double EXT_LENGTH = MAX_LENGTH - MIN_LENGTH;
 
@@ -323,59 +323,7 @@ public final class Constants
 
             public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2);
 
-            public static final double SEGMENT_COUNT = 8.5;
-            public static final double SEGMENT_LENGTH = Units.inchesToMeters(9.139);
-
-            public static final double SEGMENT_COUNT_SQ = SEGMENT_COUNT*SEGMENT_COUNT;
-            public static final double SEGMENT_LENGTH_SQ = SEGMENT_LENGTH*SEGMENT_LENGTH;
-
-            public static final double LEAD_SCREW_FACTOR = Units.inchesToMeters(0.1);
-
-            static
-            {
-                assert MAX_LENGTH < SEGMENT_LENGTH * SEGMENT_COUNT
-                     : "The maximum extension of the stinger must be less than the combined length of each segment";
-            }
-
-            public static double leadDistToStngDist(final double leadDist)
-            {
-                /**
-                 * S := 8.5    //The number of segments
-                 * W := 9.139  //The length of one segment
-                 * T := input  //The distance the lead screw has travelled
-                 * 
-                 * output := S * sqrt(W^2 + T^2)
-                 */
-
-                return SEGMENT_COUNT * Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(leadDist, 2));
-            }
-
-
-            public static double stngDistToLeadDist(final double elevDist) 
-            {
-                /**
-                 * S := 8.5    //The number of segments
-                 * W := 9.139  //The length of one segment
-                 * T := input  //The distance the elevator has travelled
-                 * 
-                 * output := sqrt(W^2 - (T / W)^2)
-                 */
-
-                return Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(elevDist, 2) / SEGMENT_COUNT_SQ);
-            }
-
-            public static double stingerFactor(double leadDist)
-            {
-                return - SEGMENT_COUNT * leadDist / Math.sqrt(SEGMENT_LENGTH_SQ - Math.pow(leadDist, 2.0));
-            }
-            public static double stingerVelToMotorVel(double leadDist, double stingerVel)
-            {
-                return stingerVel / stingerFactor(leadDist);
-            }
-            public static double motorVelToStingerVel(double leadDist, double motorVel)
-            {
-                return motorVel * stingerFactor(leadDist);
-            }
+            public static final double MAX_STINGER_VEL = 0.09;
         } 
     }
     

@@ -105,7 +105,7 @@ public class PIDMechanism implements Sendable
             speed = directSpeed;
         }
 
-        if(pidController.atSetpoint())
+        if(pidController.atSetpoint() && usingPID)
         {
             cancel();
         }
