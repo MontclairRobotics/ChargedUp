@@ -87,6 +87,10 @@ public class PIDMechanism implements Sendable
      */
     public void update()
     {
+        if(pidController.atSetpoint())
+        {
+            cancel();
+        }
         if(usingPID)
         {
             double calulation = pidController.calculate(measurement);

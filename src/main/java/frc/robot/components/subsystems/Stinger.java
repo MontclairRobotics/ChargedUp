@@ -165,7 +165,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public boolean isPIDFree()
     {
-        return !PID.active();
+        return PID.free();
     }
 
     /**
@@ -215,7 +215,7 @@ public class Stinger extends ManagerSubsystemBase
     {
         double speed;
 
-        if(getLeadScrewPosition() > StingerMath.SEGMENT_LENGTH - 0.01)
+        if(getLeadScrewPosition() >= StingerMath.SEGMENT_LENGTH)
         {
             speed = Math.signum(stingerVel) * -Robot.Stinger.MAX_STINGER_VEL * 0.5;
         }

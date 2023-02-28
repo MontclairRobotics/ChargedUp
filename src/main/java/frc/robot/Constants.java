@@ -298,7 +298,7 @@ public final class Constants
             public static final int INNER_LIMIT_SWITCH = 4;
 
             public static final double
-                IN_OUT_KP = 0.2,
+                IN_OUT_KP = 0.1,
                 IN_OUT_KI = 0.1,
                 IN_OUT_KD = 0
             ;
