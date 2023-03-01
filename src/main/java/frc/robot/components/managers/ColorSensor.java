@@ -5,12 +5,13 @@ import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.util.Color;
-import frc.robot.Constants.Robot;
+import frc.robot.constants.*;
+import frc.robot.constants.Constants.Robot;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 public class ColorSensor extends ManagerBase
 {
-    ColorSensorV3 colorSensor = new ColorSensorV3(Robot.Grabber.COLOR_SENSOR_PORT);
+    ColorSensorV3 colorSensor = new ColorSensorV3(GrabberConstants.COLOR_SENSOR_PORT);
     ColorMatch colorMatch = new ColorMatch();
 
     boolean previousCubeSeen;

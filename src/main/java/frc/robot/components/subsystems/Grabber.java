@@ -2,10 +2,11 @@ package frc.robot.components.subsystems;
 
 import frc.robot.ChargedUp;
 import frc.robot.animation.DefaultAnimation;
+import frc.robot.constants.PneuConstants;
 import frc.robot.structure.GamePiece;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
-import static frc.robot.Constants.*;
+import static frc.robot.constants.GrabberConstants.*;
 
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
@@ -27,8 +28,8 @@ import edu.wpi.first.wpilibj.util.Color;
  */
 public class Grabber extends ManagerSubsystemBase 
 {
-    Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_SOLENOID_PORT);
-    Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Pneu.GRABBER_PSI_SOLENOID_PORT);
+    Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_SOLENOID_PORT);
+    Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_PSI_SOLENOID_PORT);
 
     GamePiece heldObject = GamePiece.NONE;
 
@@ -49,7 +50,7 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void grab() 
     {
-        outputSolenoid.set(!Robot.Grabber.SOLENOID_DEFAULT_STATE);
+        outputSolenoid.set(!SOLENOID_DEFAULT_STATE);
         updatePressure();
         
         if (ChargedUp.colorSensor.seesCone()) heldObject = GamePiece.CONE;
@@ -61,7 +62,7 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void release() 
     {
-        outputSolenoid.set(Robot.Grabber.SOLENOID_DEFAULT_STATE);
+        outputSolenoid.set(SOLENOID_DEFAULT_STATE);
         heldObject = GamePiece.NONE;
     }
 
@@ -83,7 +84,7 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void setPSIHigh()
     {
-        pressureSolenoid.set(!Robot.Grabber.PSI_SOLENOID_DEFAULT_STATE);
+        pressureSolenoid.set(!PSI_SOLENOID_DEFAULT_STATE);
     }
 
     /**
@@ -91,7 +92,7 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void setPSINormal()
     {
-        pressureSolenoid.set(Robot.Grabber.PSI_SOLENOID_DEFAULT_STATE);
+        pressureSolenoid.set(PSI_SOLENOID_DEFAULT_STATE);
     }
 
     /**

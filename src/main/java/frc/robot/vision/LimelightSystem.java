@@ -1,6 +1,6 @@
 package frc.robot.vision;
 
-import frc.robot.Constants;
+import frc.robot.constants.LimelightConstants;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.commandrobot.ManagerBase;
@@ -27,7 +27,7 @@ public class LimelightSystem extends ManagerBase implements VisionSystem
 
     public String getCameraStreamURL()
     {
-        return Constants.Robot.PhotonVision.PHOTON_URL;
+        return LimelightConstants.LIMELIGHT_URL;
     }
 
     @Override

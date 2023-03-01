@@ -22,13 +22,15 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
-import frc.robot.Constants.*;
+import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.SimulationUtility;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
+
+import static frc.robot.constants.ElevatorConstants.*;
 
 public class Elevator extends ManagerSubsystemBase 
 {
@@ -39,11 +41,11 @@ public class Elevator extends ManagerSubsystemBase
 
     SimDeviceSim motorSim;
 
-    private LimitSwitch toplimitSwitch = new LimitSwitch(Robot.Elevator.TOP_LIMIT_SWITCH);
-    private LimitSwitch bottomlimitSwitch = new LimitSwitch(Robot.Elevator.BOTTOM_LIMIT_SWITCH);
-    private LimitSwitch startlimitSwitch = new LimitSwitch(Robot.Elevator.START_LIMIT_SWITCH);
+    private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH);
+    private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH);
+    private LimitSwitch startlimitSwitch = new LimitSwitch(START_LIMIT_SWITCH);
 
-    public final PIDMechanism PID = new PIDMechanism(Robot.Elevator.updown());
+    public final PIDMechanism PID = new PIDMechanism(updown());
 
     MechanismLigament2d ligament;
 
@@ -51,17 +53,17 @@ public class Elevator extends ManagerSubsystemBase
     
     public Elevator()
     {
-        motor = new CANSparkMax(Robot.Elevator.MOTOR_PORT, MotorType.kBrushless);
-        motor.setInverted(Robot.Elevator.INVERTED);
+        motor = new CANSparkMax(MOTOR_PORT, MotorType.kBrushless);
+        motor.setInverted(INVERTED);
 
         encoder = motor.getEncoder();
-        encoder.setPositionConversionFactor(Robot.Elevator.ENCODER_CONVERSION_FACTOR);
+        encoder.setPositionConversionFactor(ENCODER_CONVERSION_FACTOR);
 
         motorSim = new SimDeviceSim("SPARK MAX [" + motor.getDeviceId() + "]");
 
         MechanismRoot2d elevatorRoot = ChargedUp.mainMechanism.getRoot("Elevator::root", 2.5, 0.5);
         ligament = elevatorRoot.append(new MechanismLigament2d("Elevator::length", 0, 90));
-        ligament.setColor(new Color8Bit(Simulation.ELEVATOR_COLOR));
+        ligament.setColor(new Color8Bit(SimulationConstants.ELEVATOR_COLOR));
     }
 
     /**
@@ -70,15 +72,15 @@ public class Elevator extends ManagerSubsystemBase
      */
     private void setHeight(double height)
     {
-        if(height > Robot.Elevator.MAX_HEIGHT || height < Robot.Elevator.MIN_HEIGHT)
+        if(height > MAX_HEIGHT || height < MIN_HEIGHT)
         {
             Logging.info(
                 "Invalid height [" + height + " m] provided to Elevator.setHeight, clamping to acceptable range" +
-                "[" + Robot.Elevator.MIN_HEIGHT + " m, " + Robot.Elevator.MAX_HEIGHT + " m]"
+                "[" + MIN_HEIGHT + " m, " + MAX_HEIGHT + " m]"
             );
         }
 
-        height = Math555.clamp(height, Robot.Elevator.MIN_HEIGHT, Robot.Elevator.MAX_HEIGHT);
+        height = Math555.clamp(height, MIN_HEIGHT, MAX_HEIGHT);
 
         PID.setTarget(height);
     }
@@ -88,7 +90,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void setHigh()
     {
-        setHeight(Robot.Elevator.HIGH_HEIGHT);
+        setHeight(HIGH_HEIGHT);
     }
 
     /**
@@ -96,7 +98,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void setMid()
     {
-        setHeight(Robot.Elevator.MID_HEIGHT);
+        setHeight(MID_HEIGHT);
     }
 
     /**
@@ -112,7 +114,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void delevate()
     {
-        PID.setSpeed(-Robot.Elevator.SPEED);
+        PID.setSpeed(-SPEED);
     }
 
     /**
@@ -120,7 +122,7 @@ public class Elevator extends ManagerSubsystemBase
      */
     public void elevate()
     {
-        PID.setSpeed(Robot.Elevator.SPEED);
+        PID.setSpeed(SPEED);
     }
 
     /**
@@ -180,7 +182,7 @@ public class Elevator extends ManagerSubsystemBase
     {
         shouldStop = false;
 
-        if (ChargedUp.shwooper.isShwooperOut() && encoder.getPosition() <= Robot.Elevator.BUFFER_SPACE_TO_INTAKE) 
+        if (ChargedUp.shwooper.isShwooperOut() && encoder.getPosition() <= BUFFER_SPACE_TO_INTAKE) 
         {
             if (PID.getSpeed() < 0) 
             {

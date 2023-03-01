@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
-import frc.robot.Constants.Drive;
+import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
 import frc.robot.structure.DetectionType;
@@ -38,7 +38,8 @@ import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import static frc.robot.Constants.*;
+import static frc.robot.constants.Constants.*;
+import static frc.robot.constants.DriveConstants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -69,17 +70,8 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     private boolean hasDrivenThisUpdate = false;
 
-
     //sets the speedIndex to speeds length
-    private static int speedIndex = Drive.speeds.length-1;
-
-    private static final String[] MODULE_NAMES = {
-        "FL",
-        "FR",
-        "BL",
-        "BR"
-    };
-
+    private static int speedIndex = SPEEDS.length-1;
     
     private static class SimulationData
     {
@@ -100,23 +92,23 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
         // Build Modules //
-        modules = new SwerveModule[Drive.MODULE_COUNT];
+        modules = new SwerveModule[MODULE_COUNT];
         moduleObject = ChargedUp.field.getObject("Swerve Modules");
 
-        Pose2d[] modPoses = new Pose2d[Drive.MODULE_COUNT];
+        Pose2d[] modPoses = new Pose2d[MODULE_COUNT];
 
-        for (int i = 0; i < Drive.MODULE_COUNT; i++)
+        for (int i = 0; i < MODULE_COUNT; i++)
         {
-            modules[i] = Drive.MODULES[i].build(
+            modules[i] = MODULES[i].build(
                 ChargedUp.getDebugTab()
                     .getLayout("Module " + MODULE_NAMES[i], BuiltInLayouts.kList)
                     .withSize(2, 3)
                     .withPosition(2*i, 0)
             );
 
-            modPoses[i] = getRobotPose().plus(new Transform2d(Drive.MOD_POSITIONS[i], new Rotation2d()));
+            modPoses[i] = getRobotPose().plus(new Transform2d(MOD_POSITIONS[i], new Rotation2d()));
 
-            assert Drive.STEER_TYPE == MotorType.NEO
+            assert STEER_TYPE == MotorType.NEO
                  : "This code assumes that the steer type of the robot is a neo.";
 
             CANSparkMax mot = (CANSparkMax) modules[i].getSteerMotor();
@@ -127,7 +119,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build Odometry //
         poseEstimator = new SwerveDrivePoseEstimator(
-            Drive.KINEMATICS, 
+            KINEMATICS, 
             getRobotRotation(), 
             getModulePositions(), 
             new Pose2d()
@@ -135,21 +127,21 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build PID Controllers //
         xController = new PIDController(
-            Drive.PosPID.KP,
-            Drive.PosPID.KI, 
-            Drive.PosPID.KD
+            PosPID.KP,
+            PosPID.KI, 
+            PosPID.KD
         );
 
         yController = new PIDController(
-            Drive.PosPID.KP,
-            Drive.PosPID.KI, 
-            Drive.PosPID.KD
+            PosPID.KP,
+            PosPID.KI, 
+            PosPID.KD
         );
 
         thetaController = new PIDController(
-            Drive.ThetaPID.KP,
-            Drive.ThetaPID.KI, 
-            Drive.ThetaPID.KD
+            ThetaPID.KP,
+            ThetaPID.KI, 
+            ThetaPID.KD
         );
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
@@ -201,9 +193,9 @@ public class Drivetrain extends ManagerSubsystemBase
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
         set(
-            +turn.getX()  * Drive.MAX_TURN_SPEED_RAD_PER_S,
-            +drive.getY() * Drive.MAX_SPEED_MPS,
-            +drive.getX() * Drive.MAX_SPEED_MPS
+            +turn.getX()  * MAX_TURN_SPEED_RAD_PER_S,
+            +drive.getY() * MAX_SPEED_MPS,
+            +drive.getX() * MAX_SPEED_MPS
         );
     }
     
@@ -223,13 +215,13 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public void set(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
     {
-        vx_meter_per_second  = +Math555.clamp(vx_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        vy_meter_per_second  = +Math555.clamp(vy_meter_per_second,  -Drive.MAX_SPEED_MPS,            Drive.MAX_SPEED_MPS);
-        omega_rad_per_second = +Math555.clamp(omega_rad_per_second, -Drive.MAX_TURN_SPEED_RAD_PER_S, Drive.MAX_TURN_SPEED_RAD_PER_S);
+        vx_meter_per_second  = +Math555.clamp(vx_meter_per_second,  -MAX_SPEED_MPS,            MAX_SPEED_MPS);
+        vy_meter_per_second  = +Math555.clamp(vy_meter_per_second,  -MAX_SPEED_MPS,            MAX_SPEED_MPS);
+        omega_rad_per_second = +Math555.clamp(omega_rad_per_second, -MAX_TURN_SPEED_RAD_PER_S, MAX_TURN_SPEED_RAD_PER_S);
         
-        vx_meter_per_second  *= Drive.speeds[speedIndex][0];
-        vy_meter_per_second  *= Drive.speeds[speedIndex][0];
-        omega_rad_per_second *= Drive.speeds[speedIndex][1];
+        vx_meter_per_second  *= SPEEDS[speedIndex][0];
+        vy_meter_per_second  *= SPEEDS[speedIndex][0];
+        omega_rad_per_second *= SPEEDS[speedIndex][1];
 
         xPID.setSpeed(vx_meter_per_second);
         yPID.setSpeed(vy_meter_per_second);
@@ -264,13 +256,13 @@ public class Drivetrain extends ManagerSubsystemBase
         }
     }
     /**
-     * Uses the chassis speeds to drive. 
+     * Uses the chassis speeds to  
      * Only works when the robot is real currently
      * @param speeds ChassisSpeeds object
      */
     public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
-        SwerveModuleState[] states = Drive.KINEMATICS.toSwerveModuleStates(speeds);
+        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(speeds);
         driveFromStates(states);
     }
 
@@ -281,10 +273,10 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     private void driveFromStates(SwerveModuleState[] states)
     {
-        SwerveDriveKinematics.desaturateWheelSpeeds(states, Drive.MAX_SPEED_MPS);
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_SPEED_MPS);
         hasDrivenThisUpdate = true;
         
-        for(int i = 0; i < Drive.MODULE_COUNT; i++)
+        for(int i = 0; i < MODULE_COUNT; i++)
         {
             if(RobotBase.isReal())
             {
@@ -295,14 +287,14 @@ public class Drivetrain extends ManagerSubsystemBase
             }
 
             modules[i].set(
-                states[i].speedMetersPerSecond / Drive.MAX_SPEED_MPS * Drive.MAX_VOLTAGE_V,
+                states[i].speedMetersPerSecond / MAX_SPEED_MPS * MAX_VOLTAGE_V,
                 states[i].angle.getRadians()
             );
         }
 
         if(RobotBase.isSimulation())
         {
-            simulation.targetSpeeds = Drive.KINEMATICS.toChassisSpeeds(states);
+            simulation.targetSpeeds = KINEMATICS.toChassisSpeeds(states);
 
             // System.out.println(simulation.targetSpeeds);
 
@@ -316,10 +308,10 @@ public class Drivetrain extends ManagerSubsystemBase
 
             final double dt = CommandRobot.deltaTime();
 
-            final double acc = Drive.MAX_ACCEL_MPS2 * dt;
+            final double acc = MAX_ACCEL_MPS2 * dt;
             final double dec = acc * 3;
 
-            final double alp = Drive.MAX_TURN_ACCEL_RAD_PER_S2 * dt;
+            final double alp = MAX_TURN_ACCEL_RAD_PER_S2 * dt;
             final double dlp = alp * 3;
 
             currentX = Math555.accClamp(targetX, currentX, acc, dec);
@@ -336,12 +328,12 @@ public class Drivetrain extends ManagerSubsystemBase
 
             simulation.accumulatedPose = simulation.accumulatedPose.plus(transform);
 
-            Pose2d[] modPoses = new Pose2d[Drive.MODULE_COUNT];
+            Pose2d[] modPoses = new Pose2d[MODULE_COUNT];
 
-            for(int i = 0; i < Drive.MODULE_COUNT; i++)
+            for(int i = 0; i < MODULE_COUNT; i++)
             {
                 modPoses[i] = simulation.accumulatedPose.plus(
-                    new Transform2d(Drive.MOD_POSITIONS[i], states[i].angle)
+                    new Transform2d(MOD_POSITIONS[i], states[i].angle)
                 );
             }
 
@@ -357,7 +349,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             ChargedUp.vision.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= Drive.POSE_MAX_DISPLACEMENT)
+            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= POSE_MAX_DISPLACEMENT)
             {
                 poseEstimator.addVisionMeasurement(
                     ChargedUp.vision.getEstimatedPose(), 
@@ -461,14 +453,14 @@ public class Drivetrain extends ManagerSubsystemBase
     
     public void increaseMaxSpeed()
     {
-        speedIndex = (speedIndex == Drive.speeds.length-1) ? speedIndex : speedIndex + 1;
+        speedIndex = (speedIndex == SPEEDS.length-1) ? speedIndex : speedIndex + 1;
     }
     public void decreaseMaxSpeed() 
     {
         speedIndex = (speedIndex == 0) ? 0 : speedIndex - 1;
     }
 
-    public double[] getCurrentSpeedLimits() {return Drive.speeds[speedIndex];}
+    public double[] getCurrentSpeedLimits() {return SPEEDS[speedIndex];}
 
     public boolean isThetaPIDFree()
     {
@@ -525,7 +517,7 @@ public class Drivetrain extends ManagerSubsystemBase
                 new PPSwerveControllerCommand(
                     trajectory, 
                     Drivetrain.this::getRobotPose,
-                    Drive.KINEMATICS, 
+                    KINEMATICS, 
                     xController, 
                     yController, 
                     thetaController,
@@ -541,9 +533,9 @@ public class Drivetrain extends ManagerSubsystemBase
             return new SwerveAutoBuilder(
                 Drivetrain.this::getRobotPose,
                 Drivetrain.this::setRobotPose,
-                Drive.KINEMATICS,
-                Drive.PosPID.KConsts, 
-                Drive.ThetaPID.KConsts,
+                KINEMATICS,
+                PosPID.KConsts, 
+                ThetaPID.KConsts,
                 Drivetrain.this::driveFromStates,
                 markers,
                 true,

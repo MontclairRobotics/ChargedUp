@@ -43,7 +43,7 @@ import frc.robot.vision.LimelightSystem;
 import frc.robot.vision.PhotonSystem;
 import frc.robot.vision.VisionSystem;
 
-import static frc.robot.Constants.*;
+import frc.robot.constants.*;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -171,7 +171,7 @@ public class ChargedUp extends RobotContainer
                 operatorController, 
                 false, 
                 false);
-            Robot.Stinger.JOY_ADJUSTER.adjustX(right);
+            StingerConstants.JOY_ADJUSTER.adjustX(right);
             stinger.setSpeed(right.getX());
         }, stinger));
 
@@ -203,7 +203,7 @@ public class ChargedUp extends RobotContainer
             JoystickInput left = JoystickInput.getLeft(
                 operatorController, false, false);
             
-            Robot.Elevator.JOY_ADJUSTER.adjustY(left);
+            ElevatorConstants.JOY_ADJUSTER.adjustY(left);
 
             elevator.setSpeed(left.getY());
         }, elevator));
@@ -310,11 +310,11 @@ public class ChargedUp extends RobotContainer
             .withPosition(0, 0);
         
         // MAX LINEAR SPEED //
-        info.addNumber("Max Linear Speed (mps)", () -> drivetrain.getCurrentSpeedLimits()[0] * Drive.MAX_SPEED_MPS)
+        info.addNumber("Max Linear Speed (mps)", () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
             .withWidget(BuiltInWidgets.kTextView);
         
         // MAX ANGULAR SPEED //
-        info.addNumber("Max Angular Speed (rps)", () -> drivetrain.getCurrentSpeedLimits()[1] * Drive.MAX_TURN_SPEED_RAD_PER_S)
+        info.addNumber("Max Angular Speed (rps)", () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
             .withWidget(BuiltInWidgets.kTextView);
         
         // HELD OBJECT //

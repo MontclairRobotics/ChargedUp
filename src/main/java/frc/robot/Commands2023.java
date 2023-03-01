@@ -8,14 +8,12 @@ import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.Drive;
-import frc.robot.Constants.Field;
-import frc.robot.Constants.Robot;
 import frc.robot.animation.DefaultAnimation;
 import frc.robot.animation.QuickSlowFlash;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Drivetrain.DriveCommands;
+import frc.robot.constants.*;
 import frc.robot.structure.DetectionType;
 import frc.robot.structure.GamePiece;
 import frc.robot.structure.ScoreHeight;
@@ -96,7 +94,7 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return stinger.PID.goToSetpoint(Robot.Stinger.MIN_LENGTH, stinger);
+        return stinger.PID.goToSetpoint(StingerConstants.MIN_LENGTH, stinger);
     }
     /**
      * extends the stinger to the length of the middle pole
@@ -104,7 +102,7 @@ public class Commands2023
      */
     public static Command stingerToMid()
     {
-        return stinger.PID.goToSetpoint(Robot.Stinger.MID_LENGTH, stinger);
+        return stinger.PID.goToSetpoint(StingerConstants.MID_LENGTH, stinger);
     }
     /**
      * extends the stinger to the high pole
@@ -112,7 +110,7 @@ public class Commands2023
      */
     public static Command stingerToHigh()
     {
-        return stinger.PID.goToSetpoint(Robot.Stinger.HIGH_LENGTH, stinger);
+        return stinger.PID.goToSetpoint(StingerConstants.HIGH_LENGTH, stinger);
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -123,7 +121,7 @@ public class Commands2023
      */
     public static Command elevatorToLow()
     {
-        return elevator.PID.goToSetpoint(Robot.Elevator.MIN_HEIGHT, elevator);
+        return elevator.PID.goToSetpoint(ElevatorConstants.MIN_HEIGHT, elevator);
     }
 
     /**
@@ -132,7 +130,7 @@ public class Commands2023
      */
     public static Command elevatorToMid()
     {
-        return elevator.PID.goToSetpoint(Robot.Elevator.MID_HEIGHT, elevator);
+        return elevator.PID.goToSetpoint(ElevatorConstants.MID_HEIGHT, elevator);
     }
 
     /**
@@ -141,7 +139,7 @@ public class Commands2023
      */
     public static Command elevatorToHigh()
     {
-        return elevator.PID.goToSetpoint(Robot.Elevator.HIGH_HEIGHT, elevator);
+        return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
     }
 
     /**
@@ -343,7 +341,7 @@ public class Commands2023
 
             // Suck it
             shwooperSuck(),
-            waitSeconds(Robot.Shwooper.SUCK_TIME_FOR_PICKUP_AUTO),
+            waitSeconds(ShwooperConstants.SUCK_TIME_FOR_PICKUP_AUTO),
             stopShwooper(),
 
             // Grab it
@@ -418,15 +416,15 @@ public class Commands2023
             Commands.run(() -> 
             {
                 ChargedUp.drivetrain.disableFieldRelative();
-
+                
                 double angle = ChargedUp.drivetrain.getChargeStationAngle();
-                double speed = Drive.MAX_SPEED_MPS / 14 * angle / Field.CHARGE_ANGLE_RANGE_DEG;
+                double speed = DriveConstants.MAX_SPEED_MPS / 14 * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
 
-                if (angle <= Field.CHARGE_ANGLE_DEADBAND && angle >= -Field.CHARGE_ANGLE_DEADBAND) 
+                if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND) 
                 {
                     speed = 0;
                 }
-                speed = Robot.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+                speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
 
                 ChargedUp.drivetrain.set(0, speed, 0);
             })

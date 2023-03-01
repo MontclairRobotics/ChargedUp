@@ -19,14 +19,16 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
-import frc.robot.Constants.Robot;
-import frc.robot.Constants.Simulation;
+import frc.robot.constants.StingerConstants;
+import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.SimulationUtility;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
+
+import static frc.robot.constants.StingerConstants.*;
 
 public class Stinger extends ManagerSubsystemBase
 {
@@ -35,17 +37,17 @@ public class Stinger extends ManagerSubsystemBase
     private CANSparkMax motor;
     RelativeEncoder encoder;
 
-    private LimitSwitch outerlimitSwitch = new LimitSwitch(Robot.Stinger.OUTER_LIMIT_SWITCH);
-    private LimitSwitch innerlimitSwitch = new LimitSwitch(Robot.Stinger.INNER_LIMIT_SWITCH);
+    private LimitSwitch outerlimitSwitch = new LimitSwitch(OUTER_LIMIT_SWITCH);
+    private LimitSwitch innerlimitSwitch = new LimitSwitch(INNER_LIMIT_SWITCH);
     
-    public final PIDMechanism PID = new PIDMechanism(Robot.Stinger.inout());
+    public final PIDMechanism PID = new PIDMechanism(inout());
 
     MechanismLigament2d widthLigament;
     MechanismLigament2d[][] ligaments;
 
     public Stinger()
     {
-        motor = new CANSparkMax(Robot.Stinger.MOTOR_PORT, MotorType.kBrushless);
+        motor = new CANSparkMax(MOTOR_PORT, MotorType.kBrushless);
 
         PID.disableOutputClamping();
 
@@ -55,7 +57,7 @@ public class Stinger extends ManagerSubsystemBase
         }
 
         encoder = motor.getEncoder();
-        encoder.setPosition(StingerMath.leadToMotor(StingerMath.stingerToLead(Robot.Stinger.MIN_LENGTH)));
+        encoder.setPosition(StingerMath.leadToMotor(StingerMath.stingerToLead(MIN_LENGTH)));
 
 
         ligaments = new MechanismLigament2d[9][2];
@@ -63,7 +65,7 @@ public class Stinger extends ManagerSubsystemBase
         MechanismObject2d root = ChargedUp.elevator.getMechanismObject().append(new MechanismLigament2d("Stinger::root", 0, -90));
         
         widthLigament = root.append(new MechanismLigament2d("Stinger::width", 0, 90));
-        widthLigament.setColor(new Color8Bit(Simulation.STINGER_COLOR));
+        widthLigament.setColor(new Color8Bit(SimulationConstants.STINGER_COLOR));
 
         MechanismLigament2d lastObjectUp   = root         .append(new MechanismLigament2d("Stinger::up::segment <root>",   0, 0));
         MechanismLigament2d lastObjectDown = widthLigament.append(new MechanismLigament2d("Stinger::down::segment <root>", 0, -90));
@@ -86,8 +88,8 @@ public class Stinger extends ManagerSubsystemBase
             ligaments[i][0].setLineWeight(2);
             ligaments[i][1].setLineWeight(2);
             
-            ligaments[i][0].setColor(new Color8Bit(Simulation.STINGER_COLOR));
-            ligaments[i][1].setColor(new Color8Bit(Simulation.STINGER_COLOR));
+            ligaments[i][0].setColor(new Color8Bit(SimulationConstants.STINGER_COLOR));
+            ligaments[i][1].setColor(new Color8Bit(SimulationConstants.STINGER_COLOR));
         }
     }
 
@@ -97,7 +99,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     private void extendToLength(double length)
     {
-        length = Math555.clamp(length, Robot.Stinger.MIN_LENGTH, Robot.Stinger.MAX_LENGTH);
+        length = Math555.clamp(length, MIN_LENGTH, MAX_LENGTH);
 
         PID.setTarget(length);
     }
@@ -107,7 +109,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void toHigh()
     {
-        extendToLength(Robot.Stinger.MIN_LENGTH + Robot.Stinger.HIGH_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
+        extendToLength(MIN_LENGTH + HIGH_LENGTH_MUL*EXT_LENGTH);
     }
 
     /**
@@ -115,15 +117,15 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void toMid()
     {
-        extendToLength(Robot.Stinger.MIN_LENGTH + Robot.Stinger.MID_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
+        extendToLength(MIN_LENGTH + MID_LENGTH_MUL*EXT_LENGTH);
     }
-
+    
     /**
      *  Fully Retracts Stinger
      */
     public void toRetract()
     {
-        extendToLength(Robot.Stinger.MIN_LENGTH);
+        extendToLength(MIN_LENGTH);
     }
 
     /**
@@ -131,7 +133,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void startExtending()
     {
-        PID.setSpeed(Robot.Stinger.SPEED);
+        PID.setSpeed(SPEED);
     }
 
     /**
@@ -139,7 +141,7 @@ public class Stinger extends ManagerSubsystemBase
      */
     public void startRetracting()
     {
-        PID.setSpeed(-Robot.Stinger.SPEED);
+        PID.setSpeed(-SPEED);
     }
 
     /**
@@ -217,7 +219,7 @@ public class Stinger extends ManagerSubsystemBase
 
         if(getLeadScrewPosition() >= StingerMath.SEGMENT_LENGTH)
         {
-            speed = Math.signum(stingerVel) * -Robot.Stinger.MAX_STINGER_VEL * 0.5;
+            speed = Math.signum(stingerVel) * -MAX_STINGER_VEL * 0.5;
         }
         else 
         {
@@ -265,7 +267,7 @@ public class Stinger extends ManagerSubsystemBase
         PID.update();
         
         if(shouldStop) motor.set(0);
-        else setMotor(Math555.clamp(PID.getSpeed(), -Robot.Stinger.MAX_STINGER_VEL, Robot.Stinger.MAX_STINGER_VEL));
+        else setMotor(Math555.clamp(PID.getSpeed(), -MAX_STINGER_VEL, MAX_STINGER_VEL));
     
         // Logging.info("--------------------------------------------------");
         // Logging.info("speed = " + PID.getSpeed());

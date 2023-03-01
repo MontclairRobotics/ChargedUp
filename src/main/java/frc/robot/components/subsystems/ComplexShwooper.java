@@ -7,18 +7,18 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import frc.robot.Constants.*;
+import static frc.robot.constants.ShwooperConstants.*;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 
 
 public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
 {
-    private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Robot.Shwooper.PNEU_PORT);
+    private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PNEU_PORT);
 
-    private final CANSparkMax motorLeft = new CANSparkMax(Robot.Shwooper.LEFT_MOTOR_PORT, MotorType.kBrushless);
-    private final CANSparkMax motorRight = new CANSparkMax(Robot.Shwooper.RIGHT_MOTOR_PORT, MotorType.kBrushless);
-    private final CANSparkMax motorCenter = new CANSparkMax(Robot.Shwooper.CENTER_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorLeft = new CANSparkMax(LEFT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorRight = new CANSparkMax(RIGHT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorCenter = new CANSparkMax(CENTER_MOTOR_PORT, MotorType.kBrushless);
 
     private final MotorControllerGroup motors = new MotorControllerGroup(new MotorController[] {
         motorLeft,
@@ -28,14 +28,14 @@ public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
     
     public ComplexShwooper() 
     {
-        motorLeft.setInverted(Robot.Shwooper.LEFT_INVERSION);
-        motorRight.setInverted(Robot.Shwooper.RIGHT_INVERSION);
-        motorCenter.setInverted(Robot.Shwooper.CENTER_INVERSION);
+        motorLeft.setInverted(TOP_OR_LEFT_INVERSION);
+        motorRight.setInverted(BOTTOM_OR_RIGHT_INVERSION);
+        motorCenter.setInverted(CENTER_INVERSION);
     }
 
     public void suck() 
     {
-        motors.set(Robot.Shwooper.SPEED);
+        motors.set(SPEED);
     }
 
     /**
@@ -43,7 +43,7 @@ public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
      */
     public void spit() 
     {
-        motors.set(-Robot.Shwooper.SPEED);
+        motors.set(-SPEED);
     }
 
     /**
@@ -59,7 +59,7 @@ public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
      */
     public void extendShwooper() 
     {
-        shwooperSolenoid.set(!Robot.Shwooper.SOLENOID_DEFAULT_STATE);
+        shwooperSolenoid.set(!SOLENOID_DEFAULT_STATE);
     }
 
     /**
@@ -67,7 +67,7 @@ public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
      */
     public void retractShwooper() 
     {
-        shwooperSolenoid.set(Robot.Shwooper.SOLENOID_DEFAULT_STATE);
+        shwooperSolenoid.set(SOLENOID_DEFAULT_STATE);
     }
 
     /**
@@ -87,7 +87,7 @@ public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
      */
     public boolean isShwooperOut()
     {
-        return !Robot.Shwooper.SOLENOID_DEFAULT_STATE;
+        return !SOLENOID_DEFAULT_STATE;
     }
     
 
