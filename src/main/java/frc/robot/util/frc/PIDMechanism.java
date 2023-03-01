@@ -47,12 +47,16 @@ public class PIDMechanism implements Sendable
      * Set the target value (setPoint) that the mechanism moves to
      * 
      * @param target
+     * @param shouldReset Whether or not the integrator and previous setpoint data should be erased when calling
      */
-    public void setTarget(double target)
+    public void setTarget(double target, boolean shouldReset)
     {
+        if(shouldReset) pidController.reset();
+
         pidController.setSetpoint(target);
         usingPID = !pidController.atSetpoint();
     }
+    public void setTarget(double target) {setTarget(target, false /*TODO: this should actually be true, but for testing this is false*/);}
 
     /**
      * Stop using PID to determine speed
@@ -169,19 +173,19 @@ public class PIDMechanism implements Sendable
     {
         return new Command() 
         {
-            private boolean ran = false;
+            private boolean updatedAtLeastOnce = false;
 
             public Set<Subsystem> getRequirements() {return Set.of(requirements);}
 
             @Override
             public void execute() 
             {
-                ran = true;
-                setTarget(value.getAsDouble());
+                setTarget(value.getAsDouble(), !updatedAtLeastOnce);
+                updatedAtLeastOnce = true;
             }
 
             @Override
-            public boolean isFinished() {return ran && free();}
+            public boolean isFinished() {return updatedAtLeastOnce && free();}
 
             @Override
             public void end(boolean interrupted) {cancel();}
