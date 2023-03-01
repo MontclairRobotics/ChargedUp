@@ -22,6 +22,7 @@ import frc.robot.util.HashMaps;
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
+import frc.robot.vision.VisionSystem;
 
 import static frc.robot.ChargedUp.*;
 
@@ -431,20 +432,22 @@ public class Commands2023
         ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
     }
 
+    /**
+     * Decorate a command so that it fails immediately if 
+     */
     public static Command ifHasTarget(Command cmd)
     {
-        return cmd.until(() -> !ChargedUp.vision.hasObject()).unless(() -> !ChargedUp.vision.hasObject());
+        return cmd.until(() -> !ChargedUp.vision.hasObject());
     }
 
     /**
      * Turns to the object.
      * @return
      */
-    public static Command turnToObject() 
+    public static Command turnToCurrentObject() 
     {
         return ifHasTarget(
-            Commands.run(() -> ChargedUp.drivetrain.setTargetAngle(ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
-                .until(() -> ChargedUp.drivetrain.isThetaPIDFree())
+            drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
         );
     }
 
@@ -452,11 +455,10 @@ public class Commands2023
      * Goes towards the object on the x-axis.
      * @return
      */
-    public static Command moveToObjectSideways()
+    public static Command moveToCurrentObjectSideways()
     {
         return ifHasTarget(
-            Commands.run(() -> ChargedUp.drivetrain.xPID.setTarget(ChargedUp.drivetrain.getRobotPose().getX() + ChargedUp.drivetrain.getObjectAngle()), ChargedUp.drivetrain)
-            .until(() -> !ChargedUp.drivetrain.xPID.active())
+            drivetrain.thetaPID.goToSetpoint(() -> drivetrain.getRobotPose().getX() + drivetrain.getObjectAngle(), drivetrain)
         );
     }
 
@@ -468,8 +470,8 @@ public class Commands2023
     {
         return Commands.sequence(
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(type)),
-            turnToObject(),
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.APRIL_TAG))
+            turnToCurrentObject(),
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
     }
 
@@ -481,8 +483,8 @@ public class Commands2023
     {
         return Commands.sequence(
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(type)),
-            moveToObjectSideways(),
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.APRIL_TAG))
+            moveToCurrentObjectSideways(),
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
     }
 

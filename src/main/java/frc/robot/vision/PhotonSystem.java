@@ -21,7 +21,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 
-public class PhotonSystem extends ManagerBase implements VisionSystem
+public class PhotonSystem extends VisionSystem
 {
     PhotonCamera photonCamera = new PhotonCamera(PhotonConstants.CAMERA_NAME);
     PhotonPoseEstimator photonPoseEstimator;

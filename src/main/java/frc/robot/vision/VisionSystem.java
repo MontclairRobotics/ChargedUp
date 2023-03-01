@@ -3,73 +3,96 @@ package frc.robot.vision;
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.commandrobot.Manager;
+import frc.robot.util.frc.commandrobot.ManagerBase;
 
-public interface VisionSystem extends Manager
+public abstract class VisionSystem extends ManagerBase
 {
+    // STATIC //
+    public static final DetectionType DEFAULT_DETECTION = DetectionType.APRIL_TAG;
+
+    // NON-STATIC //
+    private DetectionType desiredDriveTarget;
+
+    public void setDesiredDriveTarget(DetectionType type)
+    {
+        desiredDriveTarget = type;
+    }
+    public DetectionType getDesiredDriveTarget()
+    {
+        return desiredDriveTarget;
+    }
+
+    public void cycleDesiredDriveTarget()
+    {
+             if(desiredDriveTarget == DetectionType.CONE) desiredDriveTarget = DetectionType.CUBE;
+        else if(desiredDriveTarget == DetectionType.CUBE) desiredDriveTarget = DetectionType.TAPE;
+        else if(desiredDriveTarget == DetectionType.TAPE) desiredDriveTarget = DetectionType.CONE;
+    }
+
     /**
      * updates the estimated pose of the robot
      * @param prev the previous estimated position of the robot
      */
-    void updateEstimatedPose(Pose2d prev);
+    public abstract void updateEstimatedPose(Pose2d prev);
 
     /**
      * @return the estimated pose of the robot
      */
-    Pose2d getEstimatedPose();
+    public abstract Pose2d getEstimatedPose();
 
     /**
      * @return the estimated time the frame used to derive the robot pose was taken
      */
-    double getTimestampSeconds();
+    public abstract double getTimestampSeconds();
 
     /**
      * Sets the Estimated Pose
      */
-    void resetPose(Pose2d pose);
+    public abstract void resetPose(Pose2d pose);
 
     /**
      * @return if it sees a target :)
      */
-    boolean hasObject();
+    public abstract boolean hasObject();
 
     /**
      * @return the {@link frc.robot.structure.DetectionType Detection Type} that vision system has found
      * returns {@link frc.robot.structure.DetectionType#NONE NONE} if not found
      */
-    DetectionType getCurrentType();
+    public abstract DetectionType getCurrentType();
 
     /**
      * @return the {@link frc.robot.structure.DetectionType Detection Type} that vision system is searching for
      */
-    DetectionType getTargetType();
+    public abstract DetectionType getTargetType();
 
     /**
      * Set pipeline so that it targets this kind of Field element {@link frc.robot.structure.DetectionType DetectionType}
      */
-    void setTargetType(DetectionType type);
+    public abstract void setTargetType(DetectionType type);
 
     /**
      * @return the <b>horizontal</b> offset of the target from the center in degrees (angle range may change if using photon but who cares)
      */
-    double getObjectAX();
+    public abstract double getObjectAX();
     /**
      * @return the <b>vertical</b> offset of the target from the center in degrees (angle range may change if using photon but who cares)
      */
-    double getObjectAY();
+    public abstract double getObjectAY();
 
     /**
      * @return the int representing the pipline currently being used
      */
-    double getPipeline();
+    public abstract double getPipeline();
 
     /**
      * Changes the current pipeline based on the value
      * @param value number which corresponds to the pipeline
      */
-    void setPipeline(double value);
+    public abstract void setPipeline(double value);
 
     /**
      * Gets the URL for the camera streams
      */
-    String getCameraStreamURL();
+    public abstract String getCameraStreamURL();
 }

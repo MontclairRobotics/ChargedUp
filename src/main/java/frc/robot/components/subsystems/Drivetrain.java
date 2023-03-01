@@ -509,6 +509,10 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
+        public Command toggleFieldRelative()
+        {
+            return Commands.runOnce(() -> useFieldRelative = !useFieldRelative, Drivetrain.this);
+        }
 
 
         public Command follow(PathPlannerTrajectory trajectory)

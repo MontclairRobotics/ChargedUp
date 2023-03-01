@@ -122,29 +122,31 @@ public class ChargedUp extends RobotContainer
         // driverController.getButton(Button.X_SQUARE)
         //     .onTrue(Commands.runOnce(() -> led.add(new QuickSlowFlash(Color.kYellow))));
     
-        // Buttons for Field Relative and Speed
+        // Button for Field Relative 
         driverController.getButton(Button.A_CROSS)
-            .onTrue(drivetrain.commands.enableFieldRelative());
-        // driverController.getButton(Button.X_SQUARE)
-        //     .onTrue(drivetrain.commands.disableFieldRelative());
-        driverController.getButton(Button.X_SQUARE)
-            .onTrue(Commands2023.scoreHigh());
-        driverController.getButton(Button.Y_TRIANGLE)
-            .toggleOnTrue(Commands2023.elevatorStingerToLow());
+            .and(driverController.getButton(Button.START_TOUCHPAD))
+            .onTrue(drivetrain.commands.toggleFieldRelative());
+
+        // Increase/Decrease Max Speed
         driverController.getButton(Button.RIGHT_BUMPER)
             .onTrue(drivetrain.commands.increaseSpeed());
         driverController.getButton(Button.LEFT_BUMPER)
             .onTrue(drivetrain.commands.decreaseSpeed());
         
+        // VISION MOVEMENT //
+        driverController.getButton(Button.A_CROSS) //switch cont or cube
+            .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
+
+        driverController.getButton(Button.X_SQUARE)
+            .onTrue(Commands2023.moveToObjectSideways(vision.getDesiredDriveTarget()));
+
+        driverController.getButton(Button.B_CIRCLE)
+            .onTrue(Commands2023.turnToObject(vision.getDesiredDriveTarget()));
+        
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
-                if(DriverStation.isEnabled()) 
-                {
-                    Logging.warning("Attempted to zeroed NavX while enabled; refusing input.");
-                    return;
-                }
-
+                if(DriverStation.isEnabled()) return;
                 gyroscope.zeroYaw();
                 Logging.info("Zeroed NavX!");
             }));
@@ -220,6 +222,8 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands2023.quickSlowFlashYellow());
         operatorController.getButton(Button.LEFT_BUMPER)
             .onTrue(Commands2023.quickSlowFlashPurple());
+
+        
     }
 
     

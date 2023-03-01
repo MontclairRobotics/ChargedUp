@@ -12,7 +12,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class LimelightSystem extends ManagerBase implements VisionSystem
+public class LimelightSystem extends VisionSystem
 {
     private LimelightHelpers.Results results;
     private DetectionType target = DetectionType.NONE;
