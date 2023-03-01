@@ -92,41 +92,6 @@ public class Stinger extends ManagerSubsystemBase
     }
 
     /**
-     * Extends Stinger to a desired length
-     * @param length (double) the desired length 
-     */
-    private void extendToLength(double length)
-    {
-        length = Math555.clamp(length, Robot.Stinger.MIN_LENGTH, Robot.Stinger.MAX_LENGTH);
-
-        PID.setTarget(length);
-    }
-
-    /**
-     * Extend the stinger to the {@link Robot#HIGH_LENGTH_MUL the high Length}
-     */
-    public void toHigh()
-    {
-        extendToLength(Robot.Stinger.MIN_LENGTH + Robot.Stinger.HIGH_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
-    }
-
-    /**
-     * Extend the stinger to the {@link Robot#MID_LENGTH_MUL the middle Length}
-     */
-    public void toMid()
-    {
-        extendToLength(Robot.Stinger.MIN_LENGTH + Robot.Stinger.MID_LENGTH_MUL*Robot.Stinger.EXT_LENGTH);
-    }
-
-    /**
-     *  Fully Retracts Stinger
-     */
-    public void toRetract()
-    {
-        extendToLength(Robot.Stinger.MIN_LENGTH);
-    }
-
-    /**
      * Manually extends Stinger at {@link Robot#UP_DOWN_SPEED the Stinger Speed} 
      */
     public void startExtending()
@@ -148,32 +113,6 @@ public class Stinger extends ManagerSubsystemBase
     public void stop()
     {
         PID.setSpeed(0);
-    }
-
-    /**
-     * Set the speed of the Stinger
-     * @param speed desired speed
-     */
-    public void setSpeed(double speed) 
-    {
-        PID.setSpeed(speed);
-    }
-    
-    /**
-     * is currently not pidding?
-     * @return <code>true</code> if not pidding, <code>false</code> if pidding to a value
-     */
-    public boolean isPIDFree()
-    {
-        return PID.free();
-    }
-
-    /**
-     * Cancel the {@link Stinger#PID stingerPID}
-     */
-    public void stopPIDing()
-    {
-        PID.cancel();
     }
 
     /**

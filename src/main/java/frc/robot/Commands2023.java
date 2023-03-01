@@ -25,7 +25,7 @@ import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
 
-import static frc.robot.ChargedUp.elevator;
+import static frc.robot.ChargedUp.*;
 
 import java.util.Arrays;
 
@@ -96,8 +96,7 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return run(() -> ChargedUp.stinger.toRetract(), ChargedUp.stinger)
-            .until(ChargedUp.stinger::isPIDFree);
+        return stinger.PID.goTo(Robot.Stinger.MIN_LENGTH, stinger);
     }
     /**
      * extends the stinger to the length of the middle pole
@@ -105,8 +104,7 @@ public class Commands2023
      */
     public static Command stingerToMid()
     {
-        return run(() -> ChargedUp.stinger.toMid(), ChargedUp.stinger)
-            .until(ChargedUp.stinger::isPIDFree);
+        return stinger.PID.goTo(Robot.Stinger.MID_LENGTH, stinger);
     }
     /**
      * extends the stinger to the high pole
@@ -114,8 +112,7 @@ public class Commands2023
      */
     public static Command stingerToHigh()
     {
-        return run(() -> ChargedUp.stinger.toHigh(), ChargedUp.stinger)
-            .until(ChargedUp.stinger::isPIDFree);
+        return stinger.PID.goTo(Robot.Stinger.HIGH_LENGTH, stinger);
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -180,9 +177,7 @@ public class Commands2023
             run(() -> ChargedUp.elevator.setHigh())
                 .until(ChargedUp.elevator.PID::free),
             runOnce(() -> Logging.info("Finished the ELeVaToR pid")),
-            waitSeconds(1),
-            run(() -> ChargedUp.stinger.toHigh())
-                .until(ChargedUp.stinger.PID::free),
+            stingerToHigh(),
             runOnce(() -> Logging.info("Finished the Stinger pid"))
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
@@ -199,10 +194,9 @@ public class Commands2023
     public static Command elevatorStingerToMid()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.stinger.toMid())
+            run(() -> ChargedUp.stinger.PID.setTarget(Robot.Stinger.MID_LENGTH))
                 .until(ChargedUp.stinger.PID::free),
-            run(() -> ChargedUp.elevator.setMid())
-                .until(ChargedUp.elevator.PID::free)
+            stingerToMid()
         );
 
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
@@ -220,10 +214,9 @@ public class Commands2023
     public static Command elevatorStingerToLow()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.stinger.toRetract())
+            run(() -> ChargedUp.stinger.PID.setTarget(Robot.Stinger.MIN_LENGTH))
                 .until(ChargedUp.stinger.PID::free),
-            run(() -> ChargedUp.elevator.setLow())
-                .until(ChargedUp.elevator.PID::free)
+            retractStinger()
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -236,7 +229,7 @@ public class Commands2023
     {
         return Commands.runOnce(() ->
             {
-                ChargedUp.stinger.stopPIDing();
+                ChargedUp.stinger.PID.cancel();;
                 ChargedUp.elevator.stopPIDing();
             },
             ChargedUp.stinger,
@@ -353,7 +346,7 @@ public class Commands2023
             releaseGrabber(),
 
             // Lower grabber in place
-            Commands.parallel(
+            Commands.sequence(
                 retractStinger(),
                 elevatorToLow()
             ),
@@ -392,16 +385,12 @@ public class Commands2023
             //Drop grabber
             log("[SCORE] Dropping . . ."),
             openGrabber(), 
-            
-            waitSeconds(1),
-            runOnce(() -> Logging.info("!!!!!!!!PLS WAIT!!!!!!!!!!!!!")),
-            waitSeconds(1),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
             Commands.sequence(
                 retractStinger(), 
-                waitSeconds(1),
+                log("STINGER RETRACTED"),
                 elevatorToMid()
             ),
             

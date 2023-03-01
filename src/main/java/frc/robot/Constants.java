@@ -313,10 +313,14 @@ public final class Constants
             public static final double MID_LENGTH_MUL = 0.65;
             public static final double HIGH_LENGTH_MUL = 0.95;
 
+
             public static final double MIN_LENGTH = Units.inchesToMeters(10.0); // 10 inches
             public static final double MAX_LENGTH = Units.inchesToMeters(60.0); // 60 inches
 
             public static final double EXT_LENGTH = MAX_LENGTH - MIN_LENGTH;
+            
+            public static final double MID_LENGTH = MIN_LENGTH + MID_LENGTH_MUL*EXT_LENGTH;
+            public static final double HIGH_LENGTH = MIN_LENGTH + HIGH_LENGTH_MUL*EXT_LENGTH;
 
             public static final double SPEED = 1;
             public static final double DEADBAND = 0.05;

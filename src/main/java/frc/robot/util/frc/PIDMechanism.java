@@ -1,8 +1,15 @@
 package frc.robot.util.frc;
 
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.math.Math555;
 
 
@@ -87,10 +94,11 @@ public class PIDMechanism implements Sendable
      */
     public void update()
     {
-        if(pidController.atSetpoint())
-        {
-            cancel();
-        }
+        // if(pidController.atSetpoint())
+        // {
+        //     cancel();
+        // }
+
         if(usingPID)
         {
             double calulation = pidController.calculate(measurement);
@@ -152,6 +160,39 @@ public class PIDMechanism implements Sendable
 
         builder.setSmartDashboardType("ShuffleboardLayout");
     }
+
+    /**
+     * Get a command which targets the given value with this PID mechanism,
+     * requiring the given subsystem(s), if any.
+     */
+    public Command goTo(DoubleSupplier value, Subsystem... requirements)
+    {
+        return new Command() 
+        {
+            private boolean ran = false;
+
+            public Set<Subsystem> getRequirements() {return Set.of(requirements);}
+
+            @Override
+            public void execute() 
+            {
+                ran = true;
+                setTarget(value.getAsDouble());
+            }
+
+            @Override
+            public boolean isFinished() {return ran && free();}
+
+            @Override
+            public void end(boolean interrupted) {cancel();}
+        };
+    }
+
+    /**
+     * Get a command which targets the given value with this PID mechanism,
+     * requiring the given subsystem(s), if any.
+     */
+    public Command goTo(double value, Subsystem... requirements) {return goTo(() -> value, requirements);}
 }
 
 /* 

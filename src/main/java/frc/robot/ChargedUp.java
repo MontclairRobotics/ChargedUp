@@ -172,7 +172,7 @@ public class ChargedUp extends RobotContainer
                 false, 
                 false);
             Robot.Stinger.JOY_ADJUSTER.adjustX(right);
-            stinger.setSpeed(right.getX());
+            stinger.PID.setSpeed(right.getX());
         }, stinger));
 
         // Grabber
