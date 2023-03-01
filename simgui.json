@@ -3,7 +3,7 @@
     "Addressable LEDs": {
       "0": {
         "columns": 25,
-        "order": 1
+        "serpentine": true
       },
       "window": {
         "name": "LED bitches",
@@ -121,9 +121,6 @@
       "open": true
     },
     "transitory": {
-      "FMSInfo": {
-        "open": true
-      },
       "LiveWindow": {
         ".status": {
           "open": true
@@ -159,9 +156,6 @@
     "Server": {
       "open": true
     }
-  },
-  "NetworkTables View": {
-    "visible": false
   },
   "Plot": {
     "Plot <0>": {
@@ -212,7 +206,7 @@
               "min": -0.1
             }
           ],
-          "height": 305,
+          "height": 3,
           "name": "Stinger Position",
           "series": [
             {
@@ -227,7 +221,7 @@
           ]
         },
         {
-          "height": 305,
+          "height": 3,
           "name": "Lead Position",
           "series": [
             {
@@ -248,7 +242,7 @@
               "min": -0.5
             }
           ],
-          "height": 305,
+          "height": 3,
           "name": "Stinger Velocity",
           "series": [
             {
@@ -269,7 +263,7 @@
               "min": -0.1
             }
           ],
-          "height": 305,
+          "height": 3,
           "name": "Motor Velocity",
           "series": [
             {
@@ -285,7 +279,8 @@
         }
       ],
       "window": {
-        "name": "Stinger Info"
+        "name": "Stinger Info",
+        "visible": false
       }
     }
   }

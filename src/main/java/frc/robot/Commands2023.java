@@ -25,7 +25,7 @@ import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
 
-import static frc.robot.ChargedUp.elevator;
+import static frc.robot.ChargedUp.*;
 
 import java.util.Arrays;
 
@@ -96,8 +96,7 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return run(() -> ChargedUp.stinger.toRetract(), ChargedUp.stinger)
-            .until(ChargedUp.stinger::isPIDFree);
+        return stinger.PID.goToSetpoint(Robot.Stinger.MIN_LENGTH, stinger);
     }
     /**
      * extends the stinger to the length of the middle pole
@@ -105,8 +104,7 @@ public class Commands2023
      */
     public static Command stingerToMid()
     {
-        return run(() -> ChargedUp.stinger.toMid(), ChargedUp.stinger)
-            .until(ChargedUp.stinger::isPIDFree);
+        return stinger.PID.goToSetpoint(Robot.Stinger.MID_LENGTH, stinger);
     }
     /**
      * extends the stinger to the high pole
@@ -114,8 +112,7 @@ public class Commands2023
      */
     public static Command stingerToHigh()
     {
-        return run(() -> ChargedUp.stinger.toHigh(), ChargedUp.stinger)
-            .until(ChargedUp.stinger::isPIDFree);
+        return stinger.PID.goToSetpoint(Robot.Stinger.HIGH_LENGTH, stinger);
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -126,8 +123,7 @@ public class Commands2023
      */
     public static Command elevatorToLow()
     {
-        return run(elevator::setLow, elevator)
-            .until(elevator::isPIDFree);
+        return elevator.PID.goToSetpoint(Robot.Elevator.MIN_HEIGHT, elevator);
     }
 
     /**
@@ -136,8 +132,7 @@ public class Commands2023
      */
     public static Command elevatorToMid()
     {
-        return run(elevator::setMid, elevator)
-            .until(elevator::isPIDFree);
+        return elevator.PID.goToSetpoint(Robot.Elevator.MID_HEIGHT, elevator);
     }
 
     /**
@@ -146,8 +141,7 @@ public class Commands2023
      */
     public static Command elevatorToHigh()
     {
-        return run(elevator::setHigh, elevator)
-            .until(elevator::isPIDFree);
+        return elevator.PID.goToSetpoint(Robot.Elevator.HIGH_HEIGHT, elevator);
     }
 
     /**
@@ -177,12 +171,9 @@ public class Commands2023
     public static Command elevatorStingerToHigh()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.elevator.setHigh())
-                .until(ChargedUp.elevator.PID::free),
+            elevatorToHigh(),
             runOnce(() -> Logging.info("Finished the ELeVaToR pid")),
-            waitSeconds(1),
-            run(() -> ChargedUp.stinger.toHigh())
-                .until(ChargedUp.stinger.PID::free),
+            stingerToHigh(),
             runOnce(() -> Logging.info("Finished the Stinger pid"))
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
@@ -199,12 +190,9 @@ public class Commands2023
     public static Command elevatorStingerToMid()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.stinger.toMid())
-                .until(ChargedUp.stinger.PID::free),
-            run(() -> ChargedUp.elevator.setMid())
-                .until(ChargedUp.elevator.PID::free)
+            elevatorToMid(),
+            stingerToMid()
         );
-
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
     }
@@ -220,10 +208,8 @@ public class Commands2023
     public static Command elevatorStingerToLow()
     {
         CommandBase c = sequence(
-            run(() -> ChargedUp.stinger.toRetract())
-                .until(ChargedUp.stinger.PID::free),
-            run(() -> ChargedUp.elevator.setLow())
-                .until(ChargedUp.elevator.PID::free)
+            retractStinger(),
+            elevatorToLow()
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -353,10 +339,7 @@ public class Commands2023
             releaseGrabber(),
 
             // Lower grabber in place
-            Commands.parallel(
-                retractStinger(),
-                elevatorToLow()
-            ),
+            elevatorStingerToLow(),
 
             // Suck it
             shwooperSuck(),
@@ -367,7 +350,7 @@ public class Commands2023
             grabGrabber(),
 
             // Prepare to leave
-            elevatorToMid(),
+            // elevatorToMid(),
             retractSchwooper()
         );
     }
@@ -383,7 +366,7 @@ public class Commands2023
             log("[SCORE] Beginning score sequence . . ."),
 
             //move sideways to the target
-            Commands2023.moveToObjectSideways(type.getType()),
+            moveToObjectSideways(type.getType()),
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),
@@ -391,19 +374,13 @@ public class Commands2023
 
             //Drop grabber
             log("[SCORE] Dropping . . ."),
+            waitSeconds(0.3),
             openGrabber(), 
-            
-            waitSeconds(1),
-            runOnce(() -> Logging.info("!!!!!!!!PLS WAIT!!!!!!!!!!!!!")),
-            waitSeconds(1),
+            waitSeconds(0.2),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
-            Commands.sequence(
-                retractStinger(), 
-                waitSeconds(1),
-                elevatorToMid()
-            ),
+            elevatorStingerToLow(),
             
             log("[SCORE] Done!")
         );

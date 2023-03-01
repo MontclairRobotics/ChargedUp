@@ -32,8 +32,8 @@ public final class Constants
     
     public static class Simulation
     {
-        public static final Color ELEVATOR_COLOR = Color.kSilver;
-        public static final Color STINGER_COLOR  = Color.kWhite;
+        public static final Color ELEVATOR_COLOR = Color.kLightCyan;
+        public static final Color STINGER_COLOR  = Color.kCoral;
     }
 
     public static class Drive
@@ -312,6 +312,9 @@ public final class Constants
 
             public static final double MID_LENGTH_MUL = 0.65;
             public static final double HIGH_LENGTH_MUL = 0.95;
+
+            public static final double MID_LENGTH = Units.inchesToMeters(32);
+            public static final double HIGH_LENGTH = Units.inchesToMeters(57);
 
             public static final double MIN_LENGTH = Units.inchesToMeters(10.0); // 10 inches
             public static final double MAX_LENGTH = Units.inchesToMeters(60.0); // 60 inches

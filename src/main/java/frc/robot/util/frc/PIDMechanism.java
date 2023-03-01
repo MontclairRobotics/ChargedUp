@@ -1,8 +1,13 @@
 package frc.robot.util.frc;
 
+import java.util.Set;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.math.Math555;
 
 
@@ -42,6 +47,12 @@ public class PIDMechanism implements Sendable
      * @param target
      */
     public void setTarget(double target)
+    {
+        pidController.reset();
+        updateTarget(target);
+    }
+
+    public void updateTarget(double target)
     {
         pidController.setSetpoint(target);
         usingPID = !pidController.atSetpoint();
@@ -152,6 +163,56 @@ public class PIDMechanism implements Sendable
 
         builder.setSmartDashboardType("ShuffleboardLayout");
     }
+
+    public Command goToSetpoint(double target, Subsystem... requirements)
+    {
+        return goToSetpoint(() -> target, requirements);
+    }
+
+    public Command goToSetpoint(DoubleSupplier target, Subsystem... requirements)
+    {
+        /* Create an Anonymous Command cuz Command is an interface */
+        return new Command()
+        {
+            // How commands work approximately (not actually)
+            // initialize();
+            // while(!isFinished)
+            // {
+            //    execute();
+            // }
+            // end();
+
+            @Override
+            public Set<Subsystem> getRequirements() 
+            {
+                return Set.of(requirements);
+            }
+
+            @Override
+            public void initialize()
+            {
+                setTarget(target.getAsDouble());
+            }
+
+            @Override
+            public void execute()
+            {
+                updateTarget(target.getAsDouble());
+            }
+
+            @Override
+            public boolean isFinished()
+            {
+                return pidController.atSetpoint();
+            }
+
+            @Override
+            public void end(boolean inter)
+            {
+                PIDMechanism.this.cancel();
+            }
+        };
+    }
 }
 
 /* 
@@ -178,3 +239,29 @@ class MultiPIDMechanism
     String current() - get the name of the current controller, or 'null' if no pidding is ocurring
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// hi
