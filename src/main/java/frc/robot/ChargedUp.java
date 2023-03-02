@@ -167,6 +167,10 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.DOWN)
             .onTrue(Commands2023.elevatorStingerToLow());
 
+        // Cancel PID
+        operatorController.getButton(Button.START_TOUCHPAD) 
+            .onTrue(Commands2023.stopPIDing());
+
         // Stinger
         stinger.setDefaultCommand(Commands.run(() -> {
             JoystickInput right = JoystickInput.getRight(
