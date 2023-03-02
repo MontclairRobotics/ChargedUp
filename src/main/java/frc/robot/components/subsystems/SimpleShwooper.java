@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import static frc.robot.constants.ShwooperConstants.*;
+
+import frc.robot.constants.ShwooperConstants;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 
@@ -15,17 +17,17 @@ import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
 {
     private final CANSparkMax motorTop = new CANSparkMax(LEFT_MOTOR_PORT, MotorType.kBrushless);
-    private final CANSparkMax motorBottom = new CANSparkMax(RIGHT_MOTOR_PORT, MotorType.kBrushless);
+    // private final CANSparkMax motorBottom = new CANSparkMax(Robot.Shwooper.RIGHT_MOTOR_PORT, MotorType.kBrushless);
 
-    private final MotorControllerGroup motors = new MotorControllerGroup(new MotorController[] {
-        motorTop,
-        motorBottom,
-    });
+    // private final MotorControllerGroup motors = new MotorControllerGroup(new MotorController[] {
+    //     motorTop,
+    //     motorBottom,
+    // });
     
     public SimpleShwooper() 
     {
-        motorTop   .setInverted(TOP_OR_LEFT_INVERSION);
-        motorBottom.setInverted(BOTTOM_OR_RIGHT_INVERSION);
+        motorTop.setInverted(TOP_OR_LEFT_INVERSION);
+        // motorBottom.setInverted(Robot.Shwooper.RIGHT_INVERSION);
     }
 
     /**
@@ -34,8 +36,8 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
     public void suck() 
     {
         //This could be opposite
-        motorTop.set(SPEED);
-        motorBottom.set(SPEED);
+        motorTop.set(INVERT_SIMPLE_SCHWOOPER * SPEED);
+        // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * -Robot.Shwooper.SPEED);
     }
 
     /**
@@ -43,8 +45,8 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
      */
     public void spit() 
     {
-        motorTop.set(SPEED);
-        motorBottom.set(SPEED);
+        motorTop.set(INVERT_SIMPLE_SCHWOOPER * -SPEED);
+        // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * Robot.Shwooper.SPEED);
     }
 
     /**
@@ -52,7 +54,7 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
      */
     public void stop() 
     {
-        motors.set(0);
+        motorTop.set(0);
     }
 
     public void extendShwooper(){};

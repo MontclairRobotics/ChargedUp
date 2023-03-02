@@ -151,7 +151,7 @@ public class Commands2023
     {
         return Commands.sequence(
             run(elevator::delevate, elevator)
-                .until(elevator::isAtStartPosition),
+                .until(elevator::isAtBottom),
 
             run(elevator::resetElevatorEncoder, elevator) 
         );

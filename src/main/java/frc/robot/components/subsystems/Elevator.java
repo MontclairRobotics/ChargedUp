@@ -43,7 +43,7 @@ public class Elevator extends ManagerSubsystemBase
 
     private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH);
     private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH);
-    private LimitSwitch startlimitSwitch = new LimitSwitch(START_LIMIT_SWITCH);
+    // private LimitSwitch startlimitSwitch = new LimitSwitch(START_LIMIT_SWITCH);
 
     public final PIDMechanism PID = new PIDMechanism(updown());
 
@@ -154,9 +154,9 @@ public class Elevator extends ManagerSubsystemBase
      * returns if the limit switch for the starting position of the elevator is triggered
      * @return boolean
      */
-    public boolean isAtStartPosition() 
+    public boolean isAtBottom() 
     {
-        return startlimitSwitch.get(); 
+        return bottomlimitSwitch.get(); 
     }
 
     /**
