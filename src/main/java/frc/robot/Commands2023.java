@@ -7,8 +7,11 @@ import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -588,7 +591,14 @@ public class Commands2023
             {
                 sumTrajectory = sumTrajectory.concatenate(allTrajectories.get(i));
             }
+
+            if (DriverStation.getAlliance() == Alliance.Red)
+            {
+                // sumTrajectory = sumTrajectory.transformBy(new Pose2d(new Translation2d(16.5, 5.15).minus(sumTrajectory.getInitialPose().getTranslation()), Rotation2d.fromDegrees(180)).minus(sumTrajectory.getInitialPose()));
+                sumTrajectory = sumTrajectory.relativeTo(new Pose2d(8.28, 4.0, Rotation2d.fromDegrees(90)));//.minus(sumTrajectory.getInitialPose()));
+            }
         }
+        
 
         // Display the sum trajectory
         if(sumTrajectory == null)

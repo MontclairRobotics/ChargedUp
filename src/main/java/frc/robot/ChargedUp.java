@@ -66,6 +66,8 @@ public class ChargedUp extends RobotContainer
     public static ShuffleboardTab getDebugTab() {return debugTab;}
     private static final ShuffleboardTab mainTab = Shuffleboard.getTab("Main Tab");
     public static ShuffleboardTab getMainTab() {return mainTab;}
+    private static final ShuffleboardTab PIDTab = Shuffleboard.getTab("PID");
+    public static ShuffleboardTab getPIDTab() {return PIDTab;}
 
     // COMPONENTS //
     public static final AHRS gyroscope = new AHRS();
@@ -91,6 +93,7 @@ public class ChargedUp extends RobotContainer
 
         setupDebugTab();
         setupMainTab();
+        setupPIDTab();
 
         vision.setTargetType(DetectionType.APRIL_TAG);
 
@@ -134,8 +137,9 @@ public class ChargedUp extends RobotContainer
             .onTrue(drivetrain.commands.decreaseSpeed());
         
         // VISION MOVEMENT //
-        driverController.getButton(Button.A_CROSS) //switch cont or cube
-            .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
+        driverController.getButton(Button.A_CROSS) //switch cone or cube
+            // .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
+                .onTrue(Commands2023.scoreHigh());
 
         driverController.getButton(Button.X_SQUARE)
             .onTrue(Commands2023.moveToObjectSideways(vision.getDesiredDriveTarget()));
@@ -242,23 +246,6 @@ public class ChargedUp extends RobotContainer
 
     public void setupDebugTab()
     {
-        debugTab.add("X-PID Controller", drivetrain.xPID)
-            .withPosition(0, 3)
-            .withSize(2, 3);
-        debugTab.add("Y-PID Controller", drivetrain.yPID)
-            .withPosition(0+2, 3)
-            .withSize(2, 3);
-        debugTab.add("θ-PID Controller", drivetrain.thetaPID)
-            .withPosition(0+2+2, 3)
-            .withSize(2, 3);
-
-        debugTab.add("Elevator PID", elevator.PID)
-            .withPosition(0, 3)
-            .withSize(2, 3);
-        debugTab.add("Stinger PID", stinger.PID)
-            .withPosition(0, 3)
-            .withSize(2, 3);
-
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
             .withPosition(0+2+2+2, 3)
             .withSize(2, 2);
@@ -275,6 +262,25 @@ public class ChargedUp extends RobotContainer
             .withPosition(0+2+2+2+2, 0)
             .withSize(2, 1);
         debugTab.addDouble("Stinger Lead Position", stinger::getLeadScrewPosition);
+    }
+    public void setupPIDTab() 
+    {
+        PIDTab.add("X-PID Controller", drivetrain.xPID.getPIDController())
+            .withPosition(0, 3)
+            .withSize(2, 3);
+        PIDTab.add("Y-PID Controller", drivetrain.yPID.getPIDController())
+            .withPosition(0+2, 3)
+            .withSize(2, 3);
+        PIDTab.add("θ-PID Controller", drivetrain.thetaPID.getPIDController())
+            .withPosition(0+2+2, 3)
+            .withSize(2, 3);
+
+        PIDTab.add("Elevator PID", elevator.PID.getPIDController())
+            .withPosition(0, 3)
+            .withSize(2, 3);
+        PIDTab.add("Stinger PID", stinger.PID.getPIDController())
+            .withPosition(0, 3)
+            .withSize(2, 3);
     }
 
     // SHUFFLEBOARD //
@@ -331,5 +337,10 @@ public class ChargedUp extends RobotContainer
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(2, 1)
             .withPosition(0, 2);
+        mainTab
+            .addString("Target Object", () -> vision.getDesiredDriveTargetAsString())
+            .withSize(2, 1)
+            .withPosition(0,4)
+            .withWidget(BuiltInWidgets.kTextView);
     }
 }

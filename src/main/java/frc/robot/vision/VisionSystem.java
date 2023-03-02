@@ -11,7 +11,7 @@ public abstract class VisionSystem extends ManagerBase
     public static final DetectionType DEFAULT_DETECTION = DetectionType.APRIL_TAG;
 
     // NON-STATIC //
-    private DetectionType desiredDriveTarget;
+    private DetectionType desiredDriveTarget = DetectionType.CUBE;
 
     public void setDesiredDriveTarget(DetectionType type)
     {
@@ -21,6 +21,12 @@ public abstract class VisionSystem extends ManagerBase
     {
         return desiredDriveTarget;
     }
+    public String getDesiredDriveTargetAsString()
+    {
+        if (desiredDriveTarget == null) return "none";
+        return desiredDriveTarget.toString();
+    }
+
 
     public void cycleDesiredDriveTarget()
     {

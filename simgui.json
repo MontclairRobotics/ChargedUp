@@ -56,12 +56,22 @@
       "/Shuffleboard/Debug/θ-PID Controller": "PIDController",
       "/Shuffleboard/Main Tab/Field": "Field2d",
       "/Shuffleboard/Main/Field": "Field2d",
+      "/Shuffleboard/PID/Elevator PID": "PIDController",
+      "/Shuffleboard/PID/Stinger PID": "PIDController",
+      "/Shuffleboard/PID/X-PID Controller": "PIDController",
+      "/Shuffleboard/PID/Y-PID Controller": "PIDController",
+      "/Shuffleboard/PID/θ-PID Controller": "PIDController",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
       "/Shuffleboard/Debug/Mechanism": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Main Tab/Field": {
         "window": {
           "visible": true
         }
@@ -140,6 +150,9 @@
           "Field": {
             "open": true
           },
+          "open": true
+        },
+        "Main Tab": {
           "open": true
         },
         "open": true

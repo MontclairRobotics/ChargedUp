@@ -15,7 +15,8 @@ public class StingerMath
     private static final double Vf // Free speed of motor
         = DCMotor.getNEO(1).freeSpeedRadPerSec / (2 * Math.PI);
     private static final double Ct // Conversion factor from lead dist to motor rot
-        = 98947.8001131; //15748.031496063;
+        // = 15748.031496063;
+        = 98947.8001131;
 
     /**
      * Convert from Lead distance traveled (meters) to Stinger distance (meters)
