@@ -445,7 +445,7 @@ public class Commands2023
      */
     public static Command ifHasTarget(Command cmd)
     {
-        return cmd.until(() -> !ChargedUp.vision.hasObject());
+        return cmd.until(() -> !ChargedUp.vision.hasObject()).unless(() -> !ChargedUp.vision.hasObject());
     }
 
     /**
