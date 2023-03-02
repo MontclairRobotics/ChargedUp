@@ -550,8 +550,6 @@ public class Drivetrain extends ManagerSubsystemBase
         public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
             SwerveAutoBuilder b = autoBuilder(markers);
-            Trajectory displayTrajectory = trajectory.transformBy(new Transform2d(trajectory.getInitialPose(), getRobotDisplayPose().plus(new Transform2d(new Translation2d(), getRobotRotation().unaryMinus()))));
-            ChargedUp.field.getObject("trajectory").setTrajectory(displayTrajectory);
             return b.fullAuto(trajectory);
         }
         public Command goToAngle(double angle)

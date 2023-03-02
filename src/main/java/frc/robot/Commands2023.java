@@ -5,6 +5,11 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -26,7 +31,10 @@ import frc.robot.vision.VisionSystem;
 
 import static frc.robot.ChargedUp.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.pathplanner.lib.PathPlannerTrajectory;
 
 public class Commands2023 
 {   
@@ -495,7 +503,7 @@ public class Commands2023
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static Command fromStringToCommand(String str)
+    public static Command fromStringToCommand(String str, ArrayList<Trajectory> trajectories)
     {
         // Single actions
         if(str.length() == 1)
@@ -523,16 +531,15 @@ public class Commands2023
         {
             try 
             {
-                return Trajectories.auto(
-                    str, 
-                    Constants.Auto.MAX_VEL, 
-                    Constants.Auto.MAX_ACC, 
-                    HashMaps.of(
-                        "Elevator Mid",  elevatorToMid(),
-                        "Elevator High", elevatorToHigh(),
-                        "Extend Intake", extendSchwooper()
-                    )
-                );
+                PathPlannerTrajectory nextTrajectory = Trajectories.get(str, Constants.Auto.MAX_VEL, Constants.Auto.MAX_ACC);
+
+                trajectories.add(nextTrajectory);
+
+                return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
+                    "Elevator Mid",  elevatorToMid(),
+                    "Elevator High", elevatorToHigh(),
+                    "Extend Intake", extendSchwooper()
+                ));
             }
             catch (Exception e)
             {
@@ -556,17 +563,42 @@ public class Commands2023
     public static Command buildAuto(String[] list)
     {
         Command[] commandList = new Command[list.length];
+        ArrayList<Trajectory> allTrajectories = new ArrayList<>();
 
         for (int i = 0; i < list.length; i++)
         {
-            commandList[i] = fromStringToCommand(list[i]);
+            commandList[i] = fromStringToCommand(list[i], allTrajectories);
 
             if(commandList[i] == null)
             {
                 return null;
             }
         }
+
+        // Calculate the sum trajectory
+        Trajectory sumTrajectory = null;
+        if(allTrajectories.size() > 0)
+        {
+            sumTrajectory = allTrajectories.get(0);
+
+            for(int i = 1; i < allTrajectories.size(); i++)
+            {
+                sumTrajectory = sumTrajectory.concatenate(allTrajectories.get(i));
+            }
+        }
+
+        // Display the sum trajectory
+        FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");
+        if(sumTrajectory == null)
+        {
+            trajectoryObject.setPose(new Pose2d(new Translation2d(10_000, 10_000), new Rotation2d()));
+        } 
+        else
+        {
+            trajectoryObject.setTrajectory(sumTrajectory);
+        }
         
+        // Return the sum command
         return Commands.sequence(
             elevatorInitialize(), 
             Commands.sequence(commandList)
