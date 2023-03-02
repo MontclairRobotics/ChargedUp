@@ -3,6 +3,8 @@ package frc.robot.util.frc;
 import java.util.HashMap;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
 /**
@@ -20,7 +22,10 @@ public class Trajectories
      */
     public static PathPlannerTrajectory get(String name, double maxVel, double maxAccel)
     {
-        return PathPlanner.loadPath(name, maxVel, maxAccel);
+        return PathPlannerTrajectory.transformTrajectoryForAlliance(
+            PathPlanner.loadPath(name, maxVel, maxAccel), 
+            DriverStation.getAlliance()
+        );
     }
 
     /**

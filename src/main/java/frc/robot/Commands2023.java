@@ -564,6 +564,8 @@ public class Commands2023
     {
         Command[] commandList = new Command[list.length];
         ArrayList<Trajectory> allTrajectories = new ArrayList<>();
+        
+        FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");
 
         for (int i = 0; i < list.length; i++)
         {
@@ -571,6 +573,7 @@ public class Commands2023
 
             if(commandList[i] == null)
             {
+                trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
                 return null;
             }
         }
@@ -588,10 +591,9 @@ public class Commands2023
         }
 
         // Display the sum trajectory
-        FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");
         if(sumTrajectory == null)
         {
-            trajectoryObject.setPose(new Pose2d(new Translation2d(10_000, 10_000), new Rotation2d()));
+            trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
         } 
         else
         {
