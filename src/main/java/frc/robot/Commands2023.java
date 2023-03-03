@@ -594,8 +594,7 @@ public class Commands2023
 
             if (DriverStation.getAlliance() == Alliance.Red)
             {
-                // sumTrajectory = sumTrajectory.transformBy(new Pose2d(new Translation2d(16.5, 5.15).minus(sumTrajectory.getInitialPose().getTranslation()), Rotation2d.fromDegrees(180)).minus(sumTrajectory.getInitialPose()));
-                sumTrajectory = sumTrajectory.relativeTo(new Pose2d(8.28, 4.0, Rotation2d.fromDegrees(90)));//.minus(sumTrajectory.getInitialPose()));
+                sumTrajectory = sumTrajectory.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
             }
         }
         

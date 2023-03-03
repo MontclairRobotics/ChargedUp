@@ -116,10 +116,7 @@
           ],
           "style": "Line"
         },
-        "units": "meters",
-        "window": {
-          "visible": true
-        }
+        "units": "meters"
       }
     }
   },
