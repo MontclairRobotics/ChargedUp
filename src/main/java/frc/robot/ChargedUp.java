@@ -45,6 +45,8 @@ import frc.robot.vision.VisionSystem;
 
 import frc.robot.constants.*;
 
+import java.util.Map;
+
 import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
@@ -139,7 +141,7 @@ public class ChargedUp extends RobotContainer
         // VISION MOVEMENT //
         driverController.getButton(Button.A_CROSS) //switch cone or cube
             .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
-                // .onTrue(Commands2023.scoreHigh());
+            // .onTrue(Commands2023.scoreHigh());
 
         driverController.getButton(Button.X_SQUARE)
             .onTrue(Commands2023.moveToObjectSideways(vision.getDesiredDriveTarget()));
@@ -265,22 +267,52 @@ public class ChargedUp extends RobotContainer
     }
     public void setupPIDTab() 
     {
-        PIDTab.add("X-PID Controller", drivetrain.xPID.getPIDController())
-            .withPosition(0, 3)
-            .withSize(2, 3);
-        PIDTab.add("Y-PID Controller", drivetrain.yPID.getPIDController())
-            .withPosition(0+2, 3)
-            .withSize(2, 3);
-        PIDTab.add("θ-PID Controller", drivetrain.thetaPID.getPIDController())
-            .withPosition(0+2+2, 3)
-            .withSize(2, 3);
+        final ShuffleboardLayout xPID = PIDTab.getLayout("X-PID", BuiltInLayouts.kGrid)
+            .withPosition(0, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+        xPID.add("X-PID Controller", drivetrain.xPID.getPIDController()).withPosition(0, 0);
+        xPID.addBoolean("At SetPoint?", drivetrain.xPID::free          ).withPosition(0, 1);
+        xPID.addDouble("X-Speed", drivetrain.xPID::getSpeed            ).withPosition(0, 2);
+        xPID.addDouble("X-Measurement", drivetrain.xPID::getMeasurement).withPosition(0, 3);
 
-        PIDTab.add("Elevator PID", elevator.PID.getPIDController())
-            .withPosition(0, 3)
-            .withSize(2, 3);
-        PIDTab.add("Stinger PID", stinger.PID.getPIDController())
-            .withPosition(0, 3)
-            .withSize(2, 3);
+        final ShuffleboardLayout yPID = PIDTab.getLayout("Y-PID", BuiltInLayouts.kGrid)
+            .withPosition(1, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+        yPID.add("Y-PID Controller",drivetrain.yPID.getPIDController()).withPosition(0, 0);
+        yPID.addBoolean("At SetPoint?", drivetrain.yPID::free         ).withPosition(0, 1);
+        yPID.addDouble("Speed", drivetrain.yPID::getSpeed             ).withPosition(0, 2);
+        yPID.addDouble("Measurement", drivetrain.yPID::getMeasurement ).withPosition(0, 3);
+
+        final ShuffleboardLayout thetaPID = PIDTab.getLayout("THETA-PID", BuiltInLayouts.kGrid)
+            .withPosition(2, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+        thetaPID.add("θ-PID Controller",drivetrain.thetaPID.getPIDController()).withPosition(0, 0);
+        thetaPID.addBoolean("At SetPoint?", drivetrain.thetaPID::free         ).withPosition(0, 1);
+        thetaPID.addDouble("Speed", drivetrain.thetaPID::getSpeed             ).withPosition(0, 2);
+        thetaPID.addDouble("Measurement", drivetrain.thetaPID::getMeasurement ).withPosition(0, 3);
+
+        final ShuffleboardLayout elevatorPID = PIDTab.getLayout("ELEVATOR-PID", BuiltInLayouts.kGrid)
+            .withPosition(3, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+        elevatorPID.add("Elevator PID", elevator.PID.getPIDController()  ).withPosition(0, 0);
+        elevatorPID.addBoolean("At SetPoint?", elevator.PID::free        ).withPosition(0, 1);
+        elevatorPID.addDouble("Speed", elevator.PID::getSpeed            ).withPosition(0, 2);
+        elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
+
+        final ShuffleboardLayout stingerPID = PIDTab.getLayout("STINGER-PID", BuiltInLayouts.kGrid)
+            .withPosition(4, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+        stingerPID.add("Stinger PID", stinger.PID.getPIDController()).withPosition(0, 0);
+        stingerPID.addBoolean("At SetPoint?", stinger.PID::free).withPosition(0, 1);
+        stingerPID.addDouble("Extension Speed", stinger::getStingerSpeed).withPosition(0, 2);
+        stingerPID.addDouble("Extension", stinger::getExtension).withPosition(0, 3);
+        stingerPID.addDouble("Lead Screw Position", stinger::getLeadScrewPosition).withPosition(0, 4);
+        stingerPID.addDouble("Lead Screw Speed", stinger::getLeadScrewSpeed).withPosition(0, 5);
     }
 
     // SHUFFLEBOARD //

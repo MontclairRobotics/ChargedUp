@@ -6,7 +6,7 @@
         "serpentine": true
       },
       "window": {
-        "name": "LED bitches",
+        "name": "LED",
         "visible": true
       }
     },
@@ -56,10 +56,15 @@
       "/Shuffleboard/Debug/θ-PID Controller": "PIDController",
       "/Shuffleboard/Main Tab/Field": "Field2d",
       "/Shuffleboard/Main/Field": "Field2d",
+      "/Shuffleboard/PID/ELEVATOR-PID/Elevator PID": "PIDController",
       "/Shuffleboard/PID/Elevator PID": "PIDController",
+      "/Shuffleboard/PID/STINGER-PID/Stinger PID": "PIDController",
       "/Shuffleboard/PID/Stinger PID": "PIDController",
+      "/Shuffleboard/PID/THETA-PID/θ-PID Controller": "PIDController",
       "/Shuffleboard/PID/X-PID Controller": "PIDController",
+      "/Shuffleboard/PID/X-PID/X-PID Controller": "PIDController",
       "/Shuffleboard/PID/Y-PID Controller": "PIDController",
+      "/Shuffleboard/PID/Y-PID/Y-PID Controller": "PIDController",
       "/Shuffleboard/PID/θ-PID Controller": "PIDController",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
@@ -116,7 +121,10 @@
           ],
           "style": "Line"
         },
-        "units": "meters"
+        "units": "meters",
+        "window": {
+          "visible": true
+        }
       }
     }
   },
