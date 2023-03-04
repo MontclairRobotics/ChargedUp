@@ -182,8 +182,9 @@ public class ChargedUp extends RobotContainer
             .toggleOnTrue(Commands2023.elevatorStingerToLow());
 
         // Stinger
-        if(stinger instanceof MotorStinger ms)
+        if(stinger instanceof MotorStinger)
         {
+            MotorStinger ms = (MotorStinger) stinger;
             stinger.setDefaultCommand(Commands.run(() -> {
                 JoystickInput right = JoystickInput.getRight(
                     operatorController, 
@@ -239,7 +240,6 @@ public class ChargedUp extends RobotContainer
         operatorController.getButton(Button.LEFT_BUMPER)
             .onTrue(Commands2023.quickSlowFlashPurple()); 
     }
-
     
     // AUTO //
     public static final Auto auto = new Auto();
@@ -258,8 +258,9 @@ public class ChargedUp extends RobotContainer
 
         debugTab.add("Mechanism", mainMechanism);
 
-        if(stinger instanceof MotorStinger ms)
+        if(stinger instanceof MotorStinger)
         {
+            MotorStinger ms = (MotorStinger) stinger;
             debugTab.addDouble("Stinger Extension", ms::getExtension)
                 .withPosition(0+2+2+2+2, 0)
                 .withSize(2, 1);
@@ -310,8 +311,9 @@ public class ChargedUp extends RobotContainer
         elevatorPID.addDouble("Speed", elevator.PID::getSpeed            ).withPosition(0, 2);
         elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
 
-        if (stinger instanceof MotorStinger ms) 
+        if (stinger instanceof MotorStinger) 
         {
+            MotorStinger ms = (MotorStinger) stinger;
             final ShuffleboardLayout stingerPID = PIDTab.getLayout("STINGER-PID", BuiltInLayouts.kGrid)
                 .withPosition(4, 0)
                 .withSize(1, 5)

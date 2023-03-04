@@ -13,6 +13,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.animation.Animation;
+import frc.robot.animation.CircusAnimation;
+import frc.robot.animation.MagicAnimation;
+import frc.robot.animation.QuickSlowFlash;
+import frc.robot.animation.RainbowAnimation;
+import frc.robot.animation.DeathAnimation;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.math.Units555;
 import frc.robot.util.frc.GameController;
@@ -40,6 +46,25 @@ public final class Constants
 
             public static final double COLOR_CONFIDENCE = 0.7;
         }
+
+        public static class LED
+        {
+
+            public static final int PWM_PORT = 9;
+            public static final Animation[] animations = {
+                MagicAnimation.fire(3),
+                new CircusAnimation(3),
+                new RainbowAnimation(3),
+                MagicAnimation.galaxy(3),
+                new DeathAnimation(3),
+                new QuickSlowFlash(Color.kNavy)
+            };
+            
+
+        }
+
+
+        
     }
     
     
