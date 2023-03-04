@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import frc.robot.inputs.JoystickAdjuster;
@@ -24,7 +25,7 @@ public class ElevatorConstants
     public static final int START_LIMIT_SWITCH = 2;
 
     public static final double SPEED = 0.1;  
-    //TODO: Tweak these values
+    
     
     public static final double ELEVATOR_MIN_TO_FLOOR = Units.feetToMeters(6.0/12);
 

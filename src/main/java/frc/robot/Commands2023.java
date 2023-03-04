@@ -595,7 +595,7 @@ public class Commands2023
         
         // Return the sum command
         return Commands.sequence(
-            elevatorInitialize(), 
+            // elevatorInitialize(), 
             Commands.sequence(commandList)
         );
     }

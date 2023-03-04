@@ -9,7 +9,7 @@ public class Ports
 
     public static final int STINGER_MOTOR_PORT = 17;
 
-    public static final int SHWOOPER_LEFT_MOTOR_PORT = 34;
+    public static final int SHWOOPER_LEFT_MOTOR_PORT = 34; //USED FOR SIMPLE INTAKE
     public static final int SHWOOPER_RIGHT_MOTOR_PORT = 90;
     public static final int SHWOOPER_CENTER_MOTOR_PORT = 92;
 

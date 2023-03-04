@@ -18,10 +18,17 @@ public class LimitSwitch implements Sendable
     {
         dio = new DigitalInput(channel);
 
-        sim = SimDevice.create("Limit Switch["+channel+"]");
-        bool = sim.createBoolean("value", Direction.kOutput, false);
-
-        dio.setSimDevice(sim);
+        if(RobotBase.isSimulation())
+        {
+            sim = SimDevice.create("Limit Switch["+channel+"]");
+            bool = sim.createBoolean("value", Direction.kOutput, false);
+            dio.setSimDevice(sim);
+        }
+        else 
+        {
+            sim = null;
+            bool = null;
+        }
     }
 
     public boolean get() 

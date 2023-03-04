@@ -12,7 +12,7 @@ import frc.robot.util.frc.SwerveModuleSpec;
 
 public class DriveConstants
 {
-    public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
+    public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
     
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;
@@ -24,8 +24,8 @@ public class DriveConstants
     private static final SwerveModuleSpec FRONT_LEFT = 
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
-            DRIVE_TYPE, Ports.DRIVE_FR_PORT, false, 
-            STEER_TYPE, Ports.STEER_FR_PORT, false,  
+            DRIVE_TYPE, Ports.DRIVE_FL_PORT, false, 
+            STEER_TYPE, Ports.STEER_FL_PORT, false,  
             Ports.CANCO_FL_PORT, 268.242188
         ); //fl
     private static final SwerveModuleSpec FRONT_RIGHT = 
@@ -46,7 +46,7 @@ public class DriveConstants
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
             DRIVE_TYPE, Ports.DRIVE_BR_PORT, false, 
-            STEER_TYPE, Ports.STEER_BL_PORT, false, 
+            STEER_TYPE, Ports.STEER_BR_PORT, false, 
             Ports.CANCO_BR_PORT, 149.765625
         ); //br
     
@@ -98,10 +98,10 @@ public class DriveConstants
     public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27); //TODO: CONFIRM WITH JOSH
     public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
 
-    private static Translation2d FLPosition = new Translation2d(WHEEL_BASE_H_M/2, WHEEL_BASE_W_M/2); //FL
-    private static Translation2d FRPosition = new Translation2d(WHEEL_BASE_H_M/2, WHEEL_BASE_W_M/2); //FR
-    private static Translation2d BLPosition = new Translation2d(WHEEL_BASE_H_M/2, WHEEL_BASE_W_M/2); //BL
-    private static Translation2d BRPosition = new Translation2d(WHEEL_BASE_H_M/2, WHEEL_BASE_W_M/2); //BR
+    private static Translation2d FLPosition = new Translation2d(+WHEEL_BASE_H_M/2, +WHEEL_BASE_W_M/2); //FL
+    private static Translation2d FRPosition = new Translation2d(+WHEEL_BASE_H_M/2, -WHEEL_BASE_W_M/2); //FR
+    private static Translation2d BLPosition = new Translation2d(-WHEEL_BASE_H_M/2, +WHEEL_BASE_W_M/2); //BL
+    private static Translation2d BRPosition = new Translation2d(-WHEEL_BASE_H_M/2, -WHEEL_BASE_W_M/2); //BR
     public static final Translation2d[] MOD_POSITIONS = {
         FLPosition,
         FRPosition,

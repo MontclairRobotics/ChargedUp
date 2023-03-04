@@ -31,7 +31,9 @@ import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
 import frc.robot.components.subsystems.shwooper.ComplexShwooper;
 import frc.robot.components.subsystems.shwooper.Shwooper;
+import frc.robot.components.subsystems.shwooper.SimpleShwooper;
 import frc.robot.components.subsystems.stinger.MotorStinger;
+import frc.robot.components.subsystems.stinger.PneuStinger;
 import frc.robot.components.subsystems.stinger.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
@@ -41,6 +43,7 @@ import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.commandrobot.RobotContainer;
+import frc.robot.vision.DummySystem;
 import frc.robot.vision.LimelightSystem;
 import frc.robot.vision.PhotonSystem;
 import frc.robot.vision.VisionSystem;
@@ -77,14 +80,14 @@ public class ChargedUp extends RobotContainer
     public static final AHRS gyroscope = new AHRS();
     public static final LED  led       = new LED();
 
-    public static final VisionSystem vision      = new PhotonSystem();
+    public static final VisionSystem vision      = new DummySystem();
     public static final ColorSensor  colorSensor = new ColorSensor();
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
-    public static final Shwooper   shwooper   = new ComplexShwooper();
+    public static final Shwooper   shwooper   = new SimpleShwooper();
     public static final Grabber    grabber    = new Grabber();
-    public static final Stinger    stinger    = new MotorStinger();
+    public static final Stinger    stinger    = new PneuStinger();
 
     //TODO: needing to create an object for this is kidna dumb
     public static final SimulationHooks simHooks = new SimulationHooks();

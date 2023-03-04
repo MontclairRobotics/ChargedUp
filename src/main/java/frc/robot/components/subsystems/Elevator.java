@@ -184,6 +184,7 @@ public class Elevator extends ManagerSubsystemBase
     @Override
     public void always() 
     {
+        Logging.info("" + PID.getSpeed());
         shouldStop = false;
 
         if (ChargedUp.shwooper.isShwooperOut() && encoder.getPosition() <= BUFFER_SPACE_TO_INTAKE) 
@@ -216,6 +217,7 @@ public class Elevator extends ManagerSubsystemBase
         maxSpeed = encoder.getPosition() > MAX_HEIGHT - BUFFER_TO_MAX 
                 || encoder.getPosition() < MIN_HEIGHT + BUFFER_TO_MAX ? 0.1 : 1;
 
+        maxSpeed *= 0.1;
         PID.setMeasurement(encoder.getPosition());
         PID.update();
 

@@ -28,6 +28,7 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
+import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
@@ -36,15 +37,30 @@ import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.constants.StingerConstants.*;
 
+import java.util.function.DoubleSupplier;
+
 
 public class PneuStinger implements Stinger
 {
     private final Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
 
     @Override
-    public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME));}
+    public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(PNEU_TIME));}
     @Override
-    public Command outMid() {return Commands.runOnce(() -> solenoid.set(true)).andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME));}
+    public Command outMid() 
+    {
+        return Commands.sequence(
+            ChargedUp.drivetrain.commands.disableFieldRelative(),
+            ChargedUp.drivetrain.xPID.goToSetpoint(
+                new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - (HIGH_LENGTH - MID_LENGTH)), 
+                ChargedUp.drivetrain
+            ),
+            ChargedUp.drivetrain.commands.enableFieldRelative(),
+            Commands.runOnce(() -> solenoid.set(true)),
+            Commands.waitSeconds(PNEU_TIME)
+            
+        );
+    }
     @Override
     public Command outHigh() {return Commands.runOnce(() -> solenoid.set(true));}
 

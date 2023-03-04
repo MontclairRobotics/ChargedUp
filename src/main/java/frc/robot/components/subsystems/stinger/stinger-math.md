@@ -21,6 +21,9 @@ $$
 ## Converting From Stinger Distance to Lead Screw Distance 
 
 Because of the fact that a single scissor segment forms two right traingles, we can use the pythagorean theorem to find the distance of the stinger from the lead screw distance and vice-versa.
+
+![maths](StingerMath.jpg)
+
 $$
 y = S\sqrt{W^2 - x^2} \\
 \ \\
@@ -50,7 +53,7 @@ $$
 {dx \over dt} = {{dy \over dt} \over C(x)} 
 $$
 
-
+![maths](StingerMath2.jpg)
 
 ## Converting From Lead Screw Distance to Motor Rotation 
 

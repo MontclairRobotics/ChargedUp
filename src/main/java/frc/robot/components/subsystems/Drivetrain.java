@@ -106,7 +106,7 @@ public class Drivetrain extends ManagerSubsystemBase
                     .withPosition(2*i, 0)
             );
 
-            modPoses[i] = getRobotPose().plus(new Transform2d(MOD_POSITIONS[i], new Rotation2d()));
+            modPoses[i] = new Pose2d(MOD_POSITIONS[i], new Rotation2d());
 
             assert STEER_TYPE == MotorType.NEO
                  : "This code assumes that the steer type of the robot is a neo.";
@@ -116,7 +116,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
         moduleObject.setPoses(modPoses);
-
+        
         // Build Odometry //
         poseEstimator = new SwerveDrivePoseEstimator(
             KINEMATICS, 
@@ -280,10 +280,10 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             if(RobotBase.isReal())
             {
-                states[i] = SwerveModuleState.optimize(
-                    states[i], 
-                    new Rotation2d(modules[i].getSteerAngle())
-                );
+                // states[i] = SwerveModuleState.optimize(
+                //     states[i], 
+                //     new Rotation2d(modules[i].getSteerAngle())
+                // );
             }
 
             modules[i].set(
@@ -296,7 +296,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             simulation.targetSpeeds = KINEMATICS.toChassisSpeeds(states);
 
-            // System.out.println(simulation.targetSpeeds);
+            // System.out.println(.targetSpeeds);
 
             final double targetX = simulation.targetSpeeds.vxMetersPerSecond;
             final double targetY = simulation.targetSpeeds.vyMetersPerSecond;
@@ -385,7 +385,7 @@ public class Drivetrain extends ManagerSubsystemBase
 
             ChassisSpeeds c;
             // Prevent stupid also
-            if (ChargedUp.stinger.isOut())
+            if (false && ChargedUp.stinger.isOut())
             {
                 c = getChassisSpeeds(0, 0, 0);
             }

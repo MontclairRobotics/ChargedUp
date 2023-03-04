@@ -40,10 +40,10 @@ public class LimelightSystem extends VisionSystem
     public void updateEstimatedPose(Pose2d prev) {}
 
     @Override
-    public Pose2d getEstimatedPose() {return LimelightHelpers.getBotPose2d("");}
+    public Pose2d getEstimatedPose() {return hasObject() ? LimelightHelpers.getBotPose2d("") : new Pose2d() /*TODO: this is very stupid*/;}
 
     @Override
-    public double getTimestampSeconds() {return results.targetingResults.timestamp_LIMELIGHT_publish;}
+    public double getTimestampSeconds() {return results == null ? -1 : results.targetingResults.timestamp_LIMELIGHT_publish;}
 
     @Override
     public boolean hasObject() {return LimelightHelpers.getTV("");}
