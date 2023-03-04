@@ -383,8 +383,17 @@ public class Drivetrain extends ManagerSubsystemBase
             yPID.update();
             thetaPID.update();
 
-            ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
-            
+            ChassisSpeeds c;
+            // Prevent stupid also
+            if (ChargedUp.stinger.isOut())
+            {
+                c = getChassisSpeeds(0, 0, 0);
+            }
+            else
+            {
+                c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
+            }
+
             driveFromChassisSpeeds(c);
         }
         

@@ -49,6 +49,8 @@ public class Elevator extends ManagerSubsystemBase
 
     MechanismLigament2d ligament;
 
+    double maxSpeed = 1;
+
     public MechanismObject2d getMechanismObject() {return ligament;}
     
     public Elevator()
@@ -58,6 +60,7 @@ public class Elevator extends ManagerSubsystemBase
 
         encoder = motor.getEncoder();
         encoder.setPositionConversionFactor(ENCODER_CONVERSION_FACTOR);
+        encoder.setPosition(MIN_HEIGHT);
 
         motorSim = new SimDeviceSim("SPARK MAX [" + motor.getDeviceId() + "]");
 
@@ -208,6 +211,10 @@ public class Elevator extends ManagerSubsystemBase
             }
         }
 
+        // Prevent stupid
+        maxSpeed = encoder.getPosition() > MAX_HEIGHT - BUFFER_TO_MAX 
+                || encoder.getPosition() < MIN_HEIGHT + BUFFER_TO_MAX ? 0.1 : 1;
+
         PID.setMeasurement(encoder.getPosition());
         PID.update();
 
@@ -222,7 +229,7 @@ public class Elevator extends ManagerSubsystemBase
         // System.out.println("Stinger::pid_on  = " + ChargedUp.stinger.PID.active());
         
         if(shouldStop) motor.set(0);
-        else           motor.set(PID.getSpeed());
+        else           motor.set(PID.getSpeed() * maxSpeed);
 
 
         if(RobotBase.isSimulation())

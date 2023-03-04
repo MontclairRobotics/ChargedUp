@@ -29,6 +29,7 @@ public class ElevatorConstants
     
     public static final double ELEVATOR_MIN_TO_FLOOR = Units.feetToMeters(6.0/12);
 
+    public static final double BUFFER_TO_MAX = Units.feetToMeters(12.0/12);
     public static final double MAX_HEIGHT = Units.feetToMeters(78.0/12);
     
     public static final double HIGH_HEIGHT = Units.feetToMeters(3.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
