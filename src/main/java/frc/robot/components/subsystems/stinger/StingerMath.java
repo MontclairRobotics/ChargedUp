@@ -1,4 +1,4 @@
-package frc.robot.components.subsystems;
+package frc.robot.components.subsystems.stinger;
 
 import edu.wpi.first.math.system.plant.DCMotor;
 

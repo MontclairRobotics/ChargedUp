@@ -1,4 +1,4 @@
-package frc.robot.components.subsystems;
+package frc.robot.components.subsystems.stinger;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVPhysicsSim;
@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
 import frc.robot.constants.StingerConstants;
 import frc.robot.constants.SimulationConstants;
@@ -30,7 +31,7 @@ import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.constants.StingerConstants.*;
 
-public class Stinger extends ManagerSubsystemBase
+public class MotorStinger extends ManagerSubsystemBase implements Stinger
 {
     private boolean shouldStop; 
 
@@ -45,7 +46,7 @@ public class Stinger extends ManagerSubsystemBase
     MechanismLigament2d widthLigament;
     MechanismLigament2d[][] ligaments;
 
-    public Stinger()
+    public MotorStinger()
     {
         motor = new CANSparkMax(MOTOR_PORT, MotorType.kBrushless);
 
@@ -171,7 +172,7 @@ public class Stinger extends ManagerSubsystemBase
     }
 
     /**
-     * Cancel the {@link Stinger#PID stingerPID}
+     * Cancel the {@link MotorStinger#PID stingerPID}
      */
     public void stopPIDing()
     {
@@ -296,4 +297,28 @@ public class Stinger extends ManagerSubsystemBase
             ligaments[i][1].setAngle(angle[1]);
         }
     }
+
+    @Override
+    public Command in() 
+    {
+        return PID.goToSetpoint(MIN_LENGTH, this);
+    }
+
+    @Override
+    public Command outMid() 
+    {
+        return PID.goToSetpoint(MID_LENGTH, this);
+    }
+
+    @Override
+    public Command outHigh() 
+    {
+        return PID.goToSetpoint(HIGH_LENGTH, this);
+    }
+
+    @Override
+    public boolean isOut() {return getExtension() > MIN_LENGTH + 0.1;}
+
+    @Override
+    public boolean requiresDriveOffset() {return false;}
 }

@@ -28,9 +28,9 @@ import frc.robot.components.managers.SimulationHooks;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
-import frc.robot.components.subsystems.Shwooper;
-import frc.robot.components.subsystems.ComplexShwooper;
-import frc.robot.components.subsystems.Stinger;
+import frc.robot.components.subsystems.shwooper.ComplexShwooper;
+import frc.robot.components.subsystems.shwooper.Shwooper;
+import frc.robot.components.subsystems.stinger.MotorStinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.GameController;
@@ -82,7 +82,7 @@ public class ChargedUp extends RobotContainer
     public static final Elevator   elevator   = new Elevator();
     public static final Shwooper   shwooper   = new ComplexShwooper();
     public static final Grabber    grabber    = new Grabber();
-    public static final Stinger    stinger    = new Stinger();
+    public static final MotorStinger    stinger    = new MotorStinger();
 
     //TODO: needing to create an object for this is kidna dumb
     public static final SimulationHooks simHooks = new SimulationHooks();

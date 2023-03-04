@@ -1,4 +1,4 @@
-package frc.robot.components.subsystems;
+package frc.robot.components.subsystems.shwooper;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
