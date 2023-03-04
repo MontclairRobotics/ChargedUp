@@ -1,8 +1,9 @@
 package frc.robot.components.subsystems.stinger;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public interface Stinger
+public interface Stinger extends Subsystem
 {
     // public Command selfDestruct();
     public Command in();

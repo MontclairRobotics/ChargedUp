@@ -106,7 +106,7 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return stinger.PID.goToSetpoint(StingerConstants.MIN_LENGTH, stinger);
+        return stinger.in();
     }
     /**
      * extends the stinger to the length of the middle pole
@@ -114,7 +114,7 @@ public class Commands2023
      */
     public static Command stingerToMid()
     {
-        return stinger.PID.goToSetpoint(StingerConstants.MID_LENGTH, stinger);
+        return stinger.outMid();
     }
     /**
      * extends the stinger to the high pole
@@ -122,7 +122,7 @@ public class Commands2023
      */
     public static Command stingerToHigh()
     {
-        return stinger.PID.goToSetpoint(StingerConstants.HIGH_LENGTH, stinger);
+        return stinger.outHigh();
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -224,22 +224,6 @@ public class Commands2023
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
     }
-
-    /**
-     * Cancel the PID of the elevator and the stinger, so no longer targeting a value
-     */
-    public static Command stopPIDing()
-    {
-        return Commands.runOnce(() ->
-            {
-                ChargedUp.stinger.stopPIDing();
-                ChargedUp.elevator.stopPIDing();
-            },
-            ChargedUp.stinger,
-            ChargedUp.elevator
-        );
-    }
-
     
 
     /////////////////////// GRABBER COMMANDS ////////////////////////////////////////////

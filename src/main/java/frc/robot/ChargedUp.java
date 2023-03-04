@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -31,6 +32,7 @@ import frc.robot.components.subsystems.Grabber;
 import frc.robot.components.subsystems.shwooper.ComplexShwooper;
 import frc.robot.components.subsystems.shwooper.Shwooper;
 import frc.robot.components.subsystems.stinger.MotorStinger;
+import frc.robot.components.subsystems.stinger.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.GameController;
@@ -82,7 +84,7 @@ public class ChargedUp extends RobotContainer
     public static final Elevator   elevator   = new Elevator();
     public static final Shwooper   shwooper   = new ComplexShwooper();
     public static final Grabber    grabber    = new Grabber();
-    public static final MotorStinger    stinger    = new MotorStinger();
+    public static final Stinger    stinger    = new MotorStinger();
 
     //TODO: needing to create an object for this is kidna dumb
     public static final SimulationHooks simHooks = new SimulationHooks();
@@ -164,28 +166,30 @@ public class ChargedUp extends RobotContainer
         driverController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
         // OPERATOR CONTROLS //
+        
+        // Cancel PID
+        Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
 
         // D-Pad Controls
-        operatorController.getDPad(DPad.UP)
-            .onTrue(Commands2023.elevatorStingerToHigh());
-        operatorController.getDPad(DPad.LEFT)
-            .onTrue(Commands2023.elevatorStingerToHigh());
-        operatorController.getDPad(DPad.DOWN)
-            .onTrue(Commands2023.elevatorStingerToLow());
-
-        // Cancel PID
-        operatorController.getButton(Button.START_TOUCHPAD) 
-            .onTrue(Commands2023.stopPIDing());
+        operatorController.getDPad(DPad.UP).and(pidActive)
+            .toggleOnTrue(Commands2023.elevatorStingerToHigh());
+        operatorController.getDPad(DPad.LEFT).and(pidActive)
+            .toggleOnTrue(Commands2023.elevatorStingerToHigh());
+        operatorController.getDPad(DPad.DOWN).and(pidActive)
+            .toggleOnTrue(Commands2023.elevatorStingerToLow());
 
         // Stinger
-        stinger.setDefaultCommand(Commands.run(() -> {
-            JoystickInput right = JoystickInput.getRight(
-                operatorController, 
-                false, 
-                false);
-            StingerConstants.JOY_ADJUSTER.adjustX(right);
-            stinger.setSpeed(right.getX());
-        }, stinger));
+        if(stinger instanceof MotorStinger ms)
+        {
+            stinger.setDefaultCommand(Commands.run(() -> {
+                JoystickInput right = JoystickInput.getRight(
+                    operatorController, 
+                    false, 
+                    false);
+                StingerConstants.JOY_ADJUSTER.adjustX(right);
+                ms.setSpeed(right.getX());
+            }, stinger));
+        }
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
@@ -221,19 +225,16 @@ public class ChargedUp extends RobotContainer
         }, elevator));
 
         //Auto Score
-        operatorController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands2023.scoreHigh());
-
-        operatorController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands2023.scoreMid());
+        operatorController.getButton(Button.Y_TRIANGLE).and(pidActive)
+            .toggleOnTrue(Commands2023.scoreHigh());
+        operatorController.getButton(Button.B_CIRCLE).and(pidActive)
+            .toggleOnTrue(Commands2023.scoreMid());
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)
             .onTrue(Commands2023.quickSlowFlashYellow());
         operatorController.getButton(Button.LEFT_BUMPER)
-            .onTrue(Commands2023.quickSlowFlashPurple());
-
-        
+            .onTrue(Commands2023.quickSlowFlashPurple()); 
     }
 
     
@@ -254,16 +255,19 @@ public class ChargedUp extends RobotContainer
 
         debugTab.add("Mechanism", mainMechanism);
 
-        debugTab.addDouble("Stinger Extension", stinger::getExtension)
-            .withPosition(0+2+2+2+2, 0)
-            .withSize(2, 1);
-        debugTab.addDouble("Stinger Extension Velocity", stinger::getStingerSpeed)
-            .withPosition(0+2+2+2+2, 0)
-            .withSize(2, 1);
-        debugTab.addDouble("Stinger Lead Velocity", stinger::getLeadScrewSpeed)
-            .withPosition(0+2+2+2+2, 0)
-            .withSize(2, 1);
-        debugTab.addDouble("Stinger Lead Position", stinger::getLeadScrewPosition);
+        if(stinger instanceof MotorStinger ms)
+        {
+            debugTab.addDouble("Stinger Extension", ms::getExtension)
+                .withPosition(0+2+2+2+2, 0)
+                .withSize(2, 1);
+            debugTab.addDouble("Stinger Extension Velocity", ms::getStingerSpeed)
+                .withPosition(0+2+2+2+2, 0)
+                .withSize(2, 1);
+            debugTab.addDouble("Stinger Lead Velocity", ms::getLeadScrewSpeed)
+                .withPosition(0+2+2+2+2, 0)
+                .withSize(2, 1);
+            debugTab.addDouble("Stinger Lead Position", ms::getLeadScrewPosition);
+        }
     }
     public void setupPIDTab() 
     {
@@ -303,16 +307,19 @@ public class ChargedUp extends RobotContainer
         elevatorPID.addDouble("Speed", elevator.PID::getSpeed            ).withPosition(0, 2);
         elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
 
-        final ShuffleboardLayout stingerPID = PIDTab.getLayout("STINGER-PID", BuiltInLayouts.kGrid)
-            .withPosition(4, 0)
-            .withSize(1, 5)
-            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
-        stingerPID.add("Stinger PID", stinger.PID.getPIDController()).withPosition(0, 0);
-        stingerPID.addBoolean("At SetPoint?", stinger.PID::free).withPosition(0, 1);
-        stingerPID.addDouble("Extension Speed", stinger::getStingerSpeed).withPosition(0, 2);
-        stingerPID.addDouble("Extension", stinger::getExtension).withPosition(0, 3);
-        stingerPID.addDouble("Lead Screw Position", stinger::getLeadScrewPosition).withPosition(0, 4);
-        stingerPID.addDouble("Lead Screw Speed", stinger::getLeadScrewSpeed).withPosition(0, 5);
+        if (stinger instanceof MotorStinger ms) 
+        {
+            final ShuffleboardLayout stingerPID = PIDTab.getLayout("STINGER-PID", BuiltInLayouts.kGrid)
+                .withPosition(4, 0)
+                .withSize(1, 5)
+                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+            stingerPID.add("Stinger PID", ms.PID.getPIDController()).withPosition(0, 0);
+            stingerPID.addBoolean("At SetPoint?", ms.PID::free).withPosition(0, 1);
+            stingerPID.addDouble("Extension Speed", ms::getStingerSpeed).withPosition(0, 2);
+            stingerPID.addDouble("Extension", ms::getExtension).withPosition(0, 3);
+            stingerPID.addDouble("Lead Screw Position", ms::getLeadScrewPosition).withPosition(0, 4);
+            stingerPID.addDouble("Lead Screw Speed", ms::getLeadScrewSpeed).withPosition(0, 5);
+        }
     }
 
     // SHUFFLEBOARD //

@@ -17,6 +17,11 @@ public class StingerConstants
                 IN_OUT_KI = 0.1,
                 IN_OUT_KD = 0
             ;
+
+            //Pneu stuff
+            public static final int PNEU_PORT = -1;
+            public static final double PNEU_TIME = 1;
+            
             
             public static final PIDController inout()
             {
