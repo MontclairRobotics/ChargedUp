@@ -2,12 +2,6 @@ package frc.robot.constants;
 
 public class ShwooperConstants 
 {
-    public static final int LEFT_MOTOR_PORT = 91;
-    public static final int RIGHT_MOTOR_PORT = 90;
-    public static final int CENTER_MOTOR_PORT = 92;
-
-    public static final int PNEU_PORT = 2;
-
     public static final boolean SOLENOID_DEFAULT_STATE = false;
 
     public static final double SPEED = 0.5;

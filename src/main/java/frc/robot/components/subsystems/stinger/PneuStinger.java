@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.ChargedUp;
 import frc.robot.constants.StingerConstants;
 import frc.robot.constants.Constants;
+import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
@@ -38,7 +39,7 @@ import static frc.robot.constants.StingerConstants.*;
 
 public class PneuStinger implements Stinger
 {
-    private final Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, PNEU_PORT);
+    private final Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
 
     @Override
     public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME));}

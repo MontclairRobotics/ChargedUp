@@ -8,17 +8,19 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import static frc.robot.constants.ShwooperConstants.*;
+
+import frc.robot.constants.Ports;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 
 
 public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
 {
-    private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PNEU_PORT);
+    private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.SHWOOPER_PNEU_PORT);
 
-    private final CANSparkMax motorLeft = new CANSparkMax(LEFT_MOTOR_PORT, MotorType.kBrushless);
-    private final CANSparkMax motorRight = new CANSparkMax(RIGHT_MOTOR_PORT, MotorType.kBrushless);
-    private final CANSparkMax motorCenter = new CANSparkMax(CENTER_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorLeft = new CANSparkMax(Ports.SHWOOPER_LEFT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorRight = new CANSparkMax(Ports.SHWOOPER_RIGHT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorCenter = new CANSparkMax(Ports.SHWOOPER_CENTER_MOTOR_PORT, MotorType.kBrushless);
 
     private final MotorControllerGroup motors = new MotorControllerGroup(new MotorController[] {
         motorLeft,

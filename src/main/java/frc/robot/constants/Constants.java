@@ -33,8 +33,6 @@ public final class Constants
     {
         public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
 
-          
-
         public static class ColorSensing
         {
             public static final Color CONE_COLOR = Color.kYellow;
@@ -42,14 +40,6 @@ public final class Constants
 
             public static final double COLOR_CONFIDENCE = 0.7;
         }
-
-        public static class LED 
-        {
-            public static final int PWM_PORT = 9;
-        }
-
-
-        
     }
     
     

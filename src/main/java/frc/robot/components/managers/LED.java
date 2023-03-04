@@ -7,12 +7,13 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.animation.*;
 import frc.robot.constants.Constants;
+import frc.robot.constants.Ports;
 import frc.robot.structure.GamePiece;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 public class LED extends ManagerBase 
 {
-    private AddressableLED led = new AddressableLED(Constants.Robot.LED.PWM_PORT);
+    private AddressableLED led = new AddressableLED(Ports.LED_PWM_PORT);
     private AddressableLEDBuffer displayBuffer = new AddressableLEDBuffer(LED_COUNT);
     private AddressableLEDBuffer oldBuffer = new AddressableLEDBuffer(LED_COUNT);
     private AddressableLEDBuffer newBuffer = new AddressableLEDBuffer(LED_COUNT);

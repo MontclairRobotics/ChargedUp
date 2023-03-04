@@ -16,7 +16,6 @@ public class ElevatorConstants
 
     public static final double ENCODER_CONVERSION_FACTOR = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI;
 
-    public static final int MOTOR_PORT = 5;
     public static final boolean INVERTED = false;
 
     //TODO: Get actual digital inputs

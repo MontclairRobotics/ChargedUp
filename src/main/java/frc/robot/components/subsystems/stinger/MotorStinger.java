@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
 import frc.robot.constants.StingerConstants;
+import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
@@ -48,7 +49,7 @@ public class MotorStinger extends ManagerSubsystemBase implements Stinger
 
     public MotorStinger()
     {
-        motor = new CANSparkMax(MOTOR_PORT, MotorType.kBrushless);
+        motor = new CANSparkMax(Ports.STINGER_MOTOR_PORT, MotorType.kBrushless);
 
         PID.disableOutputClamping();
 

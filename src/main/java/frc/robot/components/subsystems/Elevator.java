@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
+import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
@@ -55,7 +56,7 @@ public class Elevator extends ManagerSubsystemBase
     
     public Elevator()
     {
-        motor = new CANSparkMax(MOTOR_PORT, MotorType.kBrushless);
+        motor = new CANSparkMax(Ports.ELEVATOR_PORT, MotorType.kBrushless);
         motor.setInverted(INVERTED);
 
         encoder = motor.getEncoder();

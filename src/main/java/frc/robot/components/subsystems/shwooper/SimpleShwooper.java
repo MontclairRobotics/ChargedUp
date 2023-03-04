@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import static frc.robot.constants.ShwooperConstants.*;
 
+import frc.robot.constants.Ports;
 import frc.robot.constants.ShwooperConstants;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
@@ -16,7 +17,7 @@ import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
 {
-    private final CANSparkMax motorTop = new CANSparkMax(LEFT_MOTOR_PORT, MotorType.kBrushless);
+    private final CANSparkMax motorTop = new CANSparkMax(Ports.SHWOOPER_LEFT_MOTOR_PORT, MotorType.kBrushless);
     // private final CANSparkMax motorBottom = new CANSparkMax(Robot.Shwooper.RIGHT_MOTOR_PORT, MotorType.kBrushless);
 
     // private final MotorControllerGroup motors = new MotorControllerGroup(new MotorController[] {
