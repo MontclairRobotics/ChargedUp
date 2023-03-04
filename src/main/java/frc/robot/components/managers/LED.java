@@ -4,11 +4,13 @@ import java.util.Stack;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.animation.*;
+import frc.robot.structure.GamePiece;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Ports;
-import frc.robot.structure.GamePiece;
+import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 public class LED extends ManagerBase 
@@ -23,6 +25,7 @@ public class LED extends ManagerBase
     private Stack<Animation> animationStack;
     private TransitionConstructor transitionConstructor;
     private Transition currentTransition;
+    private boolean justEnabled = false;
 
     public static final double TRANSITION_LENGTH = 0.2;
     public static final int LED_COUNT = 150;
@@ -61,6 +64,20 @@ public class LED extends ManagerBase
     @Override
     public void always()
     {
+        if (DriverStation.isDisabled())
+        {
+            justEnabled = false;
+            if (animationStack.size() <= 1)
+            {
+                for (Animation i : Constants.Robot.LED.animations) {
+                    add(i);
+                }
+            }
+        } else if (justEnabled = true) {
+            animationStack.clear(); //TODO Make not hacky
+            animationStack.push(new DefaultAnimation());
+        }
+
         // While the top is finished, cancel it
         while(hasCurrent() && current().isFinished()) 
         {
@@ -105,7 +122,6 @@ public class LED extends ManagerBase
                 currentTransition.run(displayBuffer);
             }
         }
-
         led.setData(displayBuffer);
     }
 

@@ -24,8 +24,8 @@ public class DriveConstants
     private static final SwerveModuleSpec FRONT_LEFT = 
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
-            DRIVE_TYPE, Ports.DRIVE_FR_PORT, false, 
-            STEER_TYPE, Ports.STEER_FR_PORT, false,  
+            DRIVE_TYPE, Ports.DRIVE_FL_PORT, false, 
+            STEER_TYPE, Ports.STEER_FL_PORT, false,  
             Ports.CANCO_FL_PORT, 268.242188
         ); //fl
     private static final SwerveModuleSpec FRONT_RIGHT = 
@@ -46,7 +46,7 @@ public class DriveConstants
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
             DRIVE_TYPE, Ports.DRIVE_BR_PORT, false, 
-            STEER_TYPE, Ports.STEER_BL_PORT, false, 
+            STEER_TYPE, Ports.STEER_BR_PORT, false, 
             Ports.CANCO_BR_PORT, 149.765625
         ); //br
     
