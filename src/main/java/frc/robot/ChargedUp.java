@@ -89,7 +89,7 @@ public class ChargedUp extends RobotContainer
     public static final Grabber    grabber    = new Grabber();
     public static final Stinger    stinger    = new PneuStinger();
 
-    //TODO: needing to create an object for this is kidna dumb
+    //TODO: needing to create an object for this is kinda dumb
     public static final SimulationHooks simHooks = new SimulationHooks();
 
     // INITIALIZER //
@@ -154,6 +154,9 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.B_CIRCLE)
             .onTrue(Commands2023.turnToObject(vision.getDesiredDriveTarget()));
         
+        // BALANCE //
+        driverController.getButton(Button.Y_TRIANGLE)
+            .onTrue(Commands2023.balance());
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
