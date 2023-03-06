@@ -18,6 +18,7 @@ import frc.robot.animation.CircusAnimation;
 import frc.robot.animation.MagicAnimation;
 import frc.robot.animation.QuickSlowFlash;
 import frc.robot.animation.RainbowAnimation;
+import frc.robot.animation.ZoomAnimation;
 import frc.robot.animation.DeathAnimation;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.math.Units555;
@@ -49,22 +50,17 @@ public final class Constants
 
         public static class LED
         {
-
-            public static final int PWM_PORT = 9;
-            public static final Animation[] animations = {
-                MagicAnimation.fire(3),
-                new CircusAnimation(3),
-                new RainbowAnimation(3),
-                MagicAnimation.galaxy(3),
-                new DeathAnimation(3),
-                new QuickSlowFlash(Color.kNavy)
+            public static final double DEMO_TIME = 8;
+            public static final Animation[] DEMO_ANIMATIONS = 
+            {
+                MagicAnimation.fire(DEMO_TIME),
+                new CircusAnimation(DEMO_TIME),
+                new RainbowAnimation(DEMO_TIME),
+                MagicAnimation.galaxy(DEMO_TIME),   
+                new ZoomAnimation(DEMO_TIME, Color.kLavender),
+                new QuickSlowFlash(DEMO_TIME, Color.kBlue)
             };
-            
-
         }
-
-
-        
     }
     
     
