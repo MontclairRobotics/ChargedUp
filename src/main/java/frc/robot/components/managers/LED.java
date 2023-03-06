@@ -25,7 +25,7 @@ public class LED extends ManagerBase
     private Stack<Animation> animationStack;
     private TransitionConstructor transitionConstructor;
     private Transition currentTransition;
-    private boolean justEnabled = false;
+    private boolean lastFrameDisabled = false;
 
     public static final double TRANSITION_LENGTH = 0.2;
     public static final int LED_COUNT = 150;
@@ -66,15 +66,19 @@ public class LED extends ManagerBase
     {
         if (DriverStation.isDisabled())
         {
-            justEnabled = false;
+            lastFrameDisabled = true;
             if (animationStack.size() <= 1)
             {
-                for (Animation i : Constants.Robot.LED.animations) {
+                for (Animation i : Constants.Robot.LED.DEMO_ANIMATIONS) 
+                {
                     add(i);
                 }
             }
-        } else if (!justEnabled) {
-            justEnabled = true;
+        } 
+        else if (lastFrameDisabled) 
+        {
+            lastFrameDisabled = false;
+            
             animationStack.clear(); //TODO Make not hacky
             animationStack.push(new DefaultAnimation());
         }

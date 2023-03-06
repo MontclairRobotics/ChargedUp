@@ -5,15 +5,16 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class CircusAnimation extends Animation
 {
+    public static final double SHIFT_SPEED = 0.1;
     private int offset = 0;
+
     public CircusAnimation(double length) 
     {
         super(length);
-
     }
     public void run(AddressableLEDBuffer ledBuffer)
     {
-        offset = (int)(timer.get() * 5);
+        offset = (int)(timeElapsed() / SHIFT_SPEED);
 
         for(int i = 0; i < ledBuffer.getLength(); i++) 
         {
@@ -23,7 +24,7 @@ public class CircusAnimation extends Animation
             } 
             else 
             {
-                ledBuffer.setLED(i, Color.kLightGoldenrodYellow);
+                ledBuffer.setLED(i, Color.kOrange);
             }
         }
     }
