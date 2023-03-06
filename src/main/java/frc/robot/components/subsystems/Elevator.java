@@ -42,8 +42,8 @@ public class Elevator extends ManagerSubsystemBase
 
     SimDeviceSim motorSim;
 
-    private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH);
-    private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH);
+    private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH, true);
+    private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH, true);
     // private LimitSwitch startlimitSwitch = new LimitSwitch(START_LIMIT_SWITCH);
 
     public final PIDMechanism PID = new PIDMechanism(updown());
@@ -60,6 +60,7 @@ public class Elevator extends ManagerSubsystemBase
         motor.setInverted(INVERTED);
 
         encoder = motor.getEncoder();
+        // encoder.setInverted(ENCODER_INVERTED);
         encoder.setPositionConversionFactor(ENCODER_CONVERSION_FACTOR);
         encoder.setPosition(MIN_HEIGHT);
 
@@ -184,22 +185,25 @@ public class Elevator extends ManagerSubsystemBase
     @Override
     public void always() 
     {
-        Logging.info("" + PID.getSpeed());
+        PID.setMeasurement(encoder.getPosition());
+        PID.update();
+        // Logging.info("" + PID.getSpeed());
         shouldStop = false;
 
         if (ChargedUp.shwooper.isShwooperOut() && encoder.getPosition() <= BUFFER_SPACE_TO_INTAKE) 
         {
-            if (PID.getSpeed() < 0) 
-            {
-                PID.cancel();
-                PID.setSpeed(0);
-            }
+            // if (PID.getSpeed() < 0) 
+            // {
+            //     PID.cancel();
+            //     PID.setSpeed(0);
+            // }
         }
 
         if (PID.getSpeed() > 0) 
         {
             if (toplimitSwitch.get()) 
             {
+                Logging.info("IM A TOP");
                 shouldStop = true;
                 PID.setSpeed(0);
             }
@@ -208,6 +212,7 @@ public class Elevator extends ManagerSubsystemBase
         {
             if (bottomlimitSwitch.get()) 
             {
+                Logging.info("IM A BOTTOM");
                 shouldStop = true;
                 PID.setSpeed(0);
             }
@@ -215,11 +220,12 @@ public class Elevator extends ManagerSubsystemBase
 
         // Prevent stupid
         maxSpeed = encoder.getPosition() > MAX_HEIGHT - BUFFER_TO_MAX 
-                || encoder.getPosition() < MIN_HEIGHT + BUFFER_TO_MAX ? 0.1 : 1;
+                || encoder.getPosition() < MIN_HEIGHT + BUFFER_TO_MAX ? 0.5 : 1;
 
-        maxSpeed *= 0.1;
-        PID.setMeasurement(encoder.getPosition());
-        PID.update();
+        maxSpeed *= SPEED;
+        // Logging.info("" + encoder.getPosition());
+
+        // maxSpeed *= 0.1;
 
         // System.out.println("----------------------------------------------");
         // System.out.println("Elevator::measurement = " + PID.getMeasurement());
@@ -230,9 +236,10 @@ public class Elevator extends ManagerSubsystemBase
         // System.out.println("Elevator::raw_speed   = " + PID.getPIDController().calculate(PID.getMeasurement()));
         // System.out.println("Elevator::pid_on = " + PID.active());
         // System.out.println("Stinger::pid_on  = " + ChargedUp.stinger.PID.active());
-        
+        // shouldStop = false;
         if(shouldStop) motor.set(0);
         else           motor.set(PID.getSpeed() * maxSpeed);
+        // Logging.info("" + motor.get());
 
 
         if(RobotBase.isSimulation())

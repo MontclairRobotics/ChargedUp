@@ -12,7 +12,7 @@ import frc.robot.util.frc.SwerveModuleSpec;
 
 public class DriveConstants
 {
-    public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
+    public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
     
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;

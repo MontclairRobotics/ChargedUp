@@ -39,8 +39,8 @@ public class MotorStinger extends ManagerSubsystemBase implements Stinger
     private CANSparkMax motor;
     RelativeEncoder encoder;
 
-    private LimitSwitch outerlimitSwitch = new LimitSwitch(OUTER_LIMIT_SWITCH);
-    private LimitSwitch innerlimitSwitch = new LimitSwitch(INNER_LIMIT_SWITCH);
+    private LimitSwitch outerlimitSwitch = new LimitSwitch(OUTER_LIMIT_SWITCH, true);
+    private LimitSwitch innerlimitSwitch = new LimitSwitch(INNER_LIMIT_SWITCH, true);
     
     public final PIDMechanism PID = new PIDMechanism(inout());
 

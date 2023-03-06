@@ -158,11 +158,14 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.Y_TRIANGLE)
             .onTrue(Commands2023.balance());
         // Button to Zero NavX
-        driverController.getButton(Button.START_TOUCHPAD)
+        driverController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
             .onTrue(Commands.runOnce(() -> {
-                if(DriverStation.isEnabled()) return;
-                gyroscope.zeroYaw();
-                Logging.info("Zeroed NavX!");
+                if(DriverStation.isDisabled())
+                {
+                    gyroscope.zeroYaw();
+                    Logging.info("Zeroed NavX!");
+                }
             }));
         
         
@@ -180,7 +183,9 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.UP).and(pidActive)
             .toggleOnTrue(Commands2023.elevatorStingerToHigh());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
-            .toggleOnTrue(Commands2023.elevatorStingerToHigh());
+            .toggleOnTrue(Commands2023.elevatorStingerToMid());
+        operatorController.getDPad(DPad.RIGHT).and(pidActive)
+            .toggleOnTrue(Commands2023.elevatorStingerToMid());
         operatorController.getDPad(DPad.DOWN).and(pidActive)
             .toggleOnTrue(Commands2023.elevatorStingerToLow());
 
@@ -228,7 +233,9 @@ public class ChargedUp extends RobotContainer
             
             ElevatorConstants.JOY_ADJUSTER.adjustY(left);
 
-            elevator.setSpeed(left.getY());
+            //! THIS IS INVERTED
+            elevator.setSpeed(-left.getY());
+            
         }, elevator));
 
         //Auto Score

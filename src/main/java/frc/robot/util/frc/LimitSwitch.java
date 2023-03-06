@@ -10,12 +10,14 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimitSwitch implements Sendable
 {
+    private final boolean invert;
     public final DigitalInput dio;
     private final SimDevice sim;
     private final SimBoolean bool;
 
-    public LimitSwitch(int channel)
+    public LimitSwitch(int channel, boolean invert)
     {
+        this.invert = invert;
         dio = new DigitalInput(channel);
 
         if(RobotBase.isSimulation())
@@ -33,8 +35,8 @@ public class LimitSwitch implements Sendable
 
     public boolean get() 
     {
-        if(RobotBase.isReal()) return dio.get();
-        else                   return bool.get();
+        if(RobotBase.isReal()) return dio.get() ^ invert;
+        else                   return bool.get() ^ invert;
     }
     public int getChannel() {return dio.getChannel();}
 
@@ -50,7 +52,7 @@ public class LimitSwitch implements Sendable
             return;
         }
 
-        bool.set(value);
+        bool.set(value ^ invert);
     }
 
     @Override

@@ -73,7 +73,8 @@ public class LED extends ManagerBase
                     add(i);
                 }
             }
-        } else if (justEnabled = true) {
+        } else if (!justEnabled) {
+            justEnabled = true;
             animationStack.clear(); //TODO Make not hacky
             animationStack.push(new DefaultAnimation());
         }

@@ -102,8 +102,10 @@ public class PIDMechanism implements Sendable
         {
             cancel();
         }
+
         if(usingPID)
         {
+            // Logging.info("USIND PID BITCHES");
             double calulation = pidController.calculate(measurement);
 
             if(clampOutput)
@@ -117,6 +119,7 @@ public class PIDMechanism implements Sendable
         }
         else 
         {
+            // Logging.info("UNOT SIND PID BITCHES");
             speed = directSpeed;
         }
 
