@@ -42,7 +42,8 @@ public class Elevator extends ManagerSubsystemBase
 
     SimDeviceSim motorSim;
 
-    private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH, true);
+    // Rev limit switches are true if not active, false if active --> so invert
+    private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH, true); 
     private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH, true);
     // private LimitSwitch startlimitSwitch = new LimitSwitch(START_LIMIT_SWITCH);
 
@@ -203,7 +204,7 @@ public class Elevator extends ManagerSubsystemBase
         {
             if (toplimitSwitch.get()) 
             {
-                Logging.info("IM A TOP");
+                // Logging.info("IM A TOP");
                 shouldStop = true;
                 PID.setSpeed(0);
             }
@@ -212,7 +213,7 @@ public class Elevator extends ManagerSubsystemBase
         {
             if (bottomlimitSwitch.get()) 
             {
-                Logging.info("IM A BOTTOM");
+                // Logging.info("IM A BOTTOM");
                 shouldStop = true;
                 PID.setSpeed(0);
             }
