@@ -35,8 +35,8 @@ public class JoystickInput
      */
     private void updateTheta()
     {
-        theta = invertX ? 180 - rawTheta : rawTheta;
-        theta = invertY ? -theta         : theta;
+        theta = invertX ? 1 * Math.PI - rawTheta : rawTheta;
+        theta = invertY ? 2 * Math.PI - theta    : theta;
     }
 
     /**
@@ -78,8 +78,8 @@ public class JoystickInput
     public double getMagnitude() {return r;}
     public double getTheta() {return theta;}
 
-    public double getRawX() {return x;}
-    public double getRawY() {return y;}
+    public double getRawX() {return rawX;}
+    public double getRawY() {return rawY;}
     public double getRawTheta() {return rawTheta;}
 
     // Setters //
@@ -103,7 +103,7 @@ public class JoystickInput
      * Sets the raw radius and theta values of the joystick 
      * and updates the radius, theta, and cartesian values based on the new values
      * @param r the radius
-     * @param theta the angle
+     * @param theta the angle (radians)
      */
     public void setPolar(double r, double theta)
     {
@@ -154,7 +154,7 @@ public class JoystickInput
     /**
      * Sets the raw theta of the joystick 
      * and updates the theta and cartesian values based on the new theta
-     * @param theta the angle
+     * @param theta the angle (radians)
      */
     public void setTheta(double theta)
     {
