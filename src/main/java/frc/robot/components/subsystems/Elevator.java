@@ -250,4 +250,9 @@ public class Elevator extends ManagerSubsystemBase
 
         ligament.setLength(encoder.getPosition());
     }
+    
+    @Override
+    public void reset() {
+        stop();
+    }
 }
