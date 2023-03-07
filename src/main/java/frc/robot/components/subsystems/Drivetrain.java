@@ -278,12 +278,12 @@ public class Drivetrain extends ManagerSubsystemBase
         
         for(int i = 0; i < MODULE_COUNT; i++)
         {
-            if(RobotBase.isReal())
+            if(RobotBase.isReal() || true)
             {
-                // states[i] = SwerveModuleState.optimize(
-                //     states[i], 
-                //     new Rotation2d(modules[i].getSteerAngle())
-                // );
+                states[i] = SwerveModuleState.optimize(
+                    states[i], 
+                    new Rotation2d(modules[i].getSteerAngle())
+                );
             }
 
             modules[i].set(

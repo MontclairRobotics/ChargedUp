@@ -10,6 +10,16 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimitSwitch implements Sendable
 {
+    /**
+     *   x  ^  i  =  r
+     *  ----------.-----
+     *   F     F  |  F
+     *   T     F  |  T
+     *   F     T  |  T
+     *   T     T  |  F
+     * 
+     */
+
     private final boolean invert;
     public final DigitalInput dio;
     private final SimDevice sim;
