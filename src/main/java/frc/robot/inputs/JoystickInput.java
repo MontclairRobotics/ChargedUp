@@ -35,8 +35,15 @@ public class JoystickInput
      */
     private void updateTheta()
     {
-        theta = invertX ? 1 * Math.PI - rawTheta : rawTheta;
-        theta = invertY ? 2 * Math.PI - theta    : theta;
+        final double PI  = Math.PI;
+        final double TAU = Math.PI * 2;
+
+        theta = rawTheta % TAU;
+
+        theta = invertX ? PI  - (theta % TAU) : theta;
+        theta = invertY ? TAU - (theta % TAU) : theta;
+
+        theta %= TAU;
     }
 
     /**
