@@ -29,6 +29,7 @@ import frc.robot.components.managers.SimulationHooks;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
+import frc.robot.components.subsystems.Drivetrain.DriveCommands;
 import frc.robot.components.subsystems.shwooper.ComplexShwooper;
 import frc.robot.components.subsystems.shwooper.Shwooper;
 import frc.robot.components.subsystems.shwooper.SimpleShwooper;
@@ -136,6 +137,11 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.A_CROSS)
             .and(driverController.getButton(Button.START_TOUCHPAD))
             .onTrue(drivetrain.commands.toggleFieldRelative());
+
+        driverController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .onTrue(drivetrain.commands.enableStraightPidding())
+            .onFalse(drivetrain.commands.disableStraightPidding());
 
         // Increase/Decrease Max Speed
         driverController.getButton(Button.RIGHT_BUMPER)
