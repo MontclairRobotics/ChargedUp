@@ -63,6 +63,8 @@ public class Drivetrain extends ManagerSubsystemBase
 
     private final FieldObject2d moduleObject;
     private final SwerveDrivePoseEstimator poseEstimator;
+    private double currentStraightAngle;
+    private boolean isStraightPidding;
 
     /**
      * Store whether or not the drivetrain has already piped values into its motors, signalling an autonomous command
@@ -370,6 +372,15 @@ public class Drivetrain extends ManagerSubsystemBase
             .toArray(SwerveModulePosition[]::new);
     }
 
+    public void startStraightPidding() {
+        isStraightPidding = true;
+        currentStraightAngle = getRobotRotation().getDegrees();
+    }
+
+    public void stopStraightPidding() {
+        isStraightPidding = false;
+    }
+
     @Override 
     public void periodic() 
     {
@@ -378,6 +389,10 @@ public class Drivetrain extends ManagerSubsystemBase
             xPID.setMeasurement(getRobotPose().getX());
             yPID.setMeasurement(getRobotPose().getY());
             thetaPID.setMeasurement(getRobotRotation().getDegrees());
+            if (isStraightPidding) 
+            {
+                thetaPID.setTarget(currentStraightAngle);
+            }
 
             xPID.update();
             yPID.update();
@@ -481,6 +496,11 @@ public class Drivetrain extends ManagerSubsystemBase
         return getRobotRotation().getDegrees() + ChargedUp.vision.getObjectAX() * 20; 
     }
 
+    @Override
+    public void reset() {
+        stopStraightPidding();
+    }
+
     public final DriveCommands commands = this.new DriveCommands();
     public class DriveCommands 
     {
@@ -508,6 +528,24 @@ public class Drivetrain extends ManagerSubsystemBase
                     .deadlineWith(Commands.waitSeconds(time)),
                 disableFieldRelative()
             );
+        }
+
+        /**
+         * Lock the robot's angle
+         * @return
+         */
+        public Command enableStraightPidding() 
+        {
+            return Commands.runOnce(() -> Drivetrain.this.startStraightPidding());
+        }
+
+        /**
+         * Stop locking the robot's angle
+         * @return
+         */
+        public Command disableStraightPidding() 
+        {
+            return Commands.runOnce(() -> Drivetrain.this.stopStraightPidding());
         }
 
         public Command enableFieldRelative()
