@@ -1,6 +1,9 @@
 package frc.robot.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.function.IntFunction;
 
 public class Array555 
@@ -19,6 +22,18 @@ public class Array555
         }
 
         return arr;
+    }
+
+    public static <T> T[] shuffle(T[] arr, IntFunction<T[]> constructor) {
+        Random rand = new Random();
+        List<T> members = new ArrayList<T>(Arrays.asList(arr));
+        T[] outputArr = constructor.apply(members.size());
+        for (int i = 0; i < outputArr.length; i++) {
+            int randomIndex = rand.nextInt(members.size());
+            outputArr[i] = members.get(randomIndex);
+            members.remove(randomIndex);
+        }
+        return outputArr;
     }
     
 }

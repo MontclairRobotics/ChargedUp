@@ -1,5 +1,7 @@
 package frc.robot.constants;
 
+import java.util.function.IntFunction;
+
 import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
@@ -22,6 +24,7 @@ import frc.robot.animation.ZoomAnimation;
 import frc.robot.animation.DeathAnimation;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.math.Units555;
+import frc.robot.util.Array555;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.SwerveModuleSpec;
 
@@ -60,6 +63,7 @@ public final class Constants
                 new ZoomAnimation(DEMO_TIME, Color.kLavender),
                 new QuickSlowFlash(DEMO_TIME, Color.kBlue)
             };
+            public static final Animation[] SHUFFLED_ANIMATIONS = Array555.shuffle(DEMO_ANIMATIONS, Animation[]::new);
         }
     }
     
