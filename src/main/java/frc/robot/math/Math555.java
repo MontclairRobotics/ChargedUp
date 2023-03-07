@@ -141,6 +141,16 @@ public class Math555
         return new Color8Bit(lerp(a.red, b.red, t), lerp(a.green, b.green, t), lerp(a.blue, b.blue, t));
     }
 
+    /**
+     * Uses {@link Math555#invlerp(double, double, double) inverse lerp function}, we get the value from
+     * [0, cycleLength-1]. It maps these values (0, 1, 2, ... cycleLength) cycles number of times
+     * @param value
+     * @param minimum
+     * @param maximum
+     * @param cycles
+     * @param cycleLength
+     * @return
+     */
     public static int repeatingCycle(double value, double minimum, double maximum, int cycles, int cycleLength)
     {
         return (int)(Math555.invlerp(value, minimum, maximum) * cycles * cycleLength) % cycleLength;
