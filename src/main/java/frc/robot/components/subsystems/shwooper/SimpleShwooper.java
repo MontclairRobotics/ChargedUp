@@ -63,5 +63,11 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
     public void toggleShwooper(){};
     
     public boolean isShwooperOut(){return true;}
+
+    @Override
+    public void reset()
+    {
+        stop();
+    }
  
 }

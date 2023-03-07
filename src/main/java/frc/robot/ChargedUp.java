@@ -114,8 +114,8 @@ public class ChargedUp extends RobotContainer
                 }
 
                 drivetrain.setInput(
-                    JoystickInput.getRight(driverController, false, false),
-                    JoystickInput.getLeft (driverController, false, false)
+                    JoystickInput.getRight(driverController, true, true),
+                    JoystickInput.getLeft (driverController, true, true)
                 );
             },
             drivetrain
@@ -159,8 +159,7 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands2023.balance());
         
         // Button to Zero NavX
-        driverController.getAxis(Axis.LEFT_TRIGGER)
-            .whenGreaterThan(0.5)
+        driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
                 if(DriverStation.isDisabled())
                 {

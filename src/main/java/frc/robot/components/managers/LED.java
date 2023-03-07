@@ -69,7 +69,7 @@ public class LED extends ManagerBase
             lastFrameDisabled = true;
             if (animationStack.size() <= 1)
             {
-                for (Animation i : Constants.Robot.LED.DEMO_ANIMATIONS) 
+                for (Animation i : Constants.Robot.LED.SHUFFLED_ANIMATIONS) 
                 {
                     add(i);
                 }

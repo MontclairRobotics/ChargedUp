@@ -77,6 +77,22 @@
         }
       },
       "/Shuffleboard/Main Tab/Field": {
+        "Swerve Modules": {
+          "arrowColor": [
+            0.0,
+            255.0,
+            251.77212524414063,
+            255.0
+          ],
+          "color": [
+            225.94937133789063,
+            0.0,
+            255.0,
+            255.0
+          ],
+          "length": 0.30000001192092896,
+          "width": 0.30000001192092896
+        },
         "window": {
           "visible": true
         }
