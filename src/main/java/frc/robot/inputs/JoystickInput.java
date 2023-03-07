@@ -11,40 +11,40 @@ public class JoystickInput
     private double x;
     private double y;
 
-    private double rawX;
-    private double rawY;
+    // private double rawX;
+    // private double rawY;
 
     private double r;
 
     private double theta;
-    private double rawTheta;
+    // private double rawTheta;
 
     // Value Updaters //
 
-    /**
-     * Inverts the x if {@link #invertX} is true and
-     * inverts the y if {@link #invertY} is true
-     */
-    private void updateXY()
-    {
-        x = invertX ? -rawX : rawX;
-        y = invertY ? -rawY : rawY;
-    }
-    /**
-     * Inverts theta based on booleans {@link #invertX} and {@link #invertY}
-     */
-    private void updateTheta()
-    {
-        final double PI  = Math.PI;
-        final double TAU = Math.PI * 2;
+    // /**
+    //  * Inverts the x if {@link #invertX} is true and
+    //  * inverts the y if {@link #invertY} is true
+    //  */
+    // private void updateXY()
+    // {
+    //     x = invertX ? -rawX : rawX;
+    //     y = invertY ? -rawY : rawY;
+    // }
+    // /**
+    //  * Inverts theta based on booleans {@link #invertX} and {@link #invertY}
+    //  */
+    // private void updateTheta()
+    // {
+    //     final double PI  = Math.PI;
+    //     final double TAU = Math.PI * 2;
 
-        theta = rawTheta % TAU;
+    //     theta = rawTheta % TAU;
 
-        theta = invertX ? PI  - (theta % TAU) : theta;
-        theta = invertY ? TAU - (theta % TAU) : theta;
+    //     theta = invertX ? PI  - (theta % TAU) : theta;
+    //     theta = invertY ? TAU - (theta % TAU) : theta;
 
-        theta %= TAU;
-    }
+    //     theta %= TAU;
+    // }
 
     /**
      * Updates the raw cartesian values of the joystick 
@@ -52,10 +52,10 @@ public class JoystickInput
      */
     private void updateCartesianFromPolar()
     {
-        rawX = r*Math.cos(rawTheta);
-        rawY = r*Math.sin(rawTheta);
+        x = r*Math.cos(theta);
+        y = r*Math.sin(theta);
         
-        updateXY();
+        // updateXY();
     }
 
     /**
@@ -64,10 +64,10 @@ public class JoystickInput
      */
     private void updatePolarFromCartesian()
     {
-        r = Math.sqrt(rawX*rawX + rawY*rawY);
-        rawTheta = Math.atan2(rawY, rawX);
+        r = Math.sqrt(x*x + y*y);
+        theta = Math.atan2(y, x);
 
-        updateTheta();
+        // updateTheta();
     }
 
     private JoystickInput(double x, double y, boolean invertX, boolean invertY)
@@ -75,7 +75,10 @@ public class JoystickInput
         this.invertX = invertX;
         this.invertY = invertY;
 
-        setXY(x, y);
+        setXY(
+            invertX ? -x : x, 
+            invertY ? -y : y
+        );
     }
 
     // Getters //
@@ -85,9 +88,9 @@ public class JoystickInput
     public double getMagnitude() {return r;}
     public double getTheta() {return theta;}
 
-    public double getRawX() {return rawX;}
-    public double getRawY() {return rawY;}
-    public double getRawTheta() {return rawTheta;}
+    // public double getRawX() {return rawX;}
+    // public double getRawY() {return rawY;}
+    // public double getRawTheta() {return rawTheta;}
 
     // Setters //
 
@@ -99,10 +102,9 @@ public class JoystickInput
      */
     public void setXY(double x, double y)
     {
-        rawX = x;
-        rawY = y;
+        this.x = x;
+        this.y = y;
 
-        updateXY();
         updatePolarFromCartesian();
     }
 
@@ -117,7 +119,6 @@ public class JoystickInput
         this.r = r;
         this.theta = theta;
 
-        updateTheta();
         updateCartesianFromPolar();
     }
 
@@ -128,9 +129,9 @@ public class JoystickInput
      */
     public void setX(double x)
     {
-        rawX = x;
+        this.x = x;
 
-        updateXY();
+        // updateXY();
         updatePolarFromCartesian();
     }
 
@@ -141,9 +142,9 @@ public class JoystickInput
      */
     public void setY(double y)
     {
-        rawY = y;
+        this.y = y;
         
-        updateXY();
+        // updateXY();
         updatePolarFromCartesian();
     }
 
@@ -165,9 +166,9 @@ public class JoystickInput
      */
     public void setTheta(double theta)
     {
-        rawTheta = theta;
+        this.theta = theta;
 
-        updateTheta();
+        // updateTheta();
         updateCartesianFromPolar();
     }
 
