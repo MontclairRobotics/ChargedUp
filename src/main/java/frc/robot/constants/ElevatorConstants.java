@@ -13,7 +13,7 @@ public class ElevatorConstants
     // PULLY SIZE  :=  4 in.
 
     public static final double GEAR_RATIO_OUT_OVER_IN = 1.0 / 40.0;
-    public static final double SPROCKET_DIAMETER = Units.inchesToMeters(8);
+    public static final double SPROCKET_DIAMETER = Units.inchesToMeters(1.685);
 
     public static final double ENCODER_CONVERSION_FACTOR = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI;
 
@@ -40,6 +40,8 @@ public class ElevatorConstants
 
     public static final double DEADBAND = 0.05;
     public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
+
+    public static final double FEED_FORWARD = 0.05;
 
     public static final double 
         KP = 0.25,

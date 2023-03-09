@@ -136,7 +136,7 @@ public class Commands2023
      */
     public static Command toggleStinger()
     {
-        return Commands.either(retractStinger(), stingerToHigh(), stinger::isOut);
+        return Commands.either(retractStinger(), stingerToHigh(), stinger::isOut).andThen(log("TOGGLED STINGERR "));
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -278,7 +278,7 @@ public class Commands2023
      */
     public static Command toggleGrabber()
     {
-        return Commands.runOnce(ChargedUp.grabber::toggle);
+        return Commands.runOnce(ChargedUp.grabber::toggle).andThen(log("GRABBBERBBRERNEOSF DJNFOFNUIS"));
     }
     // grabs 
     public static Command grabGrabber()
