@@ -58,9 +58,9 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
         motorTop.set(0);
     }
 
-    public void extendShwooper(){};
-    public void retractShwooper(){};
-    public void toggleShwooper(){};
+    public void extendShwooper(){}
+    public void retractShwooper(){}
+    public void toggleShwooper(){}
     
     public boolean isShwooperOut(){return true;}
 

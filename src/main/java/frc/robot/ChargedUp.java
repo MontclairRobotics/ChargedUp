@@ -212,6 +212,9 @@ public class ChargedUp extends RobotContainer
         // Grabber
         operatorController.getButton(Button.A_CROSS)
             .onTrue(Commands2023.toggleGrabber());
+        
+        operatorController.getButton(Button.X_SQUARE)
+            .onTrue(Commands2023.switchPressure());
 
         // Schwooper 
         
@@ -225,11 +228,6 @@ public class ChargedUp extends RobotContainer
             .whenGreaterThan(0.5)
             .onTrue (Commands2023.shwooperSpit())
             .onFalse(Commands2023.stopShwooper());
-        /**
-         * toggles shwooper
-         */
-        operatorController.getButton(Button.X_SQUARE)
-            .toggleOnTrue(Commands2023.toggleShwooper());
 
         //Elevator 
         elevator.setDefaultCommand(Commands.run(() -> 
@@ -400,5 +398,9 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 1)
             .withPosition(0,4)
             .withWidget(BuiltInWidgets.kTextView);
+        mainTab
+            .addBoolean("Cone Mode", () -> ChargedUp.grabber.getSeesCone())
+            .withSize(1, 1)
+            .withPosition(6, 3);
     }
 }

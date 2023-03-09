@@ -30,6 +30,7 @@ public class Grabber extends ManagerSubsystemBase
 {
     Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_SOLENOID_PORT);
     Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_PSI_SOLENOID_PORT);
+    private boolean seesCone = false;
 
     GamePiece heldObject = GamePiece.NONE;
 
@@ -41,8 +42,10 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void updatePressure()
     {
-        if(ChargedUp.colorSensor.seesCone()) setPSIHigh();
-        else                                 setPSINormal();
+        // if(ChargedUp.colorSensor.seesCone()) setPSIHigh();
+        // else                                 setPSINormal();
+        if (seesCone) setPSIHigh();
+        else          setPSINormal();
     }
 
     /**
@@ -78,6 +81,17 @@ public class Grabber extends ManagerSubsystemBase
         if (!outputSolenoid.get()) updatePressure();
         outputSolenoid.toggle();
     }
+
+    public void toggleSeesCone() 
+    {
+        seesCone = !seesCone;
+    }
+
+    public boolean getSeesCone() 
+    {
+        return seesCone;
+    }
+
 
     /**
      * Sets pneumatic state of grabber to <b>high pressure</b> (<b>non-default</b> state of solenoid)

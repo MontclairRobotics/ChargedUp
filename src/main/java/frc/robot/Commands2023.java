@@ -60,6 +60,10 @@ public class Commands2023
         return Commands.runOnce(() -> DefaultAnimation.setViolet());
     }
 
+    public static Command switchPressure() {
+        return Commands.runOnce(() -> ChargedUp.grabber.toggleSeesCone());
+    }
+
     /**
      * Displays solid yellow on the LEDs
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
