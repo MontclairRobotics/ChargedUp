@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -89,6 +90,8 @@ public class ChargedUp extends RobotContainer
     public static final AHRS gyroscope = new AHRS();
     public static final LED  led       = new LED();
 
+    public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.COMPRESSOR_PORT);
+
     public static final VisionSystem vision      = new LimelightSystem();
     // public static final ColorSensor  colorSensor = new ColorSensor();
 
@@ -104,7 +107,9 @@ public class ChargedUp extends RobotContainer
     // INITIALIZER //
     @Override 
     public void initialize() 
-    { 
+    {
+        pneu.enableCompressorDigital();
+
         led.setTransition(FadeTransition::new);
 
         setupDebugTab();
