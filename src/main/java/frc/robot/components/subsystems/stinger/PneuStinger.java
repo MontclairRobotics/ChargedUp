@@ -26,6 +26,7 @@ import frc.robot.ChargedUp;
 import frc.robot.Commands2023;
 import frc.robot.constants.StingerConstants;
 import frc.robot.constants.Constants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
@@ -34,6 +35,7 @@ import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.SimulationUtility;
+import frc.robot.util.frc.commandrobot.ManagerBase;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.constants.StingerConstants.*;
@@ -41,11 +43,12 @@ import static frc.robot.constants.StingerConstants.*;
 import java.util.function.DoubleSupplier;
 
 
-public class PneuStinger implements Stinger
+public class PneuStinger extends ManagerBase implements Stinger
 {
     private final Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
+    private boolean target;
 
-    private Command outThenMove(double back)
+    private Command moveThenOut(double back)
     {
         return Commands.sequence(
             ChargedUp.drivetrain.commands.disableFieldRelative(),
@@ -54,24 +57,40 @@ public class PneuStinger implements Stinger
                 ChargedUp.drivetrain
             ),
             ChargedUp.drivetrain.commands.enableFieldRelative(),
-            Commands.runOnce(() -> solenoid.set(true)),
+            Commands.runOnce(() -> target = true),
             Commands.waitSeconds(PNEU_TIME)
         );
     }
 
     @Override
-    public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(PNEU_TIME));}
+    public Command in() {return Commands.runOnce(() -> target = false).andThen(Commands.waitSeconds(PNEU_TIME));}
     
     @Override
-    public Command outLow() {return outThenMove(HIGH_LENGTH - LOW_LENGTH);}
+    public Command outLow() {return moveThenOut(HIGH_LENGTH - LOW_LENGTH);}
     @Override
-    public Command outMid() {return outThenMove(HIGH_LENGTH - MID_LENGTH);}
+    public Command outMid() {return moveThenOut(HIGH_LENGTH - MID_LENGTH);}
     @Override
-    public Command outHigh() {return Commands.runOnce(() -> solenoid.set(true));}
+    public Command outHigh() {return Commands.runOnce(() -> target = true);}
 
     @Override
     public boolean isOut() {return solenoid.get();}
 
     @Override
     public boolean requiresDriveOffset() {return true;}
+
+    @Override
+    public void always() 
+    {
+        if(target == true && solenoid.get() == false)
+        {
+            if(ChargedUp.elevator.getHeight() >= ElevatorConstants.BUFFER_SPACE_TO_INTAKE)
+            {
+                solenoid.set(true);
+            }
+        }
+        else 
+        {
+            solenoid.set(target);
+        }
+    }
 }

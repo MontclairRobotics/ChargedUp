@@ -130,6 +130,14 @@ public class Commands2023
     {
         return stinger.outHigh();
     }
+    /**
+     * toggle the stinger
+     * @return Command
+     */
+    public static Command toggleStinger()
+    {
+        return Commands.either(retractStinger(), stingerToHigh(), stinger::isOut);
+    }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
 
@@ -281,6 +289,15 @@ public class Commands2023
     public static Command releaseGrabber()
     {
         return Commands.runOnce(ChargedUp.grabber::release);
+    }
+
+    public static Command grabberSetCone()
+    {
+        return Commands.runOnce(() -> ChargedUp.grabber.setHoldingCone(true));
+    }
+    public static Command grabberSetCube()
+    {
+        return Commands.runOnce(() -> ChargedUp.grabber.setHoldingCone(false));
     }
 
     /////////////////////////////// SHWOOPER COMMMANDS ///////////////////////////
