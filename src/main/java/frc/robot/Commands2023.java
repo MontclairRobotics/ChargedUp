@@ -493,7 +493,7 @@ public class Commands2023
     public static Command moveToCurrentObjectSideways()
     {
         return ifHasTarget(
-            drivetrain.thetaPID.goToSetpoint(() -> drivetrain.getRobotPose().getX() + drivetrain.getObjectAngle(), drivetrain)
+            drivetrain.yPID.goToSetpoint(() -> drivetrain.getRobotPose().getY() + drivetrain.getObjectAngle(), drivetrain)
         );
     }
 
