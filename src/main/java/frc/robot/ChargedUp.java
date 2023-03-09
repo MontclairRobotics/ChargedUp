@@ -194,11 +194,11 @@ public class ChargedUp extends RobotContainer
 
         // D-Pad Controls
         operatorController.getDPad(DPad.UP).and(pidActive)
-            .toggleOnTrue(Commands2023.elevatorStingerToHigh());
+            .toggleOnTrue(Commands2023.scoreHigh());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
-            .toggleOnTrue(Commands2023.elevatorStingerToMid());
+            .toggleOnTrue(Commands2023.scoreMid());
         operatorController.getDPad(DPad.DOWN).and(pidActive)
-            .toggleOnTrue(Commands2023.elevatorStingerToLow());
+            .toggleOnTrue(Commands2023.scoreLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
             .toggleOnTrue(Commands2023.elevatorStingerReturn());
 
@@ -217,8 +217,14 @@ public class ChargedUp extends RobotContainer
         }
 
         // Grabber
-        operatorController.getButton(Button.X_SQUARE)
+        operatorController.getButton(Button.A_CROSS)
             .onTrue(Commands2023.toggleGrabber());
+        operatorController.getButton(Button.Y_TRIANGLE)
+            .onTrue(Commands2023.grabberSetCone());
+        operatorController.getButton(Button.X_SQUARE)
+            .onTrue(Commands2023.grabberSetCube());
+        operatorController.getButton(Button.B_CIRCLE)
+            .onTrue(Commands2023.toggleStinger());
 
         // Schwooper 
         // suck button
@@ -242,14 +248,6 @@ public class ChargedUp extends RobotContainer
 
             elevator.setSpeed(left.getY());
         }, elevator));
-
-        //Auto Score
-        operatorController.getButton(Button.Y_TRIANGLE).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreHigh());
-        operatorController.getButton(Button.B_CIRCLE).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreMid());
-        operatorController.getButton(Button.A_CROSS).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreLow());
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)
@@ -350,6 +348,7 @@ public class ChargedUp extends RobotContainer
         // SETUP FIELD //
         mainTab
             .add("Field", field)
+            .withWidget(BuiltInWidgets.kField)
             .withSize(4, 3)
             .withPosition(2, 0);
 
@@ -403,9 +402,9 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 1)
             .withPosition(0,4)
             .withWidget(BuiltInWidgets.kTextView);
-        // mainTab
-        //     .addBoolean("Cone Mode", () -> ChargedUp.grabber.getHoldingCone())
-        //     .withSize(1, 1)
-        //     .withPosition(6, 3);
+        mainTab
+            .addBoolean("Cone Mode", () -> ChargedUp.grabber.getHoldingCone())
+            .withSize(1, 1)
+            .withPosition(6, 3);
     }
 }

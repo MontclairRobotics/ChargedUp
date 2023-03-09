@@ -182,23 +182,19 @@ public class Elevator extends ManagerSubsystemBase
         PID.cancel();
     }
 
+    public double getHeight()
+    {
+        return encoder.getPosition();
+    }
+
     
     @Override
     public void always() 
     {
-        PID.setMeasurement(encoder.getPosition());
+        PID.setMeasurement(getHeight());
         PID.update();
         // Logging.info("" + PID.getSpeed());
         shouldStop = false;
-
-        if (ChargedUp.shwooper.isShwooperOut() && encoder.getPosition() <= BUFFER_SPACE_TO_INTAKE) 
-        {
-            // if (PID.getSpeed() < 0) 
-            // {
-            //     PID.cancel();
-            //     PID.setSpeed(0);
-            // }
-        }
 
         if (PID.getSpeed() > 0) 
         {
@@ -211,7 +207,8 @@ public class Elevator extends ManagerSubsystemBase
         } 
         else 
         {
-            if (bottomlimitSwitch.get()) 
+            //    vv BOTTOM LIMIT vv    or                    vv STINGER IN THE WAY vv
+            if (bottomlimitSwitch.get() || ChargedUp.stinger.isOut() && getHeight() <= BUFFER_SPACE_TO_INTAKE) 
             {
                 // Logging.info("IM A BOTTOM");
                 shouldStop = true;
