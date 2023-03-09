@@ -148,7 +148,7 @@ public class ChargedUp extends RobotContainer
             // .onTrue(Commands.runOnce(() -> led.add(new ASCIImation(5, "Hello", Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
             .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
 
-        driverController.getAxis(Axis.LEFT_TRIGGER)
+        driverController.getAxis(Axis.RIGHT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue(drivetrain.commands.enableStraightPidding())
             .onFalse(drivetrain.commands.disableStraightPidding());
