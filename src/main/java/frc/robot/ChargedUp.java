@@ -403,9 +403,9 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 1)
             .withPosition(0,4)
             .withWidget(BuiltInWidgets.kTextView);
-        mainTab
-            .addBoolean("Cone Mode", () -> ChargedUp.grabber.getHoldingCone())
-            .withSize(1, 1)
-            .withPosition(6, 3);
+        // mainTab
+        //     .addBoolean("Cone Mode", () -> ChargedUp.grabber.getHoldingCone())
+        //     .withSize(1, 1)
+        //     .withPosition(6, 3);
     }
 }
