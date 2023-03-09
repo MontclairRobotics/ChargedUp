@@ -36,6 +36,7 @@ import static frc.robot.ChargedUp.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 
@@ -60,8 +61,9 @@ public class Commands2023
         return Commands.runOnce(() -> DefaultAnimation.setViolet());
     }
 
-    public static Command switchPressure() {
-        return Commands.runOnce(() -> ChargedUp.grabber.toggleSeesCone());
+    public static Command toggleGrabberHasCone() 
+    {
+        return Commands.runOnce(() -> ChargedUp.grabber.toggleHoldingCone());
     }
 
     /**
@@ -374,7 +376,7 @@ public class Commands2023
             log("[SCORE] Beginning score sequence . . ."),
 
             //move sideways to the target
-            moveToObjectSideways(type.getType()),
+            moveToObjectSideways(type::getDetectionType),
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),
@@ -482,10 +484,10 @@ public class Commands2023
      * Turns to the object.
      * @return
      */
-    public static Command turnToObject(DetectionType type)
+    public static Command turnToObject(Supplier<DetectionType> type)
     {
         return Commands.sequence(
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type)),
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
             turnToCurrentObject(),
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
@@ -495,10 +497,10 @@ public class Commands2023
      * Goes towards the object on the x-axis.
      * @return
      */
-    public static Command moveToObjectSideways(DetectionType type)
+    public static Command moveToObjectSideways(Supplier<DetectionType> type)
     {
         return Commands.sequence(
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type)),
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
             moveToCurrentObjectSideways(),
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );

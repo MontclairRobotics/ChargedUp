@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimelightSystem extends VisionSystem
 {
@@ -39,7 +40,10 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void always() 
     {
-        results = LimelightHelpers.getLatestResults("");
+        if(RobotBase.isReal())
+        {
+            results = LimelightHelpers.getLatestResults("");
+        }
     }
 
     @Override
@@ -58,12 +62,11 @@ public class LimelightSystem extends VisionSystem
     public DetectionType getCurrentType() 
     {
         int pipe = (int) LimelightHelpers.getCurrentPipelineIndex("");
-        if      (pipe == TAPE_RETRO_PIPE)           return DetectionType.TAPE;
-        else if (pipe == APRIL_TAG_PIPE)            return DetectionType.APRIL_TAG;
-        
+        if      (pipe == TAPE_RETRO_PIPE) return DetectionType.TAPE;
+        else if (pipe == APRIL_TAG_PIPE)  return DetectionType.APRIL_TAG;
         else if (LimelightHelpers.getNeuralClassID("") == CUBE_ID) return DetectionType.CUBE;
         else if (LimelightHelpers.getNeuralClassID("") == CONE_ID) return DetectionType.CONE;
-        else                                        return DetectionType.NONE;
+        else                                                       return DetectionType.NONE;
     }
 
     @Override
@@ -80,9 +83,9 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public double getObjectAX() {return LimelightHelpers.getTX("");}
+    public double getObjectAX() {return hasObject() ? 0 : LimelightHelpers.getTX("");}
     @Override
-    public double getObjectAY() {return LimelightHelpers.getTY("");}
+    public double getObjectAY() {return hasObject() ? 0 : LimelightHelpers.getTY("");}
     @Override
     public double getPipeline() {return LimelightHelpers.getCurrentPipelineIndex("");}
     @Override

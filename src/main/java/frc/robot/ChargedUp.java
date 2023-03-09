@@ -86,8 +86,8 @@ public class ChargedUp extends RobotContainer
     public static final AHRS gyroscope = new AHRS();
     public static final LED  led       = new LED();
 
-    public static final VisionSystem vision      = new DummySystem();
-    public static final ColorSensor  colorSensor = new ColorSensor();
+    public static final VisionSystem vision      = new LimelightSystem();
+    // public static final ColorSensor  colorSensor = new ColorSensor();
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator   elevator   = new Elevator();
@@ -162,10 +162,10 @@ public class ChargedUp extends RobotContainer
             // .onTrue(Commands2023.scoreHigh());
 
         driverController.getButton(Button.X_SQUARE)
-            .onTrue(Commands2023.moveToObjectSideways(vision.getDesiredDriveTarget()));
+            .onTrue(Commands2023.moveToObjectSideways(vision::getDesiredDriveTarget));
 
         driverController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands2023.turnToObject(vision.getDesiredDriveTarget()));
+            .onTrue(Commands2023.turnToObject(vision::getDesiredDriveTarget));
         
         // BALANCE //
         driverController.getButton(Button.Y_TRIANGLE)
@@ -197,9 +197,9 @@ public class ChargedUp extends RobotContainer
             .toggleOnTrue(Commands2023.elevatorStingerToHigh());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
             .toggleOnTrue(Commands2023.elevatorStingerToMid());
-        operatorController.getDPad(DPad.RIGHT).and(pidActive)
-            .toggleOnTrue(Commands2023.elevatorStingerToMid());
         operatorController.getDPad(DPad.DOWN).and(pidActive)
+            .toggleOnTrue(Commands2023.elevatorStingerToLow());
+        operatorController.getDPad(DPad.RIGHT).and(pidActive)
             .toggleOnTrue(Commands2023.elevatorStingerReturn());
 
         // Stinger
@@ -217,14 +217,10 @@ public class ChargedUp extends RobotContainer
         }
 
         // Grabber
-        operatorController.getButton(Button.A_CROSS)
-            .onTrue(Commands2023.toggleGrabber());
-        
         operatorController.getButton(Button.X_SQUARE)
-            .onTrue(Commands2023.switchPressure());
+            .onTrue(Commands2023.toggleGrabber());
 
         // Schwooper 
-        
         // suck button
         operatorController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
@@ -249,8 +245,10 @@ public class ChargedUp extends RobotContainer
 
         //Auto Score
         operatorController.getButton(Button.Y_TRIANGLE).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreMid());
+            .toggleOnTrue(Commands2023.scoreHigh());
         operatorController.getButton(Button.B_CIRCLE).and(pidActive)
+            .toggleOnTrue(Commands2023.scoreMid());
+        operatorController.getButton(Button.A_CROSS).and(pidActive)
             .toggleOnTrue(Commands2023.scoreLow());
         
         //LEDs
@@ -406,7 +404,7 @@ public class ChargedUp extends RobotContainer
             .withPosition(0,4)
             .withWidget(BuiltInWidgets.kTextView);
         mainTab
-            .addBoolean("Cone Mode", () -> ChargedUp.grabber.getSeesCone())
+            .addBoolean("Cone Mode", () -> ChargedUp.grabber.getHoldingCone())
             .withSize(1, 1)
             .withPosition(6, 3);
     }

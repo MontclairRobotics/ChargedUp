@@ -29,24 +29,24 @@ import edu.wpi.first.wpilibj.util.Color;
 public class Grabber extends ManagerSubsystemBase 
 {
     Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_SOLENOID_PORT);
-    Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_PSI_SOLENOID_PORT);
-    private boolean seesCone = false;
+    // Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_PSI_SOLENOID_PORT);
+    private boolean holdingCone = false;
 
     GamePiece heldObject = GamePiece.NONE;
 
     public GamePiece getHeldObject() {return heldObject;}
     public String getHeldObjectName() {return heldObject.toString().toLowerCase();}
     
-    /**
-     * Update the pressure of the airflow to respect current readings.
-     */
-    public void updatePressure()
-    {
-        // if(ChargedUp.colorSensor.seesCone()) setPSIHigh();
-        // else                                 setPSINormal();
-        if (seesCone) setPSIHigh();
-        else          setPSINormal();
-    }
+    // /**
+    //  * Update the pressure of the airflow to respect current readings.
+    //  */
+    // public void updatePressure()
+    // {
+    //     // if(ChargedUp.colorSensor.seesCone()) setPSIHigh();
+    //     // else                                 setPSINormal();
+    //     if (seesCone) setPSIHigh();
+    //     else          setPSINormal();
+    // }
 
     /**
      * Sets pneumatic state of grabber to <b>grabbed</b> (<b>non-default</b> state of solenoid)
@@ -54,10 +54,10 @@ public class Grabber extends ManagerSubsystemBase
     public void grab() 
     {
         outputSolenoid.set(!SOLENOID_DEFAULT_STATE);
-        updatePressure();
+        // updatePressure();
         
-        if (ChargedUp.colorSensor.seesCone()) heldObject = GamePiece.CONE;
-        if (ChargedUp.colorSensor.seesCube()) heldObject = GamePiece.CUBE;
+        if (holdingCone) heldObject = GamePiece.CONE;
+        else             heldObject = GamePiece.CUBE;
     }
 
     /**
@@ -78,58 +78,62 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void toggle()
     {
-        if (!outputSolenoid.get()) updatePressure();
+        // if (!outputSolenoid.get()) updatePressure();
         outputSolenoid.toggle();
     }
 
-    public void toggleSeesCone() 
+    public void toggleHoldingCone() 
     {
-        seesCone = !seesCone;
+        holdingCone = !holdingCone;
+    }
+    public void setHoldingCone(boolean v) 
+    {
+        holdingCone = v;
     }
 
-    public boolean getSeesCone() 
+    public boolean getHoldingCone() 
     {
-        return seesCone;
+        return holdingCone;
     }
 
 
-    /**
-     * Sets pneumatic state of grabber to <b>high pressure</b> (<b>non-default</b> state of solenoid)
-     */
-    public void setPSIHigh()
-    {
-        pressureSolenoid.set(!PSI_SOLENOID_DEFAULT_STATE);
-    }
+    // /**
+    //  * Sets pneumatic state of grabber to <b>high pressure</b> (<b>non-default</b> state of solenoid)
+    //  */
+    // public void setPSIHigh()
+    // {
+    //     pressureSolenoid.set(!PSI_SOLENOID_DEFAULT_STATE);
+    // }
 
-    /**
-     * Sets pneumatic state of grabber to <b>normal pressure</b> (<b>default</b> state of solenoid)
-     */
-    public void setPSINormal()
-    {
-        pressureSolenoid.set(PSI_SOLENOID_DEFAULT_STATE);
-    }
+    // /**
+    //  * Sets pneumatic state of grabber to <b>normal pressure</b> (<b>default</b> state of solenoid)
+    //  */
+    // public void setPSINormal()
+    // {
+    //     pressureSolenoid.set(PSI_SOLENOID_DEFAULT_STATE);
+    // }
 
-    /**
-     * Toggle the Pressure
-     * <p>
-     * - if it is high pressure, then <b>normal pressure</b>
-     * <p>
-     * - if it is normal pressure, then <b>high pressure</b> 
-     */
-    public void togglePressure() 
-    {
-        pressureSolenoid.toggle();
-    }
+    // /**
+    //  * Toggle the Pressure
+    //  * <p>
+    //  * - if it is high pressure, then <b>normal pressure</b>
+    //  * <p>
+    //  * - if it is normal pressure, then <b>high pressure</b> 
+    //  */
+    // public void togglePressure() 
+    // {
+    //     pressureSolenoid.toggle();
+    // }
 
     @Override
     public void always() 
     {
-        switch(heldObject)
-        {
-            case CONE: DefaultAnimation.setYellow();  break;
-            case CUBE: DefaultAnimation.setViolet();  break;
-            case NONE: DefaultAnimation.setDefault(); break;
-        }
+        // switch(heldObject)
+        // {
+        //     case CONE: DefaultAnimation.setYellow();  break;
+        //     case CUBE: DefaultAnimation.setViolet();  break;
+        //     case NONE: DefaultAnimation.setDefault(); break;
+        // }
     }
 }
 

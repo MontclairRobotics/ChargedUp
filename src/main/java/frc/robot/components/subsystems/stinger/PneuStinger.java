@@ -45,35 +45,33 @@ public class PneuStinger implements Stinger
 {
     private final Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
 
-    @Override
-    public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(PNEU_TIME));}
-    @Override
-    public Command outLow() 
+    private Command outThenMove(double back)
     {
         return Commands.sequence(
             ChargedUp.drivetrain.commands.disableFieldRelative(),
             ChargedUp.drivetrain.xPID.goToSetpoint(
-                new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - (MID_LENGTH - LOW_LENGTH)), 
+                new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - back), 
                 ChargedUp.drivetrain
             ),
             ChargedUp.drivetrain.commands.enableFieldRelative(),
             Commands.runOnce(() -> solenoid.set(true)),
             Commands.waitSeconds(PNEU_TIME)
-            
         );
     }
+
     @Override
-    public Command outMid() {return Commands.runOnce(() -> solenoid.set(true));}
+    public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(PNEU_TIME));}
+    
+    @Override
+    public Command outLow() {return outThenMove(HIGH_LENGTH - LOW_LENGTH);}
+    @Override
+    public Command outMid() {return outThenMove(HIGH_LENGTH - MID_LENGTH);}
+    @Override
+    public Command outHigh() {return Commands.runOnce(() -> solenoid.set(true));}
 
     @Override
     public boolean isOut() {return solenoid.get();}
 
     @Override
     public boolean requiresDriveOffset() {return true;}
-
-    @Override
-    public Command outHigh()
-    {
-        return Commands2023.log("Cannot go out High in the Pneumatic Stinger");
-    }
 }

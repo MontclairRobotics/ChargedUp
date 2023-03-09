@@ -19,6 +19,7 @@ import frc.robot.animation.Animation;
 import frc.robot.animation.CircusAnimation;
 import frc.robot.animation.MagicAnimation;
 import frc.robot.animation.QuickSlowFlash;
+import frc.robot.animation.RaceAnimation;
 import frc.robot.animation.RainbowAnimation;
 import frc.robot.animation.ZoomAnimation;
 import frc.robot.animation.DeathAnimation;
@@ -61,7 +62,8 @@ public final class Constants
                 new RainbowAnimation(DEMO_TIME),
                 MagicAnimation.galaxy(DEMO_TIME),   
                 new ZoomAnimation(DEMO_TIME, Color.kLavender),
-                new QuickSlowFlash(DEMO_TIME, Color.kBlue)
+                new QuickSlowFlash(DEMO_TIME, Color.kBlue),
+                new RaceAnimation(DEMO_TIME)
             };
             public static final Animation[] SHUFFLED_ANIMATIONS = Array555.shuffle(DEMO_ANIMATIONS, Animation[]::new);
         }

@@ -6,7 +6,7 @@ public enum ScoringType
 {
     PEG, SHELF;
 
-    public DetectionType getType()
+    public DetectionType getDetectionType()
     {
         if (this == PEG)   return DetectionType.TAPE;
         if (this == SHELF) return DetectionType.APRIL_TAG;
