@@ -45,14 +45,14 @@ public class PhotonSystem extends VisionSystem
             AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
             
             // Create pose estimator
-            photonPoseEstimator = new PhotonPoseEstimator(
-                fieldLayout, 
-                PoseStrategy.MULTI_TAG_PNP, 
-                photonCamera, 
-                PhotonConstants.ROBOT_TO_CAM
-            );
+            // photonPoseEstimator = new PhotonPoseEstimator(
+            //     fieldLayout, 
+            //     PoseStrategy.MULTI_TAG_PNP, 
+            //     photonCamera, 
+            //     PhotonConstants.ROBOT_TO_CAM
+            // );
 
-            photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+            // photonPoseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
         } 
         catch (IOException e) 
         {
