@@ -73,6 +73,9 @@ public class ChargedUp extends RobotContainer
     public static final GameController operatorController = GameController.from(
         ControlScheme.OPERATOR_CONTROLLER_TYPE,
         ControlScheme.OPERATOR_CONTROLLER_PORT);
+    public static final GameController debugController = GameController.from(
+        ControlScheme.DEBUG_CONTROLLER_TYPE,
+        ControlScheme.DEBUG_CONTROLLER_PORT);
 
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
@@ -145,7 +148,7 @@ public class ChargedUp extends RobotContainer
             // .onTrue(Commands.runOnce(() -> led.add(new ASCIImation(5, "Hello", Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
             .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
 
-        driverController.getAxis(Axis.LEFT_TRIGGER)
+        driverController.getAxis(Axis.RIGHT_TRIGGER)
             .whenGreaterThan(0.5)
             .onTrue(drivetrain.commands.enableStraightPidding())
             .onFalse(drivetrain.commands.disableStraightPidding());
@@ -191,6 +194,13 @@ public class ChargedUp extends RobotContainer
         
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
+
+        debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
+
+        debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+        debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+        debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+        debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
         // D-Pad Controls
         operatorController.getDPad(DPad.UP).and(pidActive)

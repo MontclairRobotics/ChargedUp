@@ -37,8 +37,8 @@ public final class Constants
     
     public static class Auto 
     {
-        public static final double MAX_VEL = 10;
-        public static final double MAX_ACC = 4; // these numbers have origin inside my head
+        public static final double MAX_VEL = 0.5;
+        public static final double MAX_ACC = 2; // these numbers have origin inside my head
     }
     public static class Robot 
     {
