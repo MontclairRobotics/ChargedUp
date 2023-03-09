@@ -28,7 +28,7 @@ public class Ports
     ;
 
     // PNEUMATICS //
-    public static final int STINGER_PNEU_PORT  = 1;
+    public static final int STINGER_PNEU_PORT  = 6;
     public static final int SHWOOPER_PNEU_PORT = 2;
 
     // CANCODERS //
