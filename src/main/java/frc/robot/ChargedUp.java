@@ -392,19 +392,24 @@ public class ChargedUp extends RobotContainer
             .withWidget(BuiltInWidgets.kTextView);
         
         // HELD OBJECT //
+        // mainTab
+        //     .addString("Held Object", grabber::getHeldObjectName)
+        //     .withWidget(BuiltInWidgets.kTextView)
+        //     .withSize(2, 1)
+        //     .withPosition(0, 2);
         mainTab
-            .addString("Held Object", grabber::getHeldObjectName)
-            .withWidget(BuiltInWidgets.kTextView)
+            .addString("Target Object", vision::getDesiredDriveTargetAsString)
             .withSize(2, 1)
-            .withPosition(0, 2);
-        mainTab
-            .addString("Target Object", () -> vision.getDesiredDriveTargetAsString())
-            .withSize(2, 1)
-            .withPosition(0,4)
+            .withPosition(5, 3)
             .withWidget(BuiltInWidgets.kTextView);
         mainTab
-            .addBoolean("Cone Mode", () -> ChargedUp.grabber.getHoldingCone())
-            .withSize(1, 1)
-            .withPosition(6, 3);
+            .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(2, 1)
+            .withPosition(0, 2)
+            .withProperties(Map.of(
+                "Color when true",  Color.kGold.toHexString(),
+                "Color when false", Color.kDarkViolet.toHexString()
+            ));
     }
 }
