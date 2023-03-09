@@ -18,10 +18,15 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.animation.ASCIImation;
+import frc.robot.animation.CycleAnimation;
+import frc.robot.animation.DeathAnimation;
 import frc.robot.animation.DefaultAnimation;
 import frc.robot.animation.FadeTransition;
 import frc.robot.animation.MagicAnimation;
 import frc.robot.animation.QuickSlowFlash;
+import frc.robot.animation.RaceAnimation;
+import frc.robot.animation.ZoomAnimation;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.managers.ColorSensor;
 import frc.robot.components.managers.LED;
@@ -135,8 +140,10 @@ public class ChargedUp extends RobotContainer
     
         // Button for Field Relative 
         driverController.getButton(Button.A_CROSS)
-            .and(driverController.getButton(Button.START_TOUCHPAD))
-            .onTrue(drivetrain.commands.toggleFieldRelative());
+            // .and(driverController.getButton(Button.START_TOUCHPAD))
+            // .onTrue(drivetrain.commands.toggleFieldRelative());
+            // .onTrue(Commands.runOnce(() -> led.add(new ASCIImation(5, "Hello", Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
+            .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
 
         driverController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
@@ -193,7 +200,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
             .toggleOnTrue(Commands2023.elevatorStingerToMid());
         operatorController.getDPad(DPad.DOWN).and(pidActive)
-            .toggleOnTrue(Commands2023.elevatorStingerToLow());
+            .toggleOnTrue(Commands2023.elevatorStingerReturn());
 
         // Stinger
         if(stinger instanceof MotorStinger)
@@ -242,9 +249,9 @@ public class ChargedUp extends RobotContainer
 
         //Auto Score
         operatorController.getButton(Button.Y_TRIANGLE).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreHigh());
-        operatorController.getButton(Button.B_CIRCLE).and(pidActive)
             .toggleOnTrue(Commands2023.scoreMid());
+        operatorController.getButton(Button.B_CIRCLE).and(pidActive)
+            .toggleOnTrue(Commands2023.scoreLow());
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)

@@ -9,6 +9,7 @@ public interface Stinger extends Subsystem
     public Command in();
     public Command outMid();
     public Command outHigh();
+    public Command outLow();
     
     public boolean isOut();
 

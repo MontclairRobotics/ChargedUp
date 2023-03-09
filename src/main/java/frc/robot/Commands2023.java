@@ -219,13 +219,23 @@ public class Commands2023
      * Stinger goes to 0
      * @return Command
      */
-    public static Command elevatorStingerToLow()
+    public static Command elevatorStingerReturn()
     {
         CommandBase c = sequence(
             retractStinger(),
             elevatorToLow()
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
+        return c;
+    }
+
+    public static Command elevatorStingerToLow()
+    {
+        CommandBase c = sequence(
+            elevatorToMid(),
+            stinger.outLow()
+        );
+        c.addRequirements(stinger, elevator);
         return c;
     }
     
@@ -337,7 +347,7 @@ public class Commands2023
             releaseGrabber(),
 
             // Lower grabber in place
-            elevatorStingerToLow(),
+            elevatorStingerReturn(),
 
             // Suck it
             shwooperSuck(),
@@ -378,13 +388,18 @@ public class Commands2023
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
-            elevatorStingerToLow(),
+            elevatorStingerReturn(),
             
             log("[SCORE] Done!")
         );
         
         return c;
     }
+
+    public static Command scoreLowPeg()
+    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG);}
+    public static Command scoreLowShelf()
+    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF);}
 
     public static Command scoreMidPeg()
     {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG);}
@@ -400,6 +415,8 @@ public class Commands2023
     {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.MID,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
     public static Command scoreHigh()
     {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
+    public static Command scoreLow()
+    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
 
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 

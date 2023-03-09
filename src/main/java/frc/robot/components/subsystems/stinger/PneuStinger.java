@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.ChargedUp;
+import frc.robot.Commands2023;
 import frc.robot.constants.StingerConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Ports;
@@ -47,12 +48,12 @@ public class PneuStinger implements Stinger
     @Override
     public Command in() {return Commands.runOnce(() -> solenoid.set(false)).andThen(Commands.waitSeconds(PNEU_TIME));}
     @Override
-    public Command outMid() 
+    public Command outLow() 
     {
         return Commands.sequence(
             ChargedUp.drivetrain.commands.disableFieldRelative(),
             ChargedUp.drivetrain.xPID.goToSetpoint(
-                new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - (HIGH_LENGTH - MID_LENGTH)), 
+                new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - (MID_LENGTH - LOW_LENGTH)), 
                 ChargedUp.drivetrain
             ),
             ChargedUp.drivetrain.commands.enableFieldRelative(),
@@ -62,11 +63,17 @@ public class PneuStinger implements Stinger
         );
     }
     @Override
-    public Command outHigh() {return Commands.runOnce(() -> solenoid.set(true));}
+    public Command outMid() {return Commands.runOnce(() -> solenoid.set(true));}
 
     @Override
     public boolean isOut() {return solenoid.get();}
 
     @Override
     public boolean requiresDriveOffset() {return true;}
+
+    @Override
+    public Command outHigh()
+    {
+        return Commands2023.log("Cannot go out High in the Pneumatic Stinger");
+    }
 }
