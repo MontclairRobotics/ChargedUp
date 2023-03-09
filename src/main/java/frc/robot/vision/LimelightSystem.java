@@ -1,6 +1,6 @@
 package frc.robot.vision;
 
-import frc.robot.constants.LimelightConstants;
+import static frc.robot.constants.LimelightConstants.*;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.commandrobot.ManagerBase;
@@ -25,9 +25,15 @@ public class LimelightSystem extends VisionSystem
     public static final int CONE_ID = 1;
     public static final int CUBE_ID = 2;
 
+
+    public LimelightSystem()
+    {
+        LimelightHelpers.setCameraPose_RobotSpace("", FORWARD_OFFSET, SIDE_OFFSET, UP_OFFSET, 0.0, 0.0, 0.0);
+    }
+
     public String getCameraStreamURL()
     {
-        return LimelightConstants.LIMELIGHT_URL;
+        return LIMELIGHT_URL;
     }
 
     @Override

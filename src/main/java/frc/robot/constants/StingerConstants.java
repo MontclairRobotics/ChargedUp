@@ -32,6 +32,7 @@ public class StingerConstants
 
     public static final double MID_LENGTH = Units.inchesToMeters(32);
     public static final double HIGH_LENGTH = Units.inchesToMeters(57);
+    public static final double LOW_LENGTH = Units.inchesToMeters(10);
 
     public static final double MIN_LENGTH = Units.inchesToMeters(10.0); // 10 inches
     public static final double MAX_LENGTH = Units.inchesToMeters(60.0); // 60 inches

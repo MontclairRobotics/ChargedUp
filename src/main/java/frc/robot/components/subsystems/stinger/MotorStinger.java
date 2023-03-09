@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
+import frc.robot.Commands2023;
 import frc.robot.constants.StingerConstants;
 import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
@@ -322,4 +323,10 @@ public class MotorStinger extends ManagerSubsystemBase implements Stinger
 
     @Override
     public boolean requiresDriveOffset() {return false;}
+
+    @Override
+    public Command outLow() 
+    {
+        return Commands2023.log("AAAAAAAK Motor Stinger cannot go to Low");
+    }
 }
