@@ -9,7 +9,7 @@ public class GrabberConstants
 
     public static final I2C.Port COLOR_SENSOR_PORT = I2C.Port.kMXP;
 
-    public static final boolean SOLENOID_DEFAULT_STATE = false;
+    public static final boolean SOLENOID_DEFAULT_STATE = true;
     public static final boolean PSI_SOLENOID_DEFAULT_STATE = false;
 
     public static final double GRABBER_HEIGHT_NO_OBJECT = Units.feetToMeters(19.0/12);

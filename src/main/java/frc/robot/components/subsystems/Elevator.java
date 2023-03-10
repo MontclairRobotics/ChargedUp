@@ -225,6 +225,9 @@ public class Elevator extends ManagerSubsystemBase
 
         // maxSpeed *= 0.1;
 
+        double ff = FEED_FORWARD;
+        if(getHeight() < BUFFER_SPACE_TO_INTAKE) ff = 0;
+
         // System.out.println("----------------------------------------------");
         // System.out.println("Elevator::measurement = " + PID.getMeasurement());
         // System.out.println("Elevator::error       = " + PID.getPIDController().getPositionError());
@@ -236,7 +239,7 @@ public class Elevator extends ManagerSubsystemBase
         // System.out.println("Stinger::pid_on  = " + ChargedUp.stinger.PID.active());
         // shouldStop = false;
         if(shouldStop) motor.set(0);
-        else           motor.set(PID.getSpeed() * maxSpeed);
+        else           motor.set(PID.getSpeed() * maxSpeed + ff);
         // Logging.info("" + motor.get());
 
 
