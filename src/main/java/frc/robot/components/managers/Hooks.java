@@ -5,8 +5,13 @@ import com.revrobotics.REVPhysicsSim;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
-public class SimulationHooks extends ManagerBase
+public class Hooks extends ManagerBase
 {
+    private double lastTime;
+    private double fps;
+
+    public double fps() {return fps;}
+
     @Override
     public void always() 
     {
@@ -14,5 +19,8 @@ public class SimulationHooks extends ManagerBase
         {
             REVPhysicsSim.getInstance().run();
         }
+
+        fps = 1 / (System.currentTimeMillis() / 1000.0 - lastTime);
+        lastTime = System.currentTimeMillis() / 1000.0;
     }
 }

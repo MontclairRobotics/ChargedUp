@@ -36,7 +36,7 @@ import frc.robot.animation.ZoomAnimation;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.managers.ColorSensor;
 import frc.robot.components.managers.LED;
-import frc.robot.components.managers.SimulationHooks;
+import frc.robot.components.managers.Hooks;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
@@ -120,7 +120,7 @@ public class ChargedUp extends RobotContainer
     public static final Stinger stinger = new PneuStinger();
 
     // TODO: needing to create an object for this is kinda dumb
-    public static final SimulationHooks simHooks = new SimulationHooks();
+    public static final Hooks hooks = new Hooks();
 
     // INITIALIZER //
     @Override 
@@ -304,6 +304,10 @@ public class ChargedUp extends RobotContainer
                 .withPosition(0 + 2, 3)
                 .withSize(2, 1);
 
+        debugTab.addDouble("FPS", hooks::fps)
+            .withPosition(0 + 2 + 2, 3)
+            .withSize(2, 1);
+
         debugTab.add("Mechanism", mainMechanism);
 
         if (stinger instanceof MotorStinger) {
@@ -446,8 +450,8 @@ public class ChargedUp extends RobotContainer
                 "Color when false", Color.kDarkViolet.toHexString()
             ));
         mainTab
-                .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
-                .withSize(2, 1)
-                .withPosition(6, 3);
+            .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
+            .withSize(2, 1)
+            .withPosition(6, 3);
     }
 }
