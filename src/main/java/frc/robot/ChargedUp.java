@@ -221,6 +221,10 @@ public class ChargedUp extends RobotContainer
         debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
         debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
+        debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
+        debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
+        
+
         // D-Pad Controls
         operatorController.getDPad(DPad.UP).and(pidActive)
             .toggleOnTrue(Commands2023.scoreHigh());
