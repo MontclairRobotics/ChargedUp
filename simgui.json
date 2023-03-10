@@ -164,8 +164,7 @@
         "Debug": {
           "Elevator PID": {
             "open": true
-          },
-          "open": true
+          }
         },
         "Main": {
           "Field": {
@@ -175,7 +174,9 @@
         },
         "Main Tab": {
           "open": true
-        },
+        }
+      },
+      "Tuning": {
         "open": true
       }
     }

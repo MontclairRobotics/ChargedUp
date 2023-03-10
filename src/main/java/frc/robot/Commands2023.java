@@ -454,7 +454,7 @@ public class Commands2023
                 ChargedUp.drivetrain.disableFieldRelative();
                 
                 double angle = ChargedUp.drivetrain.getChargeStationAngle();
-                double speed = DriveConstants.MAX_SPEED_MPS / 14 * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
+                double speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get() * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
 
                 if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND) 
                 {

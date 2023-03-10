@@ -129,22 +129,30 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build PID Controllers //
         xController = new PIDController(
-            PosPID.KP,
-            PosPID.KI, 
-            PosPID.KD
+            PosPID.KP.get(),
+            PosPID.KI.get(), 
+            PosPID.KD.get()
         );
 
         yController = new PIDController(
-            PosPID.KP,
-            PosPID.KI, 
-            PosPID.KD
+            PosPID.KP.get(),
+            PosPID.KI.get(), 
+            PosPID.KD.get()
         );
 
         thetaController = new PIDController(
-            ThetaPID.KP,
-            ThetaPID.KI, 
-            ThetaPID.KD
+            ThetaPID.KP.get(),
+            ThetaPID.KI.get(), 
+            ThetaPID.KD.get()
         );
+        
+        PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
+        PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
+        PosPID.KD.whenUpdate(xController::setD).whenUpdate(yController::setD);
+
+        ThetaPID.KP.whenUpdate(thetaController::setP);
+        ThetaPID.KI.whenUpdate(thetaController::setI);
+        ThetaPID.KD.whenUpdate(thetaController::setD);
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -398,16 +406,15 @@ public class Drivetrain extends ManagerSubsystemBase
             yPID.update();
             thetaPID.update();
 
-            ChassisSpeeds c;
+            double mult = 1;
+
             // Prevent stupid also
-            if (false && ChargedUp.stinger.isOut())
+            if (ChargedUp.stinger.isOut())
             {
-                c = getChassisSpeeds(0, 0, 0);
+                mult = 0.5;
             }
-            else
-            {
-                c = getChassisSpeeds(thetaPID.getSpeed(), xPID.getSpeed(), yPID.getSpeed());
-            }
+            
+            ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed() * mult, xPID.getSpeed() * mult, yPID.getSpeed() * mult);
 
             driveFromChassisSpeeds(c);
         }
@@ -416,6 +423,8 @@ public class Drivetrain extends ManagerSubsystemBase
         ChargedUp.field.setRobotPose(pose);
 
         hasDrivenThisUpdate = false;
+
+        // Logging.info("" + PosPID.KP.get());
     }
     
     public void setRobotPose(Pose2d pose)

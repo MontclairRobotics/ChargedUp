@@ -6,12 +6,12 @@ import frc.robot.math.Math555;
 
 public class RaceAnimation extends Animation
 {
-    Color color;
+    final Color bgCol;
 
     public RaceAnimation(double length, Color color) 
     {
         super(length);
-        this.color = color;
+        this.bgCol = color;
     }
 
     @Override
@@ -20,8 +20,10 @@ public class RaceAnimation extends Animation
         int n = Math555.repeatingCycle(percentFinished(), 0, 1, 1, ledBuffer.getLength());
         for (int i = 0; i < ledBuffer.getLength(); i++)
         {
+            Color color;
+
             if (i >= n-1 && i <= n+1) color = Color.kAqua;
-            else        color = Color.kYellow;
+            else                      color = bgCol;
 
             ledBuffer.setLED(i, color);
         }

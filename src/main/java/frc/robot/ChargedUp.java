@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.VideoSource;
+import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -50,6 +51,7 @@ import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.Logging;
+import frc.robot.util.frc.Tunable;
 import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
@@ -367,6 +369,13 @@ public class ChargedUp extends RobotContainer
         }
     }
 
+    public void setupTuningTab()
+    {
+        final ShuffleboardTab tuning = Shuffleboard.getTab("Tuning");
+
+        // tuning.add(DriveConstants.PosPID.KP.entry);
+    }
+
     // SHUFFLEBOARD //
     public void setupMainTab() {
         // SETUP FIELD //
@@ -435,6 +444,6 @@ public class ChargedUp extends RobotContainer
         mainTab
                 .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
                 .withSize(2, 1)
-                .withPosition(6, 2);
+                .withPosition(6, 3);
     }
 }

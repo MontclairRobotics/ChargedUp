@@ -9,10 +9,12 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 import frc.robot.math.Units555;
 import frc.robot.util.frc.SwerveModuleSpec;
+import frc.robot.util.frc.Tunable;
 
 public class DriveConstants
 {
     public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
+    public static final Tunable<Double> CHARGER_STATION_MUL = Tunable.of(1.0 / 16, "drive.charge_mul");
     
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;
@@ -70,19 +72,19 @@ public class DriveConstants
 
     public static class PosPID
     {
-        public static final double KP = 0.1;
-        public static final double KI = 0;
-        public static final double KD = 0;
+        public static final Tunable<Double> KP = Tunable.of(0.1, "drive.pos.kp");
+        public static final Tunable<Double> KI = Tunable.of(0,   "drive.pos.ki");
+        public static final Tunable<Double> KD = Tunable.of(0,   "drive.pos.kd");
 
-        public static final PIDConstants KConsts = new PIDConstants(KP, KI, KD);
+        public static final PIDConstants KConsts = new PIDConstants(KP.get(), KI.get(), KD.get());
     }
     public static class ThetaPID
     {
-        public static final double KP = 0.1;
-        public static final double KI = 0;
-        public static final double KD = 0;
+        public static final Tunable<Double> KP = Tunable.of(0.1, "drive.theta.kp");
+        public static final Tunable<Double> KI = Tunable.of(0,   "drive.theta.ki");
+        public static final Tunable<Double> KD = Tunable.of(0,   "drive.theta.kd");
         
-        public static final PIDConstants KConsts = new PIDConstants(KP, KI, KD);
+        public static final PIDConstants KConsts = new PIDConstants(KP.get(), KI.get(), KD.get());
     }
 
 
@@ -95,7 +97,7 @@ public class DriveConstants
     public static final double MAX_TURN_SPEED_RAD_PER_S  = Math.PI * 2;
     public static final double MAX_TURN_ACCEL_RAD_PER_S2 = Units.degreesToRadians(360);
 
-    public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27); //TODO: CONFIRM WITH JOSH
+    public static final double WHEEL_BASE_W_M = Units.inchesToMeters(27);
     public static final double WHEEL_BASE_H_M = Units.inchesToMeters(30);
 
     private static Translation2d FLPosition = new Translation2d(+WHEEL_BASE_H_M/2, +WHEEL_BASE_W_M/2); //FL
