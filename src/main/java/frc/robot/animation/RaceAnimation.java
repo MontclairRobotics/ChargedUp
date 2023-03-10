@@ -6,11 +6,12 @@ import frc.robot.math.Math555;
 
 public class RaceAnimation extends Animation
 {
-    Color color = Color.kAqua;
+    Color color;
 
-    public RaceAnimation(double length) 
+    public RaceAnimation(double length, Color color) 
     {
         super(length);
+        this.color = color;
     }
 
     @Override

@@ -38,7 +38,7 @@ public class MagicAnimation extends Animation
             // Perform the linear interpolations needed to get the hue and value,
             // using (0 -> 10) as the hue range and (0 -> 255) for the value range.
             // To change the color of the flames, modify these values.
-            Color color = Math555.lerp(base, magic,  Math.pow(heatRemap, 2.0));
+            Color color = Math555.lerp(base, magic,  Math.pow(heatRemap, 4.0));
 
             // Push the pixel color to the led buffer
             ledBuffer.setLED(i, color);
