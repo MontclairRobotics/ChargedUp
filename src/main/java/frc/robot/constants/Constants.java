@@ -63,7 +63,7 @@ public final class Constants
                 MagicAnimation.galaxy(DEMO_TIME),   
                 new ZoomAnimation(DEMO_TIME, Color.kLavender),
                 new QuickSlowFlash(DEMO_TIME, Color.kBlue),
-                new RaceAnimation(DEMO_TIME)
+                new RaceAnimation(DEMO_TIME, Color.kIndigo)
             };
             public static final Animation[] SHUFFLED_ANIMATIONS = Array555.shuffle(DEMO_ANIMATIONS, Animation[]::new);
         }
