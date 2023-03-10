@@ -27,8 +27,8 @@ public class LED extends ManagerBase
     private Transition currentTransition;
     private boolean lastFrameDisabled = false;
 
-    public static final double TRANSITION_LENGTH = 0.2;
-    public static final int LED_COUNT = 26; //97
+    public static final double TRANSITION_LENGTH = 0.4;
+    public static final int LED_COUNT = 95;
 
     /**
      * Check if the led driver currently has an animation playing
