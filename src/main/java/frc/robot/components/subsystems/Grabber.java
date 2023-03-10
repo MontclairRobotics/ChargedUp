@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.util.Color;
  */
 public class Grabber extends ManagerSubsystemBase 
 {
-    Solenoid outputSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_SOLENOID_PORT);
+    Solenoid outputSolenoid = new Solenoid(PneuConstants.PH_PORT, PneumaticsModuleType.REVPH, PneuConstants.GRABBER_SOLENOID_PORT);
     // Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_PSI_SOLENOID_PORT);
     private boolean holdingCone = false;
 

@@ -63,7 +63,8 @@ import java.util.Map;
 
 import com.kauailabs.navx.frc.AHRS;
 
-public class ChargedUp extends RobotContainer {
+public class ChargedUp extends RobotContainer 
+{
     // SIMULATION //
     public static final Field2d field = new Field2d();
     public static final Mechanism2d mainMechanism = new Mechanism2d(5, 5);
@@ -88,24 +89,25 @@ public class ChargedUp extends RobotContainer {
 
     private static final ShuffleboardTab mainTab = Shuffleboard.getTab("Main Tab");
 
-    public static ShuffleboardTab getMainTab() {
+    public static ShuffleboardTab getMainTab() 
+    {
         return mainTab;
     }
 
     private static final ShuffleboardTab PIDTab = Shuffleboard.getTab("PID");
 
-    public static ShuffleboardTab getPIDTab() {
+    public static ShuffleboardTab getPIDTab() 
+    {
         return PIDTab;
     }
 
     // COMPONENTS //
     public static final AHRS gyroscope = new AHRS();
     public static final LED led = new LED();
-    public static final Compressor phCompressor = new Compressor(PneumaticsModuleType.REVPH);
 
-    public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.COMPRESSOR_PORT);
+    public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
 
-    public static final VisionSystem vision      = new LimelightSystem();
+    public static final VisionSystem vision = new LimelightSystem();
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();

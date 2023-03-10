@@ -27,6 +27,7 @@ import frc.robot.Commands2023;
 import frc.robot.constants.StingerConstants;
 import frc.robot.constants.Constants;
 import frc.robot.constants.ElevatorConstants;
+import frc.robot.constants.PneuConstants;
 import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
 import frc.robot.math.Math555;
@@ -45,7 +46,7 @@ import java.util.function.DoubleSupplier;
 
 public class PneuStinger extends ManagerBase implements Stinger
 {
-    private final Solenoid solenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
+    private final Solenoid solenoid = new Solenoid(PneuConstants.PH_PORT, PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
     private boolean target;
 
     private Command moveThenOut(double back)
@@ -81,6 +82,9 @@ public class PneuStinger extends ManagerBase implements Stinger
     @Override
     public void always() 
     {
+        Logging.info("" + target);
+        // solenoid.set(target);
+
         if(target == true && solenoid.get() == false)
         {
             if(ChargedUp.elevator.getHeight() >= ElevatorConstants.BUFFER_SPACE_TO_INTAKE)
