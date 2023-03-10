@@ -67,11 +67,11 @@ public class PneuStinger extends ManagerBase implements Stinger
     public Command in() {return Commands.runOnce(() -> target = false).andThen(Commands.waitSeconds(PNEU_TIME));}
     
     @Override
-    public Command outLow() {return moveThenOut(HIGH_LENGTH - LOW_LENGTH);}
+    public Command outLow() {return moveThenOut(MID_LENGTH - LOW_LENGTH);}
     @Override
-    public Command outMid() {return moveThenOut(HIGH_LENGTH - MID_LENGTH);}
+    public Command outMid() {return Commands.runOnce(() -> target = true).andThen(Commands.waitSeconds(PNEU_TIME));}
     @Override
-    public Command outHigh() {return Commands.runOnce(() -> target = true);}
+    public Command outHigh() {return Commands2023.log("DO NOT");}
 
     @Override
     public boolean isOut() {return solenoid.get();}
@@ -82,7 +82,7 @@ public class PneuStinger extends ManagerBase implements Stinger
     @Override
     public void always() 
     {
-        Logging.info("" + target);
+        // Logging.info("" + target);
         // solenoid.set(target);
 
         if(target == true && solenoid.get() == false)
@@ -96,5 +96,11 @@ public class PneuStinger extends ManagerBase implements Stinger
         {
             solenoid.set(target);
         }
+    }
+
+    @Override
+    public void reset() 
+    {
+        target = false;
     }
 }

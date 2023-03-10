@@ -12,14 +12,14 @@ import frc.robot.util.frc.SwerveModuleSpec;
 
 public class DriveConstants
 {
-    public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
+    public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
     
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;
     public static final double POSE_MAX_DISPLACEMENT = 1;
 
-        ////////////////////////////////////////////
-        // REBOOT THE ROBOT WHEN CHANGING OFFSETS //
+      ////////////////////////////////////////////
+     // REBOOT THE ROBOT WHEN CHANGING OFFSETS //
     ////////////////////////////////////////////
     private static final SwerveModuleSpec FRONT_LEFT = 
         new SwerveModuleSpec(

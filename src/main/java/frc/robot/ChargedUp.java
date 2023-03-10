@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -123,6 +125,7 @@ public class ChargedUp extends RobotContainer
     public void initialize() 
     {
         pneu.enableCompressorDigital();
+        // CameraServer.addCamera(CameraServer.getVideo().getSource());
 
         led.setTransition(FadeTransition::new);
 
@@ -134,15 +137,15 @@ public class ChargedUp extends RobotContainer
 
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(Commands.run(() -> {
-            if (!DriverStation.isTeleop()) {
-                drivetrain.set(0, 0, 0);
-                return;
-            }
+                if (!DriverStation.isTeleop()) {
+                        drivetrain.set(0, 0, 0);
+                        return;
+                }
 
-            drivetrain.setInput(
-                    JoystickInput.getRight(driverController, true, true),
-                    JoystickInput.getLeft(driverController, true, true));
-        },
+                drivetrain.setInput(
+                        JoystickInput.getRight(driverController, true, true),
+                        JoystickInput.getLeft(driverController, true, true));
+                },
                 drivetrain));
 
         // driverController.getButton(Button.A_CROSS)
@@ -157,12 +160,12 @@ public class ChargedUp extends RobotContainer
         // .onTrue(Commands.runOnce(() -> led.add(new QuickSlowFlash(Color.kYellow))));
 
         // Button for Field Relative
-        driverController.getButton(Button.A_CROSS)
+        // driverController.getButton(Button.A_CROSS)
                 // .and(driverController.getButton(Button.START_TOUCHPAD))
                 // .onTrue(drivetrain.commands.toggleFieldRelative());
                 // .onTrue(Commands.runOnce(() -> led.add(new ASCIImation(5, "Hello",
                 // Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
-                .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
+                // .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
 
         driverController.getAxis(Axis.LEFT_TRIGGER)
                 .whenGreaterThan(0.5)
@@ -273,9 +276,9 @@ public class ChargedUp extends RobotContainer
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)
-                .onTrue(Commands2023.quickSlowFlashYellow());
-        operatorController.getButton(Button.LEFT_BUMPER)
                 .onTrue(Commands2023.quickSlowFlashPurple());
+        operatorController.getButton(Button.LEFT_BUMPER)
+                .onTrue(Commands2023.quickSlowFlashYellow());
     }
 
     // AUTO //
@@ -290,6 +293,10 @@ public class ChargedUp extends RobotContainer
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
                 .withPosition(0 + 2 + 2 + 2, 3)
                 .withSize(2, 2);
+
+        debugTab.addDouble("Elevator Extension", elevator::getHeight)
+                .withPosition(0 + 2, 3)
+                .withSize(2, 1);
 
         debugTab.add("Mechanism", mainMechanism);
 
@@ -417,11 +424,6 @@ public class ChargedUp extends RobotContainer
         //     .withSize(2, 1)
         //     .withPosition(0, 2);
         mainTab
-                .addString("Held Object", grabber::getHeldObjectName)
-                .withWidget(BuiltInWidgets.kTextView)
-                .withSize(2, 1)
-                .withPosition(0, 2);
-        mainTab
             .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withSize(2, 1)
@@ -430,5 +432,9 @@ public class ChargedUp extends RobotContainer
                 "Color when true",  Color.kGold.toHexString(),
                 "Color when false", Color.kDarkViolet.toHexString()
             ));
+        mainTab
+                .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
+                .withSize(2, 1)
+                .withPosition(6, 2);
     }
 }

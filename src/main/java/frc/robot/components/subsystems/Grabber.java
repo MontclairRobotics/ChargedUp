@@ -135,6 +135,8 @@ public class Grabber extends ManagerSubsystemBase
         //     case NONE: DefaultAnimation.setDefault(); break;
         // }
     }
+
+    
 }
 
 // Add multiple pressures using another solenoid 

@@ -136,7 +136,7 @@ public class Commands2023
      */
     public static Command toggleStinger()
     {
-        return Commands.either(retractStinger(), stingerToHigh(), stinger::isOut).andThen(log("TOGGLED STINGERR "));
+        return Commands.either(retractStinger(), stingerToMid(), stinger::isOut).andThen(log("TOGGLED STINGERR "));
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -541,8 +541,8 @@ public class Commands2023
                 case "C": return pickup();
 
                 case "1":
-                case "2":
-                case "3": return scoreHigh();
+                case "3": return scoreMidPeg();
+                case "2": return scoreMidShelf();
 
                 case "B": return balance();
 
@@ -656,5 +656,15 @@ public class Commands2023
         }
 
         return buildAuto(parts);
+    }
+
+    public static Command backupAuto()
+    {
+        return Commands.sequence
+        (
+            scoreMid(),
+            drivetrain.commands.driveForTime(5, 0, -1, 0),
+            balance()
+        );
     }
 }
