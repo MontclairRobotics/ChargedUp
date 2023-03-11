@@ -49,11 +49,11 @@
     },
     {
       "anchorPoint": {
-        "x": 6.45,
+        "x": 6.7,
         "y": 4.6
       },
       "prevControl": {
-        "x": 5.494372742217707,
+        "x": 5.744372742217707,
         "y": 4.748170402590805
       },
       "nextControl": null,
@@ -77,13 +77,13 @@
     {
       "position": 0.3400568181818182,
       "names": [
-        "Elevator Mid"
+        "Retract"
       ]
     },
     {
       "position": 1.5475142045454573,
       "names": [
-        "Extend Intake"
+        "Intake On"
       ]
     }
   ]

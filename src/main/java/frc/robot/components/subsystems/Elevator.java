@@ -227,7 +227,7 @@ public class Elevator extends ManagerSubsystemBase
 
         // maxSpeed *= 0.1;
 
-        double ff = FEED_FORWARD;
+        double ff = FEED_FORWARD.get();
         if(getHeight() < BUFFER_SPACE_TO_INTAKE) ff = 0;
 
         // System.out.println("----------------------------------------------");

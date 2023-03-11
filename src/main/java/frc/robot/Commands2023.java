@@ -564,9 +564,10 @@ public class Commands2023
                 trajectories.add(nextTrajectory);
 
                 return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
-                    "Elevator Mid",  elevatorToMid(),
-                    "Elevator High", elevatorToHigh(),
-                    "Extend Intake", extendSchwooper()
+                    "Elevator High", elevatorToMid(), //TODO: this is very poorly named
+                    "Intake On", shwooperSuck(),
+                    "Retract", elevatorStingerReturn(),
+                    "Intake Off", stopShwooper()
                 ));
             }
             catch (Exception e)

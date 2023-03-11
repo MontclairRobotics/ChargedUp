@@ -75,19 +75,33 @@ public class DriveConstants
 
     public static class PosPID
     {
-        public static final Tunable<Double> KP = Tunable.of(0.1, "drive.pos.kp");
-        public static final Tunable<Double> KI = Tunable.of(0,   "drive.pos.ki");
-        public static final Tunable<Double> KD = Tunable.of(0,   "drive.pos.kd");
+        public static final Tunable<Double> KP = Tunable.of(12., "drive.pos.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.pos.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.2, "drive.pos.kd");
 
-        public static final PIDConstants KConsts = new PIDConstants(KP.get(), KI.get(), KD.get());
+        public static PIDConstants consts()
+        {
+            return new PIDConstants(
+                KP.get() * SdsModuleConfigurations.MK4I_L1.getDriveReduction(), 
+                KI.get() * SdsModuleConfigurations.MK4I_L1.getDriveReduction(), 
+                KD.get() * SdsModuleConfigurations.MK4I_L1.getDriveReduction()
+            );
+        }
     }
     public static class ThetaPID
     {
-        public static final Tunable<Double> KP = Tunable.of(0.1, "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0,   "drive.theta.ki");
-        public static final Tunable<Double> KD = Tunable.of(0,   "drive.theta.kd");
+        public static final Tunable<Double> KP = Tunable.of(6.3, "drive.theta.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.theta.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.5, "drive.theta.kd");
         
-        public static final PIDConstants KConsts = new PIDConstants(KP.get(), KI.get(), KD.get());
+        public static PIDConstants consts()
+        {
+            return new PIDConstants(
+                KP.get() * SdsModuleConfigurations.MK4I_L1.getSteerReduction(), 
+                KI.get() * SdsModuleConfigurations.MK4I_L1.getSteerReduction(), 
+                KD.get() * SdsModuleConfigurations.MK4I_L1.getSteerReduction()
+            );
+        }
     }
 
 

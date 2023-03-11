@@ -36,6 +36,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MotorType;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
@@ -44,6 +45,7 @@ import static frc.robot.constants.DriveConstants.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -84,6 +86,19 @@ public class Drivetrain extends ManagerSubsystemBase
         private Pose2d accumulatedPose = new Pose2d();
     }
     private SimulationData simulation;
+
+    private Consumer<Double> funcMul(Consumer<Double> cd, double factor)
+    {
+        return x -> cd.accept(x * factor);
+    }
+    private Consumer<Double> drivePid(Consumer<Double> cd)
+    {
+        return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getDriveReduction());
+    }
+    private Consumer<Double> steerPid(Consumer<Double> cd)
+    {
+        return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getSteerReduction());
+    }
 
     public Drivetrain()
     {
@@ -142,30 +157,30 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build PID Controllers //
         xController = new PIDController(
-            PosPID.KP.get(),
-            PosPID.KI.get(), 
-            PosPID.KD.get()
+            PosPID.consts().kP,
+            PosPID.consts().kI, 
+            PosPID.consts().kD
         );
 
         yController = new PIDController(
-            PosPID.KP.get(),
-            PosPID.KI.get(), 
-            PosPID.KD.get()
+            PosPID.consts().kP,
+            PosPID.consts().kI, 
+            PosPID.consts().kD
         );
 
         thetaController = new PIDController(
-            ThetaPID.KP.get(),
-            ThetaPID.KI.get(), 
-            ThetaPID.KD.get()
+            ThetaPID.consts().kP,
+            ThetaPID.consts().kI, 
+            ThetaPID.consts().kD
         );
         
-        PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
-        PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
-        PosPID.KD.whenUpdate(xController::setD).whenUpdate(yController::setD);
+        PosPID.KP.whenUpdate(drivePid(xController::setP)).whenUpdate(drivePid(yController::setP));
+        PosPID.KI.whenUpdate(drivePid(xController::setI)).whenUpdate(drivePid(yController::setI));
+        PosPID.KD.whenUpdate(drivePid(xController::setD)).whenUpdate(drivePid(yController::setD));
 
-        ThetaPID.KP.whenUpdate(thetaController::setP);
-        ThetaPID.KI.whenUpdate(thetaController::setI);
-        ThetaPID.KD.whenUpdate(thetaController::setD);
+        ThetaPID.KP.whenUpdate(steerPid(thetaController::setP));
+        ThetaPID.KI.whenUpdate(steerPid(thetaController::setI));
+        ThetaPID.KD.whenUpdate(steerPid(thetaController::setD));
 
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
@@ -607,8 +622,8 @@ public class Drivetrain extends ManagerSubsystemBase
                 Drivetrain.this::getRobotPose,
                 Drivetrain.this::setRobotPose,
                 KINEMATICS,
-                PosPID.KConsts, 
-                ThetaPID.KConsts,
+                PosPID.consts(), 
+                ThetaPID.consts(),
                 Drivetrain.this::driveFromStates,
                 markers,
                 false,

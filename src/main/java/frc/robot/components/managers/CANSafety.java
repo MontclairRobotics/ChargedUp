@@ -42,7 +42,7 @@ public class CANSafety extends ManagerBase
                     case kInvalid:
                     case kUnknown: return true;
 
-                    default: return false || true;
+                    default: return false;
                 }
             }
         });

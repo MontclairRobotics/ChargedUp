@@ -4,6 +4,8 @@ import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import frc.robot.inputs.JoystickAdjuster;
+import frc.robot.util.frc.Tunable;
+
 import static frc.robot.constants.GrabberConstants.*;
 
 public class ElevatorConstants
@@ -41,7 +43,7 @@ public class ElevatorConstants
     public static final double DEADBAND = 0.05;
     public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
-    public static final double FEED_FORWARD = 0.05;
+    public static final Tunable<Double> FEED_FORWARD = Tunable.of(0.05, "elevator.ff");
 
     public static final double 
         KP = 0.25,

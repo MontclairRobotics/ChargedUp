@@ -2,12 +2,12 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 6.45,
+        "x": 6.7,
         "y": 0.95
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.499765787066987,
+        "x": 5.749765787066987,
         "y": 0.8572625077261484
       },
       "holonomicAngle": 0,
@@ -78,6 +78,12 @@
       "position": 1.5127272727272847,
       "names": [
         "elevator high"
+      ]
+    },
+    {
+      "position": 0.4072727272727039,
+      "names": [
+        "Intake Off"
       ]
     }
   ]
