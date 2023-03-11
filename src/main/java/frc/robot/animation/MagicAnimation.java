@@ -51,6 +51,6 @@ public class MagicAnimation extends Animation
     }
     public static MagicAnimation galaxy(double length)
     {
-        return new MagicAnimation(length, new Color(45, 0, 200), Color.kDeepPink);
+        return new MagicAnimation(length, /*new Color(45, 0, 200)*/ Color.kNavy, /*Color.kDeepPink*/ new Color(252, 159, 209));
     }
 }

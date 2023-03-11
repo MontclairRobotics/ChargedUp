@@ -108,6 +108,10 @@ public class Drivetrain extends ManagerSubsystemBase
                     .withPosition(2*i, 0)
             );
 
+            ChargedUp.canSafety.add(modules[i].getDriveMotor());
+            ChargedUp.canSafety.add(modules[i].getSteerMotor());
+            ChargedUp.canSafety.addEncoder(modules[i].getSteerEncoder());
+
             modPoses[i] = new Pose2d(MOD_POSITIONS[i], new Rotation2d());
 
             assert STEER_TYPE == MotorType.NEO
@@ -118,6 +122,15 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
         moduleObject.setPoses(modPoses);
+
+        DRIVE_INVERT.whenUpdate(modules[0].getDriveMotor()::setInverted)
+                    .whenUpdate(modules[1].getDriveMotor()::setInverted)
+                    .whenUpdate(modules[2].getDriveMotor()::setInverted)
+                    .whenUpdate(modules[3].getDriveMotor()::setInverted);
+        STEER_INVERT.whenUpdate(modules[0].getSteerMotor()::setInverted)
+                    .whenUpdate(modules[1].getSteerMotor()::setInverted)
+                    .whenUpdate(modules[2].getSteerMotor()::setInverted)
+                    .whenUpdate(modules[3].getSteerMotor()::setInverted);
         
         // Build Odometry //
         poseEstimator = new SwerveDrivePoseEstimator(

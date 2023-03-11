@@ -23,6 +23,6 @@ public class PhotonConstants
     public static final Transform3d ROBOT_TO_CAM = new Transform3d(); 
 
     //The URL that shuffleboard gets video from for PhotonVision
-    public static final String PHOTON_URL = "http://10.55.5.11:1182/stream.mjpg";
+    public static final String PHOTON_URL = "http://10.5.55.11:1182/stream.mjpg";
 
 }

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.VideoSource;
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Compressor;
@@ -34,6 +35,7 @@ import frc.robot.animation.QuickSlowFlash;
 import frc.robot.animation.RaceAnimation;
 import frc.robot.animation.ZoomAnimation;
 import frc.robot.components.managers.Auto;
+import frc.robot.components.managers.CANSafety;
 import frc.robot.components.managers.ColorSensor;
 import frc.robot.components.managers.LED;
 import frc.robot.components.managers.Hooks;
@@ -108,6 +110,7 @@ public class ChargedUp extends RobotContainer
     // COMPONENTS //
     public static final AHRS gyroscope = new AHRS();
     public static final LED led = new LED();
+    public static final CANSafety canSafety = new CANSafety();
 
     public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
 
@@ -128,6 +131,11 @@ public class ChargedUp extends RobotContainer
     {
         pneu.enableCompressorDigital();
         // CameraServer.addCamera(CameraServer.getVideo().getSource());
+
+        for(int port = 5800; port <= 5805; port++)
+        {
+            PortForwarder.add(port, "limelight.local", port);
+        }
 
         led.setTransition(FadeTransition::new);
 
@@ -221,7 +229,7 @@ public class ChargedUp extends RobotContainer
         debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
         debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
+        debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
         debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
         
 

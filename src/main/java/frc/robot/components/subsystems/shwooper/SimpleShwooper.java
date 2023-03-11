@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import static frc.robot.constants.ShwooperConstants.*;
 
+import frc.robot.ChargedUp;
 import frc.robot.constants.Ports;
 import frc.robot.constants.ShwooperConstants;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
@@ -28,6 +29,7 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
     public SimpleShwooper() 
     {
         motorTop.setInverted(TOP_OR_LEFT_INVERSION);
+        ChargedUp.canSafety.add(motorTop);
         // motorBottom.setInverted(Robot.Shwooper.RIGHT_INVERSION);
     }
 

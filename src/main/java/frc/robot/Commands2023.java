@@ -391,12 +391,13 @@ public class Commands2023
     {
         CommandBase c = Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
+            closeGrabber(),
 
             //move sideways to the target
             moveToObjectSideways(type::getDetectionType),
 
             //Prepare position
-            log("[SCORE] Positioning elevator and stinger . . ."),
+            log("[SCORE] Positioning elevator and stinger . . ."),  
             height.getPositioner(), 
 
             //Drop grabber

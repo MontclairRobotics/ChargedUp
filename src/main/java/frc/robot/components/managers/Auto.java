@@ -162,6 +162,7 @@ public class Auto extends ManagerBase
      */
     public static String[] parse(String str) 
     {
+        //hi
         // Lex
         String[] lex = lex(str);
 
