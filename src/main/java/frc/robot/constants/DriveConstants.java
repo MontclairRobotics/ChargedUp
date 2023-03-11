@@ -75,31 +75,35 @@ public class DriveConstants
 
     public static class PosPID
     {
-        public static final Tunable<Double> KP = Tunable.of(12., "drive.pos.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.pos.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.2, "drive.pos.kd");
+        static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getDriveReduction();}
+
+        public static final Tunable<Double> KP = Tunable.of(12.0/10, "drive.pos.kp").andThen(PosPID::mod);
+        public static final Tunable<Double> KI = Tunable.of(0.0/10, "drive.pos.ki").andThen(PosPID::mod);
+        public static final Tunable<Double> KD = Tunable.of(0.2/10, "drive.pos.kd").andThen(PosPID::mod);
 
         public static PIDConstants consts()
         {
             return new PIDConstants(
-                KP.get() * SdsModuleConfigurations.MK4I_L1.getDriveReduction(), 
-                KI.get() * SdsModuleConfigurations.MK4I_L1.getDriveReduction(), 
-                KD.get() * SdsModuleConfigurations.MK4I_L1.getDriveReduction()
+                KP.get(), 
+                KI.get(), 
+                KD.get()
             );
         }
     }
     public static class ThetaPID
     {
-        public static final Tunable<Double> KP = Tunable.of(6.3, "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.theta.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.5, "drive.theta.kd");
+        static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getSteerReduction();}
+
+        public static final Tunable<Double> KP = Tunable.of(6.3/10, "drive.theta.kp").andThen(ThetaPID::mod);
+        public static final Tunable<Double> KI = Tunable.of(0.0/10, "drive.theta.ki").andThen(ThetaPID::mod);
+        public static final Tunable<Double> KD = Tunable.of(0.5/10, "drive.theta.kd").andThen(ThetaPID::mod);
         
         public static PIDConstants consts()
         {
             return new PIDConstants(
-                KP.get() * SdsModuleConfigurations.MK4I_L1.getSteerReduction(), 
-                KI.get() * SdsModuleConfigurations.MK4I_L1.getSteerReduction(), 
-                KD.get() * SdsModuleConfigurations.MK4I_L1.getSteerReduction()
+                KP.get(), 
+                KI.get(), 
+                KD.get()
             );
         }
     }

@@ -80,7 +80,7 @@ public class LED extends ManagerBase
         if(canError && !lastFrameCANError)
         {
             resetToDefault();
-            replace(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kDarkOrange));
+            replace(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kFirstRed));
         }
         else if(!canError && lastFrameCANError)
         {
@@ -92,7 +92,7 @@ public class LED extends ManagerBase
             // CHECK DISABLED //
             if(DriverStation.isDisabled())
             {
-                boolean navxZero = Math.abs(ChargedUp.drivetrain.getRobotRotation().getDegrees() % 360) > 0.5;
+                boolean navxZero = Math.abs((ChargedUp.drivetrain.getRobotRotation().getDegrees() + 180) % 360 - 360) < 0.5;
 
                 // CHECK NAVX ZEROED //
                 if(!navxZero)

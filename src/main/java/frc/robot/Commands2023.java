@@ -394,7 +394,7 @@ public class Commands2023
             closeGrabber(),
 
             //move sideways to the target
-            moveToObjectSideways(type::getDetectionType),
+            // moveToObjectSideways(type::getDetectionType), //TODO: shit yourself
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
@@ -664,9 +664,13 @@ public class Commands2023
     {
         return Commands.sequence
         (
+            log("STARTING THE AUTO!!"),
             scoreMid(),
-            drivetrain.commands.driveForTime(5, 0, -1, 0),
-            balance()
+            log("SCORED!!!!!")
+            // drivetrain.commands.driveForTime(1.5, 0, -1, 0),
+            // log("DROVE IT"),
+            // balance(),
+            // log("balance!!")
         );
     }
 }

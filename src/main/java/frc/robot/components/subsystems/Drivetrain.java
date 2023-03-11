@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
+import frc.robot.Commands2023;
 import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
@@ -316,13 +317,10 @@ public class Drivetrain extends ManagerSubsystemBase
         
         for(int i = 0; i < MODULE_COUNT; i++)
         {
-            if(RobotBase.isReal() || true)
-            {
-                states[i] = SwerveModuleState.optimize(
-                    states[i], 
-                    new Rotation2d(modules[i].getSteerAngle())
-                );
-            }
+            states[i] = SwerveModuleState.optimize(
+                states[i], 
+                new Rotation2d(modules[i].getSteerAngle())
+            );
 
             modules[i].set(
                 states[i].speedMetersPerSecond / MAX_SPEED_MPS * MAX_VOLTAGE_V,
@@ -420,6 +418,8 @@ public class Drivetrain extends ManagerSubsystemBase
     @Override 
     public void periodic() 
     {
+        // Logging.info("" + PosPID.KP.get());
+
         if(!hasDrivenThisUpdate)
         {
             xPID.setMeasurement(getRobotPose().getX());
@@ -558,12 +558,12 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.parallel
+            return Commands.sequence
             (
-                enableFieldRelative(),
-                Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this)
-                    .deadlineWith(Commands.waitSeconds(time)),
-                disableFieldRelative()
+                disableFieldRelative(),
+                Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
+                    .raceWith(Commands.waitSeconds(time)),
+                enableFieldRelative()
             );
         }
 

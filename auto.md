@@ -1,6 +1,6 @@
 # How Autonomous Works:
 **Pretzel:**
-![Pretzel](pretzel.jpg)
+![Pretzel](pretzel.png)
 
 ## The Pretzel Explanation
 

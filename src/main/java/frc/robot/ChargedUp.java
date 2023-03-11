@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -82,9 +83,9 @@ public class ChargedUp extends RobotContainer
     public static final GameController operatorController = GameController.from(
         ControlScheme.OPERATOR_CONTROLLER_TYPE,
         ControlScheme.OPERATOR_CONTROLLER_PORT);
-    public static final GameController debugController = GameController.from(
-        ControlScheme.DEBUG_CONTROLLER_TYPE,
-        ControlScheme.DEBUG_CONTROLLER_PORT);
+    // public static final GameController debugController = GameController.from(
+    //     ControlScheme.DEBUG_CONTROLLER_TYPE,
+    //     ControlScheme.DEBUG_CONTROLLER_PORT);
 
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
@@ -130,7 +131,7 @@ public class ChargedUp extends RobotContainer
     public void initialize() 
     {
         pneu.enableCompressorDigital();
-        // CameraServer.addCamera(CameraServer.getVideo().getSource());
+        CameraServer.startAutomaticCapture();
 
         for(int port = 5800; port <= 5805; port++)
         {
@@ -177,10 +178,10 @@ public class ChargedUp extends RobotContainer
                 // Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
                 // .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
 
-        driverController.getAxis(Axis.LEFT_TRIGGER)
-                .whenGreaterThan(0.5)
-                .onTrue(drivetrain.commands.enableStraightPidding())
-                .onFalse(drivetrain.commands.disableStraightPidding());
+        // driverController.getAxis(Axis.LEFT_TRIGGER)
+        //         .whenGreaterThan(0.5)
+        //         .onTrue(drivetrain.commands.enableStraightPidding())
+        //         .onFalse(drivetrain.commands.disableStraightPidding());
 
         // Increase/Decrease Max Speed
         driverController.getButton(Button.RIGHT_BUMPER)
@@ -199,47 +200,48 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.B_CIRCLE)
                 .onTrue(Commands2023.turnToObject(vision::getDesiredDriveTarget));
 
+        driverController.getButton(Button.LEFT_STICK)
+                .onTrue(drivetrain.commands.enableFieldRelative());
+
         // BALANCE //
         driverController.getButton(Button.Y_TRIANGLE)
                 .onTrue(Commands2023.balance());
 
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
-                .onTrue(Commands.runOnce(() -> {
-                    if (DriverStation.isDisabled()) {
-                        gyroscope.zeroYaw();
-                        Logging.info("Zeroed NavX!");
-                    }
-                }).ignoringDisable(true));
+            .onTrue(Commands.runOnce(() -> {
+                gyroscope.zeroYaw();
+                Logging.info("Zeroed NavX!");
+            }).ignoringDisable(true));
 
-        driverController.getDPad(DPad.UP).onTrue(drivetrain.commands.goToAngle(Math.PI / 2));
-        driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-        driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
-        driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
+        // driverController.getDPad(DPad.UP).onTrue(drivetrain.commands.goToAngle(Math.PI / 2));
+        // driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+        // driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
+        // driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
         // OPERATOR CONTROLS //
 
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
 
-        debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
+        // debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
 
-        debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
-        debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-        debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
-        debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
+        // debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+        // debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+        // debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+        // debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
-        debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
+        // debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
+        // debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
         
 
         // D-Pad Controls
-        operatorController.getDPad(DPad.UP).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreHigh());
+        // operatorController.getDPad(DPad.UP).and(pidActive)
+        //     .toggleOnTrue(Commands2023.scoreHigh());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
             .toggleOnTrue(Commands2023.scoreMid());
-        operatorController.getDPad(DPad.DOWN).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreLow());
+        // operatorController.getDPad(DPad.DOWN).and(pidActive)
+        //     .toggleOnTrue(Commands2023.scoreLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
                 .toggleOnTrue(Commands2023.elevatorStingerReturn());
 
@@ -293,15 +295,23 @@ public class ChargedUp extends RobotContainer
                 .onTrue(Commands2023.quickSlowFlashPurple());
         operatorController.getButton(Button.LEFT_BUMPER)
                 .onTrue(Commands2023.quickSlowFlashYellow());
+
+        
+        // Quick calibrate + zero
+        // gyroscope.calibrate();
+        // Timer.delay(2);
+        // gyroscope.zeroYaw();
     }
 
     // AUTO //
     public static final Auto auto = new Auto();
 
-    @Override
-    public Command getAuto() {
-        return auto.get();
-    }
+    // @Override
+    // public Command getAuto() 
+    // {
+    //     grabber.setHoldingCone(false);
+    //     return Commands2023.backupAuto();//auto.get();
+    // }
 
     public void setupDebugTab() {
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
