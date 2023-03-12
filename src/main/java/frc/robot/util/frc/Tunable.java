@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.function.Consumer;
 import java.util.function.DoubleConsumer;
+import java.util.function.Function;
 
 import com.kauailabs.navx.AHRSProtocol.TuningVar;
 
@@ -19,7 +20,10 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 
 public abstract class Tunable<T>
 {
+    T rawValue;
     T value;
+
+    Function<T, T> modder = x -> x;
     ArrayList<Consumer<T>> updators = new ArrayList<>();
 
     public final GenericEntry entry;
@@ -31,13 +35,13 @@ public abstract class Tunable<T>
 
     protected Tunable(T value, String name)
     {
-        this.value = value;
-        this.name  = name;
+        this.value = this.rawValue = value;
+        this.name = name;
 
         NetworkTable nt = NetworkTableInstance.getDefault().getTable("Tuning");
         entry = nt.getTopic(name).getGenericEntry();
 
-        setNT(value);
+        setNT(this.rawValue);
         
         nt.addListener(name, EnumSet.of(Kind.kValueAll), (table, key, event) -> 
         {
@@ -47,17 +51,13 @@ public abstract class Tunable<T>
             || matchType == DriverStation.MatchType.Practice 
             || DriverStation.isTest())
             {
-                T nval = getFromNT();
+                this.rawValue = getFromNT();
+                this.value = modder.apply(this.rawValue);
 
-                if(!nval.equals(value))
+                for(Consumer<T> updator : updators)
                 {
-                    for(Consumer<T> updator : updators)
-                    {
-                        updator.accept(nval);
-                    }
+                    updator.accept(this.value);
                 }
-                
-                this.value = nval;
             }
         }); 
     }
@@ -100,6 +100,13 @@ public abstract class Tunable<T>
     public Tunable<T> whenUpdate(Consumer<T> updator)
     {
         updators.add(updator);
+        return this;
+    }
+    public Tunable<T> andThen(Function<T, T> modder)
+    {
+        this.modder = modder;
+        value = modder.apply(rawValue);
+
         return this;
     }
 

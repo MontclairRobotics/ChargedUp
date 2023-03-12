@@ -52,6 +52,7 @@ public class CommandRobot extends TimedRobot
     public void robotPeriodic() 
     {   
         CommandScheduler.getInstance().run();
+        
         for(var m : managers)
         {
             ManagerSubsystemBase msb;

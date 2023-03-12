@@ -14,11 +14,14 @@ import frc.robot.util.frc.Tunable;
 public class DriveConstants
 {
     public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
-    public static final Tunable<Double> CHARGER_STATION_MUL = Tunable.of(1.0 / 16, "drive.charge_mul");
+    public static final Tunable<Double> CHARGER_STATION_MUL = Tunable.of(1.0 / 14, "drive.charge_mul");
     
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;
     public static final double POSE_MAX_DISPLACEMENT = 1;
+
+    public static final Tunable<Boolean> DRIVE_INVERT = Tunable.of(true, "drive.drive_invert");
+    public static final Tunable<Boolean> STEER_INVERT = Tunable.of(false, "drive.steer_invert");
 
       ////////////////////////////////////////////
      // REBOOT THE ROBOT WHEN CHANGING OFFSETS //
@@ -26,29 +29,29 @@ public class DriveConstants
     private static final SwerveModuleSpec FRONT_LEFT = 
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
-            DRIVE_TYPE, Ports.DRIVE_FL_PORT, true, 
-            STEER_TYPE, Ports.STEER_FL_PORT, false,  
+            DRIVE_TYPE, Ports.DRIVE_FL_PORT, DRIVE_INVERT.get(), 
+            STEER_TYPE, Ports.STEER_FL_PORT, STEER_INVERT.get(),  
             Ports.CANCO_FL_PORT, 268.242188
         ); //fl
     private static final SwerveModuleSpec FRONT_RIGHT = 
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
-            DRIVE_TYPE, Ports.DRIVE_FR_PORT, true, 
-            STEER_TYPE, Ports.STEER_FR_PORT, false, 
+            DRIVE_TYPE, Ports.DRIVE_FR_PORT, DRIVE_INVERT.get(), 
+            STEER_TYPE, Ports.STEER_FR_PORT, STEER_INVERT.get(), 
             Ports.CANCO_FR_PORT, 305.771484
         ); //fr
     private static final SwerveModuleSpec BACK_LEFT = 
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
-            DRIVE_TYPE, Ports.DRIVE_BL_PORT, true, 
-            STEER_TYPE, Ports.STEER_BL_PORT, false, 
+            DRIVE_TYPE, Ports.DRIVE_BL_PORT, DRIVE_INVERT.get(), 
+            STEER_TYPE, Ports.STEER_BL_PORT, STEER_INVERT.get(), 
             Ports.CANCO_BL_PORT, 250.048828
         ); //bl
     private static final SwerveModuleSpec BACK_RIGHT =
         new SwerveModuleSpec(
             SdsModuleConfigurations.MK4I_L1, 
-            DRIVE_TYPE, Ports.DRIVE_BR_PORT, true, 
-            STEER_TYPE, Ports.STEER_BR_PORT, false, 
+            DRIVE_TYPE, Ports.DRIVE_BR_PORT, DRIVE_INVERT.get(), 
+            STEER_TYPE, Ports.STEER_BR_PORT, STEER_INVERT.get(), 
             Ports.CANCO_BR_PORT, 149.765625
         ); //br
     
@@ -72,19 +75,37 @@ public class DriveConstants
 
     public static class PosPID
     {
-        public static final Tunable<Double> KP = Tunable.of(0.1, "drive.pos.kp");
-        public static final Tunable<Double> KI = Tunable.of(0,   "drive.pos.ki");
-        public static final Tunable<Double> KD = Tunable.of(0,   "drive.pos.kd");
+        static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getDriveReduction();}
 
-        public static final PIDConstants KConsts = new PIDConstants(KP.get(), KI.get(), KD.get());
+        public static final Tunable<Double> KP = Tunable.of(12.0/10, "drive.pos.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.0/10, "drive.pos.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.2/10, "drive.pos.kd");
+
+        public static PIDConstants consts()
+        {
+            return new PIDConstants(
+                KP.get(), 
+                KI.get(), 
+                KD.get()
+            );
+        }
     }
     public static class ThetaPID
     {
-        public static final Tunable<Double> KP = Tunable.of(0.1, "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0,   "drive.theta.ki");
-        public static final Tunable<Double> KD = Tunable.of(0,   "drive.theta.kd");
+        static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getSteerReduction();}
+
+        public static final Tunable<Double> KP = Tunable.of(6.3/10, "drive.theta.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.0/10, "drive.theta.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.5/10, "drive.theta.kd");
         
-        public static final PIDConstants KConsts = new PIDConstants(KP.get(), KI.get(), KD.get());
+        public static PIDConstants consts()
+        {
+            return new PIDConstants(
+                KP.get(), 
+                KI.get(), 
+                KD.get()
+            );
+        }
     }
 
 

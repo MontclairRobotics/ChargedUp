@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.85,
-        "y": 3.85
+        "y": 4.43
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8549808204432288,
-        "y": 2.9862256891652597
+        "x": 1.8947214664967587,
+        "y": 3.2246695654864395
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -28,8 +28,8 @@
         "y": 3.0
       },
       "prevControl": {
-        "x": 2.0991019319149133,
-        "y": 2.9635167485632423
+        "x": 2.428381570644162,
+        "y": 3.0032573946167727
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -52,7 +52,7 @@
     {
       "position": 0.19563210227272743,
       "names": [
-        "Elevator Mid"
+        "Retract"
       ]
     }
   ]

@@ -22,5 +22,5 @@ public class LimelightConstants
     public static final double SIDE_OFFSET = Units.inchesToMeters(3.57);
     public static final double UP_OFFSET = Units.inchesToMeters(28 + (1.0/8));
 
-    public static final String LIMELIGHT_URL = "http://10.55.5.11:5800";
+    public static final String LIMELIGHT_URL = "http://10.5.55.11:5800";
 }

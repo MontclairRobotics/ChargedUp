@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Color;
+import frc.robot.ChargedUp;
 import frc.robot.animation.*;
 import frc.robot.structure.GamePiece;
 import frc.robot.constants.Constants;
@@ -25,7 +26,10 @@ public class LED extends ManagerBase
     private Stack<Animation> animationStack;
     private TransitionConstructor transitionConstructor;
     private Transition currentTransition;
+
     private boolean lastFrameDisabled = false;
+    private boolean lastFrameNavxZero = false;
+    private boolean lastFrameCANError = false;
 
     public static final double TRANSITION_LENGTH = 0.4;
     public static final int LED_COUNT = 95;
@@ -60,28 +64,72 @@ public class LED extends ManagerBase
 
         transitionConstructor = FadeTransition::new;
     }
+
+    public void resetToDefault()
+    {
+        animationStack.clear(); //TODO Make not hacky
+        animationStack.push(new DefaultAnimation());
+    }
    
     @Override
     public void always()
     {
-        if (DriverStation.isDisabled())
+        boolean canError = ChargedUp.canSafety.hasErrors();
+        
+        // CHECK CAN ERROR //
+        if(canError && !lastFrameCANError)
         {
-            lastFrameDisabled = true;
-            if (animationStack.size() <= 1)
-            {
-                for (Animation i : Constants.Robot.LED.SHUFFLED_ANIMATIONS) 
-                {
-                    add(i);
-                }
-            }
-        } 
-        else if (lastFrameDisabled) 
-        {
-            lastFrameDisabled = false;
-            
-            animationStack.clear(); //TODO Make not hacky
-            animationStack.push(new DefaultAnimation());
+            resetToDefault();
+            replace(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kFirstRed));
         }
+        else if(!canError && lastFrameCANError)
+        {
+            resetToDefault();
+        }
+
+        if(!canError)
+        {
+            // CHECK DISABLED //
+            if(DriverStation.isDisabled())
+            {
+                double angle = ChargedUp.drivetrain.getRobotRotationModRotation().getDegrees();
+                boolean navxZero = angle >= 179.5 && angle <= 180.5;
+
+                // CHECK NAVX ZEROED //
+                if(!navxZero)
+                {
+                    if (animationStack.size() <= 1)
+                    {
+                        for (Animation i : Constants.Robot.LED.SHUFFLED_ANIMATIONS) 
+                        {
+                            add(i);
+                        }
+                    }
+                }
+
+                if(navxZero && !lastFrameNavxZero)
+                {
+                    resetToDefault();
+                    replace(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kGreen));
+                }
+                else if(!navxZero && lastFrameNavxZero)
+                {
+                    resetToDefault();
+                }
+
+                lastFrameDisabled = true;
+                lastFrameNavxZero = navxZero;
+            } 
+            else if(lastFrameDisabled) 
+            {
+                lastFrameDisabled = false;
+                resetToDefault();
+            }
+        }
+
+        lastFrameCANError = canError;
+
+        // TODO: do this
 
         // While the top is finished, cancel it
         while(hasCurrent() && current().isFinished()) 
@@ -110,15 +158,18 @@ public class LED extends ManagerBase
             }
             else 
             {
-                if(current().timeElapsed() > TRANSITION_LENGTH)
+                if(animationStack.size() > 1)
                 {
-                    current ().run(oldBuffer);
-                    previous().run(newBuffer);
-                }
-                else 
-                {
-                    current ().run(newBuffer);
-                    previous().run(oldBuffer);
+                    if(current().timeElapsed() > TRANSITION_LENGTH)
+                    {
+                        current ().run(oldBuffer);
+                        previous().run(newBuffer);
+                    }
+                    else 
+                    {
+                        current ().run(newBuffer);
+                        previous().run(oldBuffer);
+                    }
                 }
 
                 currentTransition.setOld(oldBuffer);

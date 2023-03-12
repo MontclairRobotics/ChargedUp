@@ -16,6 +16,13 @@ import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class ComplexShwooper extends ManagerSubsystemBase implements Shwooper
 {
+    // TODO: delet this class
+    @Override
+    public String currentMode() 
+    {
+        return "";
+    }
+
     private final Solenoid shwooperSolenoid = new Solenoid(PneumaticsModuleType.REVPH, Ports.SHWOOPER_PNEU_PORT);
 
     private final CANSparkMax motorLeft = new CANSparkMax(Ports.SHWOOPER_LEFT_MOTOR_PORT, MotorType.kBrushless);

@@ -2,8 +2,7 @@
   "HALProvider": {
     "Addressable LEDs": {
       "0": {
-        "columns": 26,
-        "serpentine": true
+        "columns": 26
       },
       "window": {
         "name": "LED",
@@ -22,11 +21,6 @@
         }
       },
       "SPARK MAX [3]": {
-        "header": {
-          "open": true
-        }
-      },
-      "SPARK MAX [5]": {
         "header": {
           "open": true
         }
@@ -66,16 +60,12 @@
       "/Shuffleboard/PID/Y-PID Controller": "PIDController",
       "/Shuffleboard/PID/Y-PID/Y-PID Controller": "PIDController",
       "/Shuffleboard/PID/θ-PID Controller": "PIDController",
+      "/Shuffleboard/The Field/Field": "Field2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Orientation Chooser": "String Chooser",
       "/SmartDashboard/field": "Field2d"
     },
     "windows": {
-      "/Shuffleboard/Debug/Mechanism": {
-        "window": {
-          "visible": true
-        }
-      },
       "/Shuffleboard/Main Tab/Field": {
         "Swerve Modules": {
           "arrowColor": [
@@ -92,9 +82,6 @@
           ],
           "length": 0.30000001192092896,
           "width": 0.30000001192092896
-        },
-        "window": {
-          "visible": true
         }
       },
       "/Shuffleboard/Main/Field": {
@@ -137,7 +124,20 @@
           ],
           "style": "Line"
         },
-        "units": "meters",
+        "units": "meters"
+      },
+      "/Shuffleboard/The Field/Field": {
+        "Swerve Modules": {
+          "arrowSize": 53,
+          "color": [
+            1.0,
+            0.8208954930305481,
+            0.0,
+            255.0
+          ],
+          "length": 0.20000000298023224,
+          "width": 0.20000000298023224
+        },
         "window": {
           "visible": true
         }

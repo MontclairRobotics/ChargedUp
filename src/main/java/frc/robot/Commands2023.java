@@ -278,7 +278,7 @@ public class Commands2023
      */
     public static Command toggleGrabber()
     {
-        return Commands.runOnce(ChargedUp.grabber::toggle).andThen(log("GRABBBERBBRERNEOSF DJNFOFNUIS"));
+        return Commands.runOnce(ChargedUp.grabber::toggle);
     }
     // grabs 
     public static Command grabGrabber()
@@ -391,19 +391,20 @@ public class Commands2023
     {
         CommandBase c = Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
+            closeGrabber(),
 
             //move sideways to the target
-            moveToObjectSideways(type::getDetectionType),
+            // moveToObjectSideways(type::getDetectionType), //TODO: shit yourself
 
             //Prepare position
-            log("[SCORE] Positioning elevator and stinger . . ."),
+            log("[SCORE] Positioning elevator and stinger . . ."),  
             height.getPositioner(), 
 
             //Drop grabber
             log("[SCORE] Dropping . . ."),
-            waitSeconds(0.3),
+            waitSeconds(0.9),
             openGrabber(), 
-            waitSeconds(0.2),
+            waitSeconds(0.7),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
@@ -461,10 +462,11 @@ public class Commands2023
                     speed = 0;
                 }
                 speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+                Logging.info("" + speed);
 
                 ChargedUp.drivetrain.set(0, speed, 0);
             })
-        ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
+        ).finallyDo(x -> ChargedUp.drivetrain.enableFieldRelative());
     }
 
     /**
@@ -563,9 +565,10 @@ public class Commands2023
                 trajectories.add(nextTrajectory);
 
                 return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
-                    "Elevator Mid",  elevatorToMid(),
-                    "Elevator High", elevatorToHigh(),
-                    "Extend Intake", extendSchwooper()
+                    "Elevator High", elevatorToMid(), //TODO: this is very poorly named
+                    "Intake On", shwooperSuck(),
+                    "Retract", elevatorStingerReturn(),
+                    "Intake Off", stopShwooper()
                 ));
             }
             catch (Exception e)
@@ -662,9 +665,24 @@ public class Commands2023
     {
         return Commands.sequence
         (
+            Commands.runOnce(() -> 
+            {
+                ChargedUp.gyroscope.setNorth(); 
+                ChargedUp.gyroscope.setAddition(Rotation2d.fromDegrees(180));
+            }),
+
+            log("STARTING THE AUTO!!"),
             scoreMid(),
-            drivetrain.commands.driveForTime(5, 0, -1, 0),
-            balance()
+            log("SCORED!!!!!"),
+            
+            Commands.sequence(
+                log("Starting auton drive . . ."),
+                drivetrain.commands.driveForTime(2.5, 0, -1.25, 0),
+                log("DROVE IT"),
+                balance(),
+                log("balance!!")
+            )
+            .unless(ChargedUp::skipDriveAuto)
         );
     }
 }

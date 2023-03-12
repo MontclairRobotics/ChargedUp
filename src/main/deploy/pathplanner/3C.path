@@ -3,12 +3,12 @@
     {
       "anchorPoint": {
         "x": 1.85,
-        "y": 0.45
+        "y": 1.05
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.5891807319659343,
-        "y": 0.884774681293446
+        "x": 2.865528677232993,
+        "y": 0.5563690447494211
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -54,13 +54,13 @@
     {
       "position": 0.19705255681818182,
       "names": [
-        "Elevator Mid"
+        "Retract"
       ]
     },
     {
       "position": 0.7493252840909079,
       "names": [
-        "Extend Intake"
+        "Intake On"
       ]
     }
   ]

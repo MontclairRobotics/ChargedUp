@@ -60,6 +60,8 @@ public class Elevator extends ManagerSubsystemBase
         motor = new CANSparkMax(Ports.ELEVATOR_PORT, MotorType.kBrushless);
         motor.setInverted(INVERTED);
 
+        ChargedUp.canSafety.add(motor);
+
         encoder = motor.getEncoder();
         // encoder.setInverted(ENCODER_INVERTED);
         encoder.setPositionConversionFactor(ENCODER_CONVERSION_FACTOR);
@@ -225,7 +227,7 @@ public class Elevator extends ManagerSubsystemBase
 
         // maxSpeed *= 0.1;
 
-        double ff = FEED_FORWARD;
+        double ff = FEED_FORWARD.get();
         if(getHeight() < BUFFER_SPACE_TO_INTAKE) ff = 0;
 
         // System.out.println("----------------------------------------------");
@@ -252,7 +254,8 @@ public class Elevator extends ManagerSubsystemBase
     }
     
     @Override
-    public void reset() {
+    public void reset() 
+    {
         stop();
     }
 }

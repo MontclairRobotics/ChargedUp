@@ -41,6 +41,11 @@ public class PIDMechanism implements Sendable
         clampOutput = false;
     }
 
+    public double getTarget()
+    {
+        return pidController.getSetpoint();
+    }
+
     /**
      * Set the target value (setPoint) that the mechanism moves to
      * 

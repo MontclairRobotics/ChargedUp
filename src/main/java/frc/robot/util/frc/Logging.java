@@ -81,9 +81,9 @@ public class Logging
     /**
      * Print and store an informational log.
      */
-    public static void info(String message)
+    public static void info(Object message)
     {
-        String s = message;
+        String s = message.toString();
 
         System.out.println(s);
         addLog(s);
@@ -92,9 +92,9 @@ public class Logging
     /**
      * Print and store a warning log.
      */
-    public static void warning(String message)
+    public static void warning(Object message)
     {
-        String s = message;
+        String s = message.toString();
         StackTraceElement[] trace = StackTrace555.trace(1);
 
         DriverStation.reportWarning(s, trace);
@@ -103,9 +103,9 @@ public class Logging
     /**
      * Print and store a warning log without any trace.
      */
-    public static void warningNoTrace(String message)
+    public static void warningNoTrace(Object message)
     {
-        String s = message;
+        String s = message.toString();
 
         DriverStation.reportWarning(s, false);
         addLog(s);
@@ -114,9 +114,9 @@ public class Logging
     /**
      * Print and store an erroneous log.
      */
-    public static void error(String message)
+    public static void error(Object message)
     {
-        String s = message;
+        String s = message.toString();
         StackTraceElement[] trace = StackTrace555.trace(1);
 
         DriverStation.reportError(s, trace);
@@ -125,9 +125,9 @@ public class Logging
     /**
      * Print and store an erroneous log without any trace.
      */
-    public static void errorNoTrace(String message)
+    public static void errorNoTrace(Object message)
     {
-        String s = message;
+        String s = message.toString();
 
         DriverStation.reportError(s, false);
         addLog(s);
@@ -136,9 +136,9 @@ public class Logging
     /**
      * Print and store a fatal log.
      */
-    public static void fatal(String message)
+    public static void fatal(Object message)
     {
-        String s = message;
+        String s = message.toString();
         StackTraceElement[] trace = StackTrace555.trace(1);
 
         DriverStation.reportError(s, trace);
@@ -147,9 +147,9 @@ public class Logging
     /**
      * Print and store a fatal log without any trace.
      */
-    public static void fatalNoTrace(String message)
+    public static void fatalNoTrace(Object message)
     {
-        String s = message;
+        String s = message.toString();
 
         DriverStation.reportError(s, false);
         addLog(s);

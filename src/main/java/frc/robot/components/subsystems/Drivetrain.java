@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
+import frc.robot.Commands2023;
 import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
@@ -36,6 +37,7 @@ import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MotorType;
+import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
 import static frc.robot.constants.Constants.*;
@@ -44,6 +46,7 @@ import static frc.robot.constants.DriveConstants.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.photonvision.EstimatedRobotPose;
 
@@ -85,6 +88,19 @@ public class Drivetrain extends ManagerSubsystemBase
     }
     private SimulationData simulation;
 
+    private Consumer<Double> funcMul(Consumer<Double> cd, double factor)
+    {
+        return x -> cd.accept(x * factor);
+    }
+    private Consumer<Double> drivePid(Consumer<Double> cd)
+    {
+        return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getDriveReduction());
+    }
+    private Consumer<Double> steerPid(Consumer<Double> cd)
+    {
+        return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getSteerReduction());
+    }
+
     public Drivetrain()
     {
         if(RobotBase.isSimulation())
@@ -108,6 +124,10 @@ public class Drivetrain extends ManagerSubsystemBase
                     .withPosition(2*i, 0)
             );
 
+            ChargedUp.canSafety.add(modules[i].getDriveMotor());
+            ChargedUp.canSafety.add(modules[i].getSteerMotor());
+            ChargedUp.canSafety.addEncoder(modules[i].getSteerEncoder());
+
             modPoses[i] = new Pose2d(MOD_POSITIONS[i], new Rotation2d());
 
             assert STEER_TYPE == MotorType.NEO
@@ -118,6 +138,15 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
         moduleObject.setPoses(modPoses);
+
+        DRIVE_INVERT.whenUpdate(modules[0].getDriveMotor()::setInverted)
+                    .whenUpdate(modules[1].getDriveMotor()::setInverted)
+                    .whenUpdate(modules[2].getDriveMotor()::setInverted)
+                    .whenUpdate(modules[3].getDriveMotor()::setInverted);
+        STEER_INVERT.whenUpdate(modules[0].getSteerMotor()::setInverted)
+                    .whenUpdate(modules[1].getSteerMotor()::setInverted)
+                    .whenUpdate(modules[2].getSteerMotor()::setInverted)
+                    .whenUpdate(modules[3].getSteerMotor()::setInverted);
         
         // Build Odometry //
         poseEstimator = new SwerveDrivePoseEstimator(
@@ -129,32 +158,32 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build PID Controllers //
         xController = new PIDController(
-            PosPID.KP.get(),
-            PosPID.KI.get(), 
-            PosPID.KD.get()
+            PosPID.consts().kP,
+            PosPID.consts().kI, 
+            PosPID.consts().kD
         );
 
         yController = new PIDController(
-            PosPID.KP.get(),
-            PosPID.KI.get(), 
-            PosPID.KD.get()
+            PosPID.consts().kP,
+            PosPID.consts().kI, 
+            PosPID.consts().kD
         );
 
         thetaController = new PIDController(
-            ThetaPID.KP.get(),
-            ThetaPID.KI.get(), 
-            ThetaPID.KD.get()
+            ThetaPID.consts().kP,
+            ThetaPID.consts().kI, 
+            ThetaPID.consts().kD
         );
+
+        thetaController.enableContinuousInput(0, 2*Math.PI);
         
-        PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
-        PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
-        PosPID.KD.whenUpdate(xController::setD).whenUpdate(yController::setD);
+        PosPID.KP.whenUpdate(drivePid(xController::setP)).whenUpdate(drivePid(yController::setP));
+        PosPID.KI.whenUpdate(drivePid(xController::setI)).whenUpdate(drivePid(yController::setI));
+        PosPID.KD.whenUpdate(drivePid(xController::setD)).whenUpdate(drivePid(yController::setD));
 
-        ThetaPID.KP.whenUpdate(thetaController::setP);
-        ThetaPID.KI.whenUpdate(thetaController::setI);
-        ThetaPID.KD.whenUpdate(thetaController::setD);
-
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        ThetaPID.KP.whenUpdate(steerPid(thetaController::setP));
+        ThetaPID.KI.whenUpdate(steerPid(thetaController::setI));
+        ThetaPID.KD.whenUpdate(steerPid(thetaController::setD));
 
         // Build PID Mechanisms //
         xPID = new PIDMechanism(xController);
@@ -288,13 +317,10 @@ public class Drivetrain extends ManagerSubsystemBase
         
         for(int i = 0; i < MODULE_COUNT; i++)
         {
-            if(RobotBase.isReal() || true)
-            {
-                states[i] = SwerveModuleState.optimize(
-                    states[i], 
-                    new Rotation2d(modules[i].getSteerAngle())
-                );
-            }
+            // states[i] = SwerveModuleState.optimize(
+            //     states[i], 
+            //     new Rotation2d(modules[i].getSteerAngle())
+            // );
 
             modules[i].set(
                 states[i].speedMetersPerSecond / MAX_SPEED_MPS * MAX_VOLTAGE_V,
@@ -380,9 +406,10 @@ public class Drivetrain extends ManagerSubsystemBase
             .toArray(SwerveModulePosition[]::new);
     }
 
-    public void startStraightPidding() {
+    public void startStraightPidding() 
+    {
         isStraightPidding = true;
-        currentStraightAngle = getRobotRotation().getDegrees();
+        currentStraightAngle = getRobotRotation().getRadians();
     }
 
     public void stopStraightPidding() {
@@ -392,14 +419,18 @@ public class Drivetrain extends ManagerSubsystemBase
     @Override 
     public void periodic() 
     {
+        // Logging.info("" + PosPID.KP.get());
+
         if(!hasDrivenThisUpdate)
         {
             xPID.setMeasurement(getRobotPose().getX());
             yPID.setMeasurement(getRobotPose().getY());
-            thetaPID.setMeasurement(getRobotRotation().getDegrees());
+            thetaPID.setMeasurement(getRobotRotationModRotation().getRadians());
+
             if (isStraightPidding) 
             {
-                thetaPID.setTarget(currentStraightAngle);
+                if (thetaPID.getTarget() != currentStraightAngle) thetaPID.setTarget(currentStraightAngle);
+                thetaPID.updateTarget(currentStraightAngle);
             }
 
             xPID.update();
@@ -441,6 +472,11 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             simulation.resetPose = pose;    
         }
+    }
+
+    public Rotation2d getRobotRotationModRotation()
+    {
+        return Rotation2d.fromDegrees(getRobotRotation().getDegrees() % 360);
     }
 
     public Rotation2d getRobotRotation()
@@ -530,13 +566,12 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.parallel
+            return Commands.sequence
             (
-                enableFieldRelative(),
-                Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this)
-                    .deadlineWith(Commands.waitSeconds(time)),
-                disableFieldRelative()
-            );
+                disableFieldRelative(),
+                Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
+                    .raceWith(Commands.waitSeconds(time))
+            ).finallyDo(__ -> ChargedUp.drivetrain.enableFieldRelative());
         }
 
         /**
@@ -571,22 +606,22 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
 
-        public Command follow(PathPlannerTrajectory trajectory)
-        {
-            return Commands.race(
-                new PPSwerveControllerCommand(
-                    trajectory, 
-                    Drivetrain.this::getRobotPose,
-                    KINEMATICS, 
-                    xController, 
-                    yController, 
-                    thetaController,
-                    Drivetrain.this::driveFromStates, 
-                    Drivetrain.this
-                ),
-                Commands.run(() -> ChargedUp.field.getObject("trajectory").setTrajectory(trajectory))
-            );
-        }
+        // public Command follow(PathPlannerTrajectory trajectory)
+        // {
+        //     return Commands.race(
+        //         new PPSwerveControllerCommand(
+        //             trajectory, 
+        //             Drivetrain.this::getRobotPose,
+        //             KINEMATICS, 
+        //             xController, 
+        //             yController, 
+        //             thetaController,
+        //             Drivetrain.this::driveFromStates, 
+        //             Drivetrain.this
+        //         ),
+        //         Commands.run(() -> ChargedUp.field.getObject("trajectory").setTrajectory(trajectory))
+        //     );
+        // }
 
         public SwerveAutoBuilder autoBuilder(HashMap<String, Command> markers)
         {
@@ -594,8 +629,8 @@ public class Drivetrain extends ManagerSubsystemBase
                 Drivetrain.this::getRobotPose,
                 Drivetrain.this::setRobotPose,
                 KINEMATICS,
-                PosPID.KConsts, 
-                ThetaPID.KConsts,
+                PosPID.consts(), 
+                ThetaPID.consts(),
                 Drivetrain.this::driveFromStates,
                 markers,
                 false,
@@ -610,8 +645,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         public Command goToAngle(double angle)
         {
-            return Commands.run(() -> Drivetrain.this.setTargetAngle(angle), Drivetrain.this)
-                .until(Drivetrain.this::isThetaPIDFree);
+            return thetaPID.goToSetpoint(angle);
         }
 
     }
