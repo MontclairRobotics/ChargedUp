@@ -187,10 +187,10 @@ public class ChargedUp extends RobotContainer
                 // Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
                 // .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
 
-        driverController.getAxis(Axis.LEFT_TRIGGER)
-                .whenGreaterThan(0.5)
-                .onTrue(drivetrain.commands.enableStraightPidding())
-                .onFalse(drivetrain.commands.disableStraightPidding());
+        // driverController.getAxis(Axis.LEFT_TRIGGER)
+        //         .whenGreaterThan(0.5)
+        //         .onTrue(drivetrain.commands.enableStraightPidding())
+        //         .onFalse(drivetrain.commands.disableStraightPidding());
 
         // Increase/Decrease Max Speed
         driverController.getButton(Button.RIGHT_BUMPER)
@@ -228,7 +228,7 @@ public class ChargedUp extends RobotContainer
         // driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
         // driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        // OPERATOR CONTROLS //
+        // OPERATOR CONTROLS //4
 
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
