@@ -40,6 +40,8 @@ public class CANSafety extends ManagerBase
                     case kInvalidCANId:
                     case kDuplicateCANId:
                     case kInvalid:
+                    case kError:
+                    case kHALError:
                     case kUnknown: return true;
 
                     default: return false;

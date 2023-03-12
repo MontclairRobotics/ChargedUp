@@ -466,7 +466,7 @@ public class Commands2023
 
                 ChargedUp.drivetrain.set(0, speed, 0);
             })
-        ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
+        ).finallyDo(x -> ChargedUp.drivetrain.enableFieldRelative());
     }
 
     /**
@@ -670,14 +670,19 @@ public class Commands2023
                 ChargedUp.gyroscope.setNorth(); 
                 ChargedUp.gyroscope.setAddition(Rotation2d.fromDegrees(180));
             }),
-            
+
             log("STARTING THE AUTO!!"),
             scoreMid(),
             log("SCORED!!!!!"),
-            drivetrain.commands.driveForTime(1.5, 0, -1, 0)
-            // log("DROVE IT"),
-            // balance(),
-            // log("balance!!")
+            
+            Commands.sequence(
+                log("Starting auton drive . . ."),
+                drivetrain.commands.driveForTime(1.75, 0, -1.25, 0),
+                log("DROVE IT"),
+                balance(),
+                log("balance!!")
+            )
+            .unless(ChargedUp::skipDriveAuto)
         );
     }
 }

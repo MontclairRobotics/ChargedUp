@@ -425,7 +425,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             xPID.setMeasurement(getRobotPose().getX());
             yPID.setMeasurement(getRobotPose().getY());
-            thetaPID.setMeasurement(getRobotRotationMod360().getRadians());
+            thetaPID.setMeasurement(getRobotRotationModRotation().getRadians());
 
             if (isStraightPidding) 
             {
@@ -473,7 +473,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
     }
 
-    public Rotation2d getRobotRotationMod360()
+    public Rotation2d getRobotRotationModRotation()
     {
         return Rotation2d.fromDegrees(getRobotRotation().getDegrees() % 360);
     }
@@ -484,10 +484,8 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             return ChargedUp.gyroscope.getRotation2d();
         }
-        else 
-        {
-            return getRobotPose().getRotation();
-        }
+
+        throw new Error("This is bad and you suck");
     }
 
     public void setTargetAngle(double angle)
@@ -570,7 +568,7 @@ public class Drivetrain extends ManagerSubsystemBase
                 disableFieldRelative(),
                 Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
                     .raceWith(Commands.waitSeconds(time))
-            ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
+            ).finallyDo(__ -> ChargedUp.drivetrain.enableFieldRelative());
         }
 
         /**

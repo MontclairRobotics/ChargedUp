@@ -92,7 +92,8 @@ public class LED extends ManagerBase
             // CHECK DISABLED //
             if(DriverStation.isDisabled())
             {
-                boolean navxZero = Math.abs((ChargedUp.drivetrain.getRobotRotation().getDegrees() + 180) % 360 - 360) < 0.5;
+                double angle = ChargedUp.drivetrain.getRobotRotationModRotation().getDegrees();
+                boolean navxZero = angle >= 179.5 && angle <= 180.5;
 
                 // CHECK NAVX ZEROED //
                 if(!navxZero)

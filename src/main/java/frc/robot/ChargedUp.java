@@ -74,6 +74,8 @@ import com.kauailabs.navx.frc.AHRS;
 
 public class ChargedUp extends RobotContainer 
 {
+    public static final boolean useDebugController = false;
+
     // SIMULATION //
     public static final Field2d field = new Field2d();
     public static final Mechanism2d mainMechanism = new Mechanism2d(5, 5);
@@ -85,9 +87,11 @@ public class ChargedUp extends RobotContainer
     public static final GameController operatorController = GameController.from(
         ControlScheme.OPERATOR_CONTROLLER_TYPE,
         ControlScheme.OPERATOR_CONTROLLER_PORT);
-    public static final GameController debugController = GameController.from(
+    public static final GameController debugController = useDebugController 
+        ? GameController.from(
         ControlScheme.DEBUG_CONTROLLER_TYPE,
-        ControlScheme.DEBUG_CONTROLLER_PORT);
+        ControlScheme.DEBUG_CONTROLLER_PORT)
+        : null;
 
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
@@ -215,8 +219,8 @@ public class ChargedUp extends RobotContainer
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
+                Logging.info("Diego hit the button; current rotation is " + gyroscope.getRotation2d().getDegrees() + " degrees");
                 gyroscope.setNorth();
-                Logging.info("Zeroed NavX!");
             }).ignoringDisable(true));
 
         // driverController.getDPad(DPad.UP).onTrue(drivetrain.commands.goToAngle(Math.PI / 2));
@@ -224,21 +228,23 @@ public class ChargedUp extends RobotContainer
         // driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
         // driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        // OPERATOR CONTROLS //4
+        // OPERATOR CONTROLS //
 
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
 
-        debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
+        if(useDebugController)
+        {
+            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
 
-        debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
-        debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-        debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
-        debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
+            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
-        debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
-        
+            debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
+            debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
+        }
 
         // D-Pad Controls
         // operatorController.getDPad(DPad.UP).and(pidActive)
@@ -288,7 +294,7 @@ public class ChargedUp extends RobotContainer
         // Elevator
         elevator.setDefaultCommand(Commands.run(() -> {
             JoystickInput left = JoystickInput.getLeft(
-                    operatorController, false, true);
+                operatorController, false, true);
 
             ElevatorConstants.JOY_ADJUSTER.adjustY(left);
 
@@ -297,7 +303,7 @@ public class ChargedUp extends RobotContainer
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)
-                .onTrue(Commands2023.quickSlowFlashPurple());
+            .onTrue(Commands2023.quickSlowFlashPurple());
         operatorController.getButton(Button.LEFT_BUMPER)
                 .onTrue(Commands2023.quickSlowFlashYellow());
 
@@ -306,6 +312,11 @@ public class ChargedUp extends RobotContainer
         // gyroscope.calibrate();
         // Timer.delay(2);
         // gyroscope.zeroYaw();
+    }
+
+    public static boolean skipDriveAuto()
+    {
+        return false; // TODO; this
     }
 
     // AUTO //
@@ -318,14 +329,15 @@ public class ChargedUp extends RobotContainer
         return Commands2023.backupAuto();//auto.get();
     }
 
-    public void setupDebugTab() {
+    public void setupDebugTab() 
+    {
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
-                .withPosition(0 + 2 + 2 + 2, 3)
-                .withSize(2, 2);
+            .withPosition(0 + 2 + 2 + 2, 3)
+            .withSize(2, 2);
 
         debugTab.addDouble("Elevator Extension", elevator::getHeight)
-                .withPosition(0 + 2, 3)
-                .withSize(2, 1);
+            .withPosition(0 + 2, 3)
+            .withSize(2, 1);
 
         debugTab.addDouble("FPS", hooks::fps)
             .withPosition(0 + 2 + 2, 3)
@@ -336,50 +348,50 @@ public class ChargedUp extends RobotContainer
         if (stinger instanceof MotorStinger) {
             MotorStinger ms = (MotorStinger) stinger;
             debugTab.addDouble("Stinger Extension", ms::getExtension)
-                    .withPosition(0 + 2 + 2 + 2 + 2, 0)
-                    .withSize(2, 1);
+                .withPosition(0 + 2 + 2 + 2 + 2, 0)
+                .withSize(2, 1);
             debugTab.addDouble("Stinger Extension Velocity", ms::getStingerSpeed)
-                    .withPosition(0 + 2 + 2 + 2 + 2, 0)
-                    .withSize(2, 1);
+                .withPosition(0 + 2 + 2 + 2 + 2, 0)
+                .withSize(2, 1);
             debugTab.addDouble("Stinger Lead Velocity", ms::getLeadScrewSpeed)
-                    .withPosition(0 + 2 + 2 + 2 + 2, 0)
-                    .withSize(2, 1);
+                .withPosition(0 + 2 + 2 + 2 + 2, 0)
+                .withSize(2, 1);
             debugTab.addDouble("Stinger Lead Position", ms::getLeadScrewPosition);
         }
     }
 
     public void setupPIDTab() {
         final ShuffleboardLayout xPID = PIDTab.getLayout("X-PID", BuiltInLayouts.kGrid)
-                .withPosition(0, 0)
-                .withSize(1, 5)
-                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+            .withPosition(0, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
         xPID.add("X-PID Controller", drivetrain.xPID.getPIDController()).withPosition(0, 0);
         xPID.addBoolean("At SetPoint?", drivetrain.xPID::free).withPosition(0, 1);
         xPID.addDouble("X-Speed", drivetrain.xPID::getSpeed).withPosition(0, 2);
         xPID.addDouble("X-Measurement", drivetrain.xPID::getMeasurement).withPosition(0, 3);
 
         final ShuffleboardLayout yPID = PIDTab.getLayout("Y-PID", BuiltInLayouts.kGrid)
-                .withPosition(1, 0)
-                .withSize(1, 5)
-                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+            .withPosition(1, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
         yPID.add("Y-PID Controller", drivetrain.yPID.getPIDController()).withPosition(0, 0);
         yPID.addBoolean("At SetPoint?", drivetrain.yPID::free).withPosition(0, 1);
         yPID.addDouble("Speed", drivetrain.yPID::getSpeed).withPosition(0, 2);
         yPID.addDouble("Measurement", drivetrain.yPID::getMeasurement).withPosition(0, 3);
 
         final ShuffleboardLayout thetaPID = PIDTab.getLayout("THETA-PID", BuiltInLayouts.kGrid)
-                .withPosition(2, 0)
-                .withSize(1, 5)
-                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+            .withPosition(2, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
         thetaPID.add("θ-PID Controller", drivetrain.thetaPID.getPIDController()).withPosition(0, 0);
         thetaPID.addBoolean("At SetPoint?", drivetrain.thetaPID::free).withPosition(0, 1);
         thetaPID.addDouble("Speed", drivetrain.thetaPID::getSpeed).withPosition(0, 2);
         thetaPID.addDouble("Measurement", drivetrain.thetaPID::getMeasurement).withPosition(0, 3);
 
         final ShuffleboardLayout elevatorPID = PIDTab.getLayout("ELEVATOR-PID", BuiltInLayouts.kGrid)
-                .withPosition(3, 0)
-                .withSize(1, 5)
-                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+            .withPosition(3, 0)
+            .withSize(1, 5)
+            .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
         elevatorPID.add("Elevator PID", elevator.PID.getPIDController()).withPosition(0, 0);
         elevatorPID.addBoolean("At SetPoint?", elevator.PID::free).withPosition(0, 1);
         elevatorPID.addDouble("Speed", elevator.PID::getSpeed).withPosition(0, 2);
@@ -388,9 +400,9 @@ public class ChargedUp extends RobotContainer
         if (stinger instanceof MotorStinger) {
             MotorStinger ms = (MotorStinger) stinger;
             final ShuffleboardLayout stingerPID = PIDTab.getLayout("STINGER-PID", BuiltInLayouts.kGrid)
-                    .withPosition(4, 0)
-                    .withSize(1, 5)
-                    .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
+                .withPosition(4, 0)
+                .withSize(1, 5)
+                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
             stingerPID.add("Stinger PID", ms.PID.getPIDController()).withPosition(0, 0);
             stingerPID.addBoolean("At SetPoint?", ms.PID::free).withPosition(0, 1);
             stingerPID.addDouble("Extension Speed", ms::getStingerSpeed).withPosition(0, 2);
@@ -412,23 +424,23 @@ public class ChargedUp extends RobotContainer
     {
         // IS USING FIELD RELATIVE //
         final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
-                .withSize(2, 4)
-                .withPosition(9, 0);
+            .withSize(2, 4)
+            .withPosition(9, 0);
 
         info.addBoolean("Field Relative", drivetrain::usingFieldRelative)
-                .withWidget(BuiltInWidgets.kBooleanBox);
+            .withWidget(BuiltInWidgets.kBooleanBox);
 
         // LOGGING LOG RECENT //
         mainTab
-                .addString("Recent Log", Logging::mostRecentLog)
-                .withWidget(BuiltInWidgets.kTextView)
-                .withSize(4, 1)
-                .withPosition(2, 3);
+            .addString("Recent Log", Logging::mostRecentLog)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(3, 1)
+            .withPosition(2, 3);
 
         mainTab
-            .addDouble("Pressure", () -> pneu.getPressure(0))
+            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
             .withSize(2, 1)
-            .withPosition(5, 1);
+            .withPosition(7, 3);
             
 
         // CAMERAS //
@@ -476,6 +488,6 @@ public class ChargedUp extends RobotContainer
         mainTab
             .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
             .withSize(2, 1)
-            .withPosition(6, 3);
+            .withPosition(5, 3);
     }
 }
