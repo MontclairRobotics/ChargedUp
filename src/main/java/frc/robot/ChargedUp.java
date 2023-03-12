@@ -83,9 +83,9 @@ public class ChargedUp extends RobotContainer
     public static final GameController operatorController = GameController.from(
         ControlScheme.OPERATOR_CONTROLLER_TYPE,
         ControlScheme.OPERATOR_CONTROLLER_PORT);
-    // public static final GameController debugController = GameController.from(
-    //     ControlScheme.DEBUG_CONTROLLER_TYPE,
-    //     ControlScheme.DEBUG_CONTROLLER_PORT);
+    public static final GameController debugController = GameController.from(
+        ControlScheme.DEBUG_CONTROLLER_TYPE,
+        ControlScheme.DEBUG_CONTROLLER_PORT);
 
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
@@ -219,20 +219,20 @@ public class ChargedUp extends RobotContainer
         // driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
         // driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        // OPERATOR CONTROLS //
+        // OPERATOR CONTROLS //4
 
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
 
-        // debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
+        debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
 
-        // debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
-        // debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-        // debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
-        // debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
+        debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+        debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+        debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+        debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        // debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
-        // debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
+        debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
+        debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
         
 
         // D-Pad Controls
@@ -403,14 +403,8 @@ public class ChargedUp extends RobotContainer
     }
 
     // SHUFFLEBOARD //
-    public void setupMainTab() {
-        // SETUP FIELD //
-        mainTab
-            .add("Field", field)
-            .withWidget(BuiltInWidgets.kField)
-            .withSize(4, 3)
-            .withPosition(2, 0);
-
+    public void setupMainTab() 
+    {
         // IS USING FIELD RELATIVE //
         final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
                 .withSize(2, 4)
@@ -425,6 +419,12 @@ public class ChargedUp extends RobotContainer
                 .withWidget(BuiltInWidgets.kTextView)
                 .withSize(4, 1)
                 .withPosition(2, 3);
+
+        mainTab
+            .addDouble("Pressure", () -> pneu.getPressure(0))
+            .withSize(2, 1)
+            .withPosition(5, 1);
+            
 
         // CAMERAS //
         // mainTab

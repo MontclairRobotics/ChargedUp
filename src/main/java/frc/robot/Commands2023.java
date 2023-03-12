@@ -462,6 +462,7 @@ public class Commands2023
                     speed = 0;
                 }
                 speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+                Logging.info("" + speed);
 
                 ChargedUp.drivetrain.set(0, speed, 0);
             })
@@ -665,9 +666,9 @@ public class Commands2023
         return Commands.sequence
         (
             log("STARTING THE AUTO!!"),
-            scoreMid(),
-            log("SCORED!!!!!")
-            // drivetrain.commands.driveForTime(1.5, 0, -1, 0),
+            // scoreMid(),
+            log("SCORED!!!!!"),
+            drivetrain.commands.driveForTime(1.5, 0, -1, 0)
             // log("DROVE IT"),
             // balance(),
             // log("balance!!")

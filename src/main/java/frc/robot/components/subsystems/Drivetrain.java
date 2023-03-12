@@ -317,10 +317,10 @@ public class Drivetrain extends ManagerSubsystemBase
         
         for(int i = 0; i < MODULE_COUNT; i++)
         {
-            states[i] = SwerveModuleState.optimize(
-                states[i], 
-                new Rotation2d(modules[i].getSteerAngle())
-            );
+            // states[i] = SwerveModuleState.optimize(
+            //     states[i], 
+            //     new Rotation2d(modules[i].getSteerAngle())
+            // );
 
             modules[i].set(
                 states[i].speedMetersPerSecond / MAX_SPEED_MPS * MAX_VOLTAGE_V,
