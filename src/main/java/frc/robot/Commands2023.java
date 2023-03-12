@@ -278,7 +278,7 @@ public class Commands2023
      */
     public static Command toggleGrabber()
     {
-        return Commands.runOnce(ChargedUp.grabber::toggle).andThen(log("GRABBBERBBRERNEOSF DJNFOFNUIS"));
+        return Commands.runOnce(ChargedUp.grabber::toggle);
     }
     // grabs 
     public static Command grabGrabber()
@@ -665,8 +665,14 @@ public class Commands2023
     {
         return Commands.sequence
         (
+            Commands.runOnce(() -> 
+            {
+                ChargedUp.gyroscope.setNorth(); 
+                ChargedUp.gyroscope.setAddition(Rotation2d.fromDegrees(180));
+            }),
+            
             log("STARTING THE AUTO!!"),
-            // scoreMid(),
+            scoreMid(),
             log("SCORED!!!!!"),
             drivetrain.commands.driveForTime(1.5, 0, -1, 0)
             // log("DROVE IT"),

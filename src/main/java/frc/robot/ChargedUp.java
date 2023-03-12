@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.VideoSource;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -38,6 +39,7 @@ import frc.robot.animation.ZoomAnimation;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.managers.CANSafety;
 import frc.robot.components.managers.ColorSensor;
+import frc.robot.components.managers.GyroscopeNavX;
 import frc.robot.components.managers.LED;
 import frc.robot.components.managers.Hooks;
 import frc.robot.components.subsystems.Drivetrain;
@@ -109,7 +111,7 @@ public class ChargedUp extends RobotContainer
     }
 
     // COMPONENTS //
-    public static final AHRS gyroscope = new AHRS();
+    public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
     public static final LED led = new LED();
     public static final CANSafety canSafety = new CANSafety();
 
@@ -130,6 +132,9 @@ public class ChargedUp extends RobotContainer
     @Override 
     public void initialize() 
     {
+        field.setRobotPose(2, 2, Rotation2d.fromDegrees(0));
+        Shuffleboard.getTab("The Field").add(field).withSize(10, 6);
+
         pneu.enableCompressorDigital();
         CameraServer.startAutomaticCapture();
 
@@ -210,7 +215,7 @@ public class ChargedUp extends RobotContainer
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
-                gyroscope.zeroYaw();
+                gyroscope.setNorth();
                 Logging.info("Zeroed NavX!");
             }).ignoringDisable(true));
 
@@ -306,12 +311,12 @@ public class ChargedUp extends RobotContainer
     // AUTO //
     public static final Auto auto = new Auto();
 
-    // @Override
-    // public Command getAuto() 
-    // {
-    //     grabber.setHoldingCone(false);
-    //     return Commands2023.backupAuto();//auto.get();
-    // }
+    @Override
+    public Command getAuto() 
+    {
+        grabber.setHoldingCone(false);
+        return Commands2023.backupAuto();//auto.get();
+    }
 
     public void setupDebugTab() {
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
@@ -434,23 +439,23 @@ public class ChargedUp extends RobotContainer
 
         // GYROSCOPE VALUE //
         mainTab
-                .addNumber("Gyroscope", () -> {
-                    double y = drivetrain.getRobotRotation().getDegrees();
-                    return y > 0 ? y : 360 + y;
-                })
-                .withWidget(BuiltInWidgets.kGyro)
-                .withSize(2, 2)
-                .withPosition(0, 0);
+            .addNumber("Gyroscope", () -> {
+                double y = drivetrain.getRobotRotation().getDegrees();
+                return y > 0 ? y : 360 + y;
+            })
+            .withWidget(BuiltInWidgets.kGyro)
+            .withSize(2, 2)
+            .withPosition(0, 0);
 
         // MAX LINEAR SPEED //
         info.addNumber("Max Linear Speed (mps)",
-                () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
-                .withWidget(BuiltInWidgets.kTextView);
+            () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
+            .withWidget(BuiltInWidgets.kTextView);
 
         // MAX ANGULAR SPEED //
         info.addNumber("Max Angular Speed (rps)",
-                () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
-                .withWidget(BuiltInWidgets.kTextView);
+            () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
+            .withWidget(BuiltInWidgets.kTextView);
 
         // HELD OBJECT //
         // mainTab
@@ -467,6 +472,7 @@ public class ChargedUp extends RobotContainer
                 "Color when true",  Color.kGold.toHexString(),
                 "Color when false", Color.kDarkViolet.toHexString()
             ));
+        
         mainTab
             .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
             .withSize(2, 1)

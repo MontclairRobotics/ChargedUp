@@ -254,7 +254,8 @@ public class Elevator extends ManagerSubsystemBase
     }
     
     @Override
-    public void reset() {
+    public void reset() 
+    {
         stop();
     }
 }

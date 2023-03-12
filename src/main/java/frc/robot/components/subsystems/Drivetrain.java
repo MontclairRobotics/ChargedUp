@@ -174,6 +174,8 @@ public class Drivetrain extends ManagerSubsystemBase
             ThetaPID.consts().kI, 
             ThetaPID.consts().kD
         );
+
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
         
         PosPID.KP.whenUpdate(drivePid(xController::setP)).whenUpdate(drivePid(yController::setP));
         PosPID.KI.whenUpdate(drivePid(xController::setI)).whenUpdate(drivePid(yController::setI));
@@ -182,8 +184,6 @@ public class Drivetrain extends ManagerSubsystemBase
         ThetaPID.KP.whenUpdate(steerPid(thetaController::setP));
         ThetaPID.KI.whenUpdate(steerPid(thetaController::setI));
         ThetaPID.KD.whenUpdate(steerPid(thetaController::setD));
-
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
         // Build PID Mechanisms //
         xPID = new PIDMechanism(xController);
@@ -406,9 +406,10 @@ public class Drivetrain extends ManagerSubsystemBase
             .toArray(SwerveModulePosition[]::new);
     }
 
-    public void startStraightPidding() {
+    public void startStraightPidding() 
+    {
         isStraightPidding = true;
-        currentStraightAngle = getRobotRotation().getDegrees();
+        currentStraightAngle = getRobotRotation().getRadians();
     }
 
     public void stopStraightPidding() {
@@ -424,7 +425,8 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             xPID.setMeasurement(getRobotPose().getX());
             yPID.setMeasurement(getRobotPose().getY());
-            thetaPID.setMeasurement(getRobotRotation().getDegrees());
+            thetaPID.setMeasurement(getRobotRotationMod360().getRadians());
+
             if (isStraightPidding) 
             {
                 thetaPID.setTarget(currentStraightAngle);
@@ -469,6 +471,11 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             simulation.resetPose = pose;    
         }
+    }
+
+    public Rotation2d getRobotRotationMod360()
+    {
+        return Rotation2d.fromDegrees(getRobotRotation().getDegrees() % 360);
     }
 
     public Rotation2d getRobotRotation()
@@ -562,9 +569,8 @@ public class Drivetrain extends ManagerSubsystemBase
             (
                 disableFieldRelative(),
                 Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
-                    .raceWith(Commands.waitSeconds(time)),
-                enableFieldRelative()
-            );
+                    .raceWith(Commands.waitSeconds(time))
+            ).handleInterrupt(ChargedUp.drivetrain::enableFieldRelative);
         }
 
         /**
@@ -599,22 +605,22 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
 
-        public Command follow(PathPlannerTrajectory trajectory)
-        {
-            return Commands.race(
-                new PPSwerveControllerCommand(
-                    trajectory, 
-                    Drivetrain.this::getRobotPose,
-                    KINEMATICS, 
-                    xController, 
-                    yController, 
-                    thetaController,
-                    Drivetrain.this::driveFromStates, 
-                    Drivetrain.this
-                ),
-                Commands.run(() -> ChargedUp.field.getObject("trajectory").setTrajectory(trajectory))
-            );
-        }
+        // public Command follow(PathPlannerTrajectory trajectory)
+        // {
+        //     return Commands.race(
+        //         new PPSwerveControllerCommand(
+        //             trajectory, 
+        //             Drivetrain.this::getRobotPose,
+        //             KINEMATICS, 
+        //             xController, 
+        //             yController, 
+        //             thetaController,
+        //             Drivetrain.this::driveFromStates, 
+        //             Drivetrain.this
+        //         ),
+        //         Commands.run(() -> ChargedUp.field.getObject("trajectory").setTrajectory(trajectory))
+        //     );
+        // }
 
         public SwerveAutoBuilder autoBuilder(HashMap<String, Command> markers)
         {

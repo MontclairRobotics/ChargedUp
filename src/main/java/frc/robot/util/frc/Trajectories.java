@@ -28,18 +28,18 @@ public class Trajectories
         );
     }
 
-    /**
-     * Returns a command that follows the trajectory with the given name
-     * and with given maximum velocity and acceleration
-     * @param name the name of the trajectory
-     * @param maxVel the maximum velocity
-     * @param maxAccel the maximum acceleration 
-     * @return the command that follows the trajectory
-     */
-    public static Command follow(String name, double maxVel, double maxAccel)
-    {
-        return ChargedUp.drivetrain.commands.follow(get(name, maxVel, maxAccel));
-    }
+    // /**
+    //  * Returns a command that follows the trajectory with the given name
+    //  * and with given maximum velocity and acceleration
+    //  * @param name the name of the trajectory
+    //  * @param maxVel the maximum velocity
+    //  * @param maxAccel the maximum acceleration 
+    //  * @return the command that follows the trajectory
+    //  */
+    // public static Command follow(String name, double maxVel, double maxAccel)
+    // {
+    //     return ChargedUp.drivetrain.commands.follow(get(name, maxVel, maxAccel));
+    // }
 
     /**
      * Creates an auto with a trajectory provided by 
