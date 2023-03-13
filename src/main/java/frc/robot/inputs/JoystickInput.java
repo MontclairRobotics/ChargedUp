@@ -5,9 +5,6 @@ import frc.robot.util.frc.GameController.Axis;
 
 public class JoystickInput 
 {
-    private final boolean invertX;
-    private final boolean invertY;
-
     private double x;
     private double y;
 
@@ -72,9 +69,6 @@ public class JoystickInput
 
     private JoystickInput(double x, double y, boolean invertX, boolean invertY)
     {
-        this.invertX = invertX;
-        this.invertY = invertY;
-
         setXY(
             invertX ? -x : x, 
             invertY ? -y : y

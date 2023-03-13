@@ -10,11 +10,6 @@
       }
     },
     "Other Devices": {
-      "CANCoder[4]": {
-        "header": {
-          "open": true
-        }
-      },
       "SPARK MAX [17]": {
         "header": {
           "open": true

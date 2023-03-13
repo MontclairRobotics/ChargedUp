@@ -3,15 +3,10 @@ package frc.robot.components.subsystems.shwooper;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import static frc.robot.constants.ShwooperConstants.*;
 
-import frc.robot.ChargedUp;
 import frc.robot.constants.Ports;
-import frc.robot.constants.ShwooperConstants;
+import frc.robot.util.frc.can.CANSafety;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 
@@ -29,7 +24,7 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
     public SimpleShwooper() 
     {
         motorTop.setInverted(TOP_OR_LEFT_INVERSION);
-        ChargedUp.canSafety.add(motorTop);
+        CANSafety.monitor(motorTop);
         // motorBottom.setInverted(Robot.Shwooper.RIGHT_INVERSION);
     }
 

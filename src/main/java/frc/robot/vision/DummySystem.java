@@ -1,7 +1,6 @@
 package frc.robot.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.vision.VisionPipeline;
 import frc.robot.structure.DetectionType;
 
 public class DummySystem extends VisionSystem

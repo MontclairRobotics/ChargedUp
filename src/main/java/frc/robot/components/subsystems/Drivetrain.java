@@ -9,46 +9,34 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ChargedUp;
-import frc.robot.Commands2023;
 import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
 import frc.robot.structure.DetectionType;
-import frc.robot.structure.Tracking;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
+import frc.robot.util.frc.can.CANSafety;
 import frc.robot.util.frc.commandrobot.CommandRobot;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
-import frc.robot.vision.VisionSystem;
-
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
-import com.pathplanner.lib.commands.PPSwerveControllerCommand;
 import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 import com.swervedrivespecialties.swervelib.SwerveModule;
 
-import static frc.robot.constants.Constants.*;
 import static frc.robot.constants.DriveConstants.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Optional;
 import java.util.function.Consumer;
-
-import org.photonvision.EstimatedRobotPose;
 
 public class Drivetrain extends ManagerSubsystemBase
 {
@@ -124,9 +112,9 @@ public class Drivetrain extends ManagerSubsystemBase
                     .withPosition(2*i, 0)
             );
 
-            ChargedUp.canSafety.add(modules[i].getDriveMotor());
-            ChargedUp.canSafety.add(modules[i].getSteerMotor());
-            ChargedUp.canSafety.addEncoder(modules[i].getSteerEncoder());
+            CANSafety.monitor(modules[i].getDriveMotor());
+            CANSafety.monitor(modules[i].getSteerMotor());
+            CANSafety.monitor(modules[i].getSteerEncoder());
 
             modPoses[i] = new Pose2d(MOD_POSITIONS[i], new Rotation2d());
 

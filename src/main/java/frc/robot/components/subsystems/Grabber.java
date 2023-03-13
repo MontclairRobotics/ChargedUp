@@ -1,20 +1,13 @@
 package frc.robot.components.subsystems;
 
-import frc.robot.ChargedUp;
-import frc.robot.animation.DefaultAnimation;
 import frc.robot.constants.PneuConstants;
 import frc.robot.structure.GamePiece;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.constants.GrabberConstants.*;
 
-import com.revrobotics.ColorMatch;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorSensorV3;
-
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.util.Color;
 
 
 /**

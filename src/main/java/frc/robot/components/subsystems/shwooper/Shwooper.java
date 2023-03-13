@@ -1,7 +1,5 @@
 package frc.robot.components.subsystems.shwooper;
 
-import com.revrobotics.CANSparkMax;
-
 public interface Shwooper 
 {
     public void suck();

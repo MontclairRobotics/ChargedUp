@@ -1,7 +1,5 @@
 package frc.robot.util;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Lazy<T> implements Supplier<T> 

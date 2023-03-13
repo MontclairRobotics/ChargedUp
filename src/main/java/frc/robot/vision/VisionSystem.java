@@ -2,7 +2,6 @@ package frc.robot.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import frc.robot.structure.DetectionType;
-import frc.robot.util.frc.commandrobot.Manager;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 public abstract class VisionSystem extends ManagerBase

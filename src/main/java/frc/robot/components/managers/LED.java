@@ -11,7 +11,7 @@ import frc.robot.animation.*;
 import frc.robot.structure.GamePiece;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Ports;
-import frc.robot.util.frc.Logging;
+import frc.robot.util.frc.can.CANSafety;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 public class LED extends ManagerBase 
@@ -74,7 +74,7 @@ public class LED extends ManagerBase
     @Override
     public void always()
     {
-        boolean canError = ChargedUp.canSafety.hasErrors();
+        boolean canError = CANSafety.hasErrors();
         
         // CHECK CAN ERROR //
         if(canError && !lastFrameCANError)

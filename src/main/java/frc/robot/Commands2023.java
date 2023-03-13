@@ -4,11 +4,8 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -20,14 +17,11 @@ import frc.robot.animation.DefaultAnimation;
 import frc.robot.animation.QuickSlowFlash;
 import frc.robot.components.managers.Auto;
 import frc.robot.components.subsystems.Drivetrain;
-import frc.robot.components.subsystems.Drivetrain.DriveCommands;
 import frc.robot.constants.*;
 import frc.robot.structure.DetectionType;
-import frc.robot.structure.GamePiece;
 import frc.robot.structure.ScoreHeight;
 import frc.robot.structure.ScoringType;
 import frc.robot.util.HashMaps;
-import frc.robot.util.Unimplemented;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
 import frc.robot.vision.VisionSystem;
@@ -35,7 +29,6 @@ import frc.robot.vision.VisionSystem;
 import static frc.robot.ChargedUp.*;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPlannerTrajectory;

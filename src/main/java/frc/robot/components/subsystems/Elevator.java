@@ -1,25 +1,14 @@
 package frc.robot.components.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.REVPhysicsSim;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.hal.SimDevice;
-import edu.wpi.first.hal.SimDeviceJNI;
-import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
 import frc.robot.constants.Ports;
@@ -29,6 +18,7 @@ import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.SimulationUtility;
+import frc.robot.util.frc.can.CANSafety;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static frc.robot.constants.ElevatorConstants.*;
@@ -60,7 +50,7 @@ public class Elevator extends ManagerSubsystemBase
         motor = new CANSparkMax(Ports.ELEVATOR_PORT, MotorType.kBrushless);
         motor.setInverted(INVERTED);
 
-        ChargedUp.canSafety.add(motor);
+        CANSafety.monitor(motor);
 
         encoder = motor.getEncoder();
         // encoder.setInverted(ENCODER_INVERTED);

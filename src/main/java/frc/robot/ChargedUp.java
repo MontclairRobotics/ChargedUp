@@ -7,16 +7,10 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticHub;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -24,29 +18,16 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.animation.ASCIImation;
-import frc.robot.animation.CycleAnimation;
-import frc.robot.animation.DeathAnimation;
-import frc.robot.animation.DefaultAnimation;
 import frc.robot.animation.FadeTransition;
-import frc.robot.animation.MagicAnimation;
-import frc.robot.animation.QuickSlowFlash;
-import frc.robot.animation.RaceAnimation;
-import frc.robot.animation.ZoomAnimation;
 import frc.robot.components.managers.Auto;
-import frc.robot.components.managers.CANSafety;
-import frc.robot.components.managers.ColorSensor;
 import frc.robot.components.managers.GyroscopeNavX;
 import frc.robot.components.managers.LED;
-import frc.robot.components.managers.Hooks;
+import frc.robot.components.managers.MiscData;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
-import frc.robot.components.subsystems.Drivetrain.DriveCommands;
-import frc.robot.components.subsystems.shwooper.ComplexShwooper;
 import frc.robot.components.subsystems.shwooper.Shwooper;
 import frc.robot.components.subsystems.shwooper.SimpleShwooper;
 import frc.robot.components.subsystems.stinger.MotorStinger;
@@ -56,25 +37,20 @@ import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.Logging;
-import frc.robot.util.frc.Tunable;
 import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.commandrobot.RobotContainer;
-import frc.robot.vision.DummySystem;
 import frc.robot.vision.LimelightSystem;
-import frc.robot.vision.PhotonSystem;
 import frc.robot.vision.VisionSystem;
 
 import frc.robot.constants.*;
 
 import java.util.Map;
 
-import com.kauailabs.navx.frc.AHRS;
-
 public class ChargedUp extends RobotContainer 
 {
-    public static final boolean useDebugController = true;
+    public static final boolean useDebugController = false;
 
     // SIMULATION //
     public static final Field2d field = new Field2d();
@@ -117,7 +93,6 @@ public class ChargedUp extends RobotContainer
     // COMPONENTS //
     public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
     public static final LED led = new LED();
-    public static final CANSafety canSafety = new CANSafety();
 
     public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
 
@@ -130,7 +105,7 @@ public class ChargedUp extends RobotContainer
     public static final Stinger stinger = new PneuStinger();
 
     // TODO: needing to create an object for this is kinda dumb
-    public static final Hooks hooks = new Hooks();
+    public static final MiscData misc = new MiscData();
 
     // INITIALIZER //
     @Override 
@@ -228,7 +203,7 @@ public class ChargedUp extends RobotContainer
         // driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
         // driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
 
-        // OPERATOR CONTROLS //4
+        // OPERATOR CONTROLS //
 
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
@@ -237,10 +212,10 @@ public class ChargedUp extends RobotContainer
         {
             debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
 
-            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(0));
-            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(3*Math.PI/2));
-            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle(Math.PI));
-            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
+            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
+            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
+            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
 
             debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
             debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
@@ -339,7 +314,7 @@ public class ChargedUp extends RobotContainer
             .withPosition(0 + 2, 3)
             .withSize(2, 1);
 
-        debugTab.addDouble("FPS", hooks::fps)
+        debugTab.addDouble("FPS", misc::fps)
             .withPosition(0 + 2 + 2, 3)
             .withSize(2, 1);
 
@@ -410,13 +385,6 @@ public class ChargedUp extends RobotContainer
             stingerPID.addDouble("Lead Screw Position", ms::getLeadScrewPosition).withPosition(0, 4);
             stingerPID.addDouble("Lead Screw Speed", ms::getLeadScrewSpeed).withPosition(0, 5);
         }
-    }
-
-    public void setupTuningTab()
-    {
-        final ShuffleboardTab tuning = Shuffleboard.getTab("Tuning");
-
-        // tuning.add(DriveConstants.PosPID.KP.entry);
     }
 
     // SHUFFLEBOARD //
