@@ -441,6 +441,12 @@ public class ChargedUp extends RobotContainer
             .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
             .withSize(2, 1)
             .withPosition(7, 3);
+
+        
+        mainTab
+            .addString("Suck Mode", shwooper::currentMode)
+            .withSize(2, 1)
+            .withPosition(7, 2);
             
 
         // CAMERAS //

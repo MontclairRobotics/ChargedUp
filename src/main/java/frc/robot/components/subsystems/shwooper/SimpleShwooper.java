@@ -71,5 +71,22 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
     {
         stop();
     }
+
+    @Override
+    public String currentMode() 
+    {
+        if(motorTop.get() > 0)
+        {
+            return "SUCK";
+        }
+        else if(motorTop.get() < 0)
+        {
+            return "SPIT";
+        }
+        else
+        {
+            return "NONE";
+        }
+    }
  
 }

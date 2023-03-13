@@ -402,9 +402,9 @@ public class Commands2023
 
             //Drop grabber
             log("[SCORE] Dropping . . ."),
-            waitSeconds(0.3),
+            waitSeconds(0.9),
             openGrabber(), 
-            waitSeconds(0.2),
+            waitSeconds(0.7),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
@@ -677,7 +677,7 @@ public class Commands2023
             
             Commands.sequence(
                 log("Starting auton drive . . ."),
-                drivetrain.commands.driveForTime(1.75, 0, -1.25, 0),
+                drivetrain.commands.driveForTime(2.5, 0, -1.25, 0),
                 log("DROVE IT"),
                 balance(),
                 log("balance!!")

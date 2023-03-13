@@ -484,8 +484,10 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             return ChargedUp.gyroscope.getRotation2d();
         }
-
-        throw new Error("This is bad and you suck");
+        else 
+        {
+            return getRobotPose().getRotation();
+        }
     }
 
     public void setTargetAngle(double angle)

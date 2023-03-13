@@ -17,4 +17,6 @@ public interface Shwooper
     public void toggleShwooper();
 
     public boolean isShwooperOut();
+
+    public String currentMode();
 }
