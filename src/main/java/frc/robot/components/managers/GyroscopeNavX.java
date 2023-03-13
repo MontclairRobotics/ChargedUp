@@ -38,6 +38,10 @@ public class GyroscopeNavX
     {
         return Rotation2d.fromDegrees(360 - (navx.getAngle() - zeroOffset) + addition); //TODO: this is dumb
     }
+    public Rotation2d getRotationInCircle()
+    {
+        return Rotation2d.fromDegrees(getRotation2d().getDegrees() % 360); //TODO: this is dumb
+    }
 
     public double getPitch() {return navx.getPitch();}
     public double getRoll()  {return navx.getRoll();}

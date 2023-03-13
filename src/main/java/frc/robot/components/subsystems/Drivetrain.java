@@ -163,7 +163,7 @@ public class Drivetrain extends ManagerSubsystemBase
             ThetaPID.consts().kD
         );
 
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        thetaController.enableContinuousInput(0, 2*Math.PI);
         
         PosPID.KP.whenUpdate(drivePid(xController::setP)).whenUpdate(drivePid(yController::setP));
         PosPID.KI.whenUpdate(drivePid(xController::setI)).whenUpdate(drivePid(yController::setI));
@@ -417,7 +417,8 @@ public class Drivetrain extends ManagerSubsystemBase
 
             if (isStraightPidding) 
             {
-                thetaPID.setTarget(currentStraightAngle);
+                if (thetaPID.getTarget() != currentStraightAngle) thetaPID.setTarget(currentStraightAngle);
+                thetaPID.updateTarget(currentStraightAngle);
             }
 
             xPID.update();
@@ -632,8 +633,7 @@ public class Drivetrain extends ManagerSubsystemBase
         }
         public Command goToAngle(double angle)
         {
-            return Commands.run(() -> Drivetrain.this.setTargetAngle(angle), Drivetrain.this)
-                .until(Drivetrain.this::isThetaPIDFree);
+            return thetaPID.goToSetpoint(angle);
         }
 
     }

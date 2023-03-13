@@ -19,11 +19,14 @@
         "header": {
           "open": true
         }
+<<<<<<< HEAD
+=======
       },
       "SPARK MAX [3]": {
         "header": {
           "open": true
         }
+>>>>>>> main
       }
     },
     "Timing": {

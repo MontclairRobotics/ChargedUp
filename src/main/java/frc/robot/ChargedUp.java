@@ -425,10 +425,7 @@ public class ChargedUp extends RobotContainer
 
         // GYROSCOPE VALUE //
         mainTab
-            .addNumber("Gyroscope", () -> {
-                double y = drivetrain.getRobotRotation().getDegrees();
-                return y > 0 ? y : 360 + y;
-            })
+            .addNumber("Gyroscope", () -> gyroscope.getRotationInCircle().getDegrees())
             .withWidget(BuiltInWidgets.kGyro)
             .withSize(2, 2)
             .withPosition(0, 0);
