@@ -1,12 +1,9 @@
 package frc.robot.constants;
 
-import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import frc.robot.inputs.JoystickAdjuster;
 import frc.robot.util.frc.Tunable;
-
-import static frc.robot.constants.GrabberConstants.*;
 
 public class ElevatorConstants
 {

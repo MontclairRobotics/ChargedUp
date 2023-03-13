@@ -2,15 +2,7 @@ package frc.robot.vision;
 
 import static frc.robot.constants.LimelightConstants.*;
 import frc.robot.structure.DetectionType;
-import frc.robot.util.Unimplemented;
-import frc.robot.util.frc.commandrobot.ManagerBase;
-import frc.robot.vision.VisionSystem;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimelightSystem extends VisionSystem

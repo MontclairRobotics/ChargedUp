@@ -5,7 +5,7 @@ import com.revrobotics.REVPhysicsSim;
 import edu.wpi.first.wpilibj.RobotBase;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
-public class Hooks extends ManagerBase
+public class MiscData extends ManagerBase
 {
     private double lastTime;
     private double fps;

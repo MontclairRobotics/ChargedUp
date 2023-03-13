@@ -1,13 +1,8 @@
 package frc.robot.animation;
 
-import java.util.Random;
-
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.math.Math555;
-import frc.robot.math.PerlinNoise;
 import frc.robot.math.PerlinNoiseRing;
 
 public class MagicAnimation extends Animation

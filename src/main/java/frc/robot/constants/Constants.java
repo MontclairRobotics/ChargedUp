@@ -1,19 +1,5 @@
 package frc.robot.constants;
 
-import java.util.function.IntFunction;
-
-import com.pathplanner.lib.auto.PIDConstants;
-import com.swervedrivespecialties.swervelib.MotorType;
-import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
-
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.animation.Animation;
 import frc.robot.animation.CircusAnimation;
@@ -22,12 +8,7 @@ import frc.robot.animation.QuickSlowFlash;
 import frc.robot.animation.RaceAnimation;
 import frc.robot.animation.RainbowAnimation;
 import frc.robot.animation.ZoomAnimation;
-import frc.robot.animation.DeathAnimation;
-import frc.robot.inputs.JoystickAdjuster;
-import frc.robot.math.Units555;
 import frc.robot.util.Array555;
-import frc.robot.util.frc.GameController;
-import frc.robot.util.frc.SwerveModuleSpec;
 
 
 

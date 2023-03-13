@@ -3,8 +3,6 @@ package frc.robot.util;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
-import edu.wpi.first.networktables.DoubleArrayEntry;
-
 public class LazyDouble extends Lazy<Double> implements DoubleSupplier
 {
 
