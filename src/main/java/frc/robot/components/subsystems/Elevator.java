@@ -63,7 +63,7 @@ public class Elevator extends ManagerSubsystemBase
 
     private double getHeightNormalized()
     {
-        return Math555.invl erp(encoder.getPosition(), MIN_HEIGHT, MAX_HEIGHT);
+        return Math555.invlerp(encoder.getPosition(), MIN_HEIGHT, MAX_HEIGHT);
     }
 
     private double getUpwardMultiplier()
