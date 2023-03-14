@@ -35,13 +35,10 @@ public class Elevator extends ManagerSubsystemBase
     // Rev limit switches are true if not active, false if active --> so invert
     private LimitSwitch toplimitSwitch = new LimitSwitch(TOP_LIMIT_SWITCH, true); 
     private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH, true);
-    // private LimitSwitch startlimitSwitch = new LimitSwitch(START_LIMIT_SWITCH);
 
     public final PIDMechanism PID = new PIDMechanism(updown());
 
     MechanismLigament2d ligament;
-
-    double maxSpeed = 1;
 
     public MechanismObject2d getMechanismObject() {return ligament;}
     
@@ -62,6 +59,32 @@ public class Elevator extends ManagerSubsystemBase
         MechanismRoot2d elevatorRoot = ChargedUp.mainMechanism.getRoot("Elevator::root", 2.5, 0.5);
         ligament = elevatorRoot.append(new MechanismLigament2d("Elevator::length", 0, 90));
         ligament.setColor(new Color8Bit(SimulationConstants.ELEVATOR_COLOR));
+    }
+
+    private double getHeightNormalized()
+    {
+        return Math555.invl erp(encoder.getPosition(), MIN_HEIGHT, MAX_HEIGHT);
+    }
+
+    private double getUpwardMultiplier()
+    {
+        double ynorm = getHeightNormalized();
+
+        if(ynorm < 1 - BUFFER_UP) return SPEED;
+        return SPEED - SPEED * (ynorm - 1 - BUFFER_UP) / BUFFER_UP;
+    }
+    private double getDownwardsMultiplier()
+    {
+        double ynorm = getHeightNormalized();
+
+        if(ynorm > BUFFER_DOWN) return SPEED;
+        return ynorm / BUFFER_DOWN * SPEED;
+    }
+
+    private double getModifiedSpeed(double speed)
+    {
+        if(speed > 0) return getUpwardMultiplier()    * speed;
+        else          return getDownwardsMultiplier() * speed;
     }
 
     /**
@@ -208,11 +231,6 @@ public class Elevator extends ManagerSubsystemBase
             }
         }
 
-        // Prevent stupid
-        maxSpeed = encoder.getPosition() > MAX_HEIGHT - BUFFER_TO_MAX 
-                || encoder.getPosition() < MIN_HEIGHT + BUFFER_TO_MAX ? 0.5 : 1;
-
-        maxSpeed *= SPEED;
         // Logging.info("" + encoder.getPosition());
 
         // maxSpeed *= 0.1;
@@ -231,7 +249,7 @@ public class Elevator extends ManagerSubsystemBase
         // System.out.println("Stinger::pid_on  = " + ChargedUp.stinger.PID.active());
         // shouldStop = false;
         if(shouldStop) motor.set(0);
-        else           motor.set(PID.getSpeed() * maxSpeed + ff);
+        else           motor.set(getModifiedSpeed(PID.getSpeed()) + ff);
         // Logging.info("" + motor.get());
 
 

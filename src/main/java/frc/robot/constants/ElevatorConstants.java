@@ -19,6 +19,9 @@ public class ElevatorConstants
     public static final boolean INVERTED = true;
     // public static final boolean ENCODER_INVERTED = true;
 
+    public static final double BUFFER_UP = 0.1;
+    public static final double BUFFER_DOWN = 0.15;
+
     public static final int TOP_LIMIT_SWITCH = 0;
     public static final int BOTTOM_LIMIT_SWITCH = 1;
     public static final int START_LIMIT_SWITCH = 2; //not used anyomore
