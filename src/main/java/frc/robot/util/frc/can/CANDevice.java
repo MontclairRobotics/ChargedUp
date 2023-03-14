@@ -1,13 +1,20 @@
 package frc.robot.util.frc.can;
 
+import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.ErrorCode;
+import com.ctre.phoenix.motorcontrol.Faults;
+import com.ctre.phoenix.motorcontrol.StickyFaults;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
+
+import edu.wpi.first.wpilibj.PneumaticHub;
+import edu.wpi.first.wpilibj.PneumaticsBase;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 
 public interface CANDevice 
 {
@@ -70,6 +77,21 @@ public interface CANDevice
             }
         };
     }
+    public static CANDevice pneu(PneumaticsBase pneu, Supplier<CANErrorCode> err)
+    {
+        return new CANDevice() 
+        {
+            
+            @Override
+            public Object getDeviceObject() {return pneu;}
+
+            @Override
+            public int getID() {return pneu.getModuleNumber();}
+
+            @Override
+            public CANErrorCode getErrorCode() {return err.get();}
+        };
+    }
 
     public static CANDevice sparkMax(CANSparkMax mot)
     {
@@ -83,12 +105,23 @@ public interface CANDevice
     {
         return ctre(cdr, cdr::getLastError, cdr::getDeviceID);
     }
+    public static CANDevice revph(PneumaticHub ph)
+    {
+        return pneu(ph, () -> 
+        {
+            if(ph.getStickyFaults().CanBusOff
+            || ph.getStickyFaults().CanWarning) return CANErrorCode.NOT_FOUND;
+
+            return CANErrorCode.OK;
+        });
+    }
 
     public static CANDevice get(Object obj)
     {
-        if(obj instanceof CANSparkMax) return sparkMax((CANSparkMax)obj);
-        if(obj instanceof TalonFX)     return talon((TalonFX)obj);
-        if(obj instanceof CANCoder)    return cancoder((CANCoder)obj);
+        if(obj instanceof CANSparkMax)  return sparkMax((CANSparkMax)obj);
+        if(obj instanceof TalonFX)      return talon((TalonFX)obj);
+        if(obj instanceof CANCoder)     return cancoder((CANCoder)obj);
+        if(obj instanceof PneumaticHub) return revph((PneumaticHub)obj);
 
         return null;
     }

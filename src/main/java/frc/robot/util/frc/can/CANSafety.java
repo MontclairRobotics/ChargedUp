@@ -17,22 +17,25 @@ public class CANSafety implements Manager
     }
 
     private static boolean hasErrors;
+    
     private static HashMap<Object, CANDevice> objectMap = new HashMap<>();
     private static HashMap<CANDevice, CANErrorCode> lastCodes = new HashMap<>();
     private static HashSet<CANDevice> erroredDevices = new HashSet<>();
+    private static HashSet<CANDevice> okDevices = new HashSet<>();
 
     public static boolean hasErrors() {return hasErrors;}
-    public static CANDevice getDevice(Object obj) {return objectMap.get(obj);}
-    public static CANErrorCode getErrorCode(Object obj)
+    public static CANErrorCode getErrorCode(CANDevice dev)
     {
-        if(objectMap.containsKey(obj))
+        if(lastCodes.containsKey(dev))
         {
-            return lastCodes.get(objectMap.get(obj));
+            return lastCodes.get(dev);
         }
 
         return CANErrorCode.OK;
     }
-    public static Set<CANDevice> devicesWithErrors() {return erroredDevices;}
+    public static Set<CANDevice> devices() {return lastCodes.keySet();}
+    public static Set<CANDevice> erroredDevices() {return erroredDevices;}
+    public static Set<CANDevice> okDevices() {return erroredDevices;}
 
     public static <T> T monitor(T obj)
     {
@@ -50,7 +53,9 @@ public class CANSafety implements Manager
     public void always() 
     {
         hasErrors = false;
+
         erroredDevices.clear();
+        okDevices.clear();
 
         for(CANDevice dev : lastCodes.keySet())
         {
@@ -60,6 +65,10 @@ public class CANSafety implements Manager
             {
                 hasErrors = true;
                 erroredDevices.add(dev);
+            }
+            else 
+            {
+                okDevices.add(dev);
             }
 
             lastCodes.put(dev, errCode);

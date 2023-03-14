@@ -40,6 +40,7 @@ import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
+import frc.robot.util.frc.can.CANSafety;
 import frc.robot.util.frc.commandrobot.RobotContainer;
 import frc.robot.vision.LimelightSystem;
 import frc.robot.vision.VisionSystem;
@@ -115,6 +116,8 @@ public class ChargedUp extends RobotContainer
         Shuffleboard.getTab("The Field").add(field).withSize(10, 6);
 
         pneu.enableCompressorDigital();
+        CANSafety.monitor(pneu);
+
         CameraServer.startAutomaticCapture();
 
         for(int port = 5800; port <= 5805; port++)
