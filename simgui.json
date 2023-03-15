@@ -2,7 +2,20 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/Shuffleboard/Auto/Starting Position": "String Chooser"
+      "/Shuffleboard/Auto/Starting Position": "String Chooser",
+      "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
+      "/Shuffleboard/PID/ELEVATOR-PID/Elevator PID": "PIDController",
+      "/Shuffleboard/PID/THETA-PID/θ-PID Controller": "PIDController",
+      "/Shuffleboard/PID/X-PID/X-PID Controller": "PIDController",
+      "/Shuffleboard/PID/Y-PID/Y-PID Controller": "PIDController",
+      "/Shuffleboard/The Field/Field": "Field2d"
+    },
+    "windows": {
+      "/FMSInfo": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   }
 }

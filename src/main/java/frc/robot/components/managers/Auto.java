@@ -34,7 +34,7 @@ public class Auto extends ManagerBase
     private final GenericEntry leaveCommunity;
     private final GenericEntry scoreTwice;
     private final GenericEntry balance;
-    private final GenericEntry refresh;
+    private final GenericEntry pointless;
     
     public Auto()
     {
@@ -59,28 +59,10 @@ public class Auto extends ManagerBase
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .withPosition(0, 3)
             .withSize(2, 1).getEntry();
-        refresh = autoTab.add("Refresh", false)
+        pointless = autoTab.add("Pointless", false)
             .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(5, 4)
+            .withPosition(5, 0)
             .withSize(1, 1).getEntry();
-
-        GenericEntry[] entriesToListen = {
-            leaveCommunity,
-            scoreTwice,
-            balance,
-            refresh
-        };
-
-        for(GenericEntry entry : entriesToListen)
-        {    
-            NetworkTableInstance
-                .getDefault()
-                .addListener(
-                    entry, 
-                    EnumSet.of(Kind.kValueAll), 
-                    e -> updateAutoCommand()
-                );
-        }
     }
 
     private Command command = null;
@@ -134,6 +116,8 @@ public class Auto extends ManagerBase
         }
 
         previous = current;
+
+        pointless.setBoolean(false);
     }
 
     //orange juice because i said so. "Cesca is so awesome" - Dylan & Abe (simultaneously)
@@ -161,7 +145,7 @@ public class Auto extends ManagerBase
         {
             case "left": 
                 str += "1";
-                if(!mobility) return str; 
+                if(!mobility) break; 
 
                 str += "A";
                 if(scoreTwice) str += "4";
@@ -169,12 +153,11 @@ public class Auto extends ManagerBase
 
             case "middle": 
                 str += "2";
-                if(!mobility) return str; 
                 break;
 
             case "right": 
                 str += "3";
-                if(!mobility) return str; 
+                if(!mobility) break; 
                
                 str += "C";
                 if (scoreTwice) str += "5";
