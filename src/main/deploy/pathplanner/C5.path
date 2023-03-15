@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 6.7,
+        "x": 6.8,
         "y": 0.95
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.3231665372679196,
-        "y": 0.7493950398665674
+        "x": 5.911259946826221,
+        "y": 0.8689185413886918
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -16,26 +16,24 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Pick Up"
-        ],
-        "executionBehavior": "sequential",
+        "names": [],
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
     },
     {
       "anchorPoint": {
-        "x": 4.324578110912597,
-        "y": 0.7948129210706021
+        "x": 4.855677813464395,
+        "y": 0.8413816161705584
       },
       "prevControl": {
-        "x": 5.193830426085688,
-        "y": 0.8004943087514715
+        "x": 5.383369099245144,
+        "y": 0.8413816161705584
       },
       "nextControl": {
-        "x": 3.4559611328854403,
-        "y": 0.7891356859200982
+        "x": 4.1672546830110315,
+        "y": 0.8413816161705584
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -44,7 +42,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [],
-        "executionBehavior": "sequential",
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -55,8 +53,8 @@
         "y": 1.05
       },
       "prevControl": {
-        "x": 2.6862833212845914,
-        "y": 0.7308267607988216
+        "x": 2.4599653194866877,
+        "y": 0.6669810897890386
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -72,21 +70,5 @@
       }
     }
   ],
-  "maxVelocity": 2.0,
-  "maxAcceleration": null,
-  "isReversed": null,
-  "markers": [
-    {
-      "position": 1.156363636363639,
-      "names": [
-        "Elevator High"
-      ]
-    },
-    {
-      "position": 0.5236363636363668,
-      "names": [
-        "Intake Off"
-      ]
-    }
-  ]
+  "markers": []
 }
