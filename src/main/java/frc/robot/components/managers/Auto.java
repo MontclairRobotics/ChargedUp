@@ -35,6 +35,9 @@ public class Auto extends ManagerBase
     private final GenericEntry scoreTwice;
     private final GenericEntry balance;
     private final GenericEntry pointless;
+    private final GenericEntry field;
+    private final GenericEntry autoStringEntry;
+    private String autoString = "";
     
     public Auto()
     {
@@ -61,8 +64,22 @@ public class Auto extends ManagerBase
             .withSize(2, 1).getEntry();
         pointless = autoTab.add("Pointless", false)
             .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(5, 0)
+            .withPosition(9, 0)
             .withSize(1, 1).getEntry();
+
+        autoTab
+            .addString("Recent Log", Logging::mostRecentLog)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(3, 1)
+            .withPosition(0, 4);
+        field = autoStringEntry = autoTab.add("Command String", autoString)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withPosition(9, 1)
+            .withSize(1, 1)
+            .getEntry();
+
+        // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);
+        
     }
 
     private Command command = null;
@@ -98,12 +115,13 @@ public class Auto extends ManagerBase
             command = Commands.none();
         }
     }
+
     String previous = "";
 
     @Override
     public void always() 
     {
-        String current  = getAutoString(
+        String current = getAutoString(
             chooseStart.getSelected(), 
             leaveCommunity.getBoolean(false), 
             scoreTwice.getBoolean(false), 
@@ -116,8 +134,10 @@ public class Auto extends ManagerBase
         }
 
         previous = current;
+        autoString = current;
 
         pointless.setBoolean(false);
+        if (autoString != null) autoStringEntry.setString(autoString);
     }
 
     //orange juice because i said so. "Cesca is so awesome" - Dylan & Abe (simultaneously)
@@ -143,7 +163,7 @@ public class Auto extends ManagerBase
 
         switch(start) 
         {
-            case "left": 
+            case "right": 
                 str += "1";
                 if(!exitComm) break; 
 
@@ -155,7 +175,7 @@ public class Auto extends ManagerBase
                 str += "2";
                 break;
 
-            case "right": 
+            case "left": 
                 str += "3";
                 if(!exitComm) break; 
                

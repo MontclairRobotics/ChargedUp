@@ -52,6 +52,7 @@ public class ChargedUp extends RobotContainer
 
     // SIMULATION //
     public static final Field2d field = new Field2d();
+    public static Field2d getField() {return field;}
     public static final Mechanism2d mainMechanism = new Mechanism2d(5, 5);
 
     // CONTROLLERS //
@@ -110,8 +111,7 @@ public class ChargedUp extends RobotContainer
     public void initialize() 
     {
         field.setRobotPose(2, 2, Rotation2d.fromDegrees(0));
-        Shuffleboard.getTab("The Field").add(field).withSize(10, 6);
-        // Auto.getAutoTab().add(field).withSize(10, 6);
+        Shuffleboard.getTab("The Field").add(field).withSize(7, 4);
 
         pneu.enableCompressorDigital();
         CANSafety.monitor(pneu);

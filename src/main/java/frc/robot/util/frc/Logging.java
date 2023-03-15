@@ -74,7 +74,7 @@ public class Logging
     public static String mostRecentLog()
     {
         int idx = currentLog-1 >=0 && currentLog-1 < LOG_CAPACITY ? currentLog-1 : 0;
-        return logs[idx];
+        return logs[idx] == null ? "" : logs[idx];
     }
 
     /**
