@@ -77,7 +77,69 @@ public class Auto extends ManagerBase
 
     //// SEQUENCE PARSING ///////
 
-    
+    /**
+     * Returns a parseable auto string using inputted parameters retrieved from Shuffleboard
+     * Auto string is parsed using {@link #lex}
+     * 
+     * @param start where the robot starts, 1 for Left, 2 for Middle, 3 for Right
+     * @param mobility if the robot moves during auto
+     * @param scoreTwice if the robot scores twice
+     * @param balance if the robot balances
+     * @return the parseable auto string
+     */
+     
+    private static String getAutoString(String start, boolean mobility, boolean scoreTwice, boolean balance)
+    {
+        String str = ""; 
+        start = start.toLowerCase();
+
+        switch(start) 
+        {
+            case "left": 
+                str += "1";
+                if(!mobility) return str; 
+
+                str += "A";
+                if(scoreTwice) str += "4";
+                break;
+
+            case "middle": 
+                str += "2";
+                if(!mobility) return str; 
+                break;
+
+            case "right": 
+                str += "3";
+                if(!mobility) return str; 
+               
+                str += "C";
+                if (scoreTwice) str += "5";
+                break;
+
+            default:
+                Logging.errorNoTrace("Invalid start position: " + start + ", go read a self-help book :)");
+                return null;
+        } 
+
+        if(balance) str += "B";
+
+        return str;
+    }
+
+    /**
+     * Lex an autonomous sequence string into its components.
+     * Sequence string is generated using {@link #getAutoString(String, boolean, boolean, boolean)}
+     * Skips over any whitespace characters and appends modifiers 
+     * to their bases ("!A" remains conjoined while " A" becomes "A").
+     * 
+     * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
+     */
+    public static String[] lex() 
+    {
+        //TODO: get values from shuffleboard
+        return lexFromString(getAutoString("Left", true, false, true));
+    }
+
     /**
      * Lex an autonomous sequence string into its components.
      * Skips over any whitespace characters and appends modifiers 
@@ -86,7 +148,12 @@ public class Auto extends ManagerBase
      * @param str The autonomous sequence string
      * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
      */
-    public static String[] lex(String str)
+    public static String[] lex(String str) 
+    {
+        return lexFromString(str);     
+    }
+
+    private static String[] lexFromString(String str)
     {
         if(str.length() == 0)
         {
