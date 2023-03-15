@@ -535,9 +535,11 @@ public class Commands2023
                 case "A": 
                 case "C": return pickup();
 
-                case "1":
+                case "1": return scoreMidPeg();
                 case "3": return scoreMidPeg();
-                case "2": return scoreMidShelf();
+                case "2": return scoreMidPeg();
+                case "4": return scoreMidShelf();
+                case "5": return scoreMidShelf();
 
                 case "B": return balance();
 
