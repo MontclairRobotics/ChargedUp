@@ -33,12 +33,12 @@ public class ElevatorConstants
 
     public static final double BUFFER_TO_MAX = Units.inchesToMeters(6);
     public static final double MAX_HEIGHT = Units.inchesToMeters(62);
+    public static final double MIN_HEIGHT = 0;
     
     public static final double MID_HEIGHT_CONE  = MAX_HEIGHT;//Units.feetToMeters(2.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
     public static final double MID_HEIGHT_CUBE = MAX_HEIGHT - Units.inchesToMeters(10);
 
     public static final double BUFFER_SPACE_TO_INTAKE = Units.feetToMeters(12.0/12);
-    public static final double MIN_HEIGHT = 0;
 
     public static final double DEADBAND = 0.05;
     public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   

@@ -4,9 +4,19 @@ import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableEvent.Kind;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.ChargedUp;
@@ -17,19 +27,62 @@ import frc.robot.Commands2023;
  */
 public class Auto extends ManagerBase
 {
-    private GenericEntry subscriber;
+    private static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    public static ShuffleboardTab getAutoTab() {return autoTab;}
+
+    private final SendableChooser<String> chooseStart;
+    private final GenericEntry leaveCommunity;
+    private final GenericEntry scoreTwice;
+    private final GenericEntry balance;
+    private final GenericEntry refresh;
     
     public Auto()
     {
-        subscriber = ChargedUp.getMainTab()
-            .add("Auto Command", "Enter a command here!")
+        chooseStart = new SendableChooser<String>();
+        chooseStart.setDefaultOption("Left", "Left");
+        chooseStart.addOption("Middle", "Middle");
+        chooseStart.addOption("Right", "Right");
+
+        autoTab.add("Starting Position", chooseStart)
+            .withPosition(0,0)
+            .withSize(2, 1);
+        
+        leaveCommunity = autoTab.add("Leave Community", false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(0, 1)
+            .withSize(2, 1).getEntry();
+        scoreTwice = autoTab.add("Score Twice", false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(0,2)
+            .withSize(2, 1).getEntry();
+        balance = autoTab.add("Balance", false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
             .withPosition(0, 3)
-            .withSize(2, 1)
-            .withWidget(BuiltInWidgets.kTextView)
-            .getEntry();
+            .withSize(2, 1).getEntry();
+        refresh = autoTab.add("Refresh", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(5, 4)
+            .withSize(1, 1).getEntry();
+
+        GenericEntry[] entriesToListen = {
+            leaveCommunity,
+            scoreTwice,
+            balance,
+            refresh
+        };
+
+        for(GenericEntry entry : entriesToListen)
+        {    
+            NetworkTableInstance
+                .getDefault()
+                .addListener(
+                    entry, 
+                    EnumSet.of(Kind.kValueAll), 
+                    e -> updateAutoCommand()
+                );
+        }
     }
 
-    private String previous = "";
     private Command command = null;
 
     public Command get()
@@ -45,7 +98,12 @@ public class Auto extends ManagerBase
 
     private void updateAutoCommand()
     {
-        String str = subscriber.getString("");
+        String str = getAutoString(
+            chooseStart.getSelected(), 
+            leaveCommunity.getBoolean(false), 
+            scoreTwice.getBoolean(false), 
+            balance.getBoolean(false)
+        );
 
         command = Commands2023.buildAuto(str);
 
@@ -58,11 +116,17 @@ public class Auto extends ManagerBase
             command = Commands.none();
         }
     }
+    String previous = "";
 
     @Override
     public void always() 
     {
-        String current = subscriber.getString("");
+        String current  = getAutoString(
+            chooseStart.getSelected(), 
+            leaveCommunity.getBoolean(false), 
+            scoreTwice.getBoolean(false), 
+            balance.getBoolean(false)
+        );
 
         if(!current.equals(previous))
         {
@@ -77,7 +141,69 @@ public class Auto extends ManagerBase
 
     //// SEQUENCE PARSING ///////
 
-    
+    /**
+     * Returns a parseable auto string using inputted parameters retrieved from Shuffleboard
+     * Auto string is parsed using {@link #lex}
+     * 
+     * @param start where the robot starts, 1 for Left, 2 for Middle, 3 for Right
+     * @param mobility if the robot moves during auto
+     * @param scoreTwice if the robot scores twice
+     * @param balance if the robot balances
+     * @return the parseable auto string
+     */
+     
+    private static String getAutoString(String start, boolean mobility, boolean scoreTwice, boolean balance)
+    {
+        String str = ""; 
+        start = start.toLowerCase();
+
+        switch(start) 
+        {
+            case "left": 
+                str += "1";
+                if(!mobility) return str; 
+
+                str += "A";
+                if(scoreTwice) str += "4";
+                break;
+
+            case "middle": 
+                str += "2";
+                if(!mobility) return str; 
+                break;
+
+            case "right": 
+                str += "3";
+                if(!mobility) return str; 
+               
+                str += "C";
+                if (scoreTwice) str += "5";
+                break;
+
+            default:
+                Logging.errorNoTrace("Invalid start position: " + start + ", go read a self-help book :)");
+                return null;
+        } 
+
+        if(balance) str += "B";
+
+        return str;
+    }
+
+    /**
+     * Lex an autonomous sequence string into its components.
+     * Sequence string is generated using {@link #getAutoString(String, boolean, boolean, boolean)}
+     * Skips over any whitespace characters and appends modifiers 
+     * to their bases ("!A" remains conjoined while " A" becomes "A").
+     * 
+     * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
+     */
+    public static String[] lex() 
+    {
+        //TODO: get values from shuffleboard
+        return lexFromString(getAutoString("Left", true, false, true));
+    }
+
     /**
      * Lex an autonomous sequence string into its components.
      * Skips over any whitespace characters and appends modifiers 
@@ -86,7 +212,12 @@ public class Auto extends ManagerBase
      * @param str The autonomous sequence string
      * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
      */
-    public static String[] lex(String str)
+    public static String[] lex(String str) 
+    {
+        return lexFromString(str);     
+    }
+
+    private static String[] lexFromString(String str)
     {
         if(str.length() == 0)
         {
