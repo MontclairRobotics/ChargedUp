@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
 import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
@@ -109,9 +110,17 @@ public class Elevator extends ManagerSubsystemBase
     /**
      * Set the elevator to {@link Robot#MID_HEIGHT the middle height}
      */
-    public void setMid()
+    public void setMidCube()
     {
-        setHeight(MID_HEIGHT);
+        setHeight(MID_HEIGHT_CUBE);
+    }
+
+    /**
+     * Sets the elevator to {@link ElevatorConstants#MID_HEIGHT_CUBE the middle cone height}
+     */
+    public void setMidCone()
+    {
+        setHeight(MID_HEIGHT_CONE);
     }
 
     /**
