@@ -30,6 +30,7 @@ public class LED extends ManagerBase
     private boolean lastFrameDisabled = false;
     private boolean lastFrameNavxZero = false;
     private boolean lastFrameCANError = false;
+    private boolean lastFrameNotLinedUp = false;
 
     public static final double TRANSITION_LENGTH = 0.4;
     public static final int LED_COUNT = 95;
@@ -112,8 +113,17 @@ public class LED extends ManagerBase
                     resetToDefault();
                     replace(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kGreen));
                 }
-                else if(!navxZero && lastFrameNavxZero)
+                else if(Math.abs(ChargedUp.vision.getObjectAX()) >= 1) {
+                    if (ChargedUp.vision.getObjectAX() < 0) {
+                        add(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kFirstRed).flipped());
+                    } else if (ChargedUp.vision.getObjectAX() > 0) {
+                        add(new ZoomAnimation(Double.POSITIVE_INFINITY, Color.kFirstRed));
+                    }
+
+                } else if(!navxZero && lastFrameNavxZero)
                 {
+                    resetToDefault();
+                } else if((Math.abs(ChargedUp.vision.getObjectAX()) <= 1) && lastFrameNotLinedUp) {
                     resetToDefault();
                 }
 
