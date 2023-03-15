@@ -142,4 +142,7 @@ public class DriveConstants
     // 1st element is drive speed, 2nd is angular speed
 
     public static final String[] MODULE_NAMES = {"FL", "FR", "BR", "BL"};
+
+    public static final Tunable<Double> TIME_FULL_STOP_SEC = Tunable.of(0.25, "drive.time_full_stop");
+    public static double inputRateLimit() {return 1 / TIME_FULL_STOP_SEC.get();}
 }
