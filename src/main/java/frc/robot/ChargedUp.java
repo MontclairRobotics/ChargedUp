@@ -176,7 +176,6 @@ public class ChargedUp extends RobotContainer
         // VISION MOVEMENT //
         driverController.getButton(Button.A_CROSS) // switch cone or cube
                 .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
-        // .onTrue(Commands2023.scoreHigh());
 
         driverController.getButton(Button.X_SQUARE)
                 .onTrue(Commands2023.moveToObjectSideways(vision::getDesiredDriveTarget));

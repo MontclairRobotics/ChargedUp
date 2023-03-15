@@ -107,14 +107,6 @@ public class Elevator extends ManagerSubsystemBase
     }
 
     /**
-     * Set the elevator to {@link Robot#HIGH_HEIGHT the high height}
-     */
-    public void setHigh()
-    {
-        setHeight(HIGH_HEIGHT);
-    }
-
-    /**
      * Set the elevator to {@link Robot#MID_HEIGHT the middle height}
      */
     public void setMid()

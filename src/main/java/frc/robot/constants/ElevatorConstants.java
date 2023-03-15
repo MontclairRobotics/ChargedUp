@@ -34,7 +34,6 @@ public class ElevatorConstants
     public static final double BUFFER_TO_MAX = Units.inchesToMeters(6);
     public static final double MAX_HEIGHT = Units.inchesToMeters(62);
     
-    public static final double HIGH_HEIGHT = MAX_HEIGHT;//Units.feetToMeters(3.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
     public static final double MID_HEIGHT  = MAX_HEIGHT - Units.inchesToMeters(0);//Units.feetToMeters(2.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
 
     public static final double BUFFER_SPACE_TO_INTAKE = Units.feetToMeters(12.0/12);

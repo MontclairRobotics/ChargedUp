@@ -9,37 +9,15 @@ import static frc.robot.constants.GrabberConstants.*;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 
-
-/**
- *      /\      // Output
- *      ||
- *    [####]
- *    /\  \/    // Select between input or none
- *    ||
- *   [######]   // Select between "low" and "high" pressure inputs
- *   /\    /\
- */
 public class Grabber extends ManagerSubsystemBase 
 {
     Solenoid outputSolenoid = new Solenoid(PneuConstants.PH_PORT, PneumaticsModuleType.REVPH, PneuConstants.GRABBER_SOLENOID_PORT);
-    // Solenoid pressureSolenoid = new Solenoid(PneumaticsModuleType.REVPH, PneuConstants.GRABBER_PSI_SOLENOID_PORT);
     private boolean holdingCone = false;
 
     GamePiece heldObject = GamePiece.NONE;
 
     public GamePiece getHeldObject() {return heldObject;}
     public String getHeldObjectName() {return heldObject.toString().toLowerCase();}
-    
-    // /**
-    //  * Update the pressure of the airflow to respect current readings.
-    //  */
-    // public void updatePressure()
-    // {
-    //     // if(ChargedUp.colorSensor.seesCone()) setPSIHigh();
-    //     // else                                 setPSINormal();
-    //     if (seesCone) setPSIHigh();
-    //     else          setPSINormal();
-    // }
 
     /**
      * Sets pneumatic state of grabber to <b>grabbed</b> (<b>non-default</b> state of solenoid)
@@ -89,35 +67,6 @@ public class Grabber extends ManagerSubsystemBase
         return holdingCone;
     }
 
-
-    // /**
-    //  * Sets pneumatic state of grabber to <b>high pressure</b> (<b>non-default</b> state of solenoid)
-    //  */
-    // public void setPSIHigh()
-    // {
-    //     pressureSolenoid.set(!PSI_SOLENOID_DEFAULT_STATE);
-    // }
-
-    // /**
-    //  * Sets pneumatic state of grabber to <b>normal pressure</b> (<b>default</b> state of solenoid)
-    //  */
-    // public void setPSINormal()
-    // {
-    //     pressureSolenoid.set(PSI_SOLENOID_DEFAULT_STATE);
-    // }
-
-    // /**
-    //  * Toggle the Pressure
-    //  * <p>
-    //  * - if it is high pressure, then <b>normal pressure</b>
-    //  * <p>
-    //  * - if it is normal pressure, then <b>high pressure</b> 
-    //  */
-    // public void togglePressure() 
-    // {
-    //     pressureSolenoid.toggle();
-    // }
-
     @Override
     public void always() 
     {
@@ -131,6 +80,3 @@ public class Grabber extends ManagerSubsystemBase
 
     
 }
-
-// Add multiple pressures using another solenoid 
-// Utilize a color sensor to make sure that higher pressure is applied only when we are sure of the presence of a cone

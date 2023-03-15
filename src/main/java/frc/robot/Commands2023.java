@@ -115,14 +115,7 @@ public class Commands2023
     {
         return stinger.outMid();
     }
-    /**
-     * extends the stinger to the high pole
-     * @return Command
-     */
-    public static Command stingerToHigh()
-    {
-        return stinger.outHigh();
-    }
+
     /**
      * toggle the stinger
      * @return Command
@@ -153,15 +146,6 @@ public class Commands2023
     }
 
     /**
-     * Sets the elevator to the height of the high section
-     * @return the command
-     */
-    public static Command elevatorToHigh()
-    {
-        return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
-    }
-
-    /**
      * Moves the elevator downwards until it reaches the start position
      * @return the command
      */
@@ -176,32 +160,12 @@ public class Commands2023
     }
 
     ///////////////// ELEVATOR + STINGER COMMANDS /////////////////////////////
-
-    /**
-     * Moves the Elevator and Stinger to High position to sequence
-     * <p>
-     * Elevator goes to {@link Robot#HIGH_HEIGHT High Height Constant}
-     * <p>
-     * Stinger goes to {@link Robot#HIGH_LENGTH_MUL High Length Constant}
-     * @return Command
-     */
-    public static Command elevatorStingerToHigh()
-    {
-        CommandBase c = sequence(
-            elevatorToHigh(),
-            runOnce(() -> Logging.info("Finished the ELeVaToR pid")),
-            stingerToHigh(),
-            runOnce(() -> Logging.info("Finished the Stinger pid"))
-        );
-        c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
-        return c;
-    }
     /**
      * Moves the Elevator and Stinger to MID position in sequence
      * <p>
-     * Elevator goes to {@link Robot#MID_HEIGHT High Height Constant}
+     * Elevator goes to {@link Robot#MID_HEIGHT Mid Height Constant}
      * <p>
-     * Stinger goes to {@link Robot#MID_LENGTH_MUL High Length Constant}
+     * Stinger goes to {@link Robot#MID_LENGTH_MUL Mid Length Constant}
      * @return Command
      */
     public static Command elevatorStingerToMid()
@@ -419,15 +383,8 @@ public class Commands2023
     public static Command scoreMidShelf()
     {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF);}
     
-    public static Command scoreHighPeg()
-    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.PEG);}
-    public static Command scoreHighShelf()
-    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.SHELF);}
-    
     public static Command scoreMid()
     {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.MID,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
-    public static Command scoreHigh()
-    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
     public static Command scoreLow()
     {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
 
@@ -560,10 +517,9 @@ public class Commands2023
                 trajectories.add(nextTrajectory);
 
                 return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
-                    "Elevator High", elevatorToMid(), //TODO: this is very poorly named
                     "Intake On", shwooperSuck(),
                     "Retract", elevatorStingerReturn(),
-                    "Intake Off", stopShwooper()
+                    "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
                 ));
             }
             catch (Exception e)

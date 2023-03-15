@@ -39,8 +39,6 @@ public class Stinger extends ManagerSubsystemBase
     public Command outLow() {return moveThenOut(MID_LENGTH - LOW_LENGTH);}
     
     public Command outMid() {return Commands.runOnce(() -> target = true).andThen(Commands.waitSeconds(PNEU_TIME));}
-    
-    public Command outHigh() {return Commands2023.log("DO NOT");}
 
     public boolean isOut() {return solenoid.get();}
 
