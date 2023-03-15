@@ -4,13 +4,18 @@ import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.commandrobot.ManagerBase;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,42 +27,62 @@ import frc.robot.Commands2023;
  */
 public class Auto extends ManagerBase
 {
-    private GenericEntry subscriber;
     private static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     public static ShuffleboardTab getAutoTab() {return autoTab;}
+
+    private final SendableChooser<String> chooseStart;
+    private final GenericEntry leaveCommunity;
+    private final GenericEntry scoreTwice;
+    private final GenericEntry balance;
+    private final GenericEntry refresh;
     
     public Auto()
     {
-        subscriber = ChargedUp.getMainTab()
-            .add("Auto Command", "Enter a command here!")
-            .withPosition(0, 3)
-            .withSize(2, 1)
-            .withWidget(BuiltInWidgets.kTextView)
-            .getEntry();
-        
-        SendableChooser<String> chooseStart = new SendableChooser<String>();
-        chooseStart.addOption("Left", "Left");
+        chooseStart = new SendableChooser<String>();
+        chooseStart.setDefaultOption("Left", "Left");
         chooseStart.addOption("Middle", "Middle");
         chooseStart.addOption("Right", "Right");
+
         autoTab.add("Starting Position", chooseStart)
             .withPosition(0,0)
             .withSize(2, 1);
         
-        autoTab.addBoolean("Leave Community", () -> false)
+        leaveCommunity = autoTab.add("Leave Community", false)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .withPosition(0, 1)
-            .withSize(2, 1);
-        autoTab.addBoolean("Score Twice", () -> false)
+            .withSize(2, 1).getEntry();
+        scoreTwice = autoTab.add("Score Twice", false)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .withPosition(0,2)
-            .withSize(2, 1);
-        autoTab.addBoolean("Balance", () -> false)
+            .withSize(2, 1).getEntry();
+        balance = autoTab.add("Balance", false)
             .withWidget(BuiltInWidgets.kToggleSwitch)
             .withPosition(0, 3)
-            .withSize(2, 1);
+            .withSize(2, 1).getEntry();
+        refresh = autoTab.add("Refresh", false)
+            .withWidget(BuiltInWidgets.kToggleButton)
+            .withPosition(5, 4)
+            .withSize(1, 1).getEntry();
+
+        GenericEntry[] entriesToListen = {
+            leaveCommunity,
+            scoreTwice,
+            balance,
+            refresh
+        };
+
+        for(GenericEntry entry : entriesToListen)
+        {    
+            NetworkTableInstance
+                .getDefault()
+                .addListener(
+                    entry, 
+                    EnumSet.of(Kind.kValueAll), 
+                    e -> updateAutoCommand()
+                );
+        }
     }
 
-    private String previous = "";
     private Command command = null;
 
     public Command get()
@@ -73,7 +98,12 @@ public class Auto extends ManagerBase
 
     private void updateAutoCommand()
     {
-        String str = subscriber.getString("");
+        String str = getAutoString(
+            chooseStart.getSelected(), 
+            leaveCommunity.getBoolean(false), 
+            scoreTwice.getBoolean(false), 
+            balance.getBoolean(false)
+        );
 
         command = Commands2023.buildAuto(str);
 
@@ -86,11 +116,17 @@ public class Auto extends ManagerBase
             command = Commands.none();
         }
     }
+    String previous = "";
 
     @Override
     public void always() 
     {
-        String current = subscriber.getString("");
+        String current  = getAutoString(
+            chooseStart.getSelected(), 
+            leaveCommunity.getBoolean(false), 
+            scoreTwice.getBoolean(false), 
+            balance.getBoolean(false)
+        );
 
         if(!current.equals(previous))
         {
