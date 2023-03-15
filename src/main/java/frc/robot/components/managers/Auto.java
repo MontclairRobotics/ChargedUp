@@ -130,13 +130,13 @@ public class Auto extends ManagerBase
      * Auto string is parsed using {@link #lex}
      * 
      * @param start where the robot starts, 1 for Left, 2 for Middle, 3 for Right
-     * @param mobility if the robot moves during auto
+     * @param exitComm if the robot exits the community during auto
      * @param scoreTwice if the robot scores twice
      * @param balance if the robot balances
      * @return the parseable auto string
      */
      
-    private static String getAutoString(String start, boolean mobility, boolean scoreTwice, boolean balance)
+    private static String getAutoString(String start, boolean exitComm, boolean scoreTwice, boolean balance)
     {
         String str = ""; 
         start = start.toLowerCase();
@@ -145,7 +145,7 @@ public class Auto extends ManagerBase
         {
             case "left": 
                 str += "1";
-                if(!mobility) break; 
+                if(!exitComm) break; 
 
                 str += "A";
                 if(scoreTwice) str += "4";
@@ -157,7 +157,7 @@ public class Auto extends ManagerBase
 
             case "right": 
                 str += "3";
-                if(!mobility) break; 
+                if(!exitComm) break; 
                
                 str += "C";
                 if (scoreTwice) str += "5";
