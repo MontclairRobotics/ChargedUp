@@ -6,7 +6,12 @@ import frc.robot.util.frc.commandrobot.ManagerBase;
 import java.util.ArrayList;
 
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.ChargedUp;
@@ -18,6 +23,8 @@ import frc.robot.Commands2023;
 public class Auto extends ManagerBase
 {
     private GenericEntry subscriber;
+    private static final ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
+    public static ShuffleboardTab getAutoTab() {return autoTab;}
     
     public Auto()
     {
@@ -27,6 +34,27 @@ public class Auto extends ManagerBase
             .withSize(2, 1)
             .withWidget(BuiltInWidgets.kTextView)
             .getEntry();
+        
+        SendableChooser<String> chooseStart = new SendableChooser<String>();
+        chooseStart.addOption("Left", "Left");
+        chooseStart.addOption("Middle", "Middle");
+        chooseStart.addOption("Right", "Right");
+        autoTab.add("Starting Position", chooseStart)
+            .withPosition(0,0)
+            .withSize(2, 1);
+        
+        autoTab.addBoolean("Leave Community", () -> false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(0, 1)
+            .withSize(2, 1);
+        autoTab.addBoolean("Score Twice", () -> false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(0,2)
+            .withSize(2, 1);
+        autoTab.addBoolean("Balance", () -> false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(0, 3)
+            .withSize(2, 1);
     }
 
     private String previous = "";
