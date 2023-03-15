@@ -3,6 +3,7 @@ package frc.robot.components.subsystems;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
@@ -46,6 +47,10 @@ public class Drivetrain extends ManagerSubsystemBase
     public final PIDController yController;
     public final PIDController thetaController;
 
+    public final SlewRateLimiter xInputRateLimiter;
+    public final SlewRateLimiter yInputRateLimiter;
+    public final SlewRateLimiter thetaInputRateLimiter;
+
     public final PIDMechanism xPID;
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
@@ -62,6 +67,7 @@ public class Drivetrain extends ManagerSubsystemBase
      * if control reaches "periodic" and this is true.
      */
     private boolean hasDrivenThisUpdate = false;
+    private boolean hasUsedDriverInputThisUpdate = false;
 
     //sets the speedIndex to speeds length
     private static int speedIndex = SPEEDS.length-1;
@@ -76,18 +82,18 @@ public class Drivetrain extends ManagerSubsystemBase
     }
     private SimulationData simulation;
 
-    private Consumer<Double> funcMul(Consumer<Double> cd, double factor)
-    {
-        return x -> cd.accept(x * factor);
-    }
-    private Consumer<Double> drivePid(Consumer<Double> cd)
-    {
-        return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getDriveReduction());
-    }
-    private Consumer<Double> steerPid(Consumer<Double> cd)
-    {
-        return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getSteerReduction());
-    }
+    // private Consumer<Double> funcMul(Consumer<Double> cd, double factor)
+    // {
+    //     return x -> cd.accept(x * factor);
+    // }
+    // private Consumer<Double> drivePid(Consumer<Double> cd)
+    // {
+    //     return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getDriveReduction());
+    // }
+    // private Consumer<Double> steerPid(Consumer<Double> cd)
+    // {
+    //     return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getSteerReduction());
+    // }
 
     public Drivetrain()
     {
@@ -165,17 +171,22 @@ public class Drivetrain extends ManagerSubsystemBase
 
         thetaController.enableContinuousInput(0, 2*Math.PI);
         
-        PosPID.KP.whenUpdate(drivePid(xController::setP)).whenUpdate(drivePid(yController::setP));
-        PosPID.KI.whenUpdate(drivePid(xController::setI)).whenUpdate(drivePid(yController::setI));
-        PosPID.KD.whenUpdate(drivePid(xController::setD)).whenUpdate(drivePid(yController::setD));
+        PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
+        PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
+        PosPID.KD.whenUpdate(xController::setD).whenUpdate(yController::setD);
 
-        ThetaPID.KP.whenUpdate(steerPid(thetaController::setP));
-        ThetaPID.KI.whenUpdate(steerPid(thetaController::setI));
-        ThetaPID.KD.whenUpdate(steerPid(thetaController::setD));
+        ThetaPID.KP.whenUpdate(thetaController::setP);
+        ThetaPID.KI.whenUpdate(thetaController::setI);
+        ThetaPID.KD.whenUpdate(thetaController::setD);
+
+        // Build slew rate limiters //
+        xInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
+        yInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
+        thetaInputRateLimiter = new SlewRateLimiter(inputRateLimit());
 
         // Build PID Mechanisms //
-        xPID = new PIDMechanism(xController);
-        yPID = new PIDMechanism(yController);
+        xPID     = new PIDMechanism(xController);
+        yPID     = new PIDMechanism(yController);
         thetaPID = new PIDMechanism(thetaController);
     }
 
@@ -199,7 +210,8 @@ public class Drivetrain extends ManagerSubsystemBase
     /**
      * Gets if field relative is enabled
      */
-    public boolean usingFieldRelative() {
+    public boolean usingFieldRelative() 
+    {
         return useFieldRelative;
     }
 
@@ -207,6 +219,7 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         return ChargedUp.gyroscope.getRoll();
     }
+
     /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
      * Should be called in order to manually control the robot.
@@ -216,13 +229,19 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public void setInput(JoystickInput turn, JoystickInput drive)
     {
+        hasUsedDriverInputThisUpdate = true;
+
         ControlScheme.TURN_ADJUSTER.adjustX(turn);
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
+        double turnRL = thetaInputRateLimiter.calculate(turn.getX());
+        double xRL    = xInputRateLimiter.calculate(drive.getX());
+        double yRL    = yInputRateLimiter.calculate(drive.getY());
+
         set(
-            +turn.getX()  * MAX_TURN_SPEED_RAD_PER_S,
-            +drive.getY() * MAX_SPEED_MPS,
-            +drive.getX() * MAX_SPEED_MPS
+            turnRL / SPEEDS[speedIndex][1],
+            xRL    / SPEEDS[speedIndex][0],
+            yRL    / SPEEDS[speedIndex][0]
         );
     }
     
@@ -236,23 +255,34 @@ public class Drivetrain extends ManagerSubsystemBase
      * 
      * TODO: is this correct?
      * 
-     * @param omega_rad_per_second rotational velocity in radians per second
-     * @param vx_meter_per_second x direction velocity 
-     * @param vy_meter_per_second y direction velocity
+     * @param omega rotational velocity percentage
+     * @param vx x direction velocity percentage
+     * @param vy y direction velocity percentage
      */
-    public void set(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+    public void set(double omega, double vx, double vy)
     {
-        vx_meter_per_second  = +Math555.clamp(vx_meter_per_second,  -MAX_SPEED_MPS,            MAX_SPEED_MPS);
-        vy_meter_per_second  = +Math555.clamp(vy_meter_per_second,  -MAX_SPEED_MPS,            MAX_SPEED_MPS);
-        omega_rad_per_second = +Math555.clamp(omega_rad_per_second, -MAX_TURN_SPEED_RAD_PER_S, MAX_TURN_SPEED_RAD_PER_S);
-        
-        vx_meter_per_second  *= SPEEDS[speedIndex][0];
-        vy_meter_per_second  *= SPEEDS[speedIndex][0];
-        omega_rad_per_second *= SPEEDS[speedIndex][1];
+        vx    = Math555.clamp1(vx);
+        vy    = Math555.clamp1(vy);
+        omega = Math555.clamp1(omega);
 
-        xPID.setSpeed(vx_meter_per_second);
-        yPID.setSpeed(vy_meter_per_second);
-        thetaPID.setSpeed(omega_rad_per_second);
+        xPID    .setSpeed(vx);
+        yPID    .setSpeed(vy);
+        thetaPID.setSpeed(omega);
+    }
+
+    public void setVelocities(double omega, double vx, double vy)
+    {
+        vx    /= MAX_SPEED_MPS;
+        vy    /= MAX_SPEED_MPS;
+        omega /= MAX_TURN_SPEED_RAD_PER_S;
+
+        vx    = Math555.clamp1(vx);
+        vy    = Math555.clamp1(vy);
+        omega = Math555.clamp1(omega);
+
+        xPID    .setSpeed(vx);
+        yPID    .setSpeed(vy);
+        thetaPID.setSpeed(omega);
     }
 
     /**
@@ -316,11 +346,10 @@ public class Drivetrain extends ManagerSubsystemBase
             );
         }
 
+        // Simulate swerve drive using average forces
         if(RobotBase.isSimulation())
         {
             simulation.targetSpeeds = KINEMATICS.toChassisSpeeds(states);
-
-            // System.out.println(.targetSpeeds);
 
             final double targetX = simulation.targetSpeeds.vxMetersPerSecond;
             final double targetY = simulation.targetSpeeds.vyMetersPerSecond;
@@ -364,11 +393,13 @@ public class Drivetrain extends ManagerSubsystemBase
             moduleObject.setPoses(modPoses);
         }
 
+        // Update pose
         poseEstimator.update(
             getRobotRotation(), 
             getModulePositions()
         );
 
+        // Use april tag info
         if(ChargedUp.vision.getTargetType() == DetectionType.APRIL_TAG)
         {
             ChargedUp.vision.updateEstimatedPose(poseEstimator.getEstimatedPosition());
@@ -417,33 +448,41 @@ public class Drivetrain extends ManagerSubsystemBase
 
             if (isStraightPidding) 
             {
-                if (thetaPID.getTarget() != currentStraightAngle) thetaPID.setTarget(currentStraightAngle);
-                thetaPID.updateTarget(currentStraightAngle);
+                if (thetaPID.getTarget() != currentStraightAngle) 
+                {
+                    thetaPID.setTarget(currentStraightAngle);
+                }
+                else 
+                {
+                    thetaPID.updateTarget(currentStraightAngle);
+                }
             }
 
             xPID.update();
             yPID.update();
             thetaPID.update();
-
-            double mult = 1;
-
-            // Prevent stupid also
-            if (ChargedUp.stinger.isOut())
-            {
-                mult = 0.5;
-            }
             
-            ChassisSpeeds c = getChassisSpeeds(thetaPID.getSpeed() * mult, xPID.getSpeed() * mult, yPID.getSpeed() * mult);
+            ChassisSpeeds c = getChassisSpeeds(
+                thetaPID.getSpeed() * MAX_SPEED_MPS, 
+                xPID.getSpeed()     * MAX_SPEED_MPS, 
+                yPID.getSpeed()     * MAX_TURN_SPEED_RAD_PER_S
+            );
 
             driveFromChassisSpeeds(c);
+        }
+
+        if(!hasUsedDriverInputThisUpdate)
+        {
+            xInputRateLimiter.reset(0);
+            yInputRateLimiter.reset(0);
+            thetaInputRateLimiter.reset(0);
         }
         
         Pose2d pose = getRobotDisplayPose();
         ChargedUp.field.setRobotPose(pose);
 
         hasDrivenThisUpdate = false;
-
-        // Logging.info("" + PosPID.KP.get());
+        hasUsedDriverInputThisUpdate = false;
     }
     
     public void setRobotPose(Pose2d pose)

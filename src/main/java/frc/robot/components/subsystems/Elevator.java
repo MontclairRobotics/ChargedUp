@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.ChargedUp;
 import frc.robot.constants.Ports;
 import frc.robot.constants.SimulationConstants;
+import frc.robot.constants.ElevatorConstants;
 import frc.robot.math.Math555;
 import frc.robot.util.frc.LimitSwitch;
 import frc.robot.util.frc.Logging;
@@ -109,9 +110,17 @@ public class Elevator extends ManagerSubsystemBase
     /**
      * Set the elevator to {@link Robot#MID_HEIGHT the middle height}
      */
-    public void setMid()
+    public void setMidCube()
     {
-        setHeight(MID_HEIGHT);
+        setHeight(MID_HEIGHT_CUBE);
+    }
+
+    /**
+     * Sets the elevator to {@link ElevatorConstants#MID_HEIGHT_CUBE the middle cone height}
+     */
+    public void setMidCone()
+    {
+        setHeight(MID_HEIGHT_CONE);
     }
 
     /**
@@ -210,14 +219,20 @@ public class Elevator extends ManagerSubsystemBase
                 // Logging.info("IM A TOP");
                 shouldStop = true;
                 PID.setSpeed(0);
+                encoder.setPosition(MAX_HEIGHT);
             }
         } 
         else 
         {
-            //    vv BOTTOM LIMIT vv    or                    vv STINGER IN THE WAY vv
-            if (bottomlimitSwitch.get() || ChargedUp.stinger.isOut() && getHeight() <= BUFFER_SPACE_TO_INTAKE) 
+            if (bottomlimitSwitch.get()) 
             {
                 // Logging.info("IM A BOTTOM");
+                shouldStop = true;
+                PID.setSpeed(0);
+                encoder.setPosition(MIN_HEIGHT);
+            }
+            else if (ChargedUp.stinger.isOut() && getHeight() <= BUFFER_SPACE_TO_INTAKE)
+            {
                 shouldStop = true;
                 PID.setSpeed(0);
             }

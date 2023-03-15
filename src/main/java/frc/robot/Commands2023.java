@@ -19,6 +19,7 @@ import frc.robot.components.managers.Auto;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.constants.*;
 import frc.robot.structure.DetectionType;
+import frc.robot.structure.GamePiece;
 import frc.robot.structure.ScoreHeight;
 import frc.robot.structure.ScoringType;
 import frc.robot.util.HashMaps;
@@ -137,13 +138,31 @@ public class Commands2023
     }
 
     /**
-     * Sets the elevator to the height of the middle section
+     * Sets the elevator to the height of the middle cone peg
      * @return the command
      */
-    public static Command elevatorToMid()
+    public static Command elevatorToConeMid()
     {
-        return elevator.PID.goToSetpoint(ElevatorConstants.MID_HEIGHT, elevator);
+        return elevator.PID.goToSetpoint(ElevatorConstants.MID_HEIGHT_CONE, elevator);
     }
+
+    /**
+     * Sets the elevator to the height of the middle cube shelf
+     * @return Command
+     */
+    public static Command elevatorToCubeMid()
+    {
+        return elevator.PID.goToSetpoint(ElevatorConstants.MID_HEIGHT_CUBE, elevator);
+    }
+
+    /**
+     * Sets the elevator to the height of the high section
+     * @return the command
+     */
+    // public static Command elevatorToHigh()
+    // {
+    //     return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
+    // }
 
     /**
      * Moves the elevator downwards until it reaches the start position
@@ -163,7 +182,7 @@ public class Commands2023
     /**
      * Moves the Elevator and Stinger to MID position in sequence
      * <p>
-     * Elevator goes to {@link Robot#MID_HEIGHT Mid Height Constant}
+     * Elevator goes to {@link Robot#MID_HEIGHT_CONE High Height Constant}
      * <p>
      * Stinger goes to {@link Robot#MID_LENGTH_MUL Mid Length Constant}
      * @return Command
@@ -171,7 +190,7 @@ public class Commands2023
     public static Command elevatorStingerToMid()
     {
         CommandBase c = sequence(
-            elevatorToMid(),
+            elevatorToConeMid(),
             stingerToMid()
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
@@ -199,7 +218,7 @@ public class Commands2023
     public static Command elevatorStingerToLow()
     {
         CommandBase c = sequence(
-            elevatorToMid(),
+            elevatorToLow(),
             stinger.outLow()
         );
         c.addRequirements(stinger, elevator);
@@ -379,12 +398,19 @@ public class Commands2023
     {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF);}
 
     public static Command scoreMidPeg()
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG);}
+    {return scoreFromHeightAndType(ScoreHeight.MID_CONE, ScoringType.PEG);}
     public static Command scoreMidShelf()
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF);}
+    {return scoreFromHeightAndType(ScoreHeight.MID_CUBE, ScoringType.SHELF);}
+    
+    // public static Command scoreHighPeg()
+    // {return scoreFromHeightAndType(ScoreHeight.HIGH_CONE, ScoringType.PEG);}
+    // public static Command scoreHighShelf()
+    // {return scoreFromHeightAndType(ScoreHeight.HIGH_CUBE, ScoringType.SHELF);}
     
     public static Command scoreMid()
-    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.MID,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
+    {return new ProxyCommand(() -> scoreFromHeightAndType(ChargedUp.grabber.getHeldObject() == GamePiece.CUBE? ScoreHeight.MID_CUBE : ScoreHeight.MID_CONE,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
+    // public static Command scoreHigh()
+    // {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
     public static Command scoreLow()
     {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
 
@@ -517,6 +543,8 @@ public class Commands2023
                 trajectories.add(nextTrajectory);
 
                 return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
+                    "Elevator Mid Peg", elevatorToConeMid(),
+                    "Elevator Mid Shelf", elevatorToCubeMid(),
                     "Intake On", shwooperSuck(),
                     "Retract", elevatorStingerReturn(),
                     "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
