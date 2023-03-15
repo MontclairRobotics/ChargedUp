@@ -159,10 +159,10 @@ public class Commands2023
      * Sets the elevator to the height of the high section
      * @return the command
      */
-    public static Command elevatorToHigh()
-    {
-        return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
-    }
+    // public static Command elevatorToHigh()
+    // {
+    //     return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
+    // }
 
     /**
      * Moves the elevator downwards until it reaches the start position

@@ -219,14 +219,20 @@ public class Elevator extends ManagerSubsystemBase
                 // Logging.info("IM A TOP");
                 shouldStop = true;
                 PID.setSpeed(0);
+                encoder.setPosition(MAX_HEIGHT);
             }
         } 
         else 
         {
-            //    vv BOTTOM LIMIT vv    or                    vv STINGER IN THE WAY vv
-            if (bottomlimitSwitch.get() || ChargedUp.stinger.isOut() && getHeight() <= BUFFER_SPACE_TO_INTAKE) 
+            if (bottomlimitSwitch.get()) 
             {
                 // Logging.info("IM A BOTTOM");
+                shouldStop = true;
+                PID.setSpeed(0);
+                encoder.setPosition(MIN_HEIGHT);
+            }
+            else if (ChargedUp.stinger.isOut() && getHeight() <= BUFFER_SPACE_TO_INTAKE)
+            {
                 shouldStop = true;
                 PID.setSpeed(0);
             }
