@@ -1,4 +1,4 @@
-package frc.robot.components.subsystems.shwooper;
+package frc.robot.components.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -11,7 +11,7 @@ import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
 
 
 
-public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
+public class Shwooper extends ManagerSubsystemBase
 {
     private final CANSparkMax motorTop = new CANSparkMax(Ports.SHWOOPER_LEFT_MOTOR_PORT, MotorType.kBrushless);
     // private final CANSparkMax motorBottom = new CANSparkMax(Robot.Shwooper.RIGHT_MOTOR_PORT, MotorType.kBrushless);
@@ -21,7 +21,7 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
     //     motorBottom,
     // });
     
-    public SimpleShwooper() 
+    public Shwooper() 
     {
         motorTop.setInverted(TOP_OR_LEFT_INVERSION);
         CANSafety.monitor(motorTop);
@@ -67,7 +67,6 @@ public class SimpleShwooper extends ManagerSubsystemBase implements Shwooper
         stop();
     }
 
-    @Override
     public String currentMode() 
     {
         if(motorTop.get() > 0)

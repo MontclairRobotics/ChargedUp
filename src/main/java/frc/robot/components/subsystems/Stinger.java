@@ -1,4 +1,4 @@
-package frc.robot.components.subsystems.stinger;
+package frc.robot.components.subsystems;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -10,11 +10,12 @@ import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.PneuConstants;
 import frc.robot.constants.Ports;
 import frc.robot.util.LazyDouble;
-import frc.robot.util.frc.commandrobot.ManagerBase;
+import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
+
 import static frc.robot.constants.StingerConstants.*;
 
 
-public class PneuStinger extends ManagerBase implements Stinger
+public class Stinger extends ManagerSubsystemBase
 {
     private final Solenoid solenoid = new Solenoid(PneuConstants.PH_PORT, PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
     private boolean target;
@@ -33,20 +34,16 @@ public class PneuStinger extends ManagerBase implements Stinger
         );
     }
 
-    @Override
     public Command in() {return Commands.runOnce(() -> target = false).andThen(Commands.waitSeconds(PNEU_TIME));}
     
-    @Override
     public Command outLow() {return moveThenOut(MID_LENGTH - LOW_LENGTH);}
-    @Override
+    
     public Command outMid() {return Commands.runOnce(() -> target = true).andThen(Commands.waitSeconds(PNEU_TIME));}
-    @Override
+    
     public Command outHigh() {return Commands2023.log("DO NOT");}
 
-    @Override
     public boolean isOut() {return solenoid.get();}
 
-    @Override
     public boolean requiresDriveOffset() {return true;}
 
     @Override
