@@ -75,4 +75,6 @@ public abstract class Animation
 
     public double length() {return length;}
     public void length(double n) {length = n;}
+
+    public Animation flipped() {return new FlippedAnimation(this);}
 }
