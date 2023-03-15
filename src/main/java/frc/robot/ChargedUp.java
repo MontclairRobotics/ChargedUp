@@ -28,11 +28,8 @@ import frc.robot.components.managers.MiscData;
 import frc.robot.components.subsystems.Drivetrain;
 import frc.robot.components.subsystems.Elevator;
 import frc.robot.components.subsystems.Grabber;
-import frc.robot.components.subsystems.shwooper.Shwooper;
-import frc.robot.components.subsystems.shwooper.SimpleShwooper;
-import frc.robot.components.subsystems.stinger.MotorStinger;
-import frc.robot.components.subsystems.stinger.PneuStinger;
-import frc.robot.components.subsystems.stinger.Stinger;
+import frc.robot.components.subsystems.Shwooper;
+import frc.robot.components.subsystems.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
 import frc.robot.util.frc.GameController;
@@ -101,9 +98,9 @@ public class ChargedUp extends RobotContainer
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();
-    public static final Shwooper shwooper = new SimpleShwooper();
+    public static final Shwooper shwooper = new Shwooper();
     public static final Grabber grabber = new Grabber();
-    public static final Stinger stinger = new PneuStinger();
+    public static final Stinger stinger = new Stinger();
 
     // TODO: needing to create an object for this is kinda dumb
     public static final MiscData misc = new MiscData();
@@ -234,19 +231,6 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
                 .toggleOnTrue(Commands2023.elevatorStingerReturn());
 
-        // Stinger
-        if (stinger instanceof MotorStinger) {
-            MotorStinger ms = (MotorStinger) stinger;
-            stinger.setDefaultCommand(Commands.run(() -> {
-                JoystickInput right = JoystickInput.getRight(
-                        operatorController,
-                        false,
-                        false);
-                StingerConstants.JOY_ADJUSTER.adjustX(right);
-                ms.setSpeed(right.getX());
-            }, stinger));
-        }
-
         // Grabber
         operatorController.getButton(Button.A_CROSS)
             .onTrue(Commands2023.toggleGrabber());
@@ -322,20 +306,6 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 1);
 
         debugTab.add("Mechanism", mainMechanism);
-
-        if (stinger instanceof MotorStinger) {
-            MotorStinger ms = (MotorStinger) stinger;
-            debugTab.addDouble("Stinger Extension", ms::getExtension)
-                .withPosition(0 + 2 + 2 + 2 + 2, 0)
-                .withSize(2, 1);
-            debugTab.addDouble("Stinger Extension Velocity", ms::getStingerSpeed)
-                .withPosition(0 + 2 + 2 + 2 + 2, 0)
-                .withSize(2, 1);
-            debugTab.addDouble("Stinger Lead Velocity", ms::getLeadScrewSpeed)
-                .withPosition(0 + 2 + 2 + 2 + 2, 0)
-                .withSize(2, 1);
-            debugTab.addDouble("Stinger Lead Position", ms::getLeadScrewPosition);
-        }
     }
 
     public void setupPIDTab() {
@@ -374,20 +344,6 @@ public class ChargedUp extends RobotContainer
         elevatorPID.addBoolean("At SetPoint?", elevator.PID::free).withPosition(0, 1);
         elevatorPID.addDouble("Speed", elevator.PID::getSpeed).withPosition(0, 2);
         elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
-
-        if (stinger instanceof MotorStinger) {
-            MotorStinger ms = (MotorStinger) stinger;
-            final ShuffleboardLayout stingerPID = PIDTab.getLayout("STINGER-PID", BuiltInLayouts.kGrid)
-                .withPosition(4, 0)
-                .withSize(1, 5)
-                .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
-            stingerPID.add("Stinger PID", ms.PID.getPIDController()).withPosition(0, 0);
-            stingerPID.addBoolean("At SetPoint?", ms.PID::free).withPosition(0, 1);
-            stingerPID.addDouble("Extension Speed", ms::getStingerSpeed).withPosition(0, 2);
-            stingerPID.addDouble("Extension", ms::getExtension).withPosition(0, 3);
-            stingerPID.addDouble("Lead Screw Position", ms::getLeadScrewPosition).withPosition(0, 4);
-            stingerPID.addDouble("Lead Screw Speed", ms::getLeadScrewSpeed).withPosition(0, 5);
-        }
     }
 
     // SHUFFLEBOARD //
