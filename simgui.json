@@ -2,6 +2,7 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Auto/Field": "Field2d",
       "/Shuffleboard/Auto/Starting Position": "String Chooser",
       "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
       "/Shuffleboard/PID/ELEVATOR-PID/Elevator PID": "PIDController",

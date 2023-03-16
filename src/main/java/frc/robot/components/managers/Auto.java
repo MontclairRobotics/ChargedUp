@@ -79,7 +79,6 @@ public class Auto extends ManagerBase
             .getEntry();
 
         // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);
-        
     }
 
     private Command command = null;
