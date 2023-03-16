@@ -109,8 +109,7 @@ public interface CANDevice
     {
         return pneu(ph, () -> 
         {
-            if(ph.getStickyFaults().CanBusOff
-            || ph.getStickyFaults().CanWarning) return CANErrorCode.NOT_FOUND;
+            if(ph.getFaults().CanWarning) return CANErrorCode.NOT_FOUND;
 
             return CANErrorCode.OK;
         });

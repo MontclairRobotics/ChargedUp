@@ -72,14 +72,14 @@ public class Elevator extends ManagerSubsystemBase
         double ynorm = getHeightNormalized();
 
         if(ynorm < 1 - BUFFER_UP) return SPEED;
-        return SPEED - SPEED * (ynorm - 1 - BUFFER_UP) / BUFFER_UP;
+        return Math555.clamp(SPEED - SPEED * (ynorm - 1 + BUFFER_UP) / BUFFER_UP, 0.25, 1);
     }
     private double getDownwardsMultiplier()
     {
         double ynorm = getHeightNormalized();
 
         if(ynorm > BUFFER_DOWN) return SPEED;
-        return ynorm / BUFFER_DOWN * SPEED;
+        return Math555.clamp(ynorm / BUFFER_DOWN * SPEED, 0.25, 1);
     }
 
     private double getModifiedSpeed(double speed)

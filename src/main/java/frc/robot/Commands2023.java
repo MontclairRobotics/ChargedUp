@@ -402,7 +402,7 @@ public class Commands2023
     public static Command scoreMidShelf()
     {return scoreFromHeightAndType(ScoreHeight.MID_CUBE, ScoringType.SHELF);}
     
-    // public static Command scoreHighPeg()
+    // public static Command scoreHighPeg()g
     // {return scoreFromHeightAndType(ScoreHeight.HIGH_CONE, ScoringType.PEG);}
     // public static Command scoreHighShelf()
     // {return scoreFromHeightAndType(ScoreHeight.HIGH_CUBE, ScoringType.SHELF);}

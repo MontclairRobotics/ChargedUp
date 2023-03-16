@@ -169,7 +169,8 @@ public class Drivetrain extends ManagerSubsystemBase
             ThetaPID.consts().kD
         );
 
-        thetaController.enableContinuousInput(0, 2*Math.PI);
+        thetaController.setTolerance(1, 0.5);
+        thetaController.enableContinuousInput(0, 360);
         
         PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
         PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
@@ -240,8 +241,8 @@ public class Drivetrain extends ManagerSubsystemBase
 
         set(
             turnRL / SPEEDS[speedIndex][1],
-            xRL    / SPEEDS[speedIndex][0],
-            yRL    / SPEEDS[speedIndex][0]
+            yRL    / SPEEDS[speedIndex][0],
+            xRL    / SPEEDS[speedIndex][0]
         );
     }
     
@@ -274,7 +275,7 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         vx    /= MAX_SPEED_MPS;
         vy    /= MAX_SPEED_MPS;
-        omega /= MAX_TURN_SPEED_RAD_PER_S;
+        omega /= Math.toDegrees(MAX_TURN_SPEED_RAD_PER_S);
 
         vx    = Math555.clamp1(vx);
         vy    = Math555.clamp1(vy);
@@ -428,10 +429,11 @@ public class Drivetrain extends ManagerSubsystemBase
     public void startStraightPidding() 
     {
         isStraightPidding = true;
-        currentStraightAngle = getRobotRotation().getRadians();
+        currentStraightAngle = getRobotRotation().getDegrees();
     }
 
-    public void stopStraightPidding() {
+    public void stopStraightPidding() 
+    {
         isStraightPidding = false;
     }
 
@@ -444,7 +446,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             xPID.setMeasurement(getRobotPose().getX());
             yPID.setMeasurement(getRobotPose().getY());
-            thetaPID.setMeasurement(getRobotRotationModRotation().getRadians());
+            thetaPID.setMeasurement(getRobotRotationModRotation().getDegrees());
 
             if (isStraightPidding) 
             {
@@ -463,9 +465,9 @@ public class Drivetrain extends ManagerSubsystemBase
             thetaPID.update();
             
             ChassisSpeeds c = getChassisSpeeds(
-                thetaPID.getSpeed() * MAX_SPEED_MPS, 
+                thetaPID.getSpeed() * MAX_TURN_SPEED_RAD_PER_S, 
                 xPID.getSpeed()     * MAX_SPEED_MPS, 
-                yPID.getSpeed()     * MAX_TURN_SPEED_RAD_PER_S
+                yPID.getSpeed()     * MAX_SPEED_MPS
             );
 
             driveFromChassisSpeeds(c);

@@ -94,9 +94,9 @@ public class DriveConstants
     {
         static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getSteerReduction();}
 
-        public static final Tunable<Double> KP = Tunable.of(6.3/10, "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0/10, "drive.theta.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.5/10, "drive.theta.kd");
+        public static final Tunable<Double> KP = Tunable.of(0.007, "drive.theta.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.theta.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.0, "drive.theta.kd");
         
         public static PIDConstants consts()
         {

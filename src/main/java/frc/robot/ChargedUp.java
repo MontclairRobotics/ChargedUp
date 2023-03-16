@@ -48,7 +48,7 @@ import java.util.Map;
 
 public class ChargedUp extends RobotContainer 
 {
-    public static final boolean useDebugController = false;
+    public static final boolean useDebugController = true;
 
     // SIMULATION //
     public static final Field2d field = new Field2d();
@@ -212,10 +212,10 @@ public class ChargedUp extends RobotContainer
         {
             debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
 
-            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(Math.PI/2));
-            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle((3*Math.PI)/2));
-            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(Math.PI));
+            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(0));
+            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(90));
+            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle(180));
+            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(270));
 
             debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
             debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
