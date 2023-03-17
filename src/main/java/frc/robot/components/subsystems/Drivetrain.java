@@ -48,10 +48,6 @@ public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
 
-    public final PIDController xController;
-    public final PIDController yController;
-    public final PIDController thetaController;
-
     public final SlewRateLimiter xInputRateLimiter;
     public final SlewRateLimiter yInputRateLimiter;
     public final SlewRateLimiter thetaInputRateLimiter;
@@ -59,24 +55,21 @@ public class Drivetrain extends ManagerSubsystemBase
     public final PIDMechanism xPID;
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
-
-    private boolean useFieldRelative = true;
+    
+    private final SwerveDrivePoseEstimator poseEstimator;
 
     private final FieldObject2d moduleObject;
-    private final SwerveDrivePoseEstimator poseEstimator;
-    private double currentStraightAngle;
+
+    private boolean useFieldRelative = true;
     private boolean isStraightPidding;
 
-    /**
-     * Store whether or not the drivetrain has already piped values into its motors, signalling an autonomous command
-     * if control reaches "periodic" and this is true.
-     */
     private boolean hasDrivenThisUpdate = false;
     private boolean hasUsedDriverInputThisUpdate = false;
 
-    //sets the speedIndex to speeds length
-    private static int speedIndex = SPEEDS.length-1;
+    private int speedIndex = SPEEDS.length - 1;
+    private double currentStraightAngle;
     
+    // Simulation information //
     private static class SimulationData
     {
         private ChassisSpeeds targetSpeeds = new ChassisSpeeds();
@@ -87,19 +80,7 @@ public class Drivetrain extends ManagerSubsystemBase
     }
     private SimulationData simulation;
 
-    // private Consumer<Double> funcMul(Consumer<Double> cd, double factor)
-    // {
-    //     return x -> cd.accept(x * factor);
-    // }
-    // private Consumer<Double> drivePid(Consumer<Double> cd)
-    // {
-    //     return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getDriveReduction());
-    // }
-    // private Consumer<Double> steerPid(Consumer<Double> cd)
-    // {
-    //     return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getSteerReduction());
-    // }
-
+    // Construction //
     public Drivetrain()
     {
         if(RobotBase.isSimulation())
@@ -156,19 +137,19 @@ public class Drivetrain extends ManagerSubsystemBase
         );
 
         // Build PID Controllers //
-        xController = new PIDController(
+        PIDController xController = new PIDController(
             PosPID.consts().kP,
             PosPID.consts().kI, 
             PosPID.consts().kD
         );
 
-        yController = new PIDController(
+        PIDController yController = new PIDController(
             PosPID.consts().kP,
             PosPID.consts().kI, 
             PosPID.consts().kD
         );
 
-        thetaController = new PIDController(
+        PIDController thetaController = new PIDController(
             ThetaPID.consts().kP,
             ThetaPID.consts().kI, 
             ThetaPID.consts().kD
@@ -185,7 +166,7 @@ public class Drivetrain extends ManagerSubsystemBase
         ThetaPID.KI.whenUpdate(thetaController::setI);
         ThetaPID.KD.whenUpdate(thetaController::setD);
 
-        // Build slew rate limiters //
+        // Build Slew Rate Limiters //
         xInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
         yInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
         thetaInputRateLimiter = new SlewRateLimiter(inputRateLimit());
@@ -254,12 +235,10 @@ public class Drivetrain extends ManagerSubsystemBase
     /**
      * Set to use the given velocities in robot-wise coordinates:
      * <ul>
-     *      <li>+y is forward</li>
-     *      <li>+x is left</li>
+     *      <li>+x is forward</li>
+     *      <li>+y is left</li>
      *      <li>+O is CCW</li>
      * </ul>
-     * 
-     * TODO: is this correct?
      * 
      * @param omega rotational velocity percentage
      * @param vx x direction velocity percentage
@@ -276,6 +255,18 @@ public class Drivetrain extends ManagerSubsystemBase
         thetaPID.setSpeed(omega);
     }
 
+    /**
+     * Set to use the given velocities in robot-wise coordinates:
+     * <ul>
+     *      <li>+x is forward</li>
+     *      <li>+y is left</li>
+     *      <li>+O is CCW</li>
+     * </ul>
+     * 
+     * @param omega rotational velocity
+     * @param vx x direction velocity
+     * @param vy y direction velocity
+     */
     public void setVelocities(double omega, double vx, double vy)
     {
         vx    /= MAX_SPEED_MPS;
@@ -318,6 +309,7 @@ public class Drivetrain extends ManagerSubsystemBase
             );
         }
     }
+    
     /**
      * Uses the chassis speeds to  
      * Only works when the robot is real currently
@@ -564,11 +556,6 @@ public class Drivetrain extends ManagerSubsystemBase
     }
 
     public double[] getCurrentSpeedLimits() {return SPEEDS[speedIndex];}
-
-    public boolean isThetaPIDFree()
-    {
-        return !thetaPID.active();
-    }
 
     public double getObjectAngle() 
     {

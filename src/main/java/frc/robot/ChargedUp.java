@@ -39,6 +39,7 @@ import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.can.CANSafety;
+import frc.robot.util.frc.commandrobot.CommandRobot;
 import frc.robot.util.frc.commandrobot.RobotContainer;
 import frc.robot.vision.LimelightSystem;
 import frc.robot.vision.VisionSystem;
@@ -293,6 +294,66 @@ public class ChargedUp extends RobotContainer
         return Commands555.backupAuto();//auto.get();
     }
 
+    // SHUFFLEBOARD //
+    public void setupMainTab() 
+    {
+        // MAIN INFO //
+        final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
+            .withSize(2, 4)
+            .withPosition(9, 0);
+
+        info.addBoolean("Field Relative", drivetrain::usingFieldRelative)
+            .withWidget(BuiltInWidgets.kBooleanBox);
+        
+        info.addNumber("Max Linear Speed (mps)",
+            () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
+            .withWidget(BuiltInWidgets.kTextView);
+
+        info.addNumber("Max Angular Speed (rps)",
+            () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
+            .withWidget(BuiltInWidgets.kTextView);
+
+        // OTHER INFORMATION //
+        mainTab
+            .addString("Recent Log", Logging::mostRecentLog)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(3, 1)
+            .withPosition(2, 3);
+
+        mainTab
+            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
+            .withSize(2, 1)
+            .withPosition(7, 3);
+        
+        mainTab
+            .addString("Suck Mode", shwooper::currentMode)
+            .withSize(2, 1)
+            .withPosition(7, 2);
+        
+        // GYROSCOPE VALUE //
+        mainTab
+            .addNumber("Gyroscope", () -> gyroscope.getRotationInCircle().getDegrees())
+            .withWidget(BuiltInWidgets.kGyro)
+            .withSize(2, 2)
+            .withPosition(0, 0);
+
+        // OBJECT MANIPULATION //
+        mainTab
+            .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(2, 1)
+            .withPosition(0, 2)
+            .withProperties(Map.of(
+                "Color when true",  Color.kGold.toHexString(),
+                "Color when false", Color.kDarkViolet.toHexString()
+            ));
+        
+        mainTab
+            .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
+            .withSize(2, 1)
+            .withPosition(5, 3);
+    }
+
     public void setupDebugTab() 
     {
         debugTab.addStringArray("All Logs", Logging::allLogsArr)
@@ -310,7 +371,8 @@ public class ChargedUp extends RobotContainer
         debugTab.add("Mechanism", mainMechanism);
     }
 
-    public void setupPIDTab() {
+    public void setupPIDTab() 
+    {
         final ShuffleboardLayout xPID = PIDTab.getLayout("X-PID", BuiltInLayouts.kGrid)
             .withPosition(0, 0)
             .withSize(1, 5)
@@ -383,80 +445,5 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.scoreMid());
         tab.add(Commands555.scoreMidPeg());
         tab.add(Commands555.scoreMidShelf());
-    }
-
-    // SHUFFLEBOARD //
-    public void setupMainTab() 
-    {
-        // IS USING FIELD RELATIVE //
-        final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
-            .withSize(2, 4)
-            .withPosition(9, 0);
-
-        info.addBoolean("Field Relative", drivetrain::usingFieldRelative)
-            .withWidget(BuiltInWidgets.kBooleanBox);
-
-        // LOGGING LOG RECENT //
-        mainTab
-            .addString("Recent Log", Logging::mostRecentLog)
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(3, 1)
-            .withPosition(2, 3);
-
-        mainTab
-            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
-            .withSize(2, 1)
-            .withPosition(7, 3);
-
-        
-        mainTab
-            .addString("Suck Mode", shwooper::currentMode)
-            .withSize(2, 1)
-            .withPosition(7, 2);
-            
-
-        // CAMERAS //
-        // mainTab
-        // .addCamera("Cameras", "Vision Camera", vision.getCameraStreamURL())
-        // .withSize(3, 2)
-        // .withPosition(0, 3);
-
-        // GYROSCOPE VALUE //
-        mainTab
-            .addNumber("Gyroscope", () -> gyroscope.getRotationInCircle().getDegrees())
-            .withWidget(BuiltInWidgets.kGyro)
-            .withSize(2, 2)
-            .withPosition(0, 0);
-
-        // MAX LINEAR SPEED //
-        info.addNumber("Max Linear Speed (mps)",
-            () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
-            .withWidget(BuiltInWidgets.kTextView);
-
-        // MAX ANGULAR SPEED //
-        info.addNumber("Max Angular Speed (rps)",
-            () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
-            .withWidget(BuiltInWidgets.kTextView);
-
-        // HELD OBJECT //
-        // mainTab
-        //     .addString("Held Object", grabber::getHeldObjectName)
-        //     .withWidget(BuiltInWidgets.kTextView)
-        //     .withSize(2, 1)
-        //     .withPosition(0, 2);
-        mainTab
-            .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 2)
-            .withProperties(Map.of(
-                "Color when true",  Color.kGold.toHexString(),
-                "Color when false", Color.kDarkViolet.toHexString()
-            ));
-        
-        mainTab
-            .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
-            .withSize(2, 1)
-            .withPosition(5, 3);
     }
 }
