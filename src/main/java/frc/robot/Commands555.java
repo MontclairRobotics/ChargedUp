@@ -36,6 +36,7 @@ import frc.robot.vision.VisionSystem;
 import static frc.robot.ChargedUp.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
@@ -326,23 +327,40 @@ public class Commands555
         ).withName("Pickup");
     }
 
+    public static CommandBase positionForScore(ScoreHeight height, Supplier<ScoringType> type)
+    {
+        CommandBase cmd = Commands.select(
+            Map.of(
+                ScoringType.PEG,   elevatorToConeMid().andThen(extendStinger()),
+                ScoringType.SHELF, elevatorToConeMid().andThen(extendStinger())
+            ),
+            () -> type.get()
+        ); 
+        
+        if(height == ScoreHeight.LOW)
+        {
+            cmd = cmd.andThen(drivetrain.commands.goToPositionRelative(-2, 0));
+        }
+
+        return cmd;
+    }
+
     /**
      * Moves stinger/elevator to the specfied score place and opens the grabber
-     * 
-     * retracts the stinger and bring the elevator to mid
+     * Retracts the stinger and bring the elevator to mid
      */
-    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type)
+    public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type)
     {
         return Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
             closeGrabber(),
 
             //move sideways to the target
-            moveToObjectSideways(type::getDetectionType),
+            moveToObjectSideways(() -> type.get().getDetectionType()),
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
-            height.getPositioner(), 
+            positionForScore(height, type), 
 
             //Drop grabber
             log("[SCORE] Dropping . . ."),
@@ -355,32 +373,34 @@ public class Commands555
             elevatorStingerReturn(),
             
             log("[SCORE] Done!")
-        ).withName("Score " + height.toString().toLowerCase() + " " + type.toString().toLowerCase());
+        );
+    }
+
+    /**
+     * Equivalent to {@link #scoreFromHeightAndDynamicType(ScoreHeight, Supplier)} but for
+     * known scoring types. Names command appropriately.
+     */
+    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type)
+    {
+        return scoreFromHeightAndDynamicType(height, () -> type)
+            .withName("Score " + height.toString() + " " + type.toString());
     }
 
     public static CommandBase scoreLowPeg()
     {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG);}
     public static CommandBase scoreLowShelf()
     {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF);}
+    public static CommandBase scoreLow()
+    {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()))
+        .withName("Score Low (General)");}
 
     public static CommandBase scoreMidPeg()
-    {return scoreFromHeightAndType(ScoreHeight.MID_CONE, ScoringType.PEG);}
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG);}
     public static CommandBase scoreMidShelf()
-    {return scoreFromHeightAndType(ScoreHeight.MID_CUBE, ScoringType.SHELF);}
-    
-    // public static Command scoreHighPeg()g
-    // {return scoreFromHeightAndType(ScoreHeight.HIGH_CONE, ScoringType.PEG);}
-    // public static Command scoreHighShelf()
-    // {return scoreFromHeightAndType(ScoreHeight.HIGH_CUBE, ScoringType.SHELF);}
-    
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF);}
     public static CommandBase scoreMid()
-    {return new ProxyCommand(() -> scoreFromHeightAndType(ChargedUp.grabber.getHeldObject() == GamePiece.CUBE? ScoreHeight.MID_CUBE : ScoreHeight.MID_CONE,  ScoringType.from(ChargedUp.grabber.getHeldObject())))
+    {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()))
         .withName("Score Mid (General)");}
-    // public static Command scoreHigh()
-    // {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
-    public static CommandBase scoreLow()
-    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())))
-        .withName("Score Low (General)");}
 
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 
