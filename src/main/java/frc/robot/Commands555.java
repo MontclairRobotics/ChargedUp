@@ -90,7 +90,7 @@ public class Commands555
      * Flashes twice quickly and twice slowly in yellow: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static CommandBase quickSlowFlashYellow() 
+    public static CommandBase signalCone() 
     {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)))
             .withName("Signal Cone");
@@ -100,7 +100,7 @@ public class Commands555
      * Flashes twice quickly and twice slowly in purple: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cube into play
      */
-    public static CommandBase quickSlowFlashPurple()
+    public static CommandBase signalCube()
     {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)))
             .withName("Signal Cube");
@@ -215,24 +215,7 @@ public class Commands555
     //     return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
     // }
 
-    ///////////////// ELEVATOR + STINGER COMMANDS /////////////////////////////
-    /**
-     * Moves the Elevator and Stinger to MID position in sequence
-     * <p>
-     * Elevator goes to {@link Robot#MID_HEIGHT_CONE High Height Constant}
-     * <p>
-     * Stinger goes to {@link Robot#MID_LENGTH_MUL Mid Length Constant}
-     * @return Command
-     */
-    public static CommandBase elevatorStingerToMid()
-    {
-        CommandBase c = sequence(
-            elevatorToConeMid(),
-            extendStinger()
-        );
-        c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
-        return c;
-    }
+    ///////////////// COMBINATION COMMANDS /////////////////////////////
 
     /**
      * Moves the Elevator and Stinger to LOW position in sequence
@@ -247,18 +230,8 @@ public class Commands555
         CommandBase c = sequence(
             retractStinger(),
             elevatorToLow()
-        );
+        ).withName("Return Elevator and Stinger");
         c.addRequirements(elevator, stinger);
-        return c;
-    }
-
-    public static CommandBase elevatorStingerToLow()
-    {
-        CommandBase c = sequence(
-            elevatorToLow(),
-            stinger.outLow()
-        );
-        c.addRequirements(stinger, elevator);
         return c;
     }
     
@@ -433,11 +406,13 @@ public class Commands555
     // {return scoreFromHeightAndType(ScoreHeight.HIGH_CUBE, ScoringType.SHELF);}
     
     public static CommandBase scoreMid()
-    {return new ProxyCommand(() -> scoreFromHeightAndType(ChargedUp.grabber.getHeldObject() == GamePiece.CUBE? ScoreHeight.MID_CUBE : ScoreHeight.MID_CONE,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
+    {return new ProxyCommand(() -> scoreFromHeightAndType(ChargedUp.grabber.getHeldObject() == GamePiece.CUBE? ScoreHeight.MID_CUBE : ScoreHeight.MID_CONE,  ScoringType.from(ChargedUp.grabber.getHeldObject())))
+        .withName("Score Mid (General)");}
     // public static Command scoreHigh()
     // {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
     public static CommandBase scoreLow()
-    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
+    {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())))
+        .withName("Score Low (General)");}
 
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 

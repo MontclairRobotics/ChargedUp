@@ -129,6 +129,7 @@ public class ChargedUp extends RobotContainer
         setupDebugTab();
         setupMainTab();
         setupPIDTab();
+        setupCommandsTab();
 
         vision.setTargetType(DetectionType.APRIL_TAG);
 
@@ -266,9 +267,9 @@ public class ChargedUp extends RobotContainer
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)
-            .onTrue(Commands555.quickSlowFlashPurple());
+            .onTrue(Commands555.signalCube());
         operatorController.getButton(Button.LEFT_BUMPER)
-                .onTrue(Commands555.quickSlowFlashYellow());
+                .onTrue(Commands555.signalCone());
 
         
         // Quick calibrate + zero
@@ -345,6 +346,43 @@ public class ChargedUp extends RobotContainer
         elevatorPID.addBoolean("At SetPoint?", elevator.PID::free).withPosition(0, 1);
         elevatorPID.addDouble("Speed", elevator.PID::getSpeed).withPosition(0, 2);
         elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
+    }
+
+    public void setupCommandsTab()
+    {
+        ShuffleboardTab tab = Shuffleboard.getTab("Commands");
+        
+        tab.add(Commands555.activateAlliance());
+        tab.add(Commands555.activatePurple());
+        tab.add(Commands555.activateYellow());
+        
+        tab.add(Commands555.signalCube());
+        tab.add(Commands555.signalCone());
+
+        tab.add(Commands555.openGrabber());
+        tab.add(Commands555.closeGrabber());
+        tab.add(Commands555.toggleGrabber());
+        
+        tab.add(Commands555.setGrabberHasCone());
+        tab.add(Commands555.setGrabberHasCube());
+        tab.add(Commands555.toggleGrabberHasCone());
+        
+        tab.add(Commands555.extendStinger());
+        tab.add(Commands555.retractStinger());
+        tab.add(Commands555.toggleStinger());
+
+        tab.add(Commands555.shwooperSuck());
+        tab.add(Commands555.shwooperSpit());
+        tab.add(Commands555.stopShwooper());
+        
+        tab.add(Commands555.elevatorStingerReturn());
+
+        tab.add(Commands555.scoreLow());
+        tab.add(Commands555.scoreLowPeg());
+        tab.add(Commands555.scoreLowShelf());
+        tab.add(Commands555.scoreMid());
+        tab.add(Commands555.scoreMidPeg());
+        tab.add(Commands555.scoreMidShelf());
     }
 
     // SHUFFLEBOARD //
