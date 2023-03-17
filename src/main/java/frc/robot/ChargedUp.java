@@ -212,7 +212,7 @@ public class ChargedUp extends RobotContainer
 
         if(useDebugController)
         {
-            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(new LazyDouble(() -> drivetrain.getRobotPose().getY() + 2), drivetrain));
+            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.commands.goToPositionRelative(0, 2));
 
             debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(0));
             debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(90));

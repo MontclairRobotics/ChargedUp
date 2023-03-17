@@ -22,6 +22,8 @@ import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
 import frc.robot.structure.DetectionType;
+import frc.robot.util.Lazy;
+import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.can.CANSafety;
@@ -39,6 +41,8 @@ import static frc.robot.constants.DriveConstants.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Drivetrain extends ManagerSubsystemBase
 {
@@ -668,7 +672,7 @@ public class Drivetrain extends ManagerSubsystemBase
                 ThetaPID.consts(),
                 Drivetrain.this::driveFromStates,
                 markers,
-                false,
+                true,
                 Drivetrain.this
             );
         }
@@ -683,5 +687,55 @@ public class Drivetrain extends ManagerSubsystemBase
             return thetaPID.goToSetpoint(angle);
         }
 
+        // GO TO POSITION ABSOLUTE //
+        public CommandBase goToDynamicPositionAbsolute(Supplier<Translation2d> xy)
+        {
+            return Commands.parallel(
+                xPID.goToSetpoint(() -> xy.get().getX()),
+                yPID.goToSetpoint(() -> xy.get().getY())
+            );
+        }
+        public CommandBase goToDynamicPositionAbsolute(DoubleSupplier x, DoubleSupplier y)
+        {
+            return goToDynamicPositionAbsolute(() -> new Translation2d(x.getAsDouble(), y.getAsDouble()));
+        }
+        public CommandBase goToPositionAbsolute(Supplier<Translation2d> xy)
+        {
+            return goToPositionAbsolute(new Lazy<>(xy));
+        }
+        public CommandBase goToPositionAbsolute(Translation2d xy)
+        {
+            return goToPositionAbsolute(() -> xy);
+        }
+        public CommandBase goToPositionAbsolute(double x, double y)
+        {
+            return goToPositionAbsolute(new Translation2d(x, y));
+        }
+
+        // GO TO POSITION RELATIVE //
+        public CommandBase goToDynamicPositionRelative(Supplier<Translation2d> xy)
+        {
+            return goToDynamicPositionAbsolute(() -> 
+                // robotxy + targetxy (rotate) robotrotation
+                getRobotPose().getTranslation()
+                    .plus(xy.get().rotateBy(getRobotRotation()))
+            );
+        }
+        public CommandBase goToDynamicPositionRelative(DoubleSupplier x, DoubleSupplier y)
+        {
+            return goToDynamicPositionRelative(() -> new Translation2d(x.getAsDouble(), y.getAsDouble()));
+        }
+        public CommandBase goToPositionRelative(Supplier<Translation2d> xy)
+        {
+            return goToDynamicPositionRelative(new Lazy<>(xy));
+        }
+        public CommandBase goToPositionRelative(Translation2d xy)
+        {
+            return goToPositionRelative(() -> xy);
+        }
+        public CommandBase goToPositionRelative(double x, double y)
+        {
+            return goToPositionRelative(new Translation2d(x, y));
+        }
     }
 }
