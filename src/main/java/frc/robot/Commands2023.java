@@ -36,10 +36,13 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 public class Commands2023 
 {   
-
     public static Command log(String str) 
     {
         return Commands.runOnce(() -> Logging.info(str));
+    }
+    public static Command log(Supplier<String> str) 
+    {
+        return Commands.runOnce(() -> Logging.info(str.get()));
     }
 
     /////////////////////// LED COMMANDS /////////////////////////
@@ -106,15 +109,15 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return stinger.in();
+        return stinger.in().withName("Retract Stinger");
     }
     /**
      * extends the stinger to the length of the middle pole
      * @return Command
      */
-    public static Command stingerToMid()
+    public static Command extendStinger()
     {
-        return stinger.outMid();
+        return stinger.outMid().withName("Stinger Out");
     }
 
     /**
@@ -123,7 +126,7 @@ public class Commands2023
      */
     public static Command toggleStinger()
     {
-        return Commands.either(retractStinger(), stingerToMid(), stinger::isOut).andThen(log("TOGGLED STINGERR "));
+        return Commands.either(retractStinger(), extendStinger(), stinger::isOut).withName("Toggle Stinger");
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -164,20 +167,6 @@ public class Commands2023
     //     return elevator.PID.goToSetpoint(ElevatorConstants.HIGH_HEIGHT, elevator);
     // }
 
-    /**
-     * Moves the elevator downwards until it reaches the start position
-     * @return the command
-     */
-    public static Command elevatorInitialize() 
-    {
-        return Commands.sequence(
-            run(elevator::delevate, elevator)
-                .until(elevator::isAtBottom),
-
-            run(elevator::resetElevatorEncoder, elevator) 
-        );
-    }
-
     ///////////////// ELEVATOR + STINGER COMMANDS /////////////////////////////
     /**
      * Moves the Elevator and Stinger to MID position in sequence
@@ -191,7 +180,7 @@ public class Commands2023
     {
         CommandBase c = sequence(
             elevatorToConeMid(),
-            stingerToMid()
+            extendStinger()
         );
         c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
         return c;
@@ -211,7 +200,7 @@ public class Commands2023
             retractStinger(),
             elevatorToLow()
         );
-        c.addRequirements(ChargedUp.elevator, ChargedUp.stinger);
+        c.addRequirements(elevator, stinger);
         return c;
     }
 
@@ -233,7 +222,7 @@ public class Commands2023
      */ 
     public static Command closeGrabber() 
     {
-        return Commands.runOnce(ChargedUp.grabber::grab);
+        return Commands.runOnce(ChargedUp.grabber::grab).withName("Close Grabber");
 
      }
      /**
@@ -241,7 +230,7 @@ public class Commands2023
       */
     public static Command openGrabber() 
     {
-        return Commands.runOnce(ChargedUp.grabber::release);
+        return Commands.runOnce(ChargedUp.grabber::release).withName("Open Grabber");
     }
 
     /**
@@ -254,17 +243,7 @@ public class Commands2023
      */
     public static Command toggleGrabber()
     {
-        return Commands.runOnce(ChargedUp.grabber::toggle);
-    }
-    // grabs 
-    public static Command grabGrabber()
-    {
-        return Commands.runOnce(ChargedUp.grabber::grab);
-    }
-    // releases the grabber
-    public static Command releaseGrabber()
-    {
-        return Commands.runOnce(ChargedUp.grabber::release);
+        return Commands.runOnce(ChargedUp.grabber::toggle).withName("Toggle Grabber");
     }
 
     public static Command grabberSetCone()
@@ -288,21 +267,21 @@ public class Commands2023
      */
     public static Command toggleShwooper() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::toggleShwooper);
+        return Commands.runOnce(ChargedUp.shwooper::toggleShwooper).withName("Toggle Schwooper");
     }
     /**
      * retracts shwooper
      */ 
     public static Command retractSchwooper()
     {
-        return Commands.runOnce(ChargedUp.shwooper::retractShwooper);
+        return Commands.runOnce(ChargedUp.shwooper::retractShwooper).withName("Retract Schwooper");
     }
     /** 
      * extends shwooper
      */  
     public static Command extendSchwooper()
     {
-        return Commands.runOnce(ChargedUp.shwooper::extendShwooper);
+        return Commands.runOnce(ChargedUp.shwooper::extendShwooper).withName("Extend Schwooper");
     }
 
     /**
@@ -311,7 +290,7 @@ public class Commands2023
      */
     public static Command shwooperSuck() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::suck);
+        return Commands.runOnce(ChargedUp.shwooper::suck).withName("Intake Suck");
     }
  
     /**
@@ -320,7 +299,7 @@ public class Commands2023
      */
     public static Command shwooperSpit() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::spit);
+        return Commands.runOnce(ChargedUp.shwooper::spit).withName("Intake Spit");
     }
 
     /**
@@ -329,7 +308,7 @@ public class Commands2023
      */
     public static Command stopShwooper() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::stop);
+        return Commands.runOnce(ChargedUp.shwooper::stop).withName("Intake Stop");
     }
 
     ////////////////////// AUTO COMMANDS //////////////////////////
@@ -339,7 +318,7 @@ public class Commands2023
     {
         return Commands.sequence(
             // Ensure grabber released
-            releaseGrabber(),
+            openGrabber(),
 
             // Lower grabber in place
             elevatorStingerReturn(),
@@ -350,12 +329,12 @@ public class Commands2023
             stopShwooper(),
 
             // Grab it
-            grabGrabber(),
+            closeGrabber(),
 
             // Prepare to leave
             // elevatorToMid(),
             retractSchwooper()
-        );
+        ).withName("Pickup");
     }
 
     /**
@@ -365,12 +344,12 @@ public class Commands2023
      */
     public static Command scoreFromHeightAndType(ScoreHeight height, ScoringType type)
     {
-        CommandBase c = Commands.sequence(
+        return Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
             closeGrabber(),
 
             //move sideways to the target
-            // moveToObjectSideways(type::getDetectionType), //TODO: shit yourself
+            moveToObjectSideways(type::getDetectionType),
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
@@ -387,9 +366,7 @@ public class Commands2023
             elevatorStingerReturn(),
             
             log("[SCORE] Done!")
-        );
-        
-        return c;
+        ).withName("Score " + height.toString().toLowerCase() + " " + type.toString().toLowerCase());
     }
 
     public static Command scoreLowPeg()
@@ -424,13 +401,10 @@ public class Commands2023
      */
     public static Command balance()
     {
-        return Commands.sequence(
-            Commands.runOnce(ChargedUp.drivetrain::disableFieldRelative),
-            Commands.run(() -> 
+        return Commands.runOnce(drivetrain::disableFieldRelative)
+            .andThen(Commands.run(() -> 
             {
-                ChargedUp.drivetrain.disableFieldRelative();
-                
-                double angle = ChargedUp.drivetrain.getChargeStationAngle();
+                double angle = drivetrain.getChargeStationAngle();
                 double speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get() * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
 
                 if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND) 
@@ -438,11 +412,11 @@ public class Commands2023
                     speed = 0;
                 }
                 speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
-                Logging.info("" + speed);
 
-                ChargedUp.drivetrain.set(0, speed, 0);
-            })
-        ).finallyDo(x -> ChargedUp.drivetrain.enableFieldRelative());
+                drivetrain.set(0, speed, 0);
+            }))
+            .finallyDo(interupted -> drivetrain.enableFieldRelative())
+            .withName("Balance");
     }
 
     /**
@@ -450,7 +424,7 @@ public class Commands2023
      */
     public static Command ifHasTarget(Command cmd)
     {
-        return cmd.until(() -> !ChargedUp.vision.hasObject()).unless(() -> !ChargedUp.vision.hasObject());
+        return cmd.until(() -> !vision.hasObject()).unless(() -> !vision.hasObject());
     }
 
     /**
@@ -461,7 +435,7 @@ public class Commands2023
     {
         return ifHasTarget(
             drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
-        );
+        ).withName("Turn to Current Object");
     }
 
     /**
@@ -472,7 +446,7 @@ public class Commands2023
     {
         return ifHasTarget(
             drivetrain.yPID.goToSetpoint(() -> drivetrain.getRobotPose().getY() + drivetrain.getObjectAngle(), drivetrain)
-        );
+        ).withName("Move to Current Object Sideways");
     }
 
     /**
@@ -482,9 +456,9 @@ public class Commands2023
     public static Command turnToObject(Supplier<DetectionType> type)
     {
         return Commands.sequence(
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
+            Commands.runOnce(() -> vision.setTargetType(type.get())),
             turnToCurrentObject(),
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
+            Commands.runOnce(() -> vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
     }
 

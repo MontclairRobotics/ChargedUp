@@ -242,7 +242,7 @@ public class Auto extends ManagerBase
             // If we have a valid position, add it
             else if(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == 'A' || c == 'B' || c == 'C' || c == 'a' || c == 'b' || c == 'c')
             {
-                c = Character.toUpperCase(c);
+                c = Character.toUpperCase(c);//test
 
                 if(isExclaimed) out.add("!" + c);
                 else            out.add(""  + c);
