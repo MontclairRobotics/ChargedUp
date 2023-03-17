@@ -11,7 +11,7 @@ public enum ScoreHeight
 
     public Command getPositioner()
     {
-        if(this == MID_CONE)  return Commands.sequence(
+        if(this == MID_CONE) return Commands.sequence(
             Commands2023.elevatorToConeMid(),
             Commands2023.toggleStinger()
         );

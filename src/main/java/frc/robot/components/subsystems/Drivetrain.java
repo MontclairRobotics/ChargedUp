@@ -318,7 +318,7 @@ public class Drivetrain extends ManagerSubsystemBase
      * Only works when the robot is real currently
      * @param speeds ChassisSpeeds object
      */
-    public void driveFromChassisSpeeds(ChassisSpeeds speeds) 
+    private void driveFromChassisSpeeds(ChassisSpeeds speeds) 
     {
         SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(speeds);
         driveFromStates(states);
@@ -405,7 +405,7 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             ChargedUp.vision.updateEstimatedPose(poseEstimator.getEstimatedPosition());
 
-            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= POSE_MAX_DISPLACEMENT)
+            if(poseEstimator.getEstimatedPosition().minus(ChargedUp.vision.getEstimatedPose()).getTranslation().getNorm() <= VISION_ESTIMATE_MAX_DISPLACEMENT)
             {
                 poseEstimator.addVisionMeasurement(
                     ChargedUp.vision.getEstimatedPose(), 
@@ -567,11 +567,16 @@ public class Drivetrain extends ManagerSubsystemBase
 
     public double getObjectAngle() 
     {
-        return getRobotRotation().getDegrees() + ChargedUp.vision.getObjectAX() * 20; 
+        return getRobotRotationModRotation().getDegrees() + ChargedUp.vision.getObjectAX() * 20; 
+    }
+    public double getObjectHorizontalPosition() 
+    {
+        return getRobotPose().getY() + ChargedUp.vision.getObjectAX() * 1; 
     }
 
     @Override
-    public void reset() {
+    public void reset() 
+    {
         stopStraightPidding();
     }
 

@@ -445,7 +445,7 @@ public class Commands2023
     public static Command moveToCurrentObjectSideways()
     {
         return ifHasTarget(
-            drivetrain.yPID.goToSetpoint(() -> drivetrain.getRobotPose().getY() + drivetrain.getObjectAngle(), drivetrain)
+            drivetrain.yPID.goToSetpoint(drivetrain::getObjectHorizontalPosition, drivetrain)
         ).withName("Move to Current Object Sideways");
     }
 
