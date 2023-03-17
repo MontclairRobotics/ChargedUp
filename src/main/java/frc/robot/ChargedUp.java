@@ -32,9 +32,11 @@ import frc.robot.components.subsystems.Shwooper;
 import frc.robot.components.subsystems.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
+import frc.robot.util.HashMaps;
 import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.Logging;
+import frc.robot.util.frc.Trajectories;
 import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
@@ -47,6 +49,8 @@ import frc.robot.vision.VisionSystem;
 import frc.robot.constants.*;
 
 import java.util.Map;
+
+import com.pathplanner.lib.server.PathPlannerServer;
 
 public class ChargedUp extends RobotContainer 
 {
@@ -73,7 +77,8 @@ public class ChargedUp extends RobotContainer
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
 
-    public static ShuffleboardTab getDebugTab() {
+    public static ShuffleboardTab getDebugTab() 
+    {
         return debugTab;
     }
 
@@ -104,8 +109,6 @@ public class ChargedUp extends RobotContainer
     public static final Shwooper shwooper = new Shwooper();
     public static final Grabber grabber = new Grabber();
     public static final Stinger stinger = new Stinger();
-
-    // TODO: needing to create an object for this is kinda dumb
     public static final MiscData misc = new MiscData();
 
     // INITIALIZER //
@@ -119,6 +122,7 @@ public class ChargedUp extends RobotContainer
         CANSafety.monitor(pneu);
 
         CameraServer.startAutomaticCapture();
+        PathPlannerServer.startServer(5811);
 
         for(int port = 5800; port <= 5805; port++)
         {
@@ -271,17 +275,11 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands555.signalCube());
         operatorController.getButton(Button.LEFT_BUMPER)
                 .onTrue(Commands555.signalCone());
-
-        
-        // Quick calibrate + zero
-        // gyroscope.calibrate();
-        // Timer.delay(2);
-        // gyroscope.zeroYaw();
     }
 
     public static boolean skipDriveAuto()
     {
-        return false; // TODO; this
+        return false;
     }
 
     // AUTO //
@@ -290,8 +288,7 @@ public class ChargedUp extends RobotContainer
     @Override
     public Command getAuto() 
     {
-        grabber.setHoldingCone(false);
-        return Commands555.backupAuto();//auto.get();
+        return auto.get();
     }
 
     // SHUFFLEBOARD //
@@ -445,5 +442,10 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.scoreMid());
         tab.add(Commands555.scoreMidPeg());
         tab.add(Commands555.scoreMidShelf());
+
+        for(String name : Trajectories.getAllTests())
+        {
+            tab.add(drivetrain.commands.auto(name));
+        }
     }
 }

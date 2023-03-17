@@ -579,25 +579,23 @@ public class Commands555
         // Transition
         else if(str.length() == 2)
         {
-            try 
+            if(!Trajectories.exists(str))  
             {
-                PathPlannerTrajectory nextTrajectory = Trajectories.get(str, Constants.Auto.MAX_VEL, Constants.Auto.MAX_ACC);
-
-                trajectories.add(nextTrajectory);
-
-                return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
-                    "Elevator Mid Peg", elevatorToConeMid(),
-                    "Elevator Mid Shelf", elevatorToCubeMid(),
-                    "Intake On", shwooperSuck(),
-                    "Retract", elevatorStingerReturn(),
-                    "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
-                ));
-            }
-            catch (Exception e)
-            {
-                Logging.errorNoTrace("Error finding path transition '" + str + "'");
+                Logging.errorNoTrace("No transition '" + str + "' found!");
                 return null;
             }
+
+            PathPlannerTrajectory nextTrajectory = Trajectories.get(str, Constants.Auto.constraints());
+
+            trajectories.add(nextTrajectory);
+
+            return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
+                "Elevator Mid Peg", elevatorToConeMid(),
+                "Elevator Mid Shelf", elevatorToCubeMid(),
+                "Intake On", shwooperSuck(),
+                "Retract", elevatorStingerReturn(),
+                "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
+            ));
         }
         // Error
         else 

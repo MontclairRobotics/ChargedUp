@@ -1,6 +1,7 @@
 package frc.robot.components.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -19,13 +20,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ChargedUp;
 import frc.robot.constants.ControlScheme;
+import frc.robot.constants.Constants.Auto;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
 import frc.robot.structure.DetectionType;
+import frc.robot.util.HashMaps;
 import frc.robot.util.Lazy;
 import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
+import frc.robot.util.frc.Trajectories;
 import frc.robot.util.frc.can.CANSafety;
 import frc.robot.util.frc.commandrobot.CommandRobot;
 import frc.robot.util.frc.commandrobot.ManagerSubsystemBase;
@@ -664,10 +668,46 @@ public class Drivetrain extends ManagerSubsystemBase
             );
         }
 
-        public CommandBase auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
+        /**
+         * Create a full autonomous command using the given path planner supplier.
+         * @param trajectory The trajectory supplier
+         * @param markers The autonomous markers
+         * @return The command
+         */
+        public CommandBase auto(Supplier<PathPlannerTrajectory> trajectory, HashMap<String, Command> markers)
         {
             SwerveAutoBuilder b = autoBuilder(markers);
-            return b.fullAuto(trajectory);
+            return new ProxyCommand(() -> b.fullAuto(trajectory.get()));
+        }
+        /**
+         * Create a full autonomous command using the given path planner trajectory.
+         * @param trajectory The trajectory
+         * @param markers The autonomous markers
+         * @return The command
+         */
+        public CommandBase auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
+        {
+            return auto(() -> trajectory, markers);
+        }
+        /**
+         * Create a full autonomous command using the given path planner trajectory name.
+         * @param trajectoryName The trajectory name
+         * @param markers The autonomous markers
+         * @return The command
+         */
+        public CommandBase auto(String trajectoryName, HashMap<String, Command> markers)
+        {
+            return auto(() -> Trajectories.get(trajectoryName, Auto.constraints()), markers);
+        }
+        /**
+         * Create a full autonomous command using the given path planner trajectory name.
+         * @param trajectoryName The trajectory name
+         * @return The command
+         */
+        public CommandBase auto(String trajectoryName)
+        {
+            return auto(() -> Trajectories.get(trajectoryName, Auto.constraints()), HashMaps.of())
+                .withName("Trajectory " + trajectoryName);
         }
 
         public CommandBase goToAngle(double angle)

@@ -4,6 +4,31 @@
       "/FMSInfo": "FMSInfo",
       "/Shuffleboard/Auto/Field": "Field2d",
       "/Shuffleboard/Auto/Starting Position": "String Chooser",
+      "/Shuffleboard/Commands/Activate Alliance LED": "Command",
+      "/Shuffleboard/Commands/Activate Purple LED": "Command",
+      "/Shuffleboard/Commands/Activate Yellow LED": "Command",
+      "/Shuffleboard/Commands/Close Grabber": "Command",
+      "/Shuffleboard/Commands/Intake Spit": "Command",
+      "/Shuffleboard/Commands/Intake Stop": "Command",
+      "/Shuffleboard/Commands/Intake Suck": "Command",
+      "/Shuffleboard/Commands/Open Grabber": "Command",
+      "/Shuffleboard/Commands/Retract Stinger": "Command",
+      "/Shuffleboard/Commands/Return Elevator and Stinger": "Command",
+      "/Shuffleboard/Commands/Score LOW PEG": "Command",
+      "/Shuffleboard/Commands/Score LOW SHELF": "Command",
+      "/Shuffleboard/Commands/Score Low (General)": "Command",
+      "/Shuffleboard/Commands/Score MID PEG": "Command",
+      "/Shuffleboard/Commands/Score MID SHELF": "Command",
+      "/Shuffleboard/Commands/Score Mid (General)": "Command",
+      "/Shuffleboard/Commands/Set Grabber has Cone": "Command",
+      "/Shuffleboard/Commands/Set Grabber has Cube": "Command",
+      "/Shuffleboard/Commands/Signal Cone": "Command",
+      "/Shuffleboard/Commands/Signal Cube": "Command",
+      "/Shuffleboard/Commands/Stinger Out": "Command",
+      "/Shuffleboard/Commands/Toggle Grabber": "Command",
+      "/Shuffleboard/Commands/Toggle Grabber has Cone": "Command",
+      "/Shuffleboard/Commands/Toggle Stinger": "Command",
+      "/Shuffleboard/Commands/Trajectory test.Line": "Command",
       "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
       "/Shuffleboard/PID/ELEVATOR-PID/Elevator PID": "PIDController",
       "/Shuffleboard/PID/THETA-PID/θ-PID Controller": "PIDController",
@@ -16,7 +41,20 @@
         "window": {
           "visible": true
         }
+      },
+      "/Shuffleboard/Auto/Field": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Trajectory test.Line": {
+        "window": {
+          "visible": true
+        }
       }
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   }
 }
