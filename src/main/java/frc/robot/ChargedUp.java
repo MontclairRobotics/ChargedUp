@@ -32,6 +32,7 @@ import frc.robot.components.subsystems.Shwooper;
 import frc.robot.components.subsystems.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
+import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.GameController.Axis;
@@ -210,7 +211,7 @@ public class ChargedUp extends RobotContainer
 
         if(useDebugController)
         {
-            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
+            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(new LazyDouble(() -> drivetrain.getRobotPose().getY() + 2), drivetrain));
 
             debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(0));
             debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(90));
