@@ -245,11 +245,11 @@ public class Commands555
     {
         return Commands.runOnce(ChargedUp.grabber::grab)
             .withName("Close Grabber");
+    }
 
-     }
-     /**
-      * Opens the grabber
-      */
+    /**
+     * Opens the grabber
+     */
     public static CommandBase openGrabber() 
     {
         return Commands.runOnce(ChargedUp.grabber::release)
@@ -271,37 +271,6 @@ public class Commands555
     }
 
     /////////////////////////////// SHWOOPER COMMMANDS ///////////////////////////
-    
-    /**
-     * toggle the Shwooper
-     * <p>
-     * - if it is extended, <b>retract</b>
-     * <p>
-     * - if it is retracted, <b>extend</b>
-     * @return Command
-     */
-    public static CommandBase toggleShwooper() 
-    {
-        return Commands.runOnce(ChargedUp.shwooper::toggleShwooper) 
-            .withName("Toggle Schwooper");
-    }
-    /**
-     * retracts shwooper
-     */ 
-    public static CommandBase retractSchwooper()
-    {
-        return Commands.runOnce(ChargedUp.shwooper::retractShwooper)
-            .withName("Retract Schwooper");
-    }
-    /** 
-     * extends shwooper
-     */  
-    public static CommandBase extendSchwooper()
-    {
-        return Commands.runOnce(ChargedUp.shwooper::extendShwooper)
-            .withName("Extend Schwooper");
-    }
-
     /**
      * intake suck
      * @return Command
@@ -350,11 +319,10 @@ public class Commands555
             stopShwooper(),
 
             // Grab it
-            closeGrabber(),
+            closeGrabber()
 
             // Prepare to leave
             // elevatorToMid(),
-            retractSchwooper()
         ).withName("Pickup");
     }
 
