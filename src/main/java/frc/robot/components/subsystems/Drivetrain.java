@@ -682,12 +682,17 @@ public class Drivetrain extends ManagerSubsystemBase
             SwerveAutoBuilder b = autoBuilder(markers);
             return b.fullAuto(trajectory);
         }
+
         public CommandBase goToAngle(double angle)
         {
             return thetaPID.goToSetpoint(angle);
         }
 
         // GO TO POSITION ABSOLUTE //
+        /**
+         * Creates a command which goes to the given dynamically changing point in field space.
+         * @return The command
+         */
         public CommandBase goToDynamicPositionAbsolute(Supplier<Translation2d> xy)
         {
             return Commands.parallel(
@@ -695,24 +700,48 @@ public class Drivetrain extends ManagerSubsystemBase
                 yPID.goToSetpoint(() -> xy.get().getY())
             );
         }
+        
+        /**
+         * Creates a command which goes to a dynamically changing point in field space defined by ({@code x.get()}, {@code y.get()}).
+         * @return The command
+         */
         public CommandBase goToDynamicPositionAbsolute(DoubleSupplier x, DoubleSupplier y)
         {
             return goToDynamicPositionAbsolute(() -> new Translation2d(x.getAsDouble(), y.getAsDouble()));
         }
+
+        /**
+         * Creates a command which goes to the point defined by {@code xy.get()} when the command starts in field space.
+         * @return The command
+         */
         public CommandBase goToPositionAbsolute(Supplier<Translation2d> xy)
         {
             return goToPositionAbsolute(new Lazy<>(xy));
         }
+
+        /**
+         * Creates a command which goes to the given point in field space.
+         * @return The command
+         */
         public CommandBase goToPositionAbsolute(Translation2d xy)
         {
             return goToPositionAbsolute(() -> xy);
         }
+
+        /**
+         * Creates a command which goes to the point defined by ({@code x}, {@code y}) in field space.
+         * @return The command
+         */
         public CommandBase goToPositionAbsolute(double x, double y)
         {
             return goToPositionAbsolute(new Translation2d(x, y));
         }
 
         // GO TO POSITION RELATIVE //
+        /**
+         * Creates a command which goes to the given dynamically changing point in robot-relative space.
+         * @return The command
+         */
         public CommandBase goToDynamicPositionRelative(Supplier<Translation2d> xy)
         {
             return goToDynamicPositionAbsolute(() -> 
@@ -721,18 +750,38 @@ public class Drivetrain extends ManagerSubsystemBase
                     .plus(xy.get().rotateBy(getRobotRotation()))
             );
         }
+
+        /**
+         * Creates a command which goes to a dynamically changing point in robot-relative space defined by ({@code x.get()}, {@code y.get()}).
+         * @return The command
+         */
         public CommandBase goToDynamicPositionRelative(DoubleSupplier x, DoubleSupplier y)
         {
             return goToDynamicPositionRelative(() -> new Translation2d(x.getAsDouble(), y.getAsDouble()));
         }
+
+        /**
+         * Creates a command which goes to the point defined by {@code xy.get()} when the command starts in robot-relative space.
+         * @return The command
+         */
         public CommandBase goToPositionRelative(Supplier<Translation2d> xy)
         {
             return goToDynamicPositionRelative(new Lazy<>(xy));
         }
+
+        /**
+         * Creates a command which goes to the given point in robot-relative space.
+         * @return The command
+         */
         public CommandBase goToPositionRelative(Translation2d xy)
         {
             return goToPositionRelative(() -> xy);
         }
+
+        /**
+         * Creates a command which goes to the point defined by ({@code x}, {@code y}) in robot-relative space.
+         * @return The command
+         */
         public CommandBase goToPositionRelative(double x, double y)
         {
             return goToPositionRelative(new Translation2d(x, y));
