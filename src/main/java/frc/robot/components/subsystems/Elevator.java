@@ -180,6 +180,10 @@ public class Elevator extends ManagerSubsystemBase
     {
         return bottomlimitSwitch.get(); 
     }
+    public boolean isAtTop() 
+    {
+        return toplimitSwitch.get(); 
+    }
 
     /**
      * returns if the elevator is currently not using {@link Elevator#PID PID}

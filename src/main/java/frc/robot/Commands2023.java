@@ -155,13 +155,31 @@ public class Commands2023
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
 
+    public static Command elevatorTo(double height)
+    {
+        if(height < ElevatorConstants.MIN_HEIGHT) 
+            return Commands.runOnce(() -> elevator.PID.setSpeed(-1))
+                .until(elevator::isAtBottom)
+                .andThen(() -> elevator.PID.setSpeed(0))
+                .withName("Elevator to Bottom");
+            
+        if(height > ElevatorConstants.MAX_HEIGHT) 
+            return Commands.runOnce(() -> elevator.PID.setSpeed(1))
+                .until(elevator::isAtTop)
+                .andThen(() -> elevator.PID.setSpeed(0))
+                .withName("Elevator to Top");
+
+        return elevator.PID.goToSetpoint(height, elevator) 
+            .withName("Elevator to " + height + "m");
+    }
+
     /**
      * Sets the elevator its lowest height
      * @return Command
      */
     public static Command elevatorToLow()
     {
-        return elevator.PID.goToSetpoint(ElevatorConstants.MIN_HEIGHT, elevator);
+        return elevatorTo(ElevatorConstants.MIN_HEIGHT);
     }
 
     /**
@@ -170,7 +188,7 @@ public class Commands2023
      */
     public static Command elevatorToConeMid()
     {
-        return elevator.PID.goToSetpoint(ElevatorConstants.MID_HEIGHT_CONE, elevator);
+        return elevatorTo(ElevatorConstants.MID_HEIGHT_CONE);
     }
 
     /**
@@ -179,7 +197,7 @@ public class Commands2023
      */
     public static Command elevatorToCubeMid()
     {
-        return elevator.PID.goToSetpoint(ElevatorConstants.MID_HEIGHT_CUBE, elevator);
+        return elevatorTo(ElevatorConstants.MID_HEIGHT_CUBE);
     }
 
     /**
