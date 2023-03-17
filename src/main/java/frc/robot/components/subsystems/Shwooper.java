@@ -55,12 +55,6 @@ public class Shwooper extends ManagerSubsystemBase
         motorTop.set(0);
     }
 
-    public void extendShwooper(){}
-    public void retractShwooper(){}
-    public void toggleShwooper(){}
-    
-    public boolean isShwooperOut(){return true;}
-
     @Override
     public void reset()
     {

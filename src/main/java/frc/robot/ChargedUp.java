@@ -32,12 +32,14 @@ import frc.robot.components.subsystems.Shwooper;
 import frc.robot.components.subsystems.Stinger;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.structure.DetectionType;
+import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.GameController;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.GameController.Axis;
 import frc.robot.util.frc.GameController.Button;
 import frc.robot.util.frc.GameController.DPad;
 import frc.robot.util.frc.can.CANSafety;
+import frc.robot.util.frc.commandrobot.CommandRobot;
 import frc.robot.util.frc.commandrobot.RobotContainer;
 import frc.robot.vision.LimelightSystem;
 import frc.robot.vision.VisionSystem;
@@ -128,6 +130,7 @@ public class ChargedUp extends RobotContainer
         setupDebugTab();
         setupMainTab();
         setupPIDTab();
+        setupCommandsTab();
 
         vision.setTargetType(DetectionType.APRIL_TAG);
 
@@ -179,17 +182,17 @@ public class ChargedUp extends RobotContainer
                 .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
 
         driverController.getButton(Button.X_SQUARE)
-                .onTrue(Commands2023.moveToObjectSideways(vision::getDesiredDriveTarget));
+                .onTrue(Commands555.moveToObjectSideways(vision::getDesiredDriveTarget));
 
         driverController.getButton(Button.B_CIRCLE)
-                .onTrue(Commands2023.turnToObject(vision::getDesiredDriveTarget));
+                .onTrue(Commands555.turnToObject(vision::getDesiredDriveTarget));
 
         driverController.getButton(Button.LEFT_STICK)
                 .onTrue(drivetrain.commands.enableFieldRelative());
 
         // BALANCE //
         driverController.getButton(Button.Y_TRIANGLE)
-                .onTrue(Commands2023.balance());
+                .onTrue(Commands555.balance());
 
         // Button to Zero NavX
         driverController.getButton(Button.START_TOUCHPAD)
@@ -210,7 +213,7 @@ public class ChargedUp extends RobotContainer
 
         if(useDebugController)
         {
-            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.yPID.goToSetpoint(2, drivetrain));
+            debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.commands.goToPositionRelative(0, 2));
 
             debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(0));
             debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(90));
@@ -225,33 +228,33 @@ public class ChargedUp extends RobotContainer
         // operatorController.getDPad(DPad.UP).and(pidActive)
         //     .toggleOnTrue(Commands2023.scoreHigh());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
-            .toggleOnTrue(Commands2023.scoreMid());
+            .toggleOnTrue(Commands555.scoreMid());
         // operatorController.getDPad(DPad.DOWN).and(pidActive)
         //     .toggleOnTrue(Commands2023.scoreLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
-                .toggleOnTrue(Commands2023.elevatorStingerReturn());
+                .toggleOnTrue(Commands555.elevatorStingerReturn());
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
-            .onTrue(Commands2023.toggleGrabber());
+            .onTrue(Commands555.toggleGrabber());
         operatorController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands2023.grabberSetCone());
+            .onTrue(Commands555.setGrabberHasCone());
         operatorController.getButton(Button.X_SQUARE)
-            .onTrue(Commands2023.grabberSetCube());
+            .onTrue(Commands555.setGrabberHasCube());
         operatorController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands2023.toggleStinger());
+            .onTrue(Commands555.toggleStinger());
 
         // Schwooper
         // suck button
         operatorController.getAxis(Axis.LEFT_TRIGGER)
                 .whenGreaterThan(0.5)
-                .onTrue(Commands2023.shwooperSuck())
-                .onFalse(Commands2023.stopShwooper());
+                .onTrue(Commands555.shwooperSuck())
+                .onFalse(Commands555.stopShwooper());
         // button to spit schwooper
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
                 .whenGreaterThan(0.5)
-                .onTrue(Commands2023.shwooperSpit())
-                .onFalse(Commands2023.stopShwooper());
+                .onTrue(Commands555.shwooperSpit())
+                .onFalse(Commands555.stopShwooper());
 
         // Elevator
         elevator.setDefaultCommand(Commands.run(() -> {
@@ -265,9 +268,9 @@ public class ChargedUp extends RobotContainer
         
         //LEDs
         operatorController.getButton(Button.RIGHT_BUMPER)
-            .onTrue(Commands2023.quickSlowFlashPurple());
+            .onTrue(Commands555.signalCube());
         operatorController.getButton(Button.LEFT_BUMPER)
-                .onTrue(Commands2023.quickSlowFlashYellow());
+                .onTrue(Commands555.signalCone());
 
         
         // Quick calibrate + zero
@@ -288,7 +291,67 @@ public class ChargedUp extends RobotContainer
     public Command getAuto() 
     {
         grabber.setHoldingCone(false);
-        return Commands2023.backupAuto();//auto.get();
+        return Commands555.backupAuto();//auto.get();
+    }
+
+    // SHUFFLEBOARD //
+    public void setupMainTab() 
+    {
+        // MAIN INFO //
+        final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
+            .withSize(2, 4)
+            .withPosition(9, 0);
+
+        info.addBoolean("Field Relative", drivetrain::usingFieldRelative)
+            .withWidget(BuiltInWidgets.kBooleanBox);
+        
+        info.addNumber("Max Linear Speed (mps)",
+            () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
+            .withWidget(BuiltInWidgets.kTextView);
+
+        info.addNumber("Max Angular Speed (rps)",
+            () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
+            .withWidget(BuiltInWidgets.kTextView);
+
+        // OTHER INFORMATION //
+        mainTab
+            .addString("Recent Log", Logging::mostRecentLog)
+            .withWidget(BuiltInWidgets.kTextView)
+            .withSize(3, 1)
+            .withPosition(2, 3);
+
+        mainTab
+            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
+            .withSize(2, 1)
+            .withPosition(7, 3);
+        
+        mainTab
+            .addString("Suck Mode", shwooper::currentMode)
+            .withSize(2, 1)
+            .withPosition(7, 2);
+        
+        // GYROSCOPE VALUE //
+        mainTab
+            .addNumber("Gyroscope", () -> gyroscope.getRotationInCircle().getDegrees())
+            .withWidget(BuiltInWidgets.kGyro)
+            .withSize(2, 2)
+            .withPosition(0, 0);
+
+        // OBJECT MANIPULATION //
+        mainTab
+            .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(2, 1)
+            .withPosition(0, 2)
+            .withProperties(Map.of(
+                "Color when true",  Color.kGold.toHexString(),
+                "Color when false", Color.kDarkViolet.toHexString()
+            ));
+        
+        mainTab
+            .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
+            .withSize(2, 1)
+            .withPosition(5, 3);
     }
 
     public void setupDebugTab() 
@@ -308,7 +371,8 @@ public class ChargedUp extends RobotContainer
         debugTab.add("Mechanism", mainMechanism);
     }
 
-    public void setupPIDTab() {
+    public void setupPIDTab() 
+    {
         final ShuffleboardLayout xPID = PIDTab.getLayout("X-PID", BuiltInLayouts.kGrid)
             .withPosition(0, 0)
             .withSize(1, 5)
@@ -346,78 +410,40 @@ public class ChargedUp extends RobotContainer
         elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
     }
 
-    // SHUFFLEBOARD //
-    public void setupMainTab() 
+    public void setupCommandsTab()
     {
-        // IS USING FIELD RELATIVE //
-        final ShuffleboardLayout info = mainTab.getLayout("Info", BuiltInLayouts.kList)
-            .withSize(2, 4)
-            .withPosition(9, 0);
-
-        info.addBoolean("Field Relative", drivetrain::usingFieldRelative)
-            .withWidget(BuiltInWidgets.kBooleanBox);
-
-        // LOGGING LOG RECENT //
-        mainTab
-            .addString("Recent Log", Logging::mostRecentLog)
-            .withWidget(BuiltInWidgets.kTextView)
-            .withSize(3, 1)
-            .withPosition(2, 3);
-
-        mainTab
-            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
-            .withSize(2, 1)
-            .withPosition(7, 3);
-
+        ShuffleboardTab tab = Shuffleboard.getTab("Commands");
         
-        mainTab
-            .addString("Suck Mode", shwooper::currentMode)
-            .withSize(2, 1)
-            .withPosition(7, 2);
-            
-
-        // CAMERAS //
-        // mainTab
-        // .addCamera("Cameras", "Vision Camera", vision.getCameraStreamURL())
-        // .withSize(3, 2)
-        // .withPosition(0, 3);
-
-        // GYROSCOPE VALUE //
-        mainTab
-            .addNumber("Gyroscope", () -> gyroscope.getRotationInCircle().getDegrees())
-            .withWidget(BuiltInWidgets.kGyro)
-            .withSize(2, 2)
-            .withPosition(0, 0);
-
-        // MAX LINEAR SPEED //
-        info.addNumber("Max Linear Speed (mps)",
-            () -> drivetrain.getCurrentSpeedLimits()[0] * DriveConstants.MAX_SPEED_MPS)
-            .withWidget(BuiltInWidgets.kTextView);
-
-        // MAX ANGULAR SPEED //
-        info.addNumber("Max Angular Speed (rps)",
-            () -> drivetrain.getCurrentSpeedLimits()[1] * DriveConstants.MAX_TURN_SPEED_RAD_PER_S)
-            .withWidget(BuiltInWidgets.kTextView);
-
-        // HELD OBJECT //
-        // mainTab
-        //     .addString("Held Object", grabber::getHeldObjectName)
-        //     .withWidget(BuiltInWidgets.kTextView)
-        //     .withSize(2, 1)
-        //     .withPosition(0, 2);
-        mainTab
-            .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 2)
-            .withProperties(Map.of(
-                "Color when true",  Color.kGold.toHexString(),
-                "Color when false", Color.kDarkViolet.toHexString()
-            ));
+        tab.add(Commands555.activateAlliance());
+        tab.add(Commands555.activatePurple());
+        tab.add(Commands555.activateYellow());
         
-        mainTab
-            .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
-            .withSize(2, 1)
-            .withPosition(5, 3);
+        tab.add(Commands555.signalCube());
+        tab.add(Commands555.signalCone());
+
+        tab.add(Commands555.openGrabber());
+        tab.add(Commands555.closeGrabber());
+        tab.add(Commands555.toggleGrabber());
+        
+        tab.add(Commands555.setGrabberHasCone());
+        tab.add(Commands555.setGrabberHasCube());
+        tab.add(Commands555.toggleGrabberHasCone());
+        
+        tab.add(Commands555.extendStinger());
+        tab.add(Commands555.retractStinger());
+        tab.add(Commands555.toggleStinger());
+
+        tab.add(Commands555.shwooperSuck());
+        tab.add(Commands555.shwooperSpit());
+        tab.add(Commands555.stopShwooper());
+        
+        tab.add(Commands555.elevatorStingerReturn());
+
+        tab.add(Commands555.scoreLow());
+        tab.add(Commands555.scoreLowPeg());
+        tab.add(Commands555.scoreLowShelf());
+        tab.add(Commands555.scoreMid());
+        tab.add(Commands555.scoreMidPeg());
+        tab.add(Commands555.scoreMidShelf());
     }
 }

@@ -16,11 +16,14 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ChargedUp;
 import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
 import frc.robot.math.Math555;
 import frc.robot.structure.DetectionType;
+import frc.robot.util.Lazy;
+import frc.robot.util.LazyDouble;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.PIDMechanism;
 import frc.robot.util.frc.can.CANSafety;
@@ -38,14 +41,12 @@ import static frc.robot.constants.DriveConstants.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.function.Consumer;
+import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
-
-    public final PIDController xController;
-    public final PIDController yController;
-    public final PIDController thetaController;
 
     public final SlewRateLimiter xInputRateLimiter;
     public final SlewRateLimiter yInputRateLimiter;
@@ -54,24 +55,21 @@ public class Drivetrain extends ManagerSubsystemBase
     public final PIDMechanism xPID;
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
-
-    private boolean useFieldRelative = true;
+    
+    private final SwerveDrivePoseEstimator poseEstimator;
 
     private final FieldObject2d moduleObject;
-    private final SwerveDrivePoseEstimator poseEstimator;
-    private double currentStraightAngle;
+
+    private boolean useFieldRelative = true;
     private boolean isStraightPidding;
 
-    /**
-     * Store whether or not the drivetrain has already piped values into its motors, signalling an autonomous command
-     * if control reaches "periodic" and this is true.
-     */
     private boolean hasDrivenThisUpdate = false;
     private boolean hasUsedDriverInputThisUpdate = false;
 
-    //sets the speedIndex to speeds length
-    private static int speedIndex = SPEEDS.length-1;
+    private int speedIndex = SPEEDS.length - 1;
+    private double currentStraightAngle;
     
+    // Simulation information //
     private static class SimulationData
     {
         private ChassisSpeeds targetSpeeds = new ChassisSpeeds();
@@ -82,19 +80,7 @@ public class Drivetrain extends ManagerSubsystemBase
     }
     private SimulationData simulation;
 
-    // private Consumer<Double> funcMul(Consumer<Double> cd, double factor)
-    // {
-    //     return x -> cd.accept(x * factor);
-    // }
-    // private Consumer<Double> drivePid(Consumer<Double> cd)
-    // {
-    //     return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getDriveReduction());
-    // }
-    // private Consumer<Double> steerPid(Consumer<Double> cd)
-    // {
-    //     return funcMul(cd, SdsModuleConfigurations.MK4I_L1.getSteerReduction());
-    // }
-
+    // Construction //
     public Drivetrain()
     {
         if(RobotBase.isSimulation())
@@ -151,19 +137,19 @@ public class Drivetrain extends ManagerSubsystemBase
         );
 
         // Build PID Controllers //
-        xController = new PIDController(
+        PIDController xController = new PIDController(
             PosPID.consts().kP,
             PosPID.consts().kI, 
             PosPID.consts().kD
         );
 
-        yController = new PIDController(
+        PIDController yController = new PIDController(
             PosPID.consts().kP,
             PosPID.consts().kI, 
             PosPID.consts().kD
         );
 
-        thetaController = new PIDController(
+        PIDController thetaController = new PIDController(
             ThetaPID.consts().kP,
             ThetaPID.consts().kI, 
             ThetaPID.consts().kD
@@ -180,7 +166,7 @@ public class Drivetrain extends ManagerSubsystemBase
         ThetaPID.KI.whenUpdate(thetaController::setI);
         ThetaPID.KD.whenUpdate(thetaController::setD);
 
-        // Build slew rate limiters //
+        // Build Slew Rate Limiters //
         xInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
         yInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
         thetaInputRateLimiter = new SlewRateLimiter(inputRateLimit());
@@ -249,12 +235,10 @@ public class Drivetrain extends ManagerSubsystemBase
     /**
      * Set to use the given velocities in robot-wise coordinates:
      * <ul>
-     *      <li>+y is forward</li>
-     *      <li>+x is left</li>
+     *      <li>+x is forward</li>
+     *      <li>+y is left</li>
      *      <li>+O is CCW</li>
      * </ul>
-     * 
-     * TODO: is this correct?
      * 
      * @param omega rotational velocity percentage
      * @param vx x direction velocity percentage
@@ -271,6 +255,18 @@ public class Drivetrain extends ManagerSubsystemBase
         thetaPID.setSpeed(omega);
     }
 
+    /**
+     * Set to use the given velocities in robot-wise coordinates:
+     * <ul>
+     *      <li>+x is forward</li>
+     *      <li>+y is left</li>
+     *      <li>+O is CCW</li>
+     * </ul>
+     * 
+     * @param omega rotational velocity
+     * @param vx x direction velocity
+     * @param vy y direction velocity
+     */
     public void setVelocities(double omega, double vx, double vy)
     {
         vx    /= MAX_SPEED_MPS;
@@ -313,6 +309,7 @@ public class Drivetrain extends ManagerSubsystemBase
             );
         }
     }
+    
     /**
      * Uses the chassis speeds to  
      * Only works when the robot is real currently
@@ -560,11 +557,6 @@ public class Drivetrain extends ManagerSubsystemBase
 
     public double[] getCurrentSpeedLimits() {return SPEEDS[speedIndex];}
 
-    public boolean isThetaPIDFree()
-    {
-        return !thetaPID.active();
-    }
-
     public double getObjectAngle() 
     {
         return getRobotRotationModRotation().getDegrees() + ChargedUp.vision.getObjectAX() * 20; 
@@ -585,20 +577,20 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         private DriveCommands() {}
 
-        public Command increaseSpeed()
+        public CommandBase increaseSpeed()
         {
             return Commands.runOnce(() -> Drivetrain.this.increaseMaxSpeed());
         }
-        public Command decreaseSpeed()
+        public CommandBase decreaseSpeed()
         {
             return Commands.runOnce(() -> Drivetrain.this.decreaseMaxSpeed());
         }
 
-        public Command driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        public CommandBase driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.runOnce(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
-        public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        public CommandBase driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.sequence
             (
@@ -612,7 +604,7 @@ public class Drivetrain extends ManagerSubsystemBase
          * Lock the robot's angle
          * @return
          */
-        public Command enableStraightPidding() 
+        public CommandBase enableStraightPidding() 
         {
             return Commands.runOnce(() -> Drivetrain.this.startStraightPidding());
         }
@@ -621,20 +613,20 @@ public class Drivetrain extends ManagerSubsystemBase
          * Stop locking the robot's angle
          * @return
          */
-        public Command disableStraightPidding() 
+        public CommandBase disableStraightPidding() 
         {
             return Commands.runOnce(() -> Drivetrain.this.stopStraightPidding());
         }
 
-        public Command enableFieldRelative()
+        public CommandBase enableFieldRelative()
         {
             return Commands.runOnce(Drivetrain.this::enableFieldRelative, Drivetrain.this);
         }
-        public Command disableFieldRelative()
+        public CommandBase disableFieldRelative()
         {
             return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
-        public Command toggleFieldRelative()
+        public CommandBase toggleFieldRelative()
         {
             return Commands.runOnce(() -> useFieldRelative = !useFieldRelative, Drivetrain.this);
         }
@@ -667,20 +659,119 @@ public class Drivetrain extends ManagerSubsystemBase
                 ThetaPID.consts(),
                 Drivetrain.this::driveFromStates,
                 markers,
-                false,
+                true,
                 Drivetrain.this
             );
         }
 
-        public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
+        public CommandBase auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
             SwerveAutoBuilder b = autoBuilder(markers);
             return b.fullAuto(trajectory);
         }
-        public Command goToAngle(double angle)
+
+        public CommandBase goToAngle(double angle)
         {
             return thetaPID.goToSetpoint(angle);
         }
 
+        // GO TO POSITION ABSOLUTE //
+        /**
+         * Creates a command which goes to the given dynamically changing point in field space.
+         * @return The command
+         */
+        public CommandBase goToDynamicPositionAbsolute(Supplier<Translation2d> xy)
+        {
+            return Commands.parallel(
+                xPID.goToSetpoint(() -> xy.get().getX()),
+                yPID.goToSetpoint(() -> xy.get().getY())
+            );
+        }
+        
+        /**
+         * Creates a command which goes to a dynamically changing point in field space defined by ({@code x.get()}, {@code y.get()}).
+         * @return The command
+         */
+        public CommandBase goToDynamicPositionAbsolute(DoubleSupplier x, DoubleSupplier y)
+        {
+            return goToDynamicPositionAbsolute(() -> new Translation2d(x.getAsDouble(), y.getAsDouble()));
+        }
+
+        /**
+         * Creates a command which goes to the point defined by {@code xy.get()} when the command starts in field space.
+         * @return The command
+         */
+        public CommandBase goToPositionAbsolute(Supplier<Translation2d> xy)
+        {
+            return goToPositionAbsolute(new Lazy<>(xy));
+        }
+
+        /**
+         * Creates a command which goes to the given point in field space.
+         * @return The command
+         */
+        public CommandBase goToPositionAbsolute(Translation2d xy)
+        {
+            return goToPositionAbsolute(() -> xy);
+        }
+
+        /**
+         * Creates a command which goes to the point defined by ({@code x}, {@code y}) in field space.
+         * @return The command
+         */
+        public CommandBase goToPositionAbsolute(double x, double y)
+        {
+            return goToPositionAbsolute(new Translation2d(x, y));
+        }
+
+        // GO TO POSITION RELATIVE //
+        /**
+         * Creates a command which goes to the given dynamically changing point in robot-relative space.
+         * @return The command
+         */
+        public CommandBase goToDynamicPositionRelative(Supplier<Translation2d> xy)
+        {
+            return goToDynamicPositionAbsolute(() -> 
+                // robotxy + targetxy (rotate) robotrotation
+                getRobotPose().getTranslation()
+                    .plus(xy.get().rotateBy(getRobotRotation()))
+            );
+        }
+
+        /**
+         * Creates a command which goes to a dynamically changing point in robot-relative space defined by ({@code x.get()}, {@code y.get()}).
+         * @return The command
+         */
+        public CommandBase goToDynamicPositionRelative(DoubleSupplier x, DoubleSupplier y)
+        {
+            return goToDynamicPositionRelative(() -> new Translation2d(x.getAsDouble(), y.getAsDouble()));
+        }
+
+        /**
+         * Creates a command which goes to the point defined by {@code xy.get()} when the command starts in robot-relative space.
+         * @return The command
+         */
+        public CommandBase goToPositionRelative(Supplier<Translation2d> xy)
+        {
+            return goToDynamicPositionRelative(new Lazy<>(xy));
+        }
+
+        /**
+         * Creates a command which goes to the given point in robot-relative space.
+         * @return The command
+         */
+        public CommandBase goToPositionRelative(Translation2d xy)
+        {
+            return goToPositionRelative(() -> xy);
+        }
+
+        /**
+         * Creates a command which goes to the point defined by ({@code x}, {@code y}) in robot-relative space.
+         * @return The command
+         */
+        public CommandBase goToPositionRelative(double x, double y)
+        {
+            return goToPositionRelative(new Translation2d(x, y));
+        }
     }
 }

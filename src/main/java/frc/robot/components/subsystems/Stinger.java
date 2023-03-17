@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.ChargedUp;
-import frc.robot.Commands2023;
+import frc.robot.Commands555;
 import frc.robot.constants.ElevatorConstants;
 import frc.robot.constants.PneuConstants;
 import frc.robot.constants.Ports;
@@ -20,29 +20,24 @@ public class Stinger extends ManagerSubsystemBase
     private final Solenoid solenoid = new Solenoid(PneuConstants.PH_PORT, PneumaticsModuleType.REVPH, Ports.STINGER_PNEU_PORT);
     private boolean target;
 
-    private Command moveThenOut(double back)
-    {
-        return Commands.sequence(
-            ChargedUp.drivetrain.commands.disableFieldRelative(),
-            ChargedUp.drivetrain.xPID.goToSetpoint(
-                new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - back), 
-                ChargedUp.drivetrain
-            ),
-            ChargedUp.drivetrain.commands.enableFieldRelative(),
-            Commands.runOnce(() -> target = true),
-            Commands.waitSeconds(PNEU_TIME)
-        );
-    }
-
-    public Command in() {return Commands.runOnce(() -> target = false).andThen(Commands.waitSeconds(PNEU_TIME));}
-    
-    public Command outLow() {return moveThenOut(MID_LENGTH - LOW_LENGTH);}
-    
-    public Command outMid() {return Commands.runOnce(() -> target = true).andThen(Commands.waitSeconds(PNEU_TIME));}
+    // private Command moveThenOut(double back)
+    // {
+    //     return Commands.sequence(
+    //         ChargedUp.drivetrain.commands.disableFieldRelative(),
+    //         ChargedUp.drivetrain.xPID.goToSetpoint(
+    //             new LazyDouble(() -> ChargedUp.drivetrain.getRobotPose().getX() - back), 
+    //             ChargedUp.drivetrain
+    //         ),
+    //         ChargedUp.drivetrain.commands.enableFieldRelative(),
+    //         Commands.runOnce(() -> target = true),
+    //         Commands.waitSeconds(PNEU_TIME)
+    //     );
+    // }
 
     public boolean isOut() {return solenoid.get();}
 
-    public boolean requiresDriveOffset() {return true;}
+    public void targetOut() {target = true;}
+    public void targetIn() {target = false;}
 
     @Override
     public void always() 

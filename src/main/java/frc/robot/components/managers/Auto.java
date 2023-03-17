@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.ChargedUp;
-import frc.robot.Commands2023;
+import frc.robot.Commands555;
 
 /**
  * AutoCommandsManager
@@ -103,7 +103,7 @@ public class Auto extends ManagerBase
             balance.getBoolean(false)
         );
 
-        command = Commands2023.buildAuto(str);
+        command = Commands555.buildAuto(str);
 
         if(command != null)
         {
