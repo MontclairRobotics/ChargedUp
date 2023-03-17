@@ -453,6 +453,8 @@ public class Commands555
         { 
             LinearFilter tiltChange = LinearFilter.backwardFiniteDifference(1, 5, TimedRobot.kDefaultPeriod);
             EdgeDetectFilter tiltEdge = new EdgeDetectFilter(EdgeType.RISING);
+
+            Debouncer atRestDebouncer = new Debouncer(DriveConstants.CHARGER_STATION_AT_REST_DEBOUNCE_TIME.get(), DebounceType.kRising);
     
             int tiltCount = 0;
 
@@ -466,6 +468,8 @@ public class Commands555
 
                 tiltChange.reset();
                 tiltEdge.reset();
+
+                atRestDebouncer.calculate(false);
 
                 drivetrain.disableFieldRelative();
             }
@@ -509,7 +513,7 @@ public class Commands555
             @Override
             public boolean isFinished() 
             {
-                return !isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND;
+                return atRestDebouncer.calculate(!isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND);
             }
 
             @Override
