@@ -7,18 +7,16 @@ import frc.robot.ChargedUp;
 
 public enum ScoreHeight 
 {
-    MID_CONE, MID_CUBE, LOW; 
+    MID, LOW; 
 
     public Command getPositioner()
     {
-        if(this == MID_CONE) return Commands.sequence(
-            Commands2023.elevatorToConeMid(),
-            Commands2023.toggleStinger()
-        );
-        if(this == MID_CUBE) return Commands.sequence(
-            Commands2023.elevatorToCubeMid(),
-            Commands2023.toggleStinger()
-        );
+        if(this == MID) 
+        {
+            return Commands.sequence(
+                Commands.either(Commands2023.elevatorToConeMid(), Commands2023.elevatorToCubeMid(), () -> ChargedUp.grabber.getHoldingCone()),
+                Commands2023.toggleGrabber());
+        }
         if(this == LOW)  return Commands.sequence(
             Commands2023.elevatorToLow(),
             Commands2023.toggleStinger()
