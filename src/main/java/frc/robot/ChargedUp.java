@@ -235,9 +235,9 @@ public class ChargedUp extends RobotContainer
         operatorController.getButton(Button.A_CROSS)
             .onTrue(Commands2023.toggleGrabber());
         operatorController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands2023.grabberSetCone());
+            .onTrue(Commands2023.setGrabberHasCone());
         operatorController.getButton(Button.X_SQUARE)
-            .onTrue(Commands2023.grabberSetCube());
+            .onTrue(Commands2023.setGrabberHasCube());
         operatorController.getButton(Button.B_CIRCLE)
             .onTrue(Commands2023.toggleStinger());
 

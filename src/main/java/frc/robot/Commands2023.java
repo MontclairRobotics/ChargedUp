@@ -55,12 +55,8 @@ public class Commands2023
      */
     public static Command activatePurple() 
     {
-        return Commands.runOnce(() -> DefaultAnimation.setViolet());
-    }
-
-    public static Command toggleGrabberHasCone() 
-    {
-        return Commands.runOnce(() -> ChargedUp.grabber.toggleHoldingCone());
+        return Commands.runOnce(() -> DefaultAnimation.setViolet())
+            .withName("Activate Purple LED");
     }
 
     /**
@@ -70,7 +66,8 @@ public class Commands2023
      */
     public static Command activateYellow() 
     {
-        return Commands.runOnce(() -> DefaultAnimation.setYellow());
+        return Commands.runOnce(() -> DefaultAnimation.setYellow())
+            .withName("Activate Yellow LED");
     }
 
     /**
@@ -79,7 +76,8 @@ public class Commands2023
      */
     public static Command activateAlliance() 
     {
-        return Commands.runOnce(() -> DefaultAnimation.setDefault());
+        return Commands.runOnce(() -> DefaultAnimation.setDefault())
+            .withName("Activate Alliance LED");
     }
 
     /**
@@ -88,7 +86,8 @@ public class Commands2023
      */
     public static Command quickSlowFlashYellow() 
     {
-        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)));
+        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)))
+            .withName("Signal Cone");
     }
 
     /**
@@ -97,7 +96,24 @@ public class Commands2023
      */
     public static Command quickSlowFlashPurple()
     {
-        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)));
+        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)))
+            .withName("Signal Cube");
+    }
+    
+    public static Command toggleGrabberHasCone() 
+    {
+        return Commands.runOnce(ChargedUp.grabber::toggleHoldingCone)
+            .withName("Toggle Grabber has Cone");
+    }
+    public static Command setGrabberHasCone()
+    {
+        return Commands.runOnce(() -> grabber.setHoldingCone(true))
+            .withName("Set Grabber has Cone");
+    }
+    public static Command setGrabberHasCube()
+    {
+        return Commands.runOnce(() -> grabber.setHoldingCone(false))
+            .withName("Set Grabber has Cube");
     }
    
 
@@ -109,7 +125,9 @@ public class Commands2023
      */
     public static Command retractStinger()
     {
-        return stinger.in().withName("Retract Stinger");
+        return Commands.runOnce(stinger::targetIn)
+            .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
+            .withName("Retract Stinger");
     }
     /**
      * extends the stinger to the length of the middle pole
@@ -117,7 +135,9 @@ public class Commands2023
      */
     public static Command extendStinger()
     {
-        return stinger.outMid().withName("Stinger Out");
+        return Commands.runOnce(stinger::targetOut) 
+            .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
+            .withName("Stinger Out");
     }
 
     /**
@@ -126,7 +146,11 @@ public class Commands2023
      */
     public static Command toggleStinger()
     {
-        return Commands.either(retractStinger(), extendStinger(), stinger::isOut).withName("Toggle Stinger");
+        return Commands.either(
+            retractStinger(), 
+            extendStinger(), 
+            stinger::isOut
+        ).withName("Toggle Stinger");
     }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
@@ -222,7 +246,8 @@ public class Commands2023
      */ 
     public static Command closeGrabber() 
     {
-        return Commands.runOnce(ChargedUp.grabber::grab).withName("Close Grabber");
+        return Commands.runOnce(ChargedUp.grabber::grab)
+            .withName("Close Grabber");
 
      }
      /**
@@ -230,7 +255,8 @@ public class Commands2023
       */
     public static Command openGrabber() 
     {
-        return Commands.runOnce(ChargedUp.grabber::release).withName("Open Grabber");
+        return Commands.runOnce(ChargedUp.grabber::release)
+            .withName("Open Grabber");
     }
 
     /**
@@ -243,16 +269,8 @@ public class Commands2023
      */
     public static Command toggleGrabber()
     {
-        return Commands.runOnce(ChargedUp.grabber::toggle).withName("Toggle Grabber");
-    }
-
-    public static Command grabberSetCone()
-    {
-        return Commands.runOnce(() -> ChargedUp.grabber.setHoldingCone(true));
-    }
-    public static Command grabberSetCube()
-    {
-        return Commands.runOnce(() -> ChargedUp.grabber.setHoldingCone(false));
+        return Commands.runOnce(ChargedUp.grabber::toggle)
+            .withName("Toggle Grabber");
     }
 
     /////////////////////////////// SHWOOPER COMMMANDS ///////////////////////////
@@ -267,21 +285,24 @@ public class Commands2023
      */
     public static Command toggleShwooper() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::toggleShwooper).withName("Toggle Schwooper");
+        return Commands.runOnce(ChargedUp.shwooper::toggleShwooper) 
+            .withName("Toggle Schwooper");
     }
     /**
      * retracts shwooper
      */ 
     public static Command retractSchwooper()
     {
-        return Commands.runOnce(ChargedUp.shwooper::retractShwooper).withName("Retract Schwooper");
+        return Commands.runOnce(ChargedUp.shwooper::retractShwooper)
+            .withName("Retract Schwooper");
     }
     /** 
      * extends shwooper
      */  
     public static Command extendSchwooper()
     {
-        return Commands.runOnce(ChargedUp.shwooper::extendShwooper).withName("Extend Schwooper");
+        return Commands.runOnce(ChargedUp.shwooper::extendShwooper)
+            .withName("Extend Schwooper");
     }
 
     /**
@@ -290,7 +311,8 @@ public class Commands2023
      */
     public static Command shwooperSuck() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::suck).withName("Intake Suck");
+        return Commands.runOnce(ChargedUp.shwooper::suck)
+            .withName("Intake Suck");
     }
  
     /**
@@ -299,7 +321,8 @@ public class Commands2023
      */
     public static Command shwooperSpit() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::spit).withName("Intake Spit");
+        return Commands.runOnce(ChargedUp.shwooper::spit)
+            .withName("Intake Spit");
     }
 
     /**
@@ -308,7 +331,8 @@ public class Commands2023
      */
     public static Command stopShwooper() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::stop).withName("Intake Stop");
+        return Commands.runOnce(ChargedUp.shwooper::stop)
+            .withName("Intake Stop");
     }
 
     ////////////////////// AUTO COMMANDS //////////////////////////
@@ -401,6 +425,8 @@ public class Commands2023
      */
     public static Command balance()
     {
+        // TODO: redo this to stop when tipping
+
         return Commands.runOnce(drivetrain::disableFieldRelative)
             .andThen(Commands.run(() -> 
             {
