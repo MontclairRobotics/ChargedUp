@@ -7,6 +7,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.math.Math555;
 
@@ -172,15 +173,15 @@ public class PIDMechanism implements Sendable
         builder.setSmartDashboardType("ShuffleboardLayout");
     }
 
-    public Command goToSetpoint(double target, Subsystem... requirements)
+    public CommandBase goToSetpoint(double target, Subsystem... requirements)
     {
         return goToSetpoint(() -> target, requirements);
     }
 
-    public Command goToSetpoint(DoubleSupplier target, Subsystem... requirements)
+    public CommandBase goToSetpoint(DoubleSupplier target, Subsystem... requirements)
     {
         /* Create an Anonymous Command cuz Command is an interface */
-        return new Command()
+        return new CommandBase()
         {
             // How commands work approximately (not actually)
             // initialize();

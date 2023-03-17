@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.ChargedUp;
 import frc.robot.constants.ControlScheme;
 import frc.robot.inputs.JoystickInput;
@@ -585,20 +586,20 @@ public class Drivetrain extends ManagerSubsystemBase
     {
         private DriveCommands() {}
 
-        public Command increaseSpeed()
+        public CommandBase increaseSpeed()
         {
             return Commands.runOnce(() -> Drivetrain.this.increaseMaxSpeed());
         }
-        public Command decreaseSpeed()
+        public CommandBase decreaseSpeed()
         {
             return Commands.runOnce(() -> Drivetrain.this.decreaseMaxSpeed());
         }
 
-        public Command driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        public CommandBase driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.runOnce(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
-        public Command driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        public CommandBase driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.sequence
             (
@@ -612,7 +613,7 @@ public class Drivetrain extends ManagerSubsystemBase
          * Lock the robot's angle
          * @return
          */
-        public Command enableStraightPidding() 
+        public CommandBase enableStraightPidding() 
         {
             return Commands.runOnce(() -> Drivetrain.this.startStraightPidding());
         }
@@ -621,20 +622,20 @@ public class Drivetrain extends ManagerSubsystemBase
          * Stop locking the robot's angle
          * @return
          */
-        public Command disableStraightPidding() 
+        public CommandBase disableStraightPidding() 
         {
             return Commands.runOnce(() -> Drivetrain.this.stopStraightPidding());
         }
 
-        public Command enableFieldRelative()
+        public CommandBase enableFieldRelative()
         {
             return Commands.runOnce(Drivetrain.this::enableFieldRelative, Drivetrain.this);
         }
-        public Command disableFieldRelative()
+        public CommandBase disableFieldRelative()
         {
             return Commands.runOnce(Drivetrain.this::disableFieldRelative, Drivetrain.this);
         }
-        public Command toggleFieldRelative()
+        public CommandBase toggleFieldRelative()
         {
             return Commands.runOnce(() -> useFieldRelative = !useFieldRelative, Drivetrain.this);
         }
@@ -672,12 +673,12 @@ public class Drivetrain extends ManagerSubsystemBase
             );
         }
 
-        public Command auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
+        public CommandBase auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
         {
             SwerveAutoBuilder b = autoBuilder(markers);
             return b.fullAuto(trajectory);
         }
-        public Command goToAngle(double angle)
+        public CommandBase goToAngle(double angle)
         {
             return thetaPID.goToSetpoint(angle);
         }

@@ -42,11 +42,11 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 public class Commands555 
 {   
-    public static Command log(String str) 
+    public static CommandBase log(String str) 
     {
         return Commands.runOnce(() -> Logging.info(str));
     }
-    public static Command log(Supplier<String> str) 
+    public static CommandBase log(Supplier<String> str) 
     {
         return Commands.runOnce(() -> Logging.info(str.get()));
     }
@@ -59,7 +59,7 @@ public class Commands555
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activatePurple() 
+    public static CommandBase activatePurple() 
     {
         return Commands.runOnce(() -> DefaultAnimation.setViolet())
             .withName("Activate Purple LED");
@@ -70,7 +70,7 @@ public class Commands555
      * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activateYellow() 
+    public static CommandBase activateYellow() 
     {
         return Commands.runOnce(() -> DefaultAnimation.setYellow())
             .withName("Activate Yellow LED");
@@ -80,7 +80,7 @@ public class Commands555
      * Displays the alliance color in solid on the LEDs. Will run until another LED is called.
      * Since this changes the default color, if you add a command to the que it will override this
      */
-    public static Command activateAlliance() 
+    public static CommandBase activateAlliance() 
     {
         return Commands.runOnce(() -> DefaultAnimation.setDefault())
             .withName("Activate Alliance LED");
@@ -90,7 +90,7 @@ public class Commands555
      * Flashes twice quickly and twice slowly in yellow: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static Command quickSlowFlashYellow() 
+    public static CommandBase quickSlowFlashYellow() 
     {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)))
             .withName("Signal Cone");
@@ -100,23 +100,23 @@ public class Commands555
      * Flashes twice quickly and twice slowly in purple: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cube into play
      */
-    public static Command quickSlowFlashPurple()
+    public static CommandBase quickSlowFlashPurple()
     {
         return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)))
             .withName("Signal Cube");
     }
     
-    public static Command toggleGrabberHasCone() 
+    public static CommandBase toggleGrabberHasCone() 
     {
         return Commands.runOnce(ChargedUp.grabber::toggleHoldingCone)
             .withName("Toggle Grabber has Cone");
     }
-    public static Command setGrabberHasCone()
+    public static CommandBase setGrabberHasCone()
     {
         return Commands.runOnce(() -> grabber.setHoldingCone(true))
             .withName("Set Grabber has Cone");
     }
-    public static Command setGrabberHasCube()
+    public static CommandBase setGrabberHasCube()
     {
         return Commands.runOnce(() -> grabber.setHoldingCone(false))
             .withName("Set Grabber has Cube");
@@ -129,7 +129,7 @@ public class Commands555
      * fully retracts the stinger 
      * @return Command
      */
-    public static Command retractStinger()
+    public static CommandBase retractStinger()
     {
         return Commands.runOnce(stinger::targetIn)
             .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
@@ -139,7 +139,7 @@ public class Commands555
      * extends the stinger to the length of the middle pole
      * @return Command
      */
-    public static Command extendStinger()
+    public static CommandBase extendStinger()
     {
         return Commands.runOnce(stinger::targetOut) 
             .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
@@ -150,7 +150,7 @@ public class Commands555
      * toggle the stinger
      * @return Command
      */
-    public static Command toggleStinger()
+    public static CommandBase toggleStinger()
     {
         return Commands.either(
             retractStinger(), 
@@ -161,7 +161,7 @@ public class Commands555
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
 
-    public static Command elevatorTo(double height)
+    public static CommandBase elevatorTo(double height)
     {
         if(height < ElevatorConstants.MIN_HEIGHT) 
             return Commands.runOnce(() -> elevator.PID.setSpeed(-1))
@@ -183,7 +183,7 @@ public class Commands555
      * Sets the elevator its lowest height
      * @return Command
      */
-    public static Command elevatorToLow()
+    public static CommandBase elevatorToLow()
     {
         return elevatorTo(ElevatorConstants.MIN_HEIGHT);
     }
@@ -192,7 +192,7 @@ public class Commands555
      * Sets the elevator to the height of the middle cone peg
      * @return the command
      */
-    public static Command elevatorToConeMid()
+    public static CommandBase elevatorToConeMid()
     {
         return elevatorTo(ElevatorConstants.MID_HEIGHT_CONE);
     }
@@ -201,7 +201,7 @@ public class Commands555
      * Sets the elevator to the height of the middle cube shelf
      * @return Command
      */
-    public static Command elevatorToCubeMid()
+    public static CommandBase elevatorToCubeMid()
     {
         return elevatorTo(ElevatorConstants.MID_HEIGHT_CUBE);
     }
@@ -224,7 +224,7 @@ public class Commands555
      * Stinger goes to {@link Robot#MID_LENGTH_MUL Mid Length Constant}
      * @return Command
      */
-    public static Command elevatorStingerToMid()
+    public static CommandBase elevatorStingerToMid()
     {
         CommandBase c = sequence(
             elevatorToConeMid(),
@@ -242,7 +242,7 @@ public class Commands555
      * Stinger goes to 0
      * @return Command
      */
-    public static Command elevatorStingerReturn()
+    public static CommandBase elevatorStingerReturn()
     {
         CommandBase c = sequence(
             retractStinger(),
@@ -252,7 +252,7 @@ public class Commands555
         return c;
     }
 
-    public static Command elevatorStingerToLow()
+    public static CommandBase elevatorStingerToLow()
     {
         CommandBase c = sequence(
             elevatorToLow(),
@@ -268,7 +268,7 @@ public class Commands555
     /**
      * Closes the Grabber
      */ 
-    public static Command closeGrabber() 
+    public static CommandBase closeGrabber() 
     {
         return Commands.runOnce(ChargedUp.grabber::grab)
             .withName("Close Grabber");
@@ -277,7 +277,7 @@ public class Commands555
      /**
       * Opens the grabber
       */
-    public static Command openGrabber() 
+    public static CommandBase openGrabber() 
     {
         return Commands.runOnce(ChargedUp.grabber::release)
             .withName("Open Grabber");
@@ -291,7 +291,7 @@ public class Commands555
      * - if it is released, grab
      * @return Command
      */
-    public static Command toggleGrabber()
+    public static CommandBase toggleGrabber()
     {
         return Commands.runOnce(ChargedUp.grabber::toggle)
             .withName("Toggle Grabber");
@@ -307,7 +307,7 @@ public class Commands555
      * - if it is retracted, <b>extend</b>
      * @return Command
      */
-    public static Command toggleShwooper() 
+    public static CommandBase toggleShwooper() 
     {
         return Commands.runOnce(ChargedUp.shwooper::toggleShwooper) 
             .withName("Toggle Schwooper");
@@ -315,7 +315,7 @@ public class Commands555
     /**
      * retracts shwooper
      */ 
-    public static Command retractSchwooper()
+    public static CommandBase retractSchwooper()
     {
         return Commands.runOnce(ChargedUp.shwooper::retractShwooper)
             .withName("Retract Schwooper");
@@ -323,7 +323,7 @@ public class Commands555
     /** 
      * extends shwooper
      */  
-    public static Command extendSchwooper()
+    public static CommandBase extendSchwooper()
     {
         return Commands.runOnce(ChargedUp.shwooper::extendShwooper)
             .withName("Extend Schwooper");
@@ -333,7 +333,7 @@ public class Commands555
      * intake suck
      * @return Command
      */
-    public static Command shwooperSuck() 
+    public static CommandBase shwooperSuck() 
     {
         return Commands.runOnce(ChargedUp.shwooper::suck)
             .withName("Intake Suck");
@@ -343,7 +343,7 @@ public class Commands555
      * intake spit
      * @return Command
      */
-    public static Command shwooperSpit() 
+    public static CommandBase shwooperSpit() 
     {
         return Commands.runOnce(ChargedUp.shwooper::spit)
             .withName("Intake Spit");
@@ -353,7 +353,7 @@ public class Commands555
      * Stop intake
      * @return Command
      */
-    public static Command stopShwooper() 
+    public static CommandBase stopShwooper() 
     {
         return Commands.runOnce(ChargedUp.shwooper::stop)
             .withName("Intake Stop");
@@ -362,7 +362,7 @@ public class Commands555
     ////////////////////// AUTO COMMANDS //////////////////////////
     
     // picks up objects and raises the elevator to the middle after picking the object up
-    public static Command pickup() 
+    public static CommandBase pickup() 
     {
         return Commands.sequence(
             // Ensure grabber released
@@ -390,7 +390,7 @@ public class Commands555
      * 
      * retracts the stinger and bring the elevator to mid
      */
-    public static Command scoreFromHeightAndType(ScoreHeight height, ScoringType type)
+    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type)
     {
         return Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
@@ -417,14 +417,14 @@ public class Commands555
         ).withName("Score " + height.toString().toLowerCase() + " " + type.toString().toLowerCase());
     }
 
-    public static Command scoreLowPeg()
+    public static CommandBase scoreLowPeg()
     {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG);}
-    public static Command scoreLowShelf()
+    public static CommandBase scoreLowShelf()
     {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF);}
 
-    public static Command scoreMidPeg()
+    public static CommandBase scoreMidPeg()
     {return scoreFromHeightAndType(ScoreHeight.MID_CONE, ScoringType.PEG);}
-    public static Command scoreMidShelf()
+    public static CommandBase scoreMidShelf()
     {return scoreFromHeightAndType(ScoreHeight.MID_CUBE, ScoringType.SHELF);}
     
     // public static Command scoreHighPeg()g
@@ -432,11 +432,11 @@ public class Commands555
     // public static Command scoreHighShelf()
     // {return scoreFromHeightAndType(ScoreHeight.HIGH_CUBE, ScoringType.SHELF);}
     
-    public static Command scoreMid()
+    public static CommandBase scoreMid()
     {return new ProxyCommand(() -> scoreFromHeightAndType(ChargedUp.grabber.getHeldObject() == GamePiece.CUBE? ScoreHeight.MID_CUBE : ScoreHeight.MID_CONE,  ScoringType.from(ChargedUp.grabber.getHeldObject())));}
     // public static Command scoreHigh()
     // {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
-    public static Command scoreLow()
+    public static CommandBase scoreLow()
     {return new ProxyCommand(() -> scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.from(ChargedUp.grabber.getHeldObject())));}
 
     /**
@@ -447,7 +447,7 @@ public class Commands555
      * and inverts the direction of motion (relative to the angle) using 
      * {@link Robot#CHARGER_STATION_INCLINE_INVERT}.
      */
-    public static Command balance()
+    public static CommandBase balance()
     {
         return new CommandBase() 
         { 
@@ -528,7 +528,7 @@ public class Commands555
     /**
      * Decorate a command so that it fails immediately if 
      */
-    public static Command ifHasTarget(Command cmd)
+    public static CommandBase ifHasTarget(Command cmd)
     {
         return cmd.until(() -> !vision.hasObject()).unless(() -> !vision.hasObject());
     }
@@ -537,7 +537,7 @@ public class Commands555
      * Turns to the object.
      * @return
      */
-    public static Command turnToCurrentObject() 
+    public static CommandBase turnToCurrentObject() 
     {
         return ifHasTarget(
             drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
@@ -548,7 +548,7 @@ public class Commands555
      * Goes towards the object on the x-axis.
      * @return
      */
-    public static Command moveToCurrentObjectSideways()
+    public static CommandBase moveToCurrentObjectSideways()
     {
         return ifHasTarget(
             drivetrain.yPID.goToSetpoint(drivetrain::getObjectHorizontalPosition, drivetrain)
@@ -559,7 +559,7 @@ public class Commands555
      * Turns to the object.
      * @return
      */
-    public static Command turnToObject(Supplier<DetectionType> type)
+    public static CommandBase turnToObject(Supplier<DetectionType> type)
     {
         return Commands.sequence(
             Commands.runOnce(() -> vision.setTargetType(type.get())),
@@ -572,7 +572,7 @@ public class Commands555
      * Goes towards the object on the x-axis.
      * @return
      */
-    public static Command moveToObjectSideways(Supplier<DetectionType> type)
+    public static CommandBase moveToObjectSideways(Supplier<DetectionType> type)
     {
         return Commands.sequence(
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
@@ -588,7 +588,7 @@ public class Commands555
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static Command fromStringToCommand(String str, ArrayList<Trajectory> trajectories)
+    public static CommandBase fromStringToCommand(String str, ArrayList<Trajectory> trajectories)
     {
         // Single actions
         if(str.length() == 1)
@@ -649,7 +649,7 @@ public class Commands555
      * 
      * @return The command, with none() inserted into places in the sequence where an error occured.
      */
-    public static Command buildAuto(String[] list)
+    public static CommandBase buildAuto(String[] list)
     {
         Command[] commandList = new Command[list.length];
         ArrayList<Trajectory> allTrajectories = new ArrayList<>();
@@ -708,7 +708,7 @@ public class Commands555
      * @return The command, with none() inserted into places in the sequence where an error occured,
      * or none() itself if parsing or lexing fails.
      */
-    public static Command buildAuto(String p) 
+    public static CommandBase buildAuto(String p) 
     {
         String[] parts = Auto.parse(p);
 
@@ -720,7 +720,7 @@ public class Commands555
         return buildAuto(parts);
     }
 
-    public static Command backupAuto()
+    public static CommandBase backupAuto()
     {
         return Commands.sequence
         (
