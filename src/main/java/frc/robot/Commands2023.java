@@ -4,10 +4,14 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.util.Color;
@@ -23,8 +27,10 @@ import frc.robot.structure.GamePiece;
 import frc.robot.structure.ScoreHeight;
 import frc.robot.structure.ScoringType;
 import frc.robot.util.HashMaps;
+import frc.robot.util.frc.EdgeDetectFilter;
 import frc.robot.util.frc.Logging;
 import frc.robot.util.frc.Trajectories;
+import frc.robot.util.frc.EdgeDetectFilter.EdgeType;
 import frc.robot.vision.VisionSystem;
 
 import static frc.robot.ChargedUp.*;
@@ -443,24 +449,76 @@ public class Commands2023
      */
     public static Command balance()
     {
-        // TODO: redo this to stop when tipping
+        return new CommandBase() 
+        { 
+            LinearFilter tiltChange = LinearFilter.backwardFiniteDifference(1, 5, TimedRobot.kDefaultPeriod);
+            EdgeDetectFilter tiltEdge = new EdgeDetectFilter(EdgeType.RISING);
+    
+            int tiltCount = 0;
 
-        return Commands.runOnce(drivetrain::disableFieldRelative)
-            .andThen(Commands.run(() -> 
+            double tilt;
+            boolean isTilting;
+
+            @Override
+            public void initialize() 
             {
-                double angle = drivetrain.getChargeStationAngle();
-                double speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get() * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
+                tiltCount = 0;
 
-                if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND) 
+                tiltChange.reset();
+                tiltEdge.reset();
+
+                drivetrain.disableFieldRelative();
+            }
+
+            @Override
+            public void execute()
+            {
+                // Get angle
+                tilt = drivetrain.getChargeStationAngle();
+
+                // Filter to get rate
+                double tiltRate = tiltChange.calculate(tilt);
+
+                // Debounce to check if tilting
+                isTilting = Math.abs(tiltRate) > DriveConstants.CHARGER_STATION_TILT_SPEED_THRESHOLD.get();
+
+                // Check if we've just started tilting
+                boolean startedTilting = tiltEdge.calculate(isTilting);
+
+                // Add to the tilt count if we've just started tilting
+                if(startedTilting) tiltCount++;
+
+                double speed;
+
+                // Drive with a speed of zero if we are tilting
+                if(isTilting) speed = 0;
+                // Otherwise drive our max speed scaled by the amount of times we have tilted and the direction
+                // of the current tilt.
+                else 
                 {
-                    speed = 0;
+                    speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get();
+                    speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+
+                    speed *= 1.0 / (tiltCount + 1);
+                    speed *= Math.signum(tilt);
                 }
-                speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
 
                 drivetrain.set(0, speed, 0);
-            }))
-            .finallyDo(interupted -> drivetrain.enableFieldRelative())
-            .withName("Balance");
+            }
+
+            @Override
+            public boolean isFinished() 
+            {
+                return !isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND;
+            }
+
+            @Override
+            public void end(boolean interrupted) 
+            {
+                drivetrain.enableFieldRelative();
+            }
+        }
+        .withName("Balance");
     }
 
     /**
