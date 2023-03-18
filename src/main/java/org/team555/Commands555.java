@@ -164,13 +164,13 @@ public class Commands555
 
     public static CommandBase elevatorTo(double height)
     {
-        if(height < ElevatorConstants.MIN_HEIGHT) 
+        if(height <= ElevatorConstants.MIN_HEIGHT) 
             return Commands.runOnce(() -> elevator.PID.setSpeed(-1))
                 .until(elevator::isAtBottom)
                 .andThen(() -> elevator.PID.setSpeed(0))
                 .withName("Elevator to Bottom");
             
-        if(height > ElevatorConstants.MAX_HEIGHT) 
+        if(height >= ElevatorConstants.MAX_HEIGHT) 
             return Commands.runOnce(() -> elevator.PID.setSpeed(1))
                 .until(elevator::isAtTop)
                 .andThen(() -> elevator.PID.setSpeed(0))
