@@ -535,7 +535,7 @@ public class Commands555
 
         return ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(Math.toRadians(Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2)), 0, 0)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(Math555.atLeast(Math.toRadians(SPEED_MUL * vision.getObjectAX() / 27.0), 0.2), 0, 0)))
                 .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
         ).withName("Turn to Current Object");
     }

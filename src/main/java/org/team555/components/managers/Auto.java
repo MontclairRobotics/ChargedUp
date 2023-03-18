@@ -42,7 +42,7 @@ public class Auto extends ManagerBase
     public Auto()
     {
         chooseStart = new SendableChooser<String>();
-        chooseStart.setDefaultOption("Left", "Left");
+        chooseStart.setDefaultOption("Left", "Left"); //TODO: ask drive team the most logical way of naming these
         chooseStart.addOption("Middle", "Middle");
         chooseStart.addOption("Right", "Right");
 
