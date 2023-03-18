@@ -77,11 +77,9 @@ public class DriveConstants
 
     public static class PosPID
     {
-        static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getDriveReduction();}
-
-        public static final Tunable<Double> KP = Tunable.of(12.0/10, "drive.pos.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0/10, "drive.pos.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.2/10, "drive.pos.kd");
+        public static final Tunable<Double> KP = Tunable.of(1.2, "drive.pos.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.pos.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.2, "drive.pos.kd");
 
         public static PIDConstants consts()
         {
@@ -94,9 +92,7 @@ public class DriveConstants
     }
     public static class ThetaPID
     {
-        static double mod(double x) {return x * SdsModuleConfigurations.MK4I_L1.getSteerReduction();}
-
-        public static final Tunable<Double> KP = Tunable.of(0.007, "drive.theta.kp");
+        public static final Tunable<Double> KP = Tunable.of(Math.toRadians(0.007), "drive.theta.kp");
         public static final Tunable<Double> KI = Tunable.of(0.0, "drive.theta.ki");
         public static final Tunable<Double> KD = Tunable.of(0.0, "drive.theta.kd");
         

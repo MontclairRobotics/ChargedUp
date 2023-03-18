@@ -139,17 +139,24 @@ public class ChargedUp extends RobotContainer
         vision.setTargetType(DetectionType.APRIL_TAG);
 
         // HANDLE DRIVING //
-        drivetrain.setDefaultCommand(Commands.run(() -> {
-                if (!DriverStation.isTeleop()) {
-                        drivetrain.set(0, 0, 0);
+        drivetrain.setDefaultCommand(
+            Commands.run(
+                () -> 
+                {
+                    if (!DriverStation.isTeleop()) 
+                    {
+                        drivetrain.setChassisSpeeds(0, 0, 0);
                         return;
-                }
+                    }
 
-                drivetrain.setInput(
+                    drivetrain.setInput(
                         JoystickInput.getRight(driverController, true, true),
-                        JoystickInput.getLeft(driverController, true, true));
+                        JoystickInput.getLeft(driverController, true, true)
+                    );
                 },
-                drivetrain));
+                drivetrain
+            ).finallyDo(interrupted -> drivetrain.pauseDriverInput())
+        );
 
         // driverController.getButton(Button.A_CROSS)
         // .onTrue(Commands.runOnce(() -> DefaultAnimation.setViolet()));
@@ -219,10 +226,10 @@ public class ChargedUp extends RobotContainer
         {
             debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.commands.goToPositionRelative(0, 2));
 
-            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngle(0));
-            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngle(90));
-            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngle(180));
-            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(270));
+            debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)));
+            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
+            debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
+            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
 
             debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
             debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));

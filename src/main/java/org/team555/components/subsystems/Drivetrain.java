@@ -52,10 +52,17 @@ public class Drivetrain extends ManagerSubsystemBase
 {
     private final SwerveModule[] modules;
 
+    // RATE LIMITERS //
+    // These limit the rate at which the driver can change their inputs,
+    // in order to prevent tippage.
     public final SlewRateLimiter xInputRateLimiter;
     public final SlewRateLimiter yInputRateLimiter;
     public final SlewRateLimiter thetaInputRateLimiter;
 
+    // PID MECHANISMS //
+    // These store the speeds which the drivetrain should move at
+    // as a percentage of the maximum speed along that axis.
+    // Theta is in radians.
     public final PIDMechanism xPID;
     public final PIDMechanism yPID;
     public final PIDMechanism thetaPID;
@@ -67,11 +74,8 @@ public class Drivetrain extends ManagerSubsystemBase
     private boolean useFieldRelative = true;
     private boolean isStraightPidding;
 
-    private boolean hasDrivenThisUpdate = false;
-    private boolean hasUsedDriverInputThisUpdate = false;
-
     private int speedIndex = SPEEDS.length - 1;
-    private double currentStraightAngle;
+    private Rotation2d currentStraightAngle;
     
     // Simulation information //
     private static class SimulationData
@@ -160,7 +164,7 @@ public class Drivetrain extends ManagerSubsystemBase
         );
 
         thetaController.setTolerance(1, 0.5);
-        thetaController.enableContinuousInput(0, 360);
+        thetaController.enableContinuousInput(0, 2*Math.PI);
         
         PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
         PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
@@ -212,6 +216,19 @@ public class Drivetrain extends ManagerSubsystemBase
     }
 
     /**
+     * Gets the final chassis speeds relative to its forward
+     * @param adjusted_omega rotational velocity
+     * @param adjusted_vx x direction velocity
+     * @param adjusted_vy y direction velocity
+     * @return Chassis speeds
+     */
+    private ChassisSpeeds getSpeedsFromMode(double omega, double x, double y)
+    {
+        if(useFieldRelative) return ChassisSpeeds.fromFieldRelativeSpeeds(x, y, omega, getRobotRotation());
+        return new ChassisSpeeds(x, y, omega);
+    }
+
+    /**
      * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
      * Should be called in order to manually control the robot.
      * Sets the speeds of the motors directly
@@ -220,8 +237,6 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public void setInput(JoystickInput turn, JoystickInput drive)
     {
-        hasUsedDriverInputThisUpdate = true;
-
         ControlScheme.TURN_ADJUSTER.adjustX(turn);
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
@@ -229,13 +244,13 @@ public class Drivetrain extends ManagerSubsystemBase
         double xRL    = xInputRateLimiter.calculate(drive.getX());
         double yRL    = yInputRateLimiter.calculate(drive.getY());
 
-        set(
+        setChassisSpeeds(getSpeedsFromMode(
             turnRL / SPEEDS[speedIndex][1],
             yRL    / SPEEDS[speedIndex][0],
             xRL    / SPEEDS[speedIndex][0]
-        );
+        ));
     }
-    
+
     /**
      * Set to use the given velocities in robot-wise coordinates:
      * <ul>
@@ -244,12 +259,16 @@ public class Drivetrain extends ManagerSubsystemBase
      *      <li>+O is CCW</li>
      * </ul>
      * 
-     * @param omega rotational velocity percentage
-     * @param vx x direction velocity percentage
-     * @param vy y direction velocity percentage
+     * @param omega rotational velocity
+     * @param vx x direction velocity
+     * @param vy y direction velocity
      */
-    public void set(double omega, double vx, double vy)
+    public void setChassisSpeeds(double omega, double vx, double vy)
     {
+        vx    /= MAX_SPEED_MPS;
+        vy    /= MAX_SPEED_MPS;
+        omega /= MAX_TURN_SPEED_RAD_PER_S;
+
         vx    = Math555.clamp1(vx);
         vy    = Math555.clamp1(vy);
         omega = Math555.clamp1(omega);
@@ -271,58 +290,19 @@ public class Drivetrain extends ManagerSubsystemBase
      * @param vx x direction velocity
      * @param vy y direction velocity
      */
-    public void setVelocities(double omega, double vx, double vy)
+    public void setChassisSpeeds(ChassisSpeeds speeds)
     {
-        vx    /= MAX_SPEED_MPS;
-        vy    /= MAX_SPEED_MPS;
-        omega /= Math.toDegrees(MAX_TURN_SPEED_RAD_PER_S);
-
-        vx    = Math555.clamp1(vx);
-        vy    = Math555.clamp1(vy);
-        omega = Math555.clamp1(omega);
-
-        xPID    .setSpeed(vx);
-        yPID    .setSpeed(vy);
-        thetaPID.setSpeed(omega);
+        setChassisSpeeds(speeds.omegaRadiansPerSecond, speeds.vxMetersPerSecond, speeds.vyMetersPerSecond);
     }
 
     /**
-     * Gets the final chassis speeds relative to its forward
-     * @param adjusted_omega rotational velocity
-     * @param adjusted_vx x direction velocity
-     * @param adjusted_vy y direction velocity
-     * @return Chassis speeds
+     * Pause driver input: this resets all rate limiters for joystick inputs
      */
-    private ChassisSpeeds getChassisSpeeds(double adjusted_omega, double adjusted_vx, double adjusted_vy)
+    public void pauseDriverInput()
     {
-        if(useFieldRelative)
-        {
-            return ChassisSpeeds.fromFieldRelativeSpeeds(
-                adjusted_vx,
-                adjusted_vy,
-                adjusted_omega, 
-                getRobotRotation()
-            );
-        }
-        else
-        {
-            return new ChassisSpeeds(
-                adjusted_vx, 
-                adjusted_vy, 
-                adjusted_omega
-            );
-        }
-    }
-    
-    /**
-     * Uses the chassis speeds to  
-     * Only works when the robot is real currently
-     * @param speeds ChassisSpeeds object
-     */
-    private void driveFromChassisSpeeds(ChassisSpeeds speeds) 
-    {
-        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(speeds);
-        driveFromStates(states);
+        xInputRateLimiter.reset(0);
+        yInputRateLimiter.reset(0);
+        thetaInputRateLimiter.reset(0);
     }
 
     /**
@@ -333,7 +313,6 @@ public class Drivetrain extends ManagerSubsystemBase
     private void driveFromStates(SwerveModuleState[] states)
     {
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_SPEED_MPS);
-        hasDrivenThisUpdate = true;
         
         for(int i = 0; i < MODULE_COUNT; i++)
         {
@@ -427,12 +406,18 @@ public class Drivetrain extends ManagerSubsystemBase
             .toArray(SwerveModulePosition[]::new);
     }
 
+    /**
+     * Begin the process of pidding to the current angle.
+     */
     public void startStraightPidding() 
     {
         isStraightPidding = true;
-        currentStraightAngle = getRobotRotation().getDegrees();
+        currentStraightAngle = getRobotRotation();
     }
 
+    /**
+     * Stop pidding to the current angle.
+     */
     public void stopStraightPidding() 
     {
         isStraightPidding = false;
@@ -441,53 +426,49 @@ public class Drivetrain extends ManagerSubsystemBase
     @Override 
     public void periodic() 
     {
-        // Logging.info("" + PosPID.KP.get());
+        // Update PID mesaurements
+        xPID.setMeasurement(getRobotPose().getX());
+        yPID.setMeasurement(getRobotPose().getY());
+        thetaPID.setMeasurement(getRobotRotationInCircle().getRadians());
 
-        if(!hasDrivenThisUpdate)
+        // Handle straight pid
+        if (isStraightPidding) 
         {
-            xPID.setMeasurement(getRobotPose().getX());
-            yPID.setMeasurement(getRobotPose().getY());
-            thetaPID.setMeasurement(getRobotRotationModRotation().getDegrees());
-
-            if (isStraightPidding) 
+            if (thetaPID.getTarget() != currentStraightAngle.getRadians()) 
             {
-                if (thetaPID.getTarget() != currentStraightAngle) 
-                {
-                    thetaPID.setTarget(currentStraightAngle);
-                }
-                else 
-                {
-                    thetaPID.updateTarget(currentStraightAngle);
-                }
+                thetaPID.setTarget(currentStraightAngle.getRadians());
             }
-
-            xPID.update();
-            yPID.update();
-            thetaPID.update();
-            
-            ChassisSpeeds c = getChassisSpeeds(
-                thetaPID.getSpeed() * MAX_TURN_SPEED_RAD_PER_S, 
-                xPID.getSpeed()     * MAX_SPEED_MPS, 
-                yPID.getSpeed()     * MAX_SPEED_MPS
-            );
-
-            driveFromChassisSpeeds(c);
+            else 
+            {
+                thetaPID.updateTarget(currentStraightAngle.getRadians());
+            }
         }
 
-        if(!hasUsedDriverInputThisUpdate)
-        {
-            xInputRateLimiter.reset(0);
-            yInputRateLimiter.reset(0);
-            thetaInputRateLimiter.reset(0);
-        }
+        // Update PID
+        xPID.update();
+        yPID.update();
+        thetaPID.update();
         
-        Pose2d pose = getRobotDisplayPose();
-        ChargedUp.field.setRobotPose(pose);
+        // Construct chassis speeds
+        ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
+            thetaPID.getSpeed() * MAX_TURN_SPEED_RAD_PER_S, 
+            xPID.getSpeed()     * MAX_SPEED_MPS, 
+            yPID.getSpeed()     * MAX_SPEED_MPS
+        );
 
-        hasDrivenThisUpdate = false;
-        hasUsedDriverInputThisUpdate = false;
+        // Drive from states
+        SwerveModuleState[] states = KINEMATICS.toSwerveModuleStates(chassisSpeeds);
+        driveFromStates(states);
+        
+        // Update field pose
+        Pose2d pose = getRobotPose();
+        ChargedUp.field.setRobotPose(pose);
     }
     
+    /**
+     * Reset the position of the robot to that provided, updating 
+     * odometry as is necessary.
+     */
     public void setRobotPose(Pose2d pose)
     {
         poseEstimator.resetPosition(
@@ -504,11 +485,17 @@ public class Drivetrain extends ManagerSubsystemBase
         }
     }
 
-    public Rotation2d getRobotRotationModRotation()
+    /**
+     * Get the rotation of the robot within the unit circle.
+     */
+    public Rotation2d getRobotRotationInCircle()
     {
-        return Rotation2d.fromDegrees(getRobotRotation().getDegrees() % 360);
+        return Rotation2d.fromRadians(getRobotRotation().getRadians() % (2*Math.PI));
     }
 
+    /**
+     * Get the total rotation of the robot.
+     */
     public Rotation2d getRobotRotation()
     {
         if(RobotBase.isReal())
@@ -521,11 +508,9 @@ public class Drivetrain extends ManagerSubsystemBase
         }
     }
 
-    public void setTargetAngle(double angle)
-    {
-        thetaPID.setTarget(angle);
-    }
-
+    /**
+     * Get the pose of the robot.
+     */
     public Pose2d getRobotPose()
     {
         if(RobotBase.isReal())
@@ -538,33 +523,37 @@ public class Drivetrain extends ManagerSubsystemBase
         }
     }
     
-    public Pose2d getRobotDisplayPose()
-    {
-        if(RobotBase.isReal())
-        {
-            return poseEstimator.getEstimatedPosition();
-        }
-        else 
-        {
-            return simulation.accumulatedPose;
-        }
-    }
-    
+    /**
+     * Increase the current driver maximum speed limit.
+     */
     public void increaseMaxSpeed()
     {
         speedIndex = (speedIndex == SPEEDS.length-1) ? speedIndex : speedIndex + 1;
     }
+    /**
+     * Decrease the current driver maximum speed limit.
+     */
     public void decreaseMaxSpeed() 
     {
         speedIndex = (speedIndex == 0) ? 0 : speedIndex - 1;
     }
 
+    /**
+     * Get the current speed limits. {@code [0]} is for translation and {@code [1]} is for rotation.s
+     * @return
+     */
     public double[] getCurrentSpeedLimits() {return SPEEDS[speedIndex];}
 
+    /**
+     * Get the approximate angle at which the currently seen object exists.
+     */
     public double getObjectAngle() 
     {
-        return getRobotRotationModRotation().getDegrees() + ChargedUp.vision.getObjectAX() * 20; 
+        return getRobotRotationInCircle().getRadians() + ChargedUp.vision.getObjectAX() * 0.5; 
     }
+    /**
+     * Get the approximate position at which the currently seen object exists.
+     */
     public double getObjectHorizontalPosition() 
     {
         return getRobotPose().getY() + ChargedUp.vision.getObjectAX() * 1; 
@@ -592,14 +581,14 @@ public class Drivetrain extends ManagerSubsystemBase
 
         public CommandBase driveInstant(double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.runOnce(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
+            return Commands.runOnce(() -> Drivetrain.this.setChassisSpeeds(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
         public CommandBase driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
             return Commands.sequence
             (
                 disableFieldRelative(),
-                Commands.run(() -> Drivetrain.this.set(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
+                Commands.run(() -> Drivetrain.this.setChassisSpeeds(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
                     .raceWith(Commands.waitSeconds(time))
             ).finallyDo(__ -> ChargedUp.drivetrain.enableFieldRelative());
         }
@@ -635,33 +624,14 @@ public class Drivetrain extends ManagerSubsystemBase
             return Commands.runOnce(() -> useFieldRelative = !useFieldRelative, Drivetrain.this);
         }
 
-
-        // public Command follow(PathPlannerTrajectory trajectory)
-        // {
-        //     return Commands.race(
-        //         new PPSwerveControllerCommand(
-        //             trajectory, 
-        //             Drivetrain.this::getRobotPose,
-        //             KINEMATICS, 
-        //             xController, 
-        //             yController, 
-        //             thetaController,
-        //             Drivetrain.this::driveFromStates, 
-        //             Drivetrain.this
-        //         ),
-        //         Commands.run(() -> ChargedUp.field.getObject("trajectory").setTrajectory(trajectory))
-        //     );
-        // }
-
         public SwerveAutoBuilder autoBuilder(HashMap<String, Command> markers)
         {
             return new SwerveAutoBuilder(
                 Drivetrain.this::getRobotPose,
                 Drivetrain.this::setRobotPose,
-                KINEMATICS,
                 PosPID.consts(), 
                 ThetaPID.consts(),
-                Drivetrain.this::driveFromStates,
+                Drivetrain.this::setChassisSpeeds,
                 markers,
                 true,
                 Drivetrain.this
@@ -710,9 +680,13 @@ public class Drivetrain extends ManagerSubsystemBase
                 .withName("Trajectory " + trajectoryName);
         }
 
-        public CommandBase goToAngle(double angle)
+        /**
+         * Creates a command which goes to the given angle in absolute coordinates.
+         * @return The command
+         */
+        public CommandBase goToAngleAbsolute(Rotation2d angle)
         {
-            return thetaPID.goToSetpoint(angle);
+            return thetaPID.goToSetpoint(angle.getRadians());
         }
 
         // GO TO POSITION ABSOLUTE //
