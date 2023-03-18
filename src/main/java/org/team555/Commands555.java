@@ -22,6 +22,7 @@ import org.team555.animation.QuickSlowFlash;
 import org.team555.components.managers.Auto;
 import org.team555.components.subsystems.Drivetrain;
 import org.team555.constants.*;
+import org.team555.math.Math555;
 import org.team555.structure.DetectionType;
 import org.team555.structure.GamePiece;
 import org.team555.structure.ScoreHeight;
@@ -345,6 +346,19 @@ public class Commands555
         return cmd;
     }
 
+    public static CommandBase scoreCubeLow()
+    {
+        return Commands.sequence(
+            closeGrabber(),
+            waitSeconds(0.3),
+            shwooperSpit(),
+            waitSeconds(0.3),
+            openGrabber(),
+            waitSeconds(1.5),
+            stopShwooper()
+        ).withName("deIntake score");
+    }
+
     /**
      * Moves stinger/elevator to the specfied score place and opens the grabber
      * Retracts the stinger and bring the elevator to mid
@@ -357,6 +371,8 @@ public class Commands555
 
             //move sideways to the target
             moveToObjectSideways(() -> type.get().getDetectionType()),
+
+            //TODO: Move Forward
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
@@ -513,8 +529,15 @@ public class Commands555
      */
     public static CommandBase moveToCurrentObjectSideways()
     {
+        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
+
+        final double DEADBAND = 2;
+        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.3;
+
         return ifHasTarget(
-            drivetrain.yPID.goToSetpoint(drivetrain::getObjectHorizontalPosition, drivetrain)
+            Commands.runOnce(() -> hasEnded.calculate(false))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2))))
+                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
         ).withName("Move to Current Object Sideways");
     }
 
@@ -526,6 +549,8 @@ public class Commands555
     {
         return Commands.sequence(
             Commands.runOnce(() -> vision.setTargetType(type.get())),
+            waitSeconds(2),
+            log("" + vision.hasObject()),
             turnToCurrentObject(),
             Commands.runOnce(() -> vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
@@ -539,6 +564,7 @@ public class Commands555
     {
         return Commands.sequence(
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
+            waitSeconds(1),
             moveToCurrentObjectSideways(),
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
@@ -561,9 +587,9 @@ public class Commands555
                 case "A": 
                 case "C": return pickup();
 
-                case "1": return scoreMidPeg();
-                case "3": return scoreMidPeg();
-                case "2": return scoreMidPeg();
+                case "1": return scoreMidShelf(); //TODO: mnfjaidognjrae
+                case "3": return scoreMidShelf(); //TODO: jnidagunra
+                case "2": return scoreMidShelf(); //TODO: caitiue said so
                 case "4": return scoreMidShelf();
                 case "5": return scoreMidShelf();
 

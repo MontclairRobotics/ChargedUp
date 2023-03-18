@@ -92,9 +92,9 @@ public class DriveConstants
     }
     public static class ThetaPID
     {
-        public static final Tunable<Double> KP = Tunable.of(Math.toRadians(0.007), "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.theta.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.0, "drive.theta.kd");
+        public static final Tunable<Double> KP = Tunable.of(1.0, "drive.theta.kp");
+        public static final Tunable<Double> KI = Tunable.of(0.1, "drive.theta.ki");
+        public static final Tunable<Double> KD = Tunable.of(0.15, "drive.theta.kd");
         
         public static PIDConstants consts()
         {

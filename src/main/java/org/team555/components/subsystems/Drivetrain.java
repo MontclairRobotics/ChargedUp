@@ -163,7 +163,7 @@ public class Drivetrain extends ManagerSubsystemBase
             ThetaPID.consts().kD
         );
 
-        thetaController.setTolerance(1, 0.5);
+        thetaController.setTolerance(Math.toRadians(3), Math.toRadians(0.5));
         thetaController.enableContinuousInput(0, 2*Math.PI);
         
         PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
@@ -549,7 +549,7 @@ public class Drivetrain extends ManagerSubsystemBase
      */
     public double getObjectAngle() 
     {
-        return getRobotRotationInCircle().getRadians() + ChargedUp.vision.getObjectAX() * 0.5; 
+        return getRobotRotationInCircle().getRadians() - Math.toRadians(ChargedUp.vision.getObjectAX()); 
     }
     /**
      * Get the approximate position at which the currently seen object exists.

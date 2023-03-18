@@ -57,6 +57,11 @@ public class Math555
         }
     }
 
+    public static double atLeast(double value, double min)
+    {
+        return Math.abs(value) < min ? min * Math.signum(value) : value;
+    }
+
     /**
      * Clamp the value between 0 and 1
      * @param v

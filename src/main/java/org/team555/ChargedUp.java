@@ -212,10 +212,10 @@ public class ChargedUp extends RobotContainer
                 gyroscope.setNorth();
             }).ignoringDisable(true));
 
-        // driverController.getDPad(DPad.UP).onTrue(drivetrain.commands.goToAngle(Math.PI / 2));
-        // driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngle(0));
-        // driverController.getDPad(DPad.DOWN).onTrue(drivetrain.commands.goToAngle((3 * Math.PI) / 2));
-        // driverController.getDPad(DPad.LEFT).onTrue(drivetrain.commands.goToAngle(Math.PI));
+        driverController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)));
+        driverController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
+        driverController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
+        driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
 
         // OPERATOR CONTROLS //
 
@@ -373,6 +373,14 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 1);
 
         debugTab.add("Mechanism", mainMechanism);
+
+        debugTab.addDouble("Limelight X",vision::getObjectAX)
+            .withPosition(0, 3)
+            .withSize(1, 1);
+
+        debugTab.addDouble("PIPELINE #",vision::getPipeline)
+            .withPosition(0, 4)
+            .withSize(1, 1);
     }
 
     public void setupPIDTab() 
@@ -449,6 +457,12 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.scoreMid());
         tab.add(Commands555.scoreMidPeg());
         tab.add(Commands555.scoreMidShelf());
+
+        tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
+        tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE).withName("SIDE TO TAPE"));
+
+        tab.add(Commands555.scoreCubeLow());
+
 
         for(String name : Trajectories.getAllTests())
         {

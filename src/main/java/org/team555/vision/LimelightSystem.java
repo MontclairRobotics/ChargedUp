@@ -3,6 +3,13 @@ package org.team555.vision;
 import static org.team555.constants.LimelightConstants.*;
 import org.team555.structure.DetectionType;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimelightSystem extends VisionSystem
@@ -41,23 +48,44 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void updateEstimatedPose(Pose2d prev) {}
 
+    private static Pose2d toPose2D(double[] inData){
+        if(inData.length < 6)
+        {
+            System.err.println("Bad LL 2D Pose Data!");
+            return new Pose2d();
+        }
+        Translation2d tran2d = new Translation2d(inData[0], inData[1]);
+        Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
+        return new Pose2d(tran2d, r2d);
+    }
     @Override
-    public Pose2d getEstimatedPose() {return hasObject() ? LimelightHelpers.getBotPose2d("") : new Pose2d() /*TODO: this is very stupid*/;}
+    public Pose2d getEstimatedPose() 
+    {
+        return hasObject() ? toPose2D(getEntry("botpose").getDoubleArray(new double[6])) : new Pose2d() /*TODO: this is very stupid*/;
+    }
 
     @Override
-    public double getTimestampSeconds() {return results == null ? -1 : results.targetingResults.timestamp_LIMELIGHT_publish;}
+    public double getTimestampSeconds() 
+    {
+        return (System.currentTimeMillis() - getEntry("cl").getDouble(0) - getEntry("tl").getDouble(0))/1000.0;
+        // return results == null ? -1 : results.targetingResults.timestamp_LIMELIGHT_publish;
+    }
 
     @Override
-    public boolean hasObject() {return LimelightHelpers.getTV("");}
+    public boolean hasObject() 
+    {
+        return getEntry("tv").getDouble(0) == 1;
+        // return Lime?lightHelpers.getTV("");
+    }
 
     @Override
     public DetectionType getCurrentType() 
     {
-        int pipe = (int) LimelightHelpers.getCurrentPipelineIndex("");
+        int pipe = (int) getPipeline();
         if      (pipe == TAPE_RETRO_PIPE) return DetectionType.TAPE;
         else if (pipe == APRIL_TAG_PIPE)  return DetectionType.APRIL_TAG;
-        else if (LimelightHelpers.getNeuralClassID("") == CUBE_ID) return DetectionType.CUBE;
-        else if (LimelightHelpers.getNeuralClassID("") == CONE_ID) return DetectionType.CONE;
+        else if (getEntry("tclass").getDouble(0) == CUBE_ID) return DetectionType.CUBE;
+        else if (getEntry("tclass").getDouble(0) == CONE_ID) return DetectionType.CONE;
         else                                                       return DetectionType.NONE;
     }
 
@@ -75,13 +103,36 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public double getObjectAX() {return hasObject() ? 0 : LimelightHelpers.getTX("");}
+    public double getObjectAX() 
+    {
+        return getEntry("tx").getDouble(0);
+        // return hasObject() ? 0 : LimelightHelpers.getTX("");
+    }
+
+    public NetworkTableEntry getEntry(String name)
+    {
+        return NetworkTableInstance.getDefault()
+            .getTable("limelight")
+            .getEntry(name);
+    }
     @Override
-    public double getObjectAY() {return hasObject() ? 0 : LimelightHelpers.getTY("");}
+    public double getObjectAY() 
+    {
+        return getEntry("ty").getDouble(0);
+        // return hasObject() ? 0 : LimelightHelpers.getTY("");
+    }
     @Override
-    public double getPipeline() {return LimelightHelpers.getCurrentPipelineIndex("");}
+    public double getPipeline() 
+    {
+        return getEntry("getpipe").getDouble(0);
+        // return LimelightHelpers.getCurrentPipelineIndex("");
+    }
     @Override
-    public void setPipeline(double value) {LimelightHelpers.setPipelineIndex("", (int)value);}
+    public void setPipeline(double value) 
+    {
+        getEntry("pipeline").setDouble(value);
+        // LimelightHelpers.setPipelineIndex("", (int)value);
+    }
 
     @Override
     public void resetPose(Pose2d pose) 

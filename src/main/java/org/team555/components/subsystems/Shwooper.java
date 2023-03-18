@@ -34,7 +34,7 @@ public class Shwooper extends ManagerSubsystemBase
     public void suck() 
     {
         //This could be opposite
-        motorTop.set(INVERT_SIMPLE_SCHWOOPER * SPEED);
+        motorTop.set(SPEED);
         // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * -Robot.Shwooper.SPEED);
     }
 
@@ -43,7 +43,7 @@ public class Shwooper extends ManagerSubsystemBase
      */
     public void spit() 
     {
-        motorTop.set(INVERT_SIMPLE_SCHWOOPER * -SPEED);
+        motorTop.set(-0.75); //TODO: change to spit constants
         // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * Robot.Shwooper.SPEED);
     }
 
