@@ -43,7 +43,7 @@ public class ElevatorConstants
     public static final double DEADBAND = 0.05;
     public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
-    public static final Tunable<Double> FEED_FORWARD = Tunable.of(0.05, "elevator.ff");
+    public static final Tunable<Double> FEED_FORWARD_VOLTS = Tunable.of(0.05*12, "elevator.ff_volts");
 
     public static final double 
         KP = 0.25,

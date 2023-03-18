@@ -213,14 +213,13 @@ public class Elevator extends ManagerSubsystemBase
     {
         PID.setMeasurement(getHeight());
         PID.update();
-        // Logging.info("" + PID.getSpeed());
+
         shouldStop = false;
 
         if (PID.getSpeed() > 0) 
         {
             if (toplimitSwitch.get()) 
             {
-                // Logging.info("IM A TOP");
                 shouldStop = true;
                 PID.setSpeed(0);
                 encoder.setPosition(MAX_HEIGHT);
@@ -230,7 +229,6 @@ public class Elevator extends ManagerSubsystemBase
         {
             if (bottomlimitSwitch.get()) 
             {
-                // Logging.info("IM A BOTTOM");
                 shouldStop = true;
                 PID.setSpeed(0);
                 encoder.setPosition(MIN_HEIGHT);
@@ -242,27 +240,14 @@ public class Elevator extends ManagerSubsystemBase
             }
         }
 
-        // Logging.info("" + encoder.getPosition());
-
-        // maxSpeed *= 0.1;
-
-        double ff = FEED_FORWARD.get();
+        double ff = FEED_FORWARD_VOLTS.get();
         if(getHeight() < BUFFER_SPACE_TO_INTAKE) ff = 0;
 
-        // System.out.println("----------------------------------------------");
-        // System.out.println("Elevator::measurement = " + PID.getMeasurement());
-        // System.out.println("Elevator::error       = " + PID.getPIDController().getPositionError());
-        // System.out.println("Elevator::setpoint    = " + PID.getPIDController().getSetpoint());
-        // System.out.println("Elevator::speed       = " + PID.getSpeed());
-        // System.out.println("Elevator::position    = " + encoder.getPosition());
-        // System.out.println("Elevator::raw_speed   = " + PID.getPIDController().calculate(PID.getMeasurement()));
-        // System.out.println("Elevator::pid_on = " + PID.active());
-        // System.out.println("Stinger::pid_on  = " + ChargedUp.stinger.PID.active());
-        // shouldStop = false;
-        if(shouldStop) motor.set(0);
-        else           motor.set(getModifiedSpeed(PID.getSpeed()) + ff);
-        // Logging.info("" + motor.get());
-
+        double speed;
+        if(shouldStop) speed = 0;
+        else           speed = getModifiedSpeed(PID.getSpeed());
+        
+        motor.set(speed + ff / 12);
 
         if(RobotBase.isSimulation())
         {
