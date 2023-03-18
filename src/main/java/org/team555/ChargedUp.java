@@ -54,7 +54,7 @@ import com.pathplanner.lib.server.PathPlannerServer;
 
 public class ChargedUp extends RobotContainer 
 {
-    public static final boolean useDebugController = true;
+    public static final boolean useDebugController = false;
 
     // SIMULATION //
     public static final Field2d field = new Field2d();
@@ -119,10 +119,10 @@ public class ChargedUp extends RobotContainer
         Shuffleboard.getTab("Auto").add(field).withSize(7, 4).withPosition(2, 0);
 
         pneu.enableCompressorDigital();
-        CANSafety.monitor(pneu);
+        // CANSafety.monitor(pneu);
 
         CameraServer.startAutomaticCapture();
-        PathPlannerServer.startServer(5811);
+        PathPlannerServer.startServer(5820);
 
         for(int port = 5800; port <= 5805; port++)
         {

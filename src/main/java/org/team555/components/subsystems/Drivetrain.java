@@ -245,9 +245,9 @@ public class Drivetrain extends ManagerSubsystemBase
         double yRL    = yInputRateLimiter.calculate(drive.getY());
 
         setChassisSpeeds(getSpeedsFromMode(
-            turnRL / SPEEDS[speedIndex][1],
-            yRL    / SPEEDS[speedIndex][0],
-            xRL    / SPEEDS[speedIndex][0]
+            turnRL / SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
+            yRL    / SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
+            xRL    / SPEEDS[speedIndex][0] * MAX_SPEED_MPS
         ));
     }
 
@@ -451,9 +451,9 @@ public class Drivetrain extends ManagerSubsystemBase
         
         // Construct chassis speeds
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-            thetaPID.getSpeed() * MAX_TURN_SPEED_RAD_PER_S, 
             xPID.getSpeed()     * MAX_SPEED_MPS, 
-            yPID.getSpeed()     * MAX_SPEED_MPS
+            yPID.getSpeed()     * MAX_SPEED_MPS,
+            thetaPID.getSpeed() * MAX_TURN_SPEED_RAD_PER_S
         );
 
         // Drive from states

@@ -165,13 +165,13 @@ public class Commands555
     public static CommandBase elevatorTo(double height)
     {
         if(height <= ElevatorConstants.MIN_HEIGHT) 
-            return Commands.runOnce(() -> elevator.PID.setSpeed(-1))
+            return Commands.run(() -> elevator.PID.setSpeed(-1))
                 .until(elevator::isAtBottom)
                 .andThen(() -> elevator.PID.setSpeed(0))
                 .withName("Elevator to Bottom");
             
         if(height >= ElevatorConstants.MAX_HEIGHT) 
-            return Commands.runOnce(() -> elevator.PID.setSpeed(1))
+            return Commands.run(() -> elevator.PID.setSpeed(1))
                 .until(elevator::isAtTop)
                 .andThen(() -> elevator.PID.setSpeed(0))
                 .withName("Elevator to Top");
@@ -332,7 +332,7 @@ public class Commands555
         CommandBase cmd = Commands.select(
             Map.of(
                 ScoringType.PEG,   elevatorToConeMid().andThen(extendStinger()),
-                ScoringType.SHELF, elevatorToConeMid().andThen(extendStinger())
+                ScoringType.SHELF, elevatorToCubeMid().andThen(extendStinger())
             ),
             () -> type.get()
         ); 
