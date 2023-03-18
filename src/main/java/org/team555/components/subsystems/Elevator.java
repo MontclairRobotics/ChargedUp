@@ -71,17 +71,37 @@ public class Elevator extends ManagerSubsystemBase
     {
         double ynorm = getHeightNormalized();
 
+        //if not close to top (not with the buffer zone) return elevator max speed
         if(ynorm < 1 - BUFFER_UP) return SPEED;
-        return Math555.clamp(SPEED - SPEED * (ynorm - 1 + BUFFER_UP) / BUFFER_UP, 0.25, 1);
+
+        double reducedSpeed = SPEED - SPEED * (ynorm - 1 + BUFFER_UP) / BUFFER_UP;
+
+        return Math555.clamp(reducedSpeed, 0.25, 1);
     }
     private double getDownwardsMultiplier()
     {
         double ynorm = getHeightNormalized();
 
+        //if not close to bottom (not with the buffer zone) return elevator max speed
         if(ynorm > BUFFER_DOWN) return SPEED;
-        return Math555.clamp(ynorm / BUFFER_DOWN * SPEED, 0.25, 1);
+
+        double reducedSpeed = ynorm / BUFFER_DOWN * SPEED;
+
+        return Math555.clamp(reducedSpeed, 0.25, 1);
     }
 
+    /**
+     * Modify the speed of the elevator so that when it is close to a limit switch (@top and bottom)
+     * it slows down proportionally to its distance to the top (or distance to the bottom)
+     * The multiplier is clamped between [0.25, 1] so it will not go slower than 25% of the input
+     * <p>
+     * Essentially, it slows down from the max speed as it approaches top/bottom
+     * <p>
+     * <ul>
+     * <li>When the elevator speed is positive (moving upwards), it is calculated using {@link Elevator#getUpwardMultiplier()}
+     * <li>When the elevator speed is negative (moving downward), it is calculated using {@link Elevator#getDownwardsMultiplier()}
+     * <p>
+     */
     private double getModifiedSpeed(double speed)
     {
         if(speed > 0) return getUpwardMultiplier()    * speed;
