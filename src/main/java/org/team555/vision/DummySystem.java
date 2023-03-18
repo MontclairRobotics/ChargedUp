@@ -1,6 +1,9 @@
 package org.team555.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+
+import java.util.function.Supplier;
+
 import org.team555.structure.DetectionType;
 
 public class DummySystem extends VisionSystem
@@ -12,12 +15,14 @@ public class DummySystem extends VisionSystem
     public void updateEstimatedPose(Pose2d prev) {}
 
     @Override
-    public Pose2d getEstimatedPose() {
+    public Pose2d getEstimatedPose() 
+    {
         return new Pose2d();
     }
 
     @Override
-    public double getTimestampSeconds() {
+    public double getTimestampSeconds() 
+    {
         return -10;
     }
 
@@ -25,17 +30,20 @@ public class DummySystem extends VisionSystem
     public void resetPose(Pose2d pose) {}
 
     @Override
-    public boolean hasObject() {
+    public boolean hasObject() 
+    {
         return false;
     }
 
     @Override
-    public DetectionType getCurrentType() {
+    public DetectionType getCurrentType() 
+    {
         return DEFAULT_DETECTION;
     }
 
     @Override
-    public DetectionType getTargetType() {
+    public DetectionType getTargetType() 
+    {
         return DEFAULT_DETECTION;
     }
 
@@ -43,17 +51,20 @@ public class DummySystem extends VisionSystem
     public void setTargetType(DetectionType type) {}
 
     @Override
-    public double getObjectAX() {
+    public double getObjectAX()
+    {
         return 0;
     }
 
     @Override
-    public double getObjectAY() {
+    public double getObjectAY() 
+    {
         return 0;
     }
 
     @Override
-    public double getPipeline() {
+    public double getPipeline() 
+    {
         return 0;
     }
 
@@ -61,8 +72,15 @@ public class DummySystem extends VisionSystem
     public void setPipeline(double value) {}
 
     @Override
-    public String getCameraStreamURL() {
+    public String getCameraStreamURL() 
+    {
         return "<dummy>";
+    }
+
+    @Override
+    public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type) 
+    {
+        return true;
     }
     
 }

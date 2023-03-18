@@ -2,9 +2,13 @@ package org.team555.components.subsystems;
 
 import org.team555.constants.PneuConstants;
 import org.team555.structure.GamePiece;
+import org.team555.util.frc.EdgeDetectFilter;
+import org.team555.util.frc.EdgeDetectFilter.EdgeType;
 import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
 import static org.team555.constants.GrabberConstants.*;
+
+import org.team555.ChargedUp;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
@@ -67,10 +71,14 @@ public class Grabber extends ManagerSubsystemBase
         return holdingCone;
     }
 
-    //TODO: OPEN GRABBER IF ELEVATOR IS AT THE BOTTOM
+    private EdgeDetectFilter filter = new EdgeDetectFilter(EdgeType.RISING);
+
     @Override
     public void always() 
     {
+        //if elevator becomes within lower buffer (previously was not in lower buffer), release
+        if (filter.calculate(ChargedUp.elevator.isWithinLowerBuffer())) release();
+
         // switch(heldObject)
         // {
         //     case CONE: DefaultAnimation.setYellow();  break;

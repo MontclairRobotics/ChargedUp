@@ -5,6 +5,8 @@ import org.team555.constants.PhotonConstants;
 import org.team555.structure.DetectionType;
 import edu.wpi.first.wpilibj.Timer;
 
+import java.util.function.Supplier;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -110,6 +112,19 @@ public class PhotonSystem extends VisionSystem
     {
         if (photonCamera == null) return;
         photonCamera.setPipelineIndex((int) pipeline);
+    }
+
+    @Override
+    public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type)
+    {
+        int pipe = (int) getPipeline();
+
+        if      (type.get( ) == DetectionType.CUBE)      return (pipe == CUBE_PIPE);
+        else if (type.get()  == DetectionType.CONE)      return (pipe == CONE_PIPE);
+        else if (type.get( ) == DetectionType.TAPE)      return (pipe == TAPE_PIPE);
+        else if (type.get( ) == DetectionType.APRIL_TAG) return (pipe == APRIL_TAG_PIPE);
+
+        else return false;
     }
 
     @Override

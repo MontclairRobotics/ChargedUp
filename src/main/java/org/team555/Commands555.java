@@ -349,12 +349,18 @@ public class Commands555
     public static CommandBase scoreCubeLow()
     {
         return Commands.sequence(
+            //move sideways to april tag
+            moveToObjectSideways(() -> DetectionType.APRIL_TAG),
+
+            //close grabber to position the cube closer to the intake
             closeGrabber(),
             waitSeconds(0.3),
             shwooperSpit(),
             waitSeconds(0.3),
             openGrabber(),
-            waitSeconds(1.5),
+
+            //wait until the cube has shot out
+            waitSeconds(1),
             stopShwooper()
         ).withName("deIntake score");
     }
@@ -372,7 +378,8 @@ public class Commands555
             //move sideways to the target
             moveToObjectSideways(() -> type.get().getDetectionType()),
 
-            //TODO: Move Forward
+            //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
+            drivetrain.commands.driveForTime(0.5, 0, 0.5, 0), //TODO: these numbers are completely made up
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
@@ -518,8 +525,18 @@ public class Commands555
      */
     public static CommandBase turnToCurrentObject() 
     {
+        //DON'T USE PID for turn
+        // return ifHasTarget(
+        //     drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
+        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
+
+        final double DEADBAND = 2;
+        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.3;
+
         return ifHasTarget(
-            drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
+            Commands.runOnce(() -> hasEnded.calculate(false))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(Math.toRadians(Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2)), 0, 0)))
+                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
         ).withName("Turn to Current Object");
     }
 
@@ -549,8 +566,7 @@ public class Commands555
     {
         return Commands.sequence(
             Commands.runOnce(() -> vision.setTargetType(type.get())),
-            waitSeconds(2),
-            log("" + vision.hasObject()),
+            waitUntil(() -> vision.currentPipelineMatchesDetection(type)), //TODO: Does this work?
             turnToCurrentObject(),
             Commands.runOnce(() -> vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
@@ -564,7 +580,7 @@ public class Commands555
     {
         return Commands.sequence(
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
-            waitSeconds(1),
+            waitUntil(() -> vision.currentPipelineMatchesDetection(type)), //TODO: Does this work?
             moveToCurrentObjectSideways(),
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );

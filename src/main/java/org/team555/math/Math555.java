@@ -57,6 +57,12 @@ public class Math555
         }
     }
 
+    /**
+     * Returns <code>value</code>, <b>UNLESS</b>, its magnitude is below the minimum; in which case it returns <code>min</code>
+     * @param value
+     * @param min
+     * @return
+     */
     public static double atLeast(double value, double min)
     {
         return Math.abs(value) < min ? min * Math.signum(value) : value;

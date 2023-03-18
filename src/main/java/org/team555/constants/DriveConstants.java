@@ -64,8 +64,6 @@ public class DriveConstants
      * FR - 1
      * BL - 2
      * BR - 3
-     * 
-     * TODO: why do we need to subtract 90deg here?
      */
     public static final SwerveModuleSpec[] MODULES = 
     {

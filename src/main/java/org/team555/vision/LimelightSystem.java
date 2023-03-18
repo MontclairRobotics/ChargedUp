@@ -1,6 +1,9 @@
 package org.team555.vision;
 
 import static org.team555.constants.LimelightConstants.*;
+
+import java.util.function.Supplier;
+
 import org.team555.structure.DetectionType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -21,9 +24,9 @@ public class LimelightSystem extends VisionSystem
     public static final int TAPE_RETRO_PIPE = 1;
     public static final int APRIL_TAG_PIPE  = 2;
     
-    public static final int NONE_ID = 0;
-    public static final int CONE_ID = 1;
-    public static final int CUBE_ID = 2;
+    public static final int CONE_ID = 0;
+    public static final int CUBE_ID = 1;
+    public static final int NONE_ID = 2;
 
 
     public LimelightSystem()
@@ -87,6 +90,18 @@ public class LimelightSystem extends VisionSystem
         else if (getEntry("tclass").getDouble(0) == CUBE_ID) return DetectionType.CUBE;
         else if (getEntry("tclass").getDouble(0) == CONE_ID) return DetectionType.CONE;
         else                                                       return DetectionType.NONE;
+    }
+
+    @Override
+    public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type)
+    {
+        int pipe = (int) getPipeline();
+
+        if     (type.get() == DetectionType.CUBE || type.get() == DetectionType.CONE) return (pipe == CONE_CUBE_PIPE);
+        else if(type.get() == DetectionType.TAPE                                    ) return (pipe == TAPE_RETRO_PIPE);
+        else if(type.get() == DetectionType.APRIL_TAG                               ) return (pipe == APRIL_TAG_PIPE);
+
+        else return false;
     }
 
     @Override

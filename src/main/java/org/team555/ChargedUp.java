@@ -240,8 +240,8 @@ public class ChargedUp extends RobotContainer
         //     .toggleOnTrue(Commands2023.scoreHigh());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
             .toggleOnTrue(Commands555.scoreMid());
-        // operatorController.getDPad(DPad.DOWN).and(pidActive)
-        //     .toggleOnTrue(Commands2023.scoreLow());
+        operatorController.getDPad(DPad.DOWN).and(pidActive)
+            .toggleOnTrue(Commands555.scoreCubeLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
                 .toggleOnTrue(Commands555.elevatorStingerReturn());
 

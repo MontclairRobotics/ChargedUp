@@ -1,6 +1,9 @@
 package org.team555.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+
+import java.util.function.Supplier;
+
 import org.team555.structure.DetectionType;
 import org.team555.util.frc.commandrobot.ManagerBase;
 
@@ -95,6 +98,13 @@ public abstract class VisionSystem extends ManagerBase
      * @param value number which corresponds to the pipeline
      */
     public abstract void setPipeline(double value);
+
+    /**
+     * Check whether the vision system's current pipeline is applicable for detecting the inputted {@link DetectionType detection type}
+     * @param type
+     * @return
+     */
+    public abstract boolean currentPipelineMatchesDetection(Supplier<DetectionType> type);
 
     /**
      * Gets the URL for the camera streams
