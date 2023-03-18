@@ -164,13 +164,13 @@ public class Commands555
 
     public static CommandBase elevatorTo(double height)
     {
-        if(height < ElevatorConstants.MIN_HEIGHT) 
+        if(height <= ElevatorConstants.MIN_HEIGHT) 
             return Commands.runOnce(() -> elevator.PID.setSpeed(-1))
                 .until(elevator::isAtBottom)
                 .andThen(() -> elevator.PID.setSpeed(0))
                 .withName("Elevator to Bottom");
             
-        if(height > ElevatorConstants.MAX_HEIGHT) 
+        if(height >= ElevatorConstants.MAX_HEIGHT) 
             return Commands.runOnce(() -> elevator.PID.setSpeed(1))
                 .until(elevator::isAtTop)
                 .andThen(() -> elevator.PID.setSpeed(0))
@@ -446,7 +446,7 @@ public class Commands555
                 // Filter to get rate
                 double tiltRate = tiltChange.calculate(tilt);
 
-                // Debounce to check if tilting
+                // Check if tilting
                 isTilting = Math.abs(tiltRate) > DriveConstants.CHARGER_STATION_TILT_SPEED_THRESHOLD.get();
 
                 // Check if we've just started tilting
@@ -455,22 +455,22 @@ public class Commands555
                 // Add to the tilt count if we've just started tilting
                 if(startedTilting) tiltCount++;
 
-                double speed;
+                double velocity;
 
                 // Drive with a speed of zero if we are tilting
-                if(isTilting) speed = 0;
+                if(isTilting) velocity = 0;
                 // Otherwise drive our max speed scaled by the amount of times we have tilted and the direction
                 // of the current tilt.
                 else 
                 {
-                    speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get();
-                    speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+                    velocity = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get();
+                    velocity = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -velocity : velocity;
 
-                    speed *= 1.0 / (tiltCount + 1);
-                    speed *= Math.signum(tilt);
+                    velocity *= 1.0 / (tiltCount + 1);
+                    velocity *= Math.signum(tilt);
                 }
 
-                drivetrain.set(0, speed, 0);
+                drivetrain.setChassisSpeeds(0, velocity, 0);
             }
 
             @Override
