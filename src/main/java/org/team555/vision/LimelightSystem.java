@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimelightSystem extends VisionSystem
 {
-    private LimelightHelpers.Results results;
     private DetectionType target = DetectionType.NONE;
     
     public static final int CONE_CUBE_PIPE  = 0;
@@ -28,10 +27,36 @@ public class LimelightSystem extends VisionSystem
     public static final int CUBE_ID = 1;
     public static final int NONE_ID = 2;
 
+    private static Pose2d toPose2D(double[] inData)
+    {
+        if(inData.length < 6)
+        {
+            System.err.println("Bad LL 2D Pose Data!");
+            return new Pose2d();
+        }
+        Translation2d tran2d = new Translation2d(inData[0], inData[1]);
+        Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
+        return new Pose2d(tran2d, r2d);
+    }
+    
+    private NetworkTableEntry getEntry(String name)
+    {
+        return NetworkTableInstance.getDefault()
+            .getTable("limelight")
+            .getEntry(name);
+    }
+
 
     public LimelightSystem()
     {
-        LimelightHelpers.setCameraPose_RobotSpace("", FORWARD_OFFSET, SIDE_OFFSET, UP_OFFSET, 0.0, 0.0, 0.0);
+        getEntry("camerapose_robotspace").setDoubleArray(new double[] {
+            FORWARD_OFFSET, 
+            SIDE_OFFSET, 
+            UP_OFFSET, 
+            0.0, 
+            0.0, 
+            0.0
+        });
     }
 
     public String getCameraStreamURL()
@@ -42,25 +67,11 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void always() 
     {
-        if(RobotBase.isReal())
-        {
-            results = LimelightHelpers.getLatestResults("");
-        }
     }
 
     @Override
     public void updateEstimatedPose(Pose2d prev) {}
 
-    private static Pose2d toPose2D(double[] inData){
-        if(inData.length < 6)
-        {
-            System.err.println("Bad LL 2D Pose Data!");
-            return new Pose2d();
-        }
-        Translation2d tran2d = new Translation2d(inData[0], inData[1]);
-        Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
-        return new Pose2d(tran2d, r2d);
-    }
     @Override
     public Pose2d getEstimatedPose() 
     {
@@ -124,12 +135,6 @@ public class LimelightSystem extends VisionSystem
         // return hasObject() ? 0 : LimelightHelpers.getTX("");
     }
 
-    public NetworkTableEntry getEntry(String name)
-    {
-        return NetworkTableInstance.getDefault()
-            .getTable("limelight")
-            .getEntry(name);
-    }
     @Override
     public double getObjectAY() 
     {

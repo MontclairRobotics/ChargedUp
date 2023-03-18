@@ -26,6 +26,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Do not use this. For whatever reason, it does not work. :(
+ */
+@Deprecated(forRemoval = true)
 public class LimelightHelpers {
 
     public static class RetroTarget {

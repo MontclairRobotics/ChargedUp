@@ -9,14 +9,14 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 
-public abstract class Tunable<T>
+public abstract class Tunable<T> implements Sendable
 {
-    T rawValue;
     T value;
 
-    Function<T, T> modder = x -> x;
     ArrayList<Consumer<T>> updators = new ArrayList<>();
 
     public final GenericEntry entry;
@@ -28,13 +28,13 @@ public abstract class Tunable<T>
 
     protected Tunable(T value, String name)
     {
-        this.value = this.rawValue = value;
+        this.value = value;
         this.name = name;
 
         NetworkTable nt = NetworkTableInstance.getDefault().getTable("Tuning");
         entry = nt.getTopic(name).getGenericEntry();
 
-        setNT(this.rawValue);
+        setNT(value);
         
         nt.addListener(name, EnumSet.of(Kind.kValueAll), (table, key, event) -> 
         {
@@ -44,8 +44,7 @@ public abstract class Tunable<T>
             || matchType == DriverStation.MatchType.Practice 
             || DriverStation.isTest())
             {
-                this.rawValue = getFromNT();
-                this.value = modder.apply(this.rawValue);
+                this.value = getFromNT();
 
                 for(Consumer<T> updator : updators)
                 {
@@ -70,6 +69,12 @@ public abstract class Tunable<T>
             {
                 entry.setDouble(value);
             }
+
+            @Override
+            public void initSendable(SendableBuilder builder) 
+            {
+                builder.addDoubleProperty("value", this::get, this::setNT);
+            }
         };
     }
     public static Tunable<Boolean> of(boolean value, String name)
@@ -87,19 +92,18 @@ public abstract class Tunable<T>
             {
                 entry.setBoolean(value);
             }
+
+            @Override
+            public void initSendable(SendableBuilder builder) 
+            {
+                builder.addBooleanProperty("value", this::get, this::setNT);
+            }
         };
     }
 
     public Tunable<T> whenUpdate(Consumer<T> updator)
     {
         updators.add(updator);
-        return this;
-    }
-    public Tunable<T> andThen(Function<T, T> modder)
-    {
-        this.modder = modder;
-        value = modder.apply(rawValue);
-
         return this;
     }
 
