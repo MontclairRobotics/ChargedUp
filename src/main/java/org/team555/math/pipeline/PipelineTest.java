@@ -1,5 +1,7 @@
 package org.team555.math.pipeline;
 
+import java.util.Map;
+
 import org.team555.util.frc.commandrobot.ManagerBase;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -14,18 +16,32 @@ public class PipelineTest extends ManagerBase
     public DoublePipeline input = pipelines.function(this::someData); // Get data
 
     public DoublePipeline output = 
-        pipelines.function(this::dataWasSquared)          // Get if data was squared
-            .debounce(0.1)                   // Require it to have been squared for 0.1 seconds
-            .choiceDouble(input, input.pow(0.5))    // Take the square root if it was 
-            .rate()                                       // Get the rate of change of the modified data
-            .rateLimit(0.1)                          // Prevent this rate from changing more than 0.1 units per second
-            .pid(new PIDController(0, 0, 0));    // Use this value as the setpoint for some PID loop
+            input.ifElse(
+                pipelines.function(this::dataWasSquared).debounce(0.1), 
+                input.pow(0.5)
+            )
+            .rate()                                       
+            .rateLimit(0.1)                          
+            .pid(new PIDController(0, 0, 0))
+            .choiceDouble(
+                Map.of(
+                    0.0, pipelines.constant(1),
+                    1.0, pipelines.constant(2),
+                    2.0, pipelines.constant(4), 
+                    3.0, pipelines.constant(5)
+                ), 
+                input.times(10)
+            )
+            .abs()
+            .greaterThan(10)
+            .risingEdge()
+            .conditionDouble(1, 0);
 
     public void always()
     {
         pipelines.update();
 
-        double out = output.get();
+        double out = output.getAsDouble();
     }
 
     public void reset()

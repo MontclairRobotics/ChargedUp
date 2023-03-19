@@ -11,6 +11,8 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 
 public abstract class BooleanPipeline extends Pipeline<Boolean>
 {
+    public final boolean getAsBoolean() {return get();}
+
     @Override
     public BooleanPipeline withDependencies(Pipeline<?>... deps) 
     {
@@ -68,16 +70,29 @@ public abstract class BooleanPipeline extends Pipeline<Boolean>
         return edgeDetectFilter(new EdgeDetectFilter(EdgeType.EITHER));
     }
 
-    public <T> Pipeline<T> choice(Pipeline<T> onTrue, Pipeline<T> onFalse)
+    @Override
+    public BooleanPipeline ifElse(Pipeline<Boolean> cond, Pipeline<Boolean> other) 
+    {
+        return of(super.ifElse(cond, other));
+    }
+
+    public <T> Pipeline<T> condition(Pipeline<T> onTrue, Pipeline<T> onFalse)
     {
         return combine(onTrue, onFalse, (c, t, f) -> c ? t : f);
     }
-    public DoublePipeline choiceDouble(DoublePipeline onTrue, DoublePipeline onFalse)
+    public DoublePipeline conditionDouble(Pipeline<Double> onTrue, Pipeline<Double> onFalse)
     {
         return combineDouble(onTrue, onFalse, (c, t, f) -> c ? t : f);
     }
-    public BooleanPipeline choiceBoolean(BooleanPipeline onTrue, BooleanPipeline onFalse)
+    public BooleanPipeline conditionBool(Pipeline<Boolean> onTrue, Pipeline<Boolean> onFalse)
     {
         return combineBool(onTrue, onFalse, (c, t, f) -> c ? t : f);
     }
+
+    public <T> Pipeline<T> condition(T onTrue, T onFalse)
+    {return condition(constant(onTrue), constant(onFalse));}
+    public DoublePipeline conditionDouble(double onTrue, double onFalse)
+    {return conditionDouble(constant(onTrue), constant(onFalse));}
+    public BooleanPipeline conditionBools(boolean onTrue, boolean onFalse)
+    {return conditionBool(constant(onTrue), constant(onFalse));}
 }

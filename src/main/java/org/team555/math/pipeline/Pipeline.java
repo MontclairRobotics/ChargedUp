@@ -1,8 +1,10 @@
 package org.team555.math.pipeline;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.DoubleFunction;
@@ -154,6 +156,34 @@ public abstract class Pipeline<T>
     
     public BooleanPipeline notEqual(Pipeline<T> other) {return equal(other).negate();}
     public BooleanPipeline notEqual(T other) {return equal(other).negate();}
+
+    public Pipeline<T> ifElse(Pipeline<Boolean> cond, Pipeline<T> other)
+    {
+        return combine(cond, other, (t, c, f) -> c ? t : f);
+    }
+
+    public <K> Pipeline<K> choice(Map<T, ? extends Pipeline<K>> pipes, Pipeline<K> defaultCase)
+    {
+        return combine(defaultCase, (v, defaultV) -> 
+        {
+            if(!pipes.containsKey(v)) return defaultV;
+
+            return pipes.get(v).get();
+        })
+        .withDependencies(pipes.values().toArray(Pipeline<?>[]::new));
+    }
+    public <K> Pipeline<K> choice(Map<T, Pipeline<K>> pipes, K defaultValue)
+    {return choice(pipes, constant(defaultValue));}
+
+    public DoublePipeline choiceDouble(Map<T, ? extends Pipeline<Double>> pipes, Pipeline<Double> defaultCase)
+    {return DoublePipeline.of(choice(pipes, defaultCase));}
+    public DoublePipeline choiceDouble(Map<T, ? extends Pipeline<Double>> pipes, double defaultValue)
+    {return DoublePipeline.of(choice(pipes, constant(defaultValue)));}
+    
+    public BooleanPipeline choiceBool(Map<T, ? extends Pipeline<Boolean>> pipes, Pipeline<Boolean> defaultCase)
+    {return BooleanPipeline.of(choice(pipes, defaultCase));}
+    public BooleanPipeline choiceBool(Map<T, ? extends Pipeline<Boolean>> pipes, boolean defaultValue)
+    {return BooleanPipeline.of(choice(pipes, constant(defaultValue)));}
 
     public static <T> Pipeline<T> constant(T value)
     {

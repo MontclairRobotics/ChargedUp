@@ -1,5 +1,6 @@
 package org.team555.math.pipeline;
 
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
@@ -14,6 +15,8 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public abstract class DoublePipeline extends Pipeline<Double>
 {
+    public final double getAsDouble() {return get();}
+
     @Override
     public DoublePipeline withDependencies(Pipeline<?>... dep) 
     {
@@ -121,5 +124,11 @@ public abstract class DoublePipeline extends Pipeline<Double>
     public DoublePipeline pid(ProfiledPIDController controller, DoubleSupplier resetPosition)
     {
         return applyDouble(controller::calculate, () -> controller.reset(resetPosition.getAsDouble()));
+    }
+
+    @Override
+    public DoublePipeline ifElse(Pipeline<Boolean> cond, Pipeline<Double> other) 
+    {
+        return of(super.ifElse(cond, other));
     }
 }
