@@ -349,9 +349,6 @@ public class Commands555
     public static CommandBase scoreCubeLow()
     {
         return Commands.sequence(
-            //move sideways to april tag
-            moveToObjectSideways(() -> DetectionType.APRIL_TAG),
-
             //close grabber to position the cube closer to the intake
             closeGrabber(),
             waitSeconds(0.3),

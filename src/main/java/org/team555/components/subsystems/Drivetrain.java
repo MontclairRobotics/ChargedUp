@@ -183,6 +183,7 @@ public class Drivetrain extends ManagerSubsystemBase
         xPID     = new PIDMechanism(xController);
         yPID     = new PIDMechanism(yController);
         thetaPID = new PIDMechanism(thetaController);
+        thetaPID.disableOutputClamping();
     }
 
     /**
@@ -240,14 +241,14 @@ public class Drivetrain extends ManagerSubsystemBase
         ControlScheme.TURN_ADJUSTER.adjustX(turn);
         ControlScheme.DRIVE_ADJUSTER.adjustMagnitude(drive);
 
-        double turnRL = thetaInputRateLimiter.calculate(turn.getX());
-        double xRL    = xInputRateLimiter.calculate(drive.getX());
-        double yRL    = yInputRateLimiter.calculate(drive.getY());
+        // double turnRL = thetaInputRateLimiter.calculate(turn.getX());
+        // double xRL    = xInputRateLimiter.calculate(drive.getX());
+        // double yRL    = yInputRateLimiter.calculate(drive.getY());
 
         setChassisSpeeds(getSpeedsFromMode(
-            turnRL / SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
-            yRL    / SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
-            xRL    / SPEEDS[speedIndex][0] * MAX_SPEED_MPS
+            turn.getX()     / SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
+            drive.getY()    / SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
+            drive.getX()    / SPEEDS[speedIndex][0] * MAX_SPEED_MPS
         ));
     }
 
@@ -448,12 +449,16 @@ public class Drivetrain extends ManagerSubsystemBase
         xPID.update();
         yPID.update();
         thetaPID.update();
+
+        double xRL = xInputRateLimiter.calculate(xPID.getSpeed());
+        double yRL = yInputRateLimiter.calculate(yPID.getSpeed());
+        double thetaRL = thetaInputRateLimiter.calculate(thetaPID.getSpeed());
         
         // Construct chassis speeds
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
-            xPID.getSpeed()     * MAX_SPEED_MPS, 
-            yPID.getSpeed()     * MAX_SPEED_MPS,
-            thetaPID.getSpeed() * MAX_TURN_SPEED_RAD_PER_S
+            xRL     * MAX_SPEED_MPS, 
+            yRL     * MAX_SPEED_MPS,
+            thetaRL * MAX_TURN_SPEED_RAD_PER_S
         );
 
         // Drive from states
