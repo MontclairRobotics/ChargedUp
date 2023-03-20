@@ -87,8 +87,8 @@ public class AnimationReel extends SimpleAnimationBase
 
             animations[nextIndex].start();
 
-            transition.setIn(animations[index]);
-            transition.setOut(animations[nextIndex]);
+            transition.setOut(animations[index]);
+            transition.setIn(animations[nextIndex]);
         }
 
         // Run transition

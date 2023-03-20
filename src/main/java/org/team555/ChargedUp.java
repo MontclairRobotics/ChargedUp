@@ -428,6 +428,8 @@ public class ChargedUp extends RobotContainer
     {
         ShuffleboardTab tab = Shuffleboard.getTab("Commands");
         
+        tab.add(Commands555.celebrate());
+
         tab.add(Commands555.signalCube());
         tab.add(Commands555.signalCone());
 

@@ -19,8 +19,8 @@ public class FadeTransition extends TransitionBase
         for(int i = 0; i < getBuffer().getLength(); i++)
         {
             getBuffer().setLED(i, Math555.lerp(
-                getIn ().getBuffer().getLED(i), 
                 getOut().getBuffer().getLED(i), 
+                getIn ().getBuffer().getLED(i), 
                 getPercentComplete()
             ));
         }

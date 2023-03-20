@@ -11,6 +11,8 @@ public abstract class TimedAnimationBase extends AnimationBase
     public double getLength() {return length;}
     public void setLength(double length) {this.length = length;}
 
+    public TimedAnimationBase length(double length) {setLength(length); return this;}
+
     public double getPercentComplete() {return getTimeElapsed() / getLength();}
     
     @Override

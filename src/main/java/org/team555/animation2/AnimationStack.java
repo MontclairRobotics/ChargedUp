@@ -32,6 +32,11 @@ public class AnimationStack extends SimpleAnimationBase
 
         push(defaultAnimation);
     }
+    
+    private Animation top() 
+    {
+        return animations.peek();
+    }
 
     @Override
     public void start() 
@@ -46,7 +51,7 @@ public class AnimationStack extends SimpleAnimationBase
     }
     public void pop()
     {
-        if(animations.size() == 1) 
+        if(animations.size() <= 1) 
         {
             Logging.warning("Cannot pop the last remaining animation from an animation stack!");
         }
@@ -58,6 +63,15 @@ public class AnimationStack extends SimpleAnimationBase
     @Override
     public void render() 
     {
+        // Kill off animations as necessary
+        if(!transitioning)
+        {
+            while(top().isFinished())
+            {
+                pop();
+            }
+        }
+        
         // Handle transitions
         boolean startedTrans = startedTransitioning.calculate(transitioning);
 
@@ -66,7 +80,7 @@ public class AnimationStack extends SimpleAnimationBase
             transition.start();
 
             transition.setOut(animationOut);
-            transition.setIn(animations.peek());
+            transition.setIn(top());
         }
 
         // Handle animations
@@ -81,17 +95,9 @@ public class AnimationStack extends SimpleAnimationBase
             }
         }
         else 
-        {   
-            animations.peek().render();
-            
-            // Kill off animations as necessary
-            while(animations.peek().isFinished())
-            {
-                pop();
-            }
+        {
+            top().render();
         }
-
-        // System.out.println(getBuffer().getLED(0).toHexString());
     }
 
     @Override

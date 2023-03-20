@@ -57,6 +57,7 @@ public interface Animation
             {
                 original.start();
                 t.reset();
+                t.start();
             }
 
             @Override

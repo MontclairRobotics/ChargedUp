@@ -2,8 +2,11 @@ package org.team555.components.managers;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.util.Color;
 
 import org.team555.animation2.AnimationStack;
+import org.team555.animation2.CelebrationAnimation;
+import org.team555.animation2.RaceAnimation;
 import org.team555.animation2.RainbowAnimation;
 import org.team555.animation2.api.Animation;
 import org.team555.animation2.api.LEDBuffer;
@@ -46,8 +49,7 @@ public class LED extends ManagerBase
 
     public void celebrate()
     {
-        // add(new RainbowAnimation().timeout(0.2));
-        // TODO: FIGURE OUT WHY THIS DOES NOT WORK
+        add(new CelebrationAnimation().length(1));
     }
 
     /**

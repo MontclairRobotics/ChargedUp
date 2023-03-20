@@ -12,8 +12,7 @@ public abstract class SimpleAnimationBase implements Animation
     @Override
     public void start() 
     {
-        timer.reset();
-        timer.start();
+        timer.restart();
     }
 
     protected double getTimeElapsed() {return timer.get();}

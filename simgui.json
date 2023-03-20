@@ -24,6 +24,7 @@
       "/Shuffleboard/Commands/Activate Alliance LED": "Command",
       "/Shuffleboard/Commands/Activate Purple LED": "Command",
       "/Shuffleboard/Commands/Activate Yellow LED": "Command",
+      "/Shuffleboard/Commands/Celebrate": "Command",
       "/Shuffleboard/Commands/Close Grabber": "Command",
       "/Shuffleboard/Commands/Intake Spit": "Command",
       "/Shuffleboard/Commands/Intake Stop": "Command",
@@ -72,22 +73,12 @@
           "visible": true
         }
       },
-      "/Shuffleboard/Commands/Close Grabber": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Open Grabber": {
+      "/Shuffleboard/Commands/Celebrate": {
         "window": {
           "visible": true
         }
       },
       "/Shuffleboard/Commands/Trajectory test.Line": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/deIntake score": {
         "window": {
           "visible": true
         }

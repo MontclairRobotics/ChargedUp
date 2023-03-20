@@ -54,6 +54,11 @@ public class Commands555
     }
 
     /////////////////////// LED COMMANDS /////////////////////////
+    public static CommandBase celebrate() 
+    {
+        return Commands.runOnce(led::celebrate)
+            .withName("Celebrate");
+    }
 
     /**
      * Flashes twice quickly and twice slowly in yellow: * * -- --
