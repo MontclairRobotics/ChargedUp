@@ -38,13 +38,13 @@ public class DummySystem extends VisionSystem
     @Override
     public DetectionType getCurrentType() 
     {
-        return DEFAULT_DETECTION;
+        return getDefaultDetection();
     }
 
     @Override
     public DetectionType getTargetType() 
     {
-        return DEFAULT_DETECTION;
+        return getDefaultDetection();
     }
 
     @Override

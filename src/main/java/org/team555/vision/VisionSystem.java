@@ -1,6 +1,7 @@
 package org.team555.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.function.Supplier;
 
@@ -9,10 +10,13 @@ import org.team555.util.frc.commandrobot.ManagerBase;
 
 public abstract class VisionSystem extends ManagerBase
 {
-    // STATIC //
-    public static final DetectionType DEFAULT_DETECTION = DetectionType.APRIL_TAG;
+    public DetectionType getDefaultDetection() 
+    {
+        return DriverStation.isAutonomous() 
+            ? DetectionType.APRIL_TAG 
+            : DetectionType.NONE;
+    }
 
-    // NON-STATIC //
     private DetectionType desiredDriveTarget = DetectionType.CUBE;
 
     public void setDesiredDriveTarget(DetectionType type)
