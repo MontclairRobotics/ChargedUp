@@ -591,9 +591,9 @@ public class Commands555
                 case "A": 
                 case "C": return pickup();
 
-                case "1": return scoreMidShelf(); //TODO: mnfjaidognjrae
-                case "3": return scoreMidShelf(); //TODO: jnidagunra
-                case "2": return scoreMidShelf(); //TODO: caitiue said so
+                case "1": return scoreMidPeg(); //TODO: mnfjaidognjrae
+                case "3": return scoreMidPeg(); //TODO: jnidagunra
+                case "2": return scoreMidPeg(); //TODO: caitiue said so
                 case "4": return scoreMidShelf();
                 case "5": return scoreMidShelf();
 

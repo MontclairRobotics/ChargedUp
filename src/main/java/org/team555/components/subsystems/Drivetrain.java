@@ -184,7 +184,7 @@ public class Drivetrain extends ManagerSubsystemBase
         yPID     = new PIDMechanism(yController);
         thetaPID = new PIDMechanism(thetaController);
         thetaPID.disableOutputClamping();
-        thetaPID.setMaxOutput(MAX_TURN_SPEED_RAD_PER_S);
+        // thetaPID.setMaxOutput(MAX_TURN_SPEED_RAD_PER_S);
     }
 
     /**

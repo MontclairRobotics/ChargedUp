@@ -53,6 +53,7 @@ import org.team555.util.frc.GameController.DPad;
 import org.team555.util.frc.can.CANSafety;
 import org.team555.util.frc.commandrobot.CommandRobot;
 import org.team555.util.frc.commandrobot.RobotContainer;
+import org.team555.vision.DummySystem;
 import org.team555.vision.LimelightSystem;
 import org.team555.vision.VisionSystem;
 
@@ -123,21 +124,20 @@ public class ChargedUp extends RobotContainer
 
     public static Animation getGrabberAnimation()
     {
-        return new ConditionalAnimation(new ZoomAnimation(Color.kPurple))
-            .addCase(grabber::getHoldingCone, new ZoomAnimation(Color.kYellow));
+        return new ConditionalAnimation(new ZoomAnimation(Color.kPurple).mirror())
+            .addCase(grabber::getHoldingCone, new ZoomAnimation(Color.kYellow).mirror());
     }
     
     public static Animation getDefaultAnimation()
     {
-        return new ConditionalAnimation(new AllianceAnimation())
-            .addCase(DriverStation::isDisabled, getDisabledAnimation())
-            .addCase(grabber::isClosed, getGrabberAnimation());
+        return new ConditionalAnimation(getGrabberAnimation())
+            .addCase(DriverStation::isDisabled, getDisabledAnimation());
     }
 
     // COMPONENTS //
     public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
     public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
-    public static final VisionSystem vision = new LimelightSystem();
+    public static final VisionSystem vision = new DummySystem();
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();
@@ -226,36 +226,30 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.LEFT_BUMPER)
                 .onTrue(drivetrain.commands.decreaseSpeed());
 
-        // VISION MOVEMENT //
-        driverController.getButton(Button.A_CROSS) // switch cone or cube
-                .onTrue(Commands.runOnce(() -> vision.cycleDesiredDriveTarget()));
-
-        driverController.getButton(Button.X_SQUARE)
-                .onTrue(Commands555.moveToObjectSideways(vision::getDesiredDriveTarget));
-
-        driverController.getButton(Button.B_CIRCLE)
-                .onTrue(Commands555.turnToObject(vision::getDesiredDriveTarget));
-
-        driverController.getButton(Button.LEFT_STICK)
-                .onTrue(drivetrain.commands.enableFieldRelative());
-
-        // BALANCE //
+        // ANGLES //
         driverController.getButton(Button.Y_TRIANGLE)
-                .onTrue(Commands555.balance());
+            .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)));
+        driverController.getButton(Button.B_CIRCLE)
+            .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
+        driverController.getButton(Button.A_CROSS)
+            .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
+        driverController.getButton(Button.X_SQUARE)
+            .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
 
-        // Button to Zero NavX
+        // AUTONS //
+        driverController.getDPad(DPad.UP)
+            .onTrue(Commands555.balance());
+        driverController.getDPad(DPad.LEFT)
+            .onTrue(Commands555.turnToObject(() -> DetectionType.CONE));
+        driverController.getDPad(DPad.RIGHT)
+            .onTrue(Commands555.moveToObjectSideways(() -> DetectionType.CONE));
+
+        // Button to Zero NavX //
         driverController.getButton(Button.START_TOUCHPAD)
             .onTrue(Commands.runOnce(() -> {
                 Logging.info("Diego hit the button; current rotation is " + gyroscope.getRotation2d().getDegrees() + " degrees");
                 gyroscope.setNorth();
             }).ignoringDisable(true));
-
-        driverController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)));
-        driverController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
-        driverController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
-        driverController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
-
-        // OPERATOR CONTROLS //
 
         // Cancel PID
         Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
@@ -274,14 +268,15 @@ public class ChargedUp extends RobotContainer
         }
 
         // D-Pad Controls
-        // operatorController.getDPad(DPad.UP).and(pidActive)
-        //     .toggleOnTrue(Commands2023.scoreHigh());
+        operatorController.getDPad(DPad.UP).and(pidActive)
+            .toggleOnTrue(Commands555.elevatorHumanPlayerLevel());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
             .toggleOnTrue(Commands555.scoreMid());
         operatorController.getDPad(DPad.DOWN).and(pidActive)
             .toggleOnTrue(Commands555.scoreCubeLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
                 .toggleOnTrue(Commands555.elevatorStingerReturn());
+
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
@@ -297,12 +292,12 @@ public class ChargedUp extends RobotContainer
         // suck button
         operatorController.getAxis(Axis.LEFT_TRIGGER)
                 .whenGreaterThan(0.5)
-                .onTrue(Commands555.shwooperSuck())
+                .onTrue(Commands555.shwooperSpit())
                 .onFalse(Commands555.stopShwooper());
         // button to spit schwooper
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
                 .whenGreaterThan(0.5)
-                .onTrue(Commands555.shwooperSpit())
+                .onTrue(Commands555.shwooperSuck())
                 .onFalse(Commands555.stopShwooper());
 
         // Elevator
@@ -314,12 +309,6 @@ public class ChargedUp extends RobotContainer
 
             elevator.setSpeed(left.getY());
         }, elevator));
-        
-        //LEDs
-        operatorController.getButton(Button.RIGHT_BUMPER)
-            .onTrue(Commands555.signalCube());
-        operatorController.getButton(Button.LEFT_BUMPER)
-                .onTrue(Commands555.signalCone());
     }
 
     public static boolean skipDriveAuto()
