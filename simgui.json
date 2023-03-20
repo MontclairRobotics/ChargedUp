@@ -1,8 +1,18 @@
 {
   "HALProvider": {
     "Addressable LEDs": {
+      "0": {
+        "columns": 95
+      },
       "window": {
         "visible": true
+      }
+    },
+    "Other Devices": {
+      "CANCoder[11]": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
@@ -21,6 +31,7 @@
       "/Shuffleboard/Commands/Open Grabber": "Command",
       "/Shuffleboard/Commands/Retract Stinger": "Command",
       "/Shuffleboard/Commands/Return Elevator and Stinger": "Command",
+      "/Shuffleboard/Commands/SIDE TO TAPE": "Command",
       "/Shuffleboard/Commands/Score LOW PEG": "Command",
       "/Shuffleboard/Commands/Score LOW SHELF": "Command",
       "/Shuffleboard/Commands/Score Low (General)": "Command",
@@ -32,10 +43,17 @@
       "/Shuffleboard/Commands/Signal Cone": "Command",
       "/Shuffleboard/Commands/Signal Cube": "Command",
       "/Shuffleboard/Commands/Stinger Out": "Command",
+      "/Shuffleboard/Commands/TURN TO TAPE": "Command",
       "/Shuffleboard/Commands/Toggle Grabber": "Command",
       "/Shuffleboard/Commands/Toggle Grabber has Cone": "Command",
       "/Shuffleboard/Commands/Toggle Stinger": "Command",
+      "/Shuffleboard/Commands/Trajectory test.2m Circle": "Command",
+      "/Shuffleboard/Commands/Trajectory test.2m Line": "Command",
+      "/Shuffleboard/Commands/Trajectory test.2m S Bend": "Command",
+      "/Shuffleboard/Commands/Trajectory test.2m Spinning Line": "Command",
+      "/Shuffleboard/Commands/Trajectory test.2m Square": "Command",
       "/Shuffleboard/Commands/Trajectory test.Line": "Command",
+      "/Shuffleboard/Commands/deIntake score": "Command",
       "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
       "/Shuffleboard/PID/ELEVATOR-PID/Elevator PID": "PIDController",
       "/Shuffleboard/PID/THETA-PID/θ-PID Controller": "PIDController",
@@ -54,14 +72,48 @@
           "visible": true
         }
       },
+      "/Shuffleboard/Commands/Close Grabber": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Open Grabber": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Commands/Trajectory test.Line": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/deIntake score": {
         "window": {
           "visible": true
         }
       }
     }
   },
-  "NetworkTables View": {
-    "visible": false
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "Commands": {
+          "Score LOW PEG": {
+            "open": true
+          },
+          "open": true
+        },
+        "PID": {
+          "ELEVATOR-PID": {
+            "open": true
+          },
+          "open": true
+        },
+        "open": true
+      },
+      "limelight": {
+        "open": true
+      }
+    }
   }
 }
