@@ -3,14 +3,14 @@ package org.team555.constants;
 import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.wpilibj.util.Color;
-import org.team555.animation.Animation;
-import org.team555.animation.CircusAnimation;
-import org.team555.animation.MagicAnimation;
-import org.team555.animation.QuickSlowFlash;
-import org.team555.animation.RaceAnimation;
-import org.team555.animation.RainbowAnimation;
-import org.team555.animation.ZoomAnimation;
-import org.team555.util.Array555;
+import org.team555.animation2.AnimationReel;
+import org.team555.animation2.CircusAnimation;
+import org.team555.animation2.FadeTransition;
+import org.team555.animation2.MagicAnimation;
+import org.team555.animation2.QuickSlowFlash;
+import org.team555.animation2.RaceAnimation;
+import org.team555.animation2.RainbowAnimation;
+import org.team555.animation2.ZoomAnimation;
 import org.team555.util.frc.Tunable;
 
 
@@ -43,18 +43,17 @@ public final class Constants
 
         public static class LED
         {
-            public static final double DEMO_TIME = 8;
-            public static final Animation[] DEMO_ANIMATIONS = 
-            {
-                MagicAnimation.fire(DEMO_TIME),
-                new CircusAnimation(DEMO_TIME),
-                new RainbowAnimation(DEMO_TIME),
-                MagicAnimation.galaxy(DEMO_TIME),   
-                new ZoomAnimation(DEMO_TIME, Color.kLavender),
-                new QuickSlowFlash(DEMO_TIME, Color.kBlue),
-                new RaceAnimation(DEMO_TIME, Color.kIndigo)
-            };
-            public static final Animation[] SHUFFLED_ANIMATIONS = Array555.shuffle(DEMO_ANIMATIONS, Animation[]::new);
+            public static final double DEMO_TIME = 10;
+            public static final double TRANS_TIME = 1;
+
+            public static final AnimationReel DEMO_ANIMATION = new AnimationReel(DEMO_TIME, TRANS_TIME, new FadeTransition(), 
+                MagicAnimation.fire(),
+                new CircusAnimation().randomized(),
+                new RainbowAnimation().randomized(),
+                MagicAnimation.galaxy(),
+                new QuickSlowFlash(Color.kAquamarine),
+                new RaceAnimation(Color.kIndigo).randomized()
+            );
         }
     }
     

@@ -1,29 +1,28 @@
-package org.team555.animation;
+package org.team555.animation2;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
+
+import org.team555.animation2.api.AnimationBase;
+import org.team555.animation2.api.LEDBuffer;
+import org.team555.animation2.api.TimedAnimationBase;
 import org.team555.math.Math555;
 
-public class QuickSlowFlash extends Animation
+public class QuickSlowFlash extends TimedAnimationBase
 {
     private Color flashColor;
     private double proportionQuick;
 
-    public QuickSlowFlash(double length, Color color)
+    public QuickSlowFlash(Color color)
     {
-        super(length);
         flashColor = color;
         proportionQuick = 0.33;
     }
-    public QuickSlowFlash(Color color)
-    {
-        this(5, color);
-    }
 
     @Override
-    public void run(AddressableLEDBuffer ledBuffer) 
+    public void render()
     {
-        double percentFinished = percentFinished();
+        double percentFinished = getPercentComplete();
         Color color = flashColor;
 
         if (percentFinished < proportionQuick)
@@ -37,7 +36,7 @@ public class QuickSlowFlash extends Animation
             color = Math555.lerp(Color.kBlack, flashColor, state / 200.0);
         }
 
-        LEDBuffer.fill(ledBuffer, color);
+        LEDBuffer.fill(getBuffer(), color);
     }
     
 }
