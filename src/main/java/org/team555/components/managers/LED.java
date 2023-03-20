@@ -46,7 +46,8 @@ public class LED extends ManagerBase
 
     public void celebrate()
     {
-        add(new RainbowAnimation().timeout(0.2));
+        // add(new RainbowAnimation().timeout(0.2));
+        // TODO: FIGURE OUT WHY THIS DOES NOT WORK
     }
 
     /**

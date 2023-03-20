@@ -137,7 +137,7 @@ public class ChargedUp extends RobotContainer
     // COMPONENTS //
     public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
     public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
-    public static final VisionSystem vision = new DummySystem();
+    public static final VisionSystem vision = new LimelightSystem();
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();
@@ -196,30 +196,6 @@ public class ChargedUp extends RobotContainer
             ).finallyDo(interrupted -> drivetrain.pauseDriverInput())
         );
 
-        // driverController.getButton(Button.A_CROSS)
-        // .onTrue(Commands.runOnce(() -> DefaultAnimation.setViolet()));
-        // driverController.getButton(Button.B_CIRCLE)
-        // .onTrue(Commands.runOnce(() -> led.add(MagicAnimation.fire(4))));
-        // driverController.getButton(Button.A_CROSS)
-        // .onTrue(Commands.runOnce( () -> led.add(new CircusAnimation(7))));
-        // driverController.getButton(Button.Y_TRIANGLE)
-        // .onTrue(Commands.runOnce(() -> led.add(MagicAnimation.galaxy(5))));
-        // driverController.getButton(Button.X_SQUARE)
-        // .onTrue(Commands.runOnce(() -> led.add(new QuickSlowFlash(Color.kYellow))));
-
-        // Button for Field Relative
-        // driverController.getButton(Button.A_CROSS)
-                // .and(driverController.getButton(Button.START_TOUCHPAD))
-                // .onTrue(drivetrain.commands.toggleFieldRelative());
-                // .onTrue(Commands.runOnce(() -> led.add(new ASCIImation(5, "Hello",
-                // Color.kBlack, Color.kWhite, Color.kGreen, Color.kOrange))));
-                // .onTrue(Commands.runOnce(() -> led.add(new RaceAnimation(5))));
-
-        // driverController.getAxis(Axis.LEFT_TRIGGER)
-        //         .whenGreaterThan(0.5)
-        //         .onTrue(drivetrain.commands.enableStraightPidding())
-        //         .onFalse(drivetrain.commands.disableStraightPidding());
-
         // Increase/Decrease Max Speed
         driverController.getButton(Button.RIGHT_BUMPER)
                 .onTrue(drivetrain.commands.increaseSpeed());
@@ -275,8 +251,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.DOWN).and(pidActive)
             .toggleOnTrue(Commands555.scoreCubeLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
-                .toggleOnTrue(Commands555.elevatorStingerReturn());
-
+            .toggleOnTrue(Commands555.elevatorStingerReturn());
 
         // Grabber
         operatorController.getButton(Button.A_CROSS)
@@ -291,14 +266,14 @@ public class ChargedUp extends RobotContainer
         // Schwooper
         // suck button
         operatorController.getAxis(Axis.LEFT_TRIGGER)
-                .whenGreaterThan(0.5)
-                .onTrue(Commands555.shwooperSpit())
-                .onFalse(Commands555.stopShwooper());
+            .whenGreaterThan(0.5)
+            .onTrue(Commands555.shwooperSpit())
+            .onFalse(Commands555.stopShwooper());
         // button to spit schwooper
         operatorController.getAxis(Axis.RIGHT_TRIGGER)
-                .whenGreaterThan(0.5)
-                .onTrue(Commands555.shwooperSuck())
-                .onFalse(Commands555.stopShwooper());
+            .whenGreaterThan(0.5)
+            .onTrue(Commands555.shwooperSuck())
+            .onFalse(Commands555.stopShwooper());
 
         // Elevator
         elevator.setDefaultCommand(Commands.run(() -> {
