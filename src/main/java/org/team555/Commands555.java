@@ -176,6 +176,15 @@ public class Commands555
     }
 
     /**
+     * Sets the elevator high enough so that the human player can feed it a cone.
+     * @return Command
+     */
+    public static CommandBase elevatorHumanPlayerLevel()
+    {
+        return elevatorTo(ElevatorConstants.MAX_HEIGHT / 2);
+    }
+
+    /**
      * Sets the elevator to the height of the high section
      * @return the command
      */

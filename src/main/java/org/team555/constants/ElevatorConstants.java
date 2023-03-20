@@ -46,7 +46,7 @@ public class ElevatorConstants
     public static final Tunable<Double> FEED_FORWARD_VOLTS = Tunable.of(0.05*12, "elevator.ff_volts");
 
     public static final double 
-        KP = 0.5,
+        KP = 0.75,
         KI = 0.1,
         KD = 0
     ;
