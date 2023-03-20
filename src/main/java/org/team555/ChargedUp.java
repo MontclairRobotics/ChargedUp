@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.team555.animation2.AllianceAnimation;
 import org.team555.animation2.FadeTransition;
 import org.team555.animation2.SolidAnimation;
+import org.team555.animation2.WipeTransition;
 import org.team555.animation2.ZoomAnimation;
 import org.team555.animation2.api.Animation;
 import org.team555.animation2.api.ConditionalAnimation;
@@ -106,17 +107,18 @@ public class ChargedUp extends RobotContainer
     }
 
     // ANIMATIONS //
+    public static Animation getDriverAlignmentAnimation()
+    {
+        return new ConditionalAnimation(new SolidAnimation(Color.kRed)) //! This solid animation should not happen!
+            .addCase(() -> vision.getObjectAX() > +1, new ZoomAnimation(Color.kOrange))
+            .addCase(() -> vision.getObjectAX() < -1, new ZoomAnimation(Color.kOrange).flip());
+    }
+
     public static Animation getDisabledAnimation()
     {
-        final double RANGE_DEBOUNCE_TIME = 1;
-
-        Debouncer outOfRangeLeft  = new Debouncer(RANGE_DEBOUNCE_TIME, DebounceType.kFalling);
-        Debouncer outOfRangeRight = new Debouncer(RANGE_DEBOUNCE_TIME, DebounceType.kFalling);
-
         return new ConditionalAnimation(Constants.Robot.LED.DEMO_ANIMATION)
             .addCase(CANSafety::hasErrors, new ZoomAnimation(Color.kRed).mirror())
-            .addCase(() -> outOfRangeLeft .calculate(vision.getObjectAX() > +1), new ZoomAnimation(Color.kOrange))
-            .addCase(() -> outOfRangeRight.calculate(vision.getObjectAX() < -1), new ZoomAnimation(Color.kOrange).flip());
+            .addCase(() -> Math.abs(vision.getObjectAX()) > 1, getDriverAlignmentAnimation());
     }
 
     public static Animation getGrabberAnimation()
