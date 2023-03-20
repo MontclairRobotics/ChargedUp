@@ -372,11 +372,14 @@ public class Commands555
             log("[SCORE] Beginning score sequence . . ."),
             closeGrabber(),
 
-            //move sideways to the target
-            moveToObjectSideways(() -> type.get().getDetectionType()),
+            //Align to score (only in teleop)
+            Commands.sequence(
+                //move sideways to the target
+                moveToObjectSideways(() -> type.get().getDetectionType()),
 
-            //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
-            drivetrain.commands.driveForTime(0.5, 0, 0.5, 0), //TODO: these numbers are completely made up
+                //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
+                runOnce(() -> drivetrain.commands.driveForTime(0.5, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
+            ).unless(DriverStation::isAutonomous),
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
@@ -527,12 +530,12 @@ public class Commands555
         //     drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
-        final double DEADBAND = 2;
-        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.3;
+        final double DEADBAND = 2;//degrees
+        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.75;
 
         return ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(Math555.atLeast(Math.toRadians(SPEED_MUL * vision.getObjectAX() / 27.0), 0.2), 0, 0)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0)))
                 .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
         ).withName("Turn to Current Object");
     }
@@ -546,7 +549,7 @@ public class Commands555
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;
-        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.3;
+        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
 
         return ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
@@ -564,6 +567,7 @@ public class Commands555
         return Commands.sequence(
             Commands.runOnce(() -> vision.setTargetType(type.get())),
             waitUntil(() -> vision.currentPipelineMatchesDetection(type)), //TODO: Does this work?
+            waitSeconds(0.2),
             turnToCurrentObject(),
             Commands.runOnce(() -> vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
@@ -578,6 +582,7 @@ public class Commands555
         return Commands.sequence(
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
             waitUntil(() -> vision.currentPipelineMatchesDetection(type)), //TODO: Does this work?
+            waitSeconds(0.2),
             moveToCurrentObjectSideways(),
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );

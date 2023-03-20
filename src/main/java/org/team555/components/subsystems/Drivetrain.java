@@ -184,6 +184,7 @@ public class Drivetrain extends ManagerSubsystemBase
         yPID     = new PIDMechanism(yController);
         thetaPID = new PIDMechanism(thetaController);
         thetaPID.disableOutputClamping();
+        thetaPID.setMaxOutput(MAX_TURN_SPEED_RAD_PER_S);
     }
 
     /**
@@ -595,7 +596,9 @@ public class Drivetrain extends ManagerSubsystemBase
                 disableFieldRelative(),
                 Commands.run(() -> Drivetrain.this.setChassisSpeeds(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
                     .raceWith(Commands.waitSeconds(time))
-            ).finallyDo(__ -> ChargedUp.drivetrain.enableFieldRelative());
+            ).finallyDo(__ -> ChargedUp.drivetrain.enableFieldRelative())
+            .finallyDo(__ -> Drivetrain.this.setChassisSpeeds(0, 0, 0));
+
         }
 
         /**

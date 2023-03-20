@@ -17,7 +17,7 @@ public class StingerConstants
     ;
 
     //Pneu stuffs
-    public static final double PNEU_TIME = 1.1;
+    public static final double PNEU_TIME = 1.0;
     
     
     public static final PIDController inout()
