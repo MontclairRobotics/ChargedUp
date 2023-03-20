@@ -23,6 +23,9 @@ public class Grabber extends ManagerSubsystemBase
     public GamePiece getHeldObject() {return heldObject;}
     public String getHeldObjectName() {return heldObject.toString().toLowerCase();}
 
+    public boolean isOpen  () {return outputSolenoid.get() == SOLENOID_DEFAULT_STATE;}
+    public boolean isClosed() {return outputSolenoid.get() == !SOLENOID_DEFAULT_STATE;}
+
     /**
      * Sets pneumatic state of grabber to <b>grabbed</b> (<b>non-default</b> state of solenoid)
      */

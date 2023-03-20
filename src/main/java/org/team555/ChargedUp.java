@@ -7,6 +7,8 @@ package org.team555;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -20,7 +22,14 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.team555.animation.FadeTransition;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
+import org.team555.animation2.AllianceAnimation;
+import org.team555.animation2.FadeTransition;
+import org.team555.animation2.SolidAnimation;
+import org.team555.animation2.ZoomAnimation;
+import org.team555.animation2.api.Animation;
+import org.team555.animation2.api.ConditionalAnimation;
 import org.team555.components.managers.Auto;
 import org.team555.components.managers.GyroscopeNavX;
 import org.team555.components.managers.LED;
@@ -96,12 +105,36 @@ public class ChargedUp extends RobotContainer
         return PIDTab;
     }
 
+    // ANIMATIONS //
+    public static Animation getDisabledAnimation()
+    {
+        final double RANGE_DEBOUNCE_TIME = 1;
+
+        Debouncer outOfRangeLeft  = new Debouncer(RANGE_DEBOUNCE_TIME, DebounceType.kFalling);
+        Debouncer outOfRangeRight = new Debouncer(RANGE_DEBOUNCE_TIME, DebounceType.kFalling);
+
+        return new ConditionalAnimation(Constants.Robot.LED.DEMO_ANIMATION)
+            .addCase(CANSafety::hasErrors, new ZoomAnimation(Color.kRed).mirror())
+            .addCase(() -> outOfRangeLeft .calculate(vision.getObjectAX() > +1), new ZoomAnimation(Color.kOrange))
+            .addCase(() -> outOfRangeRight.calculate(vision.getObjectAX() < -1), new ZoomAnimation(Color.kOrange).flip());
+    }
+
+    public static Animation getGrabberAnimation()
+    {
+        return new ConditionalAnimation(new ZoomAnimation(Color.kPurple))
+            .addCase(grabber::getHoldingCone, new ZoomAnimation(Color.kYellow));
+    }
+    
+    public static Animation getDefaultAnimation()
+    {
+        return new ConditionalAnimation(new AllianceAnimation())
+            .addCase(DriverStation::isDisabled, getDisabledAnimation())
+            .addCase(grabber::isClosed, getGrabberAnimation());
+    }
+
     // COMPONENTS //
     public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
-    public static final LED led = new LED();
-
     public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
-
     public static final VisionSystem vision = new LimelightSystem();
 
     public static final Drivetrain drivetrain = new Drivetrain();
@@ -110,6 +143,11 @@ public class ChargedUp extends RobotContainer
     public static final Grabber grabber = new Grabber();
     public static final Stinger stinger = new Stinger();
     public static final MiscData misc = new MiscData();
+    
+    public static final LED led = new LED(
+        getDefaultAnimation(),
+        new FadeTransition()
+    );
 
     // INITIALIZER //
     @Override 
@@ -128,8 +166,6 @@ public class ChargedUp extends RobotContainer
         {
             PortForwarder.add(port, "limelight.local", port);
         }
-
-        led.setTransition(FadeTransition::new);
 
         setupDebugTab();
         setupMainTab();
@@ -425,10 +461,6 @@ public class ChargedUp extends RobotContainer
     public void setupCommandsTab()
     {
         ShuffleboardTab tab = Shuffleboard.getTab("Commands");
-        
-        tab.add(Commands555.activateAlliance());
-        tab.add(Commands555.activatePurple());
-        tab.add(Commands555.activateYellow());
         
         tab.add(Commands555.signalCube());
         tab.add(Commands555.signalCone());

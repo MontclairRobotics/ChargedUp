@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.team555.animation.DefaultAnimation;
-import org.team555.animation.QuickSlowFlash;
+
+import org.team555.animation2.QuickSlowFlash;
 import org.team555.components.managers.Auto;
 import org.team555.components.subsystems.Drivetrain;
 import org.team555.constants.*;
@@ -54,39 +54,6 @@ public class Commands555
     }
 
     /////////////////////// LED COMMANDS /////////////////////////
-
-
-    /**
-     * Displays solid purple on the LEDs
-     * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
-     * Since this changes the default color, if you add a command to the que it will override this
-     */
-    public static CommandBase activatePurple() 
-    {
-        return Commands.runOnce(() -> DefaultAnimation.setViolet())
-            .withName("Activate Purple LED");
-    }
-
-    /**
-     * Displays solid yellow on the LEDs
-     * To stop displaying this, either call activateYellow() or activateAlliance() which will set to alliance color
-     * Since this changes the default color, if you add a command to the que it will override this
-     */
-    public static CommandBase activateYellow() 
-    {
-        return Commands.runOnce(() -> DefaultAnimation.setYellow())
-            .withName("Activate Yellow LED");
-    }
-
-    /**
-     * Displays the alliance color in solid on the LEDs. Will run until another LED is called.
-     * Since this changes the default color, if you add a command to the que it will override this
-     */
-    public static CommandBase activateAlliance() 
-    {
-        return Commands.runOnce(() -> DefaultAnimation.setDefault())
-            .withName("Activate Alliance LED");
-    }
 
     /**
      * Flashes twice quickly and twice slowly in yellow: * * -- --
@@ -356,9 +323,12 @@ public class Commands555
             waitSeconds(0.3),
             openGrabber(),
 
+            runOnce(led::celebrate),
+
             //wait until the cube has shot out
             waitSeconds(1),
             stopShwooper()
+
         ).withName("deIntake score");
     }
 
@@ -386,6 +356,7 @@ public class Commands555
             log("[SCORE] Dropping . . ."),
             waitSeconds(0.9),
             openGrabber(), 
+            runOnce(led::celebrate),
             waitSeconds(0.7),
 
             //Return to position 
@@ -496,7 +467,10 @@ public class Commands555
             @Override
             public boolean isFinished() 
             {
-                return atRestDebouncer.calculate(!isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND);
+                boolean atRest = atRestDebouncer.calculate(!isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND);
+                if(atRest) led.celebrate();
+
+                return atRest;
             }
 
             @Override

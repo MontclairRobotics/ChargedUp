@@ -1,8 +1,11 @@
-package org.team555.animation;
+package org.team555.animation2.api;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
 
+/**
+ * Various helpful methods for dealing with {@link AddressableLEDBuffer}s
+ */
 public class LEDBuffer 
 {
     private LEDBuffer() {}
@@ -36,6 +39,31 @@ public class LEDBuffer
         for (int i = 0; i < from.getLength(); i++) 
         {
             copy(i, from, to);
+        }
+    }
+
+    /**
+     * Flip the contents of the given buffer 180 degrees.
+     */
+    public static void flip(AddressableLEDBuffer buf)
+    {
+        for(int i = 0; i < buf.getLength() / 2; i++)
+        {
+            Color temp = buf.getLED(i);
+            buf.setLED(i, buf.getLED(buf.getLength() - i - 1));
+            buf.setLED(buf.getLength() - i - 1, temp);
+        }
+    }
+
+    /**
+     * Mirror the contents of the given buffer around its center,
+     * copying the left half to the right half but inverted.
+     */
+    public static void mirror(AddressableLEDBuffer buf)
+    {
+        for(int i = 0; i < buf.getLength() / 2; i++)
+        {
+            buf.setLED(i, buf.getLED(buf.getLength() - i - 1));
         }
     }
 }

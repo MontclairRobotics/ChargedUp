@@ -1,4 +1,7 @@
-package org.team555.animation;
+package org.team555.animation2;
+
+import org.team555.animation2.api.AnimationBase;
+import org.team555.animation2.api.LEDBuffer;
 
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
@@ -6,19 +9,18 @@ import edu.wpi.first.wpilibj.util.Color;
 /**
  * An animation which simply fills the led buffer with a provided color for some amount of time.
  */
-public class SolidAnimation extends Animation
+public class SolidAnimation extends AnimationBase
 {
     private Color color;
     
-    public SolidAnimation(double time, Color color)
+    public SolidAnimation(Color color)
     {
-        super(time);
         this.color = color;
     }
 
     @Override
-    public void run(AddressableLEDBuffer ledBuffer) 
+    public void render()
     {
-        LEDBuffer.fill(ledBuffer, color);
+        LEDBuffer.fill(getBuffer(), color);
     }
 }

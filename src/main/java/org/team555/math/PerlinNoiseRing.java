@@ -7,7 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 
 public class PerlinNoiseRing 
 {
-    public PerlinNoiseRing(double length, int step, int size) 
+    public PerlinNoiseRing(int step, int size) 
     {
         // Get a random movement direction
         movementDir = new Rotation2d(new Random().nextDouble() * Math.PI);
@@ -16,9 +16,9 @@ public class PerlinNoiseRing
         this.step = step;
     }
 
-    public PerlinNoiseRing(double length)
+    public PerlinNoiseRing()
     {
-        this(length, 40, 70);
+        this(40, 70);
     }
 
     // Constants //

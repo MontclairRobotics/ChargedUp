@@ -1,17 +1,16 @@
-package org.team555.animation;
+package org.team555.animation2;
 
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.util.Color;
+
+import org.team555.animation2.api.AnimationBase;
 import org.team555.math.Math555;
 import org.team555.math.PerlinNoiseRing;
 
-public class MagicAnimation extends Animation
+public class MagicAnimation extends AnimationBase
 {
-    public MagicAnimation(double length, Color base, Color magic) 
+    public MagicAnimation(Color base, Color magic) 
     {
-        super(length);
-
-        noiseRing = new PerlinNoiseRing(length);
+        noiseRing = new PerlinNoiseRing();
 
         this.base = base;
         this.magic = magic;
@@ -22,13 +21,13 @@ public class MagicAnimation extends Animation
     private PerlinNoiseRing noiseRing;
 
     @Override
-    public void run(AddressableLEDBuffer ledBuffer) 
+    public void render()
     {
         // Render each pixel
-        for(int i = 0; i < ledBuffer.getLength(); i++)
+        for(int i = 0; i < getBuffer().getLength(); i++)
         {
             // Remap this value
-            double heatRemap = noiseRing.get(timer.get(), i, ledBuffer.getLength());
+            double heatRemap = noiseRing.get(getTimeElapsed(), i, getBuffer().getLength());
 
             // Perform the linear interpolations needed to get the hue and value,
             // using (0 -> 10) as the hue range and (0 -> 255) for the value range.
@@ -36,16 +35,16 @@ public class MagicAnimation extends Animation
             Color color = Math555.lerp(base, magic,  Math.pow(heatRemap, 4.0));
 
             // Push the pixel color to the led buffer
-            ledBuffer.setLED(i, color);
+            getBuffer().setLED(i, color);
         }   
     } 
 
-    public static MagicAnimation fire(double length)
+    public static MagicAnimation fire()
     {
-        return new MagicAnimation(length, Color.kBlack, Color.kOrangeRed);
+        return new MagicAnimation(Color.kBlack, Color.kOrangeRed);
     }
-    public static MagicAnimation galaxy(double length)
+    public static MagicAnimation galaxy()
     {
-        return new MagicAnimation(length, new Color(25, 0, 150), Color.kDeepPink);
+        return new MagicAnimation(new Color(25, 0, 150), Color.kDeepPink);
     }
 }

@@ -117,6 +117,10 @@ public class Math555
     {
         return clamp01((v-a) / (b-a));
     }
+    public static double invlerpNoClamp(double v, double a, double b)
+    {
+        return (v-a) / (b-a);
+    }
     /**
      * returns a fraction based on the value from a to b.
      * <p>
@@ -132,6 +136,10 @@ public class Math555
     public static double invlerp(int v, int a, int b)
     {
         return clamp01((double)(v-a) / (b-a));
+    }
+    public static double invlerpNoClamp(int v, int a, int b)
+    {
+        return (double)(v-a) / (b-a);
     }
 
     /**
@@ -164,7 +172,7 @@ public class Math555
      */
     public static int repeatingCycle(double value, double minimum, double maximum, int cycles, int cycleLength)
     {
-        return (int)(Math555.invlerp(value, minimum, maximum) * cycles * cycleLength) % cycleLength;
+        return (int)(Math555.invlerpNoClamp(value, minimum, maximum) * cycles * cycleLength) % cycleLength;
     }
 
     public static double max(double... ds)
