@@ -82,5 +82,11 @@ public class DummySystem extends VisionSystem
     {
         return true;
     }
+
+    @Override
+    public void enableProcessing() {}
+
+    @Override
+    public void disableProcessing() {}
     
 }

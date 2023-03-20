@@ -110,4 +110,7 @@ public abstract class VisionSystem extends ManagerBase
      * Gets the URL for the camera streams
      */
     public abstract String getCameraStreamURL();
+
+    public abstract void enableProcessing();
+    public abstract void disableProcessing();
 }

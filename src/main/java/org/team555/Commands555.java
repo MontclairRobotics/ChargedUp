@@ -539,9 +539,7 @@ public class Commands555
     public static CommandBase turnToObject(Supplier<DetectionType> type)
     {
         return Commands.sequence(
-            Commands.runOnce(() -> vision.setTargetType(type.get())),
-            waitUntil(() -> vision.currentPipelineMatchesDetection(type)), //TODO: Does this work?
-            waitSeconds(0.2),
+            waitForPipe(type),
             turnToCurrentObject(),
             Commands.runOnce(() -> vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
@@ -554,12 +552,17 @@ public class Commands555
     public static CommandBase moveToObjectSideways(Supplier<DetectionType> type)
     {
         return Commands.sequence(
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get())),
-            waitUntil(() -> vision.currentPipelineMatchesDetection(type)), //TODO: Does this work?
-            waitSeconds(0.2),
+            waitForPipe(type),
             moveToCurrentObjectSideways(),
             Commands.runOnce(() -> ChargedUp.vision.setTargetType(VisionSystem.DEFAULT_DETECTION))
         );
+    }
+
+    public static CommandBase waitForPipe(Supplier<DetectionType> type)
+    {
+        return Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get()))
+            .andThen(waitUntil(() -> vision.currentPipelineMatchesDetection(type)))
+            .andThen(waitSeconds(0.1)); //TODO: this is very dumb
     }
 
     

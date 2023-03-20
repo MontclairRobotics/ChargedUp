@@ -174,7 +174,7 @@ public class ChargedUp extends RobotContainer
         setupPIDTab();
         setupCommandsTab();
 
-        vision.setTargetType(DetectionType.APRIL_TAG);
+        vision.setTargetType(DetectionType.NONE);
 
         // HANDLE DRIVING //
         drivetrain.setDefaultCommand(

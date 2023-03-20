@@ -93,14 +93,17 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public DetectionType getCurrentType() 
+    public DetectionType getCurrentType()
     {
+        if(getEntry("camMode").getDouble(-1) == 0) return DetectionType.NONE;
+
         int pipe = (int) getPipeline();
         if      (pipe == TAPE_RETRO_PIPE) return DetectionType.TAPE;
         else if (pipe == APRIL_TAG_PIPE)  return DetectionType.APRIL_TAG;
         else if (getEntry("tclass").getDouble(0) == CUBE_ID) return DetectionType.CUBE;
         else if (getEntry("tclass").getDouble(0) == CONE_ID) return DetectionType.CONE;
-        else                                                       return DetectionType.NONE;
+
+        return DetectionType.NONE;
     }
 
     @Override
@@ -126,6 +129,9 @@ public class LimelightSystem extends VisionSystem
         if     (type == DetectionType.CUBE || type == DetectionType.CONE) setPipeline(CONE_CUBE_PIPE);
         else if(type == DetectionType.TAPE                              ) setPipeline(TAPE_RETRO_PIPE);
         else if(type == DetectionType.APRIL_TAG                         ) setPipeline(APRIL_TAG_PIPE);
+        
+        if(type == DetectionType.NONE) disableProcessing();
+        else                           enableProcessing();
     }
 
     @Override
@@ -157,4 +163,16 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void resetPose(Pose2d pose) 
     {}    
+    
+    @Override
+    public void enableProcessing()
+    {
+        getEntry("camMode").setDouble(0);
+    }
+
+    @Override
+    public void disableProcessing()
+    {
+        getEntry("camMode").setDouble(1);
+    }
 }

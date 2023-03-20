@@ -168,4 +168,10 @@ public class PhotonSystem extends VisionSystem
             setPipeline(TAPE_PIPE);
         }
     }
+    
+    @Override
+    public void enableProcessing() {}
+
+    @Override
+    public void disableProcessing() {}
 }
