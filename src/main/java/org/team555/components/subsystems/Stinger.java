@@ -36,8 +36,8 @@ public class Stinger extends ManagerSubsystemBase
 
     public boolean isOut() {return solenoid.get();}
 
-    public void targetOut() {target = true;}
-    public void targetIn() {target = false;}
+    public void targetOut() {target = SOLENOID_OUT;}
+    public void targetIn() {target = !SOLENOID_OUT;}
 
     @Override
     public void always() 
@@ -45,11 +45,11 @@ public class Stinger extends ManagerSubsystemBase
         // Logging.info("" + target);
         // solenoid.set(target);
 
-        if(target == true && solenoid.get() == false)
+        if(target == SOLENOID_OUT && solenoid.get() == !SOLENOID_OUT)
         {
             if(ChargedUp.elevator.getHeight() >= ElevatorConstants.BUFFER_SPACE_TO_INTAKE)
             {
-                solenoid.set(true);
+                solenoid.set(SOLENOID_OUT);
             }
         }
         else 
@@ -61,6 +61,6 @@ public class Stinger extends ManagerSubsystemBase
     @Override
     public void reset() 
     {
-        target = false;
+        target = !SOLENOID_OUT;
     }
 }

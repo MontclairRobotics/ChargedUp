@@ -44,4 +44,6 @@ public class StingerConstants
     public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2);
 
     public static final double MAX_STINGER_VEL = 0.09;
+
+    public static boolean SOLENOID_OUT = true;
 }
