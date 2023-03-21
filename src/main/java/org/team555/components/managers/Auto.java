@@ -53,9 +53,9 @@ public class Auto extends ManagerBase
     public Auto()
     {
         chooseStart = new SendableChooser<String>();
-        chooseStart.setDefaultOption("Left", "Left"); //TODO: ask drive team the most logical way of naming these
-        chooseStart.addOption("Middle", "Middle");
-        chooseStart.addOption("Right", "Right");
+        chooseStart.setDefaultOption("Cone 3", "Cone 3"); //TODO: ask drive team the most logical way of naming these
+        chooseStart.addOption("Cone 4", "Cone 4");
+        chooseStart.addOption("Cone 6", "Cone 6");
 
         autoTab.add("Starting Position", chooseStart)
             .withPosition(0,0)
@@ -115,16 +115,16 @@ public class Auto extends ManagerBase
             balance.getBoolean(false)
         );
         
-        if (chooseStart.getSelected().equals("Right"))        startPose = new Pose2d(1.85, 3.85, Rotation2d.fromDegrees(180));
-        else if (chooseStart.getSelected().equals("Middle")) startPose = new Pose2d(1.85, 2.80, Rotation2d.fromDegrees(180));
-        else if (chooseStart.getSelected().equals("Left"))  startPose = new Pose2d(1.85, 0.45, Rotation2d.fromDegrees(180));
+        if (chooseStart.getSelected().equals("Cone 6"))        startPose = new Pose2d(1.85, 3.85, Rotation2d.fromDegrees(180));
+        else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(1.85, 2.80, Rotation2d.fromDegrees(180));
+        else if (chooseStart.getSelected().equals("Cone 3"))  startPose = new Pose2d(1.85, 0.45, Rotation2d.fromDegrees(180));
         
         if (DriverStation.getAlliance() == Alliance.Red)
         {
             // startPose = startPose.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
-            if      (chooseStart.getSelected().equals("Right"))   startPose = new Pose2d(16.5-1.85, 3.85, Rotation2d.fromDegrees(180));
-            else if (chooseStart.getSelected().equals("Middle")) startPose = new Pose2d(16.5-1.85, 2.80, Rotation2d.fromDegrees(180));
-            else if (chooseStart.getSelected().equals("Left"))  startPose = new Pose2d(16.5-1.85, 0.45, Rotation2d.fromDegrees(180));
+            if      (chooseStart.getSelected().equals("Cone 6"))   startPose = new Pose2d(16.5-1.85, 3.85, Rotation2d.fromDegrees(180));
+            else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(16.5-1.85, 2.80, Rotation2d.fromDegrees(180));
+            else if (chooseStart.getSelected().equals("Cone 3"))  startPose = new Pose2d(16.5-1.85, 0.45, Rotation2d.fromDegrees(180));
         }
         start.setPose(startPose);
 
@@ -173,7 +173,7 @@ public class Auto extends ManagerBase
      * Returns a parseable auto string using inputted parameters retrieved from Shuffleboard
      * Auto string is parsed using {@link #lex}
      * 
-     * @param start where the robot starts, 1 for Left, 2 for Middle, 3 for Right
+     * @param start where the robot starts, 1 for Cone 3, 2 for Cone 4, 3 for Cone 6
      * @param exitComm if the robot exits the community during auto
      * @param scoreTwice if the robot scores twice
      * @param balance if the robot balances
@@ -182,12 +182,11 @@ public class Auto extends ManagerBase
      
     private static String getAutoString(String start, boolean exitComm, boolean scoreTwice, boolean balance)
     {
-        String str = ""; 
-        start = start.toLowerCase();
+        String str = "";
 
         switch(start) 
         {
-            case "right": 
+            case "Cone 3": 
                 str += "1";
                 if(!exitComm) break; 
 
@@ -195,11 +194,11 @@ public class Auto extends ManagerBase
                 if(scoreTwice) str += "4";
                 break;
 
-            case "middle": 
+            case "Cone 4": 
                 str += "2";
                 break;
 
-            case "left": 
+            case "Cone 6": 
                 str += "3";
                 if(!exitComm) break; 
                
@@ -219,32 +218,13 @@ public class Auto extends ManagerBase
 
     /**
      * Lex an autonomous sequence string into its components.
-     * Sequence string is generated using {@link #getAutoString(String, boolean, boolean, boolean)}
-     * Skips over any whitespace characters and appends modifiers 
-     * to their bases ("!A" remains conjoined while " A" becomes "A").
-     * 
-     * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
-     */
-    public static String[] lex() 
-    {
-        //TODO: get values from shuffleboard
-        return lexFromString(getAutoString("Left", true, false, true));
-    }
-
-    /**
-     * Lex an autonomous sequence string into its components.
      * Skips over any whitespace characters and appends modifiers 
      * to their bases ("!A" remains conjoined while " A" becomes "A").
      * 
      * @param str The autonomous sequence string
      * @return The components of the path (i.e. '1', 'A', or '!1'), or null if lexing fails
      */
-    public static String[] lex(String str) 
-    {
-        return lexFromString(str);     
-    }
-
-    private static String[] lexFromString(String str)
+    private static String[] lex(String str)
     {
         if(str.length() == 0)
         {
