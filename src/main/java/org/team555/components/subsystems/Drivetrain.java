@@ -652,10 +652,9 @@ public class Drivetrain extends ManagerSubsystemBase
          * @param markers The autonomous markers
          * @return The command
          */
-        public CommandBase auto(Supplier<PathPlannerTrajectory> trajectory, HashMap<String, Command> markers)
+        public CommandBase trajectory(SwerveAutoBuilder autoBuilder, Supplier<PathPlannerTrajectory> trajectory)
         {
-            SwerveAutoBuilder b = autoBuilder(markers);
-            return new ProxyCommand(() -> b.fullAuto(trajectory.get()));
+            return new ProxyCommand(() -> autoBuilder.followPathWithEvents(trajectory.get()));
         }
         /**
          * Create a full autonomous command using the given path planner trajectory.
@@ -663,28 +662,18 @@ public class Drivetrain extends ManagerSubsystemBase
          * @param markers The autonomous markers
          * @return The command
          */
-        public CommandBase auto(PathPlannerTrajectory trajectory, HashMap<String, Command> markers)
+        public CommandBase trajectory(SwerveAutoBuilder autoBuilder, PathPlannerTrajectory trajectory)
         {
-            return auto(() -> trajectory, markers);
-        }
-        /**
-         * Create a full autonomous command using the given path planner trajectory name.
-         * @param trajectoryName The trajectory name
-         * @param markers The autonomous markers
-         * @return The command
-         */
-        public CommandBase auto(String trajectoryName, HashMap<String, Command> markers)
-        {
-            return auto(() -> Trajectories.get(trajectoryName, Auto.constraints()), markers);
+            return trajectory(autoBuilder, () -> trajectory);
         }
         /**
          * Create a full autonomous command using the given path planner trajectory name.
          * @param trajectoryName The trajectory name
          * @return The command
          */
-        public CommandBase auto(String trajectoryName)
+        public CommandBase trajectory(SwerveAutoBuilder autoBuilder, String trajectoryName)
         {
-            return auto(() -> Trajectories.get(trajectoryName, Auto.constraints()), HashMaps.of())
+            return trajectory(autoBuilder, () -> Trajectories.get(trajectoryName, Auto.constraints()))
                 .withName("Trajectory " + trajectoryName);
         }
 

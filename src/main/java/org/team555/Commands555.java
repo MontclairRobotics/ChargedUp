@@ -37,10 +37,12 @@ import org.team555.vision.VisionSystem;
 import static org.team555.ChargedUp.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 public class Commands555 
 {   
@@ -586,7 +588,7 @@ public class Commands555
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static CommandBase fromStringToCommand(String str, ArrayList<Trajectory> trajectories)
+    public static CommandBase fromStringToCommand(String str, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
     {
         // Single actions
         if(str.length() == 1)
@@ -624,13 +626,15 @@ public class Commands555
 
             trajectories.add(nextTrajectory);
 
-            return ChargedUp.drivetrain.commands.auto(nextTrajectory, HashMaps.of(
-                "Elevator Mid Peg", elevatorToConeMid(),
-                "Elevator Mid Shelf", elevatorToCubeMid(),
-                "Intake On", shwooperSuck(),
-                "Retract", elevatorStingerReturn(),
-                "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
-            ));
+            CommandBase cmd = ChargedUp.drivetrain.commands.trajectory(autoBuilder, nextTrajectory);
+
+            // Check for first path and add a reset if it is
+            if(trajectories.size() == 1)
+            {
+                cmd = autoBuilder.resetPose(nextTrajectory).andThen(cmd);
+            }
+
+            return cmd;
         }
         // Error
         else 
@@ -647,15 +651,28 @@ public class Commands555
      */
     public static CommandBase buildAuto(String[] list)
     {
-        Command[] commandList = new Command[list.length];
-        ArrayList<Trajectory> allTrajectories = new ArrayList<>();
+        Command[] commandList = new Command[list.length+1];
+        ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
         
         FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");
 
+        // Get the auto builder //
+        HashMap<String, Command> markers = HashMaps.of(
+            "Elevator Mid Peg", elevatorToConeMid(),
+            "Elevator Mid Shelf", elevatorToCubeMid(),
+            "Intake On", shwooperSuck(),
+            "Retract", elevatorStingerReturn(),
+            "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
+        );
+
+        SwerveAutoBuilder builder = drivetrain.commands.autoBuilder(markers);
+
+        // Iterate all of the string segments
         for (int i = 0; i < list.length; i++)
         {
-            commandList[i] = fromStringToCommand(list[i], allTrajectories);
+            commandList[i] = fromStringToCommand(list[i], builder, allTrajectories);
 
+            // Error out here if necessary
             if(commandList[i] == null)
             {
                 trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
@@ -691,11 +708,9 @@ public class Commands555
             trajectoryObject.setTrajectory(sumTrajectory);
         }
         
-        // Return the sum command
-        return Commands.sequence(
-            // elevatorInitialize(), 
-            Commands.sequence(commandList)
-        );
+        // Return the sum command (with a navx set-180)
+        return Commands.runOnce(gyroscope::setSouth)
+            .andThen(Commands.sequence(commandList));
     }
     
     /**
