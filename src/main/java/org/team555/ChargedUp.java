@@ -160,7 +160,7 @@ public class ChargedUp extends RobotContainer
         Shuffleboard.getTab("Auto").add(field).withSize(7, 4).withPosition(2, 0);
 
         pneu.enableCompressorDigital();
-        // CANSafety.monitor(pneu);
+        CANSafety.monitor(pneu);
 
         CameraServer.startAutomaticCapture();
         PathPlannerServer.startServer(5820);
@@ -248,7 +248,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.UP).and(pidActive)
             .toggleOnTrue(Commands555.elevatorHumanPlayerLevel());
         operatorController.getDPad(DPad.LEFT).and(pidActive)
-            .toggleOnTrue(Commands555.scoreMid());
+            .toggleOnTrue(Commands555.scoreMid(false));
         operatorController.getDPad(DPad.DOWN).and(pidActive)
             .toggleOnTrue(Commands555.scoreCubeLow());
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
@@ -447,12 +447,12 @@ public class ChargedUp extends RobotContainer
         
         tab.add(Commands555.elevatorStingerReturn());
 
-        tab.add(Commands555.scoreLow());
-        tab.add(Commands555.scoreLowPeg());
-        tab.add(Commands555.scoreLowShelf());
-        tab.add(Commands555.scoreMid());
-        tab.add(Commands555.scoreMidPeg());
-        tab.add(Commands555.scoreMidShelf());
+        tab.add(Commands555.scoreLow(false));
+        tab.add(Commands555.scoreLowPeg(false));
+        tab.add(Commands555.scoreLowShelf(false));
+        tab.add(Commands555.scoreMid(false));
+        tab.add(Commands555.scoreMidPeg(false));
+        tab.add(Commands555.scoreMidShelf(false));
 
         tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
         tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE).withName("SIDE TO TAPE"));
