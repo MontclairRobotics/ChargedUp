@@ -3,19 +3,28 @@ package org.team555.components.managers;
 import org.team555.util.frc.Logging;
 import org.team555.util.frc.commandrobot.ManagerBase;
 
+import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.EnumSet;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableEvent.Kind;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -38,6 +47,8 @@ public class Auto extends ManagerBase
     private final GenericEntry field;
     private final GenericEntry autoStringEntry;
     private String autoString = "";
+    private Pose2d startPose = new Pose2d();
+    private final FieldObject2d start;
     
     public Auto()
     {
@@ -79,6 +90,7 @@ public class Auto extends ManagerBase
             .getEntry();
 
         // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);
+        start = ChargedUp.field.getObject("Start");
     }
 
     private Command command = null;
@@ -102,6 +114,19 @@ public class Auto extends ManagerBase
             scoreTwice.getBoolean(false), 
             balance.getBoolean(false)
         );
+        
+        if (chooseStart.getSelected().equals("Right"))        startPose = new Pose2d(1.85, 3.85, Rotation2d.fromDegrees(180));
+        else if (chooseStart.getSelected().equals("Middle")) startPose = new Pose2d(1.85, 2.80, Rotation2d.fromDegrees(180));
+        else if (chooseStart.getSelected().equals("Left"))  startPose = new Pose2d(1.85, 0.45, Rotation2d.fromDegrees(180));
+        
+        if (DriverStation.getAlliance() == Alliance.Red)
+        {
+            // startPose = startPose.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
+            if      (chooseStart.getSelected().equals("Right"))   startPose = new Pose2d(16.5-1.85, 3.85, Rotation2d.fromDegrees(180));
+            else if (chooseStart.getSelected().equals("Middle")) startPose = new Pose2d(16.5-1.85, 2.80, Rotation2d.fromDegrees(180));
+            else if (chooseStart.getSelected().equals("Left"))  startPose = new Pose2d(16.5-1.85, 0.45, Rotation2d.fromDegrees(180));
+        }
+        start.setPose(startPose);
 
         command = Commands555.buildAuto(str);
 

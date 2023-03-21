@@ -69,6 +69,15 @@
         }
       },
       "/Shuffleboard/Auto/Field": {
+        "Start": {
+          "arrows": false,
+          "style": "Box/Image"
+        },
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Auto/Starting Position": {
         "window": {
           "visible": true
         }
