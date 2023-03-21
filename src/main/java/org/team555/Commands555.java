@@ -188,7 +188,7 @@ public class Commands555
      */
     public static CommandBase elevatorHumanPlayerLevel()
     {
-        return elevatorTo(ElevatorConstants.MAX_HEIGHT);
+        return elevatorTo(ElevatorConstants.MAX_HEIGHT * 5 / 6);
     }
 
     /**
@@ -326,7 +326,9 @@ public class Commands555
             elevatorStingerReturn(),
 
             // Suck it
+            moveToObjectSideways(() -> DetectionType.CONE),
             shwooperSuck(),
+            drivetrain.commands.driveForTime(2,0,0.5,0),
             waitSeconds(ShwooperConstants.SUCK_TIME_FOR_PICKUP_AUTO),
             stopShwooper(),
 
@@ -379,7 +381,7 @@ public class Commands555
      * Moves stinger/elevator to the specfied score place and opens the grabber
      * Retracts the stinger and bring the elevator to mid
      */
-    public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type, boolean skipObjectAlignment)
+    public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type)
     {
         return Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
@@ -392,8 +394,7 @@ public class Commands555
 
                 //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
                 runOnce(() -> drivetrain.commands.driveForTime(0.5, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
-            )
-            .unless(() -> skipObjectAlignment),
+            ).unless(DriverStation::isAutonomous),
 
             //Prepare position
             log("[SCORE] Positioning elevator and stinger . . ."),  
@@ -418,26 +419,26 @@ public class Commands555
      * Equivalent to {@link #scoreFromHeightAndDynamicType(ScoreHeight, Supplier)} but for
      * known scoring types. Names command appropriately.
      */
-    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type, boolean skipObjectAlignment)
+    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type)
     {
-        return scoreFromHeightAndDynamicType(height, () -> type, skipObjectAlignment)
+        return scoreFromHeightAndDynamicType(height, () -> type)
             .withName("Score " + height.toString() + " " + type.toString());
     }
 
-    public static CommandBase scoreLowPeg(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG, skipObjectAlignment);}
-    public static CommandBase scoreLowShelf(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF, skipObjectAlignment);}
-    public static CommandBase scoreLow(boolean skipObjectAlignment)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment)
+    public static CommandBase scoreLowPeg()
+    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG);}
+    public static CommandBase scoreLowShelf()
+    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF);}
+    public static CommandBase scoreLow()
+    {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()))
         .withName("Score Low (General)");}
 
-    public static CommandBase scoreMidPeg(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG, skipObjectAlignment);}
-    public static CommandBase scoreMidShelf(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF, skipObjectAlignment);}
-    public static CommandBase scoreMid(boolean skipObjectAlignment)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment)
+    public static CommandBase scoreMidPeg()
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG);}
+    public static CommandBase scoreMidShelf()
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF);}
+    public static CommandBase scoreMid()
+    {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()))
         .withName("Score Mid (General)");}
 
     /**
@@ -626,11 +627,11 @@ public class Commands555
                 case "A": 
                 case "C": return pickup();
 
-                case "1": return scoreMidPeg(true); 
-                case "3": return scoreMidPeg(true); 
-                case "2": return scoreMidPeg(true); 
-                case "4": return scoreMidShelf(false);
-                case "5": return scoreMidShelf(false);
+                case "1": return scoreMidPeg(); 
+                case "3": return scoreMidPeg(); 
+                case "2": return scoreMidPeg(); 
+                case "4": return scoreMidShelf();
+                case "5": return scoreMidShelf();
 
                 case "B": return balance();
 
@@ -679,7 +680,7 @@ public class Commands555
      */
     public static CommandBase buildAuto(String[] list)
     {
-        CommandBase[] commandList = new CommandBase[list.length];
+        Command[] commandList = new Command[list.length+1];
         ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
         
         FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");
@@ -770,7 +771,7 @@ public class Commands555
             }),
 
             log("STARTING THE AUTO!!"),
-            scoreMid(true),
+            scoreMid(),
             log("SCORED!!!!!"),
             
             Commands.sequence(
