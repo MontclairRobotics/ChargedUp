@@ -22,10 +22,10 @@ public enum ScoringType
         return GamePiece.NONE;
     }
 
-    public static ScoringType from(GamePiece gamePeice)
+    public static ScoringType from(GamePiece gamePiece)
     {
-        if(gamePeice == GamePiece.CUBE) return SHELF;
-        if(gamePeice == GamePiece.CONE) return PEG;
+        if(gamePiece == GamePiece.CUBE) return SHELF;
+        if(gamePiece == GamePiece.CONE) return PEG;
 
         Logging.error("Attempted to score while not holding a game piece: this is bad! Defaulting to peg mode.");
         return PEG;

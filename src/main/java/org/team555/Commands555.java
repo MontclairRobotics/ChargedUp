@@ -326,7 +326,9 @@ public class Commands555
             elevatorStingerReturn(),
 
             // Suck it
+            moveToObjectSideways(() -> DetectionType.CONE),
             shwooperSuck(),
+            drivetrain.commands.driveForTime(2,0,0.5,0),
             waitSeconds(ShwooperConstants.SUCK_TIME_FOR_PICKUP_AUTO),
             stopShwooper(),
 

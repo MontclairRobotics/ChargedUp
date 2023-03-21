@@ -8,7 +8,10 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 
 import static org.team555.constants.ShwooperConstants.*;
 
+import org.team555.ChargedUp;
 import org.team555.constants.Ports;
+import org.team555.util.frc.EdgeDetectFilter;
+import org.team555.util.frc.EdgeDetectFilter.EdgeType;
 import org.team555.util.frc.can.CANSafety;
 import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
@@ -16,7 +19,10 @@ import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Shwooper extends ManagerSubsystemBase
 {
-    private final Debouncer hasObjectDebouncer = new Debouncer(0.1, DebounceType.kRising);
+    private final Debouncer hasObjectRisingDebouncer = new Debouncer(0.1, DebounceType.kRising);
+    private final Debouncer hasObjectFallingDebouncer = new Debouncer(1.0, DebounceType.kFalling);
+    private final EdgeDetectFilter edgeFilter = new EdgeDetectFilter(EdgeType.RISING);
+
     private boolean lastFrameHasObject;
     
     private final CANSparkMax motorTop = new CANSparkMax(Ports.SHWOOPER_LEFT_MOTOR_PORT, MotorType.kBrushless);
@@ -74,7 +80,11 @@ public class Shwooper extends ManagerSubsystemBase
     @Override
     public void always() 
     {
-        lastFrameHasObject = hasObjectDebouncer.calculate(getCurrent() > CUBE_CURRENT);    
+        lastFrameHasObject = hasObjectRisingDebouncer.calculate(getCurrent() > CUBE_CURRENT);    
+        lastFrameHasObject = hasObjectFallingDebouncer.calculate(lastFrameHasObject);
+
+        if(edgeFilter.calculate(lastFrameHasObject))
+            ChargedUp.led.celebrate();
     }
 
     @Override
