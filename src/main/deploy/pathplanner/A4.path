@@ -7,8 +7,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.61018997182503,
-        "y": 4.754053317716463
+        "x": 4.4707112278807895,
+        "y": 4.763258145765423
       },
       "holonomicAngle": 0,
       "isReversal": false,
@@ -28,8 +28,8 @@
         "y": 4.43
       },
       "prevControl": {
-        "x": 3.4433570149654753,
-        "y": 4.742662294211873
+        "x": 3.4494109109203466,
+        "y": 4.673493684796615
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -45,14 +45,20 @@
       }
     }
   ],
-  "maxVelocity": 4.0,
-  "maxAcceleration": null,
+  "maxVelocity": 3.0,
+  "maxAcceleration": 2.0,
   "isReversed": null,
   "markers": [
     {
       "position": 0.09952614524147728,
       "names": [
         "Intake Off"
+      ]
+    },
+    {
+      "position": 0.669966264204546,
+      "names": [
+        "Raise Elevator"
       ]
     }
   ]

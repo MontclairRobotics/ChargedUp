@@ -24,37 +24,12 @@
     },
     {
       "anchorPoint": {
-        "x": 4.855677813464395,
-        "y": 0.8413816161705584
-      },
-      "prevControl": {
-        "x": 5.383369099245144,
-        "y": 0.8413816161705584
-      },
-      "nextControl": {
-        "x": 4.1672546830110315,
-        "y": 0.8413816161705584
-      },
-      "holonomicAngle": 180.0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": false,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
         "x": 1.85,
         "y": 1.05
       },
       "prevControl": {
-        "x": 2.4599653194866877,
-        "y": 0.6669810897890386
+        "x": 2.4807233447881614,
+        "y": 0.6895140309649103
       },
       "nextControl": null,
       "holonomicAngle": 180.0,
@@ -81,6 +56,12 @@
       "position": 0.29376997514204545,
       "names": [
         "Intake Off"
+      ]
+    },
+    {
+      "position": 0.5033602627840909,
+      "names": [
+        "Raise Elevator"
       ]
     }
   ]
