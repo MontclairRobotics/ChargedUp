@@ -115,14 +115,14 @@ public class PhotonSystem extends VisionSystem
     }
 
     @Override
-    public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type)
+    public boolean currentPipelineMatches(DetectionType type)
     {
         int pipe = (int) getPipeline();
 
-        if      (type.get( ) == DetectionType.CUBE)      return (pipe == CUBE_PIPE);
-        else if (type.get()  == DetectionType.CONE)      return (pipe == CONE_PIPE);
-        else if (type.get( ) == DetectionType.TAPE)      return (pipe == TAPE_PIPE);
-        else if (type.get( ) == DetectionType.APRIL_TAG) return (pipe == APRIL_TAG_PIPE);
+        if      (type == DetectionType.CUBE)      return (pipe == CUBE_PIPE);
+        else if (type == DetectionType.CONE)      return (pipe == CONE_PIPE);
+        else if (type == DetectionType.TAPE)      return (pipe == TAPE_PIPE);
+        else if (type == DetectionType.APRIL_TAG) return (pipe == APRIL_TAG_PIPE);
 
         else return false;
     }

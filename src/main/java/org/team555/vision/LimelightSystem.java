@@ -113,11 +113,9 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type)
+    public boolean currentPipelineMatches(DetectionType ty)
     {
-        DetectionType ty = type.get();
-
-        if(ty == DetectionType.DEFAULT) return currentPipelineMatchesDetection(VisionSystem::getDefaultInternal);
+        if(ty == DetectionType.DEFAULT) return currentPipelineMatches(getDefaultInternal());
 
         int pipe = (int) getPipeline();
 

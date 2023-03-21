@@ -17,30 +17,6 @@ public abstract class VisionSystem extends ManagerBase
             : DetectionType.NONE;
     }
 
-    private DetectionType desiredDriveTarget = DetectionType.CUBE;
-
-    public void setDesiredDriveTarget(DetectionType type)
-    {
-        desiredDriveTarget = type;
-    }
-    public DetectionType getDesiredDriveTarget()
-    {
-        return desiredDriveTarget;
-    }
-    public String getDesiredDriveTargetAsString()
-    {
-        if (desiredDriveTarget == null) return "none";
-        return desiredDriveTarget.toString();
-    }
-
-
-    public void cycleDesiredDriveTarget()
-    {
-             if(desiredDriveTarget == DetectionType.CONE) desiredDriveTarget = DetectionType.CUBE;
-        else if(desiredDriveTarget == DetectionType.CUBE) desiredDriveTarget = DetectionType.TAPE;
-        else if(desiredDriveTarget == DetectionType.TAPE) desiredDriveTarget = DetectionType.CONE;
-    }
-
     /**
      * updates the estimated pose of the robot
      * @param prev the previous estimated position of the robot
@@ -108,7 +84,7 @@ public abstract class VisionSystem extends ManagerBase
      * @param type
      * @return
      */
-    public abstract boolean currentPipelineMatchesDetection(Supplier<DetectionType> type);
+    public abstract boolean currentPipelineMatches(DetectionType type);
 
     /**
      * Gets the URL for the camera streams

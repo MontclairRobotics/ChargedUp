@@ -353,11 +353,6 @@ public class ChargedUp extends RobotContainer
                 "Color when true",  Color.kGold.toHexString(),
                 "Color when false", Color.kDarkViolet.toHexString()
             ));
-        
-        mainTab
-            .addString("Current Target Object", ChargedUp.vision::getDesiredDriveTargetAsString)
-            .withSize(2, 1)
-            .withPosition(5, 3);
     }
 
     public void setupDebugTab() 

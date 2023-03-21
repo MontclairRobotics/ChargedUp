@@ -575,7 +575,7 @@ public class Commands555
     public static CommandBase waitForPipe(Supplier<DetectionType> type)
     {
         return Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get()))
-            .andThen(waitUntil(() -> vision.currentPipelineMatchesDetection(type)))
+            .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
             .andThen(waitSeconds(0.1)); //TODO: this is very dumb
     }
 

@@ -78,7 +78,7 @@ public class DummySystem extends VisionSystem
     }
 
     @Override
-    public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type) 
+    public boolean currentPipelineMatches(DetectionType type) 
     {
         return true;
     }
