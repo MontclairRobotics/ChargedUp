@@ -34,6 +34,12 @@ public class GyroscopeNavX
         Logging.info("Set gyroscope addition to " + addition + " degrees!");
     }
 
+    public void setSouth()
+    {
+        setNorth();
+        setAddition(Rotation2d.fromDegrees(180));
+    }
+
     public Rotation2d getRotation2d()
     {
         return Rotation2d.fromDegrees(360 - (navx.getAngle() - zeroOffset) + addition); //TODO: this is dumb

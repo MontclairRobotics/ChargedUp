@@ -59,6 +59,7 @@ import org.team555.vision.VisionSystem;
 
 import org.team555.constants.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import com.pathplanner.lib.server.PathPlannerServer;
@@ -461,7 +462,7 @@ public class ChargedUp extends RobotContainer
 
         for(String name : Trajectories.getAllTests())
         {
-            tab.add(drivetrain.commands.auto(name));
+            tab.add(drivetrain.commands.trajectory(drivetrain.commands.autoBuilder(HashMaps.of()), name));
         }
     }
 }

@@ -26,6 +26,6 @@ public class MiscData extends ManagerBase
             REVPhysicsSim.getInstance().run();
         }
 
-        lastFps = fpsFilter.calculate(1 / CommandRobot.deltaTime());
+        lastFps = fpsFilter.calculate((int)(1 / CommandRobot.deltaTime()));
     }
 }
