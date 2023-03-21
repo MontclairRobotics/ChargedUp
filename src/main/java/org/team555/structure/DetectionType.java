@@ -6,5 +6,6 @@ public enum DetectionType
     CONE,
     CUBE,
     TAPE,
-    APRIL_TAG;
+    APRIL_TAG,
+    DEFAULT;
 }

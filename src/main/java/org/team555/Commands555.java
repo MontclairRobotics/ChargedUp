@@ -555,7 +555,7 @@ public class Commands555
         return Commands.sequence(
             waitForPipe(type),
             turnToCurrentObject(),
-            Commands.runOnce(() -> vision.setTargetType(vision.getDefaultDetection()))
+            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
         );
     }
 
@@ -568,7 +568,7 @@ public class Commands555
         return Commands.sequence(
             waitForPipe(type),
             moveToCurrentObjectSideways(),
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(vision.getDefaultDetection()))
+            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.DEFAULT))
         );
     }
 

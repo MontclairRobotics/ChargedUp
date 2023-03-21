@@ -10,7 +10,7 @@ import org.team555.util.frc.commandrobot.ManagerBase;
 
 public abstract class VisionSystem extends ManagerBase
 {
-    public DetectionType getDefaultDetection() 
+    protected static DetectionType getDefaultInternal() 
     {
         return DriverStation.isAutonomous() 
             ? DetectionType.APRIL_TAG 
@@ -114,7 +114,4 @@ public abstract class VisionSystem extends ManagerBase
      * Gets the URL for the camera streams
      */
     public abstract String getCameraStreamURL();
-
-    public abstract void enableProcessing();
-    public abstract void disableProcessing();
 }

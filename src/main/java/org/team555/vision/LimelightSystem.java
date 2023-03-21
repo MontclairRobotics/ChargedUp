@@ -13,11 +13,12 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public class LimelightSystem extends VisionSystem
 {
-    private DetectionType target = DetectionType.NONE;
+    private DetectionType target = DetectionType.DEFAULT;
     
     public static final int CONE_CUBE_PIPE  = 0;
     public static final int TAPE_RETRO_PIPE = 1;
@@ -67,6 +68,10 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void always() 
     {
+        if(target == DetectionType.DEFAULT)
+        {
+            setPipelineTo(getDefaultInternal());
+        }
     }
 
     @Override
@@ -75,14 +80,15 @@ public class LimelightSystem extends VisionSystem
     @Override
     public Pose2d getEstimatedPose() 
     {
-        return hasObject() ? toPose2D(getEntry("botpose").getDoubleArray(new double[6])) : new Pose2d() /*TODO: this is very stupid*/;
+        return hasObject() 
+            ? toPose2D(getEntry("botpose").getDoubleArray(new double[6])) 
+            : new Pose2d();
     }
 
     @Override
     public double getTimestampSeconds() 
     {
         return (System.currentTimeMillis() - getEntry("cl").getDouble(0) - getEntry("tl").getDouble(0))/1000.0;
-        // return results == null ? -1 : results.targetingResults.timestamp_LIMELIGHT_publish;
     }
 
     @Override
@@ -109,11 +115,15 @@ public class LimelightSystem extends VisionSystem
     @Override
     public boolean currentPipelineMatchesDetection(Supplier<DetectionType> type)
     {
+        DetectionType ty = type.get();
+
+        if(ty == DetectionType.DEFAULT) return currentPipelineMatchesDetection(VisionSystem::getDefaultInternal);
+
         int pipe = (int) getPipeline();
 
-        if     (type.get() == DetectionType.CUBE || type.get() == DetectionType.CONE) return (pipe == CONE_CUBE_PIPE);
-        else if(type.get() == DetectionType.TAPE                                    ) return (pipe == TAPE_RETRO_PIPE);
-        else if(type.get() == DetectionType.APRIL_TAG                               ) return (pipe == APRIL_TAG_PIPE);
+        if     (ty == DetectionType.CUBE || ty == DetectionType.CONE) return (pipe == CONE_CUBE_PIPE);
+        else if(ty == DetectionType.TAPE                            ) return (pipe == TAPE_RETRO_PIPE);
+        else if(ty == DetectionType.APRIL_TAG                       ) return (pipe == APRIL_TAG_PIPE);
 
         else return false;
     }
@@ -126,6 +136,13 @@ public class LimelightSystem extends VisionSystem
     {
         target = type;
 
+        if(type == DetectionType.DEFAULT) return;
+
+        setPipelineTo(type);
+    }
+
+    private void setPipelineTo(DetectionType type)
+    {
         if     (type == DetectionType.CUBE || type == DetectionType.CONE) setPipeline(CONE_CUBE_PIPE);
         else if(type == DetectionType.TAPE                              ) setPipeline(TAPE_RETRO_PIPE);
         else if(type == DetectionType.APRIL_TAG                         ) setPipeline(APRIL_TAG_PIPE);
@@ -164,15 +181,12 @@ public class LimelightSystem extends VisionSystem
     public void resetPose(Pose2d pose) 
     {}    
     
-    @Override
-    public void enableProcessing()
-    {
-        getEntry("camMode").setDouble(0);
-    }
-
-    @Override
-    public void disableProcessing()
+    private void enableProcessing()
     {
         getEntry("camMode").setDouble(1);
+    }
+    private void disableProcessing()
+    {
+        getEntry("camMode").setDouble(0);
     }
 }
