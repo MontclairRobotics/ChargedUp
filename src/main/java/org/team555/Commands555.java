@@ -212,10 +212,37 @@ public class Commands555
      */
     public static CommandBase elevatorStingerReturn()
     {
-        CommandBase c = sequence(
+        CommandBase c = parallel(
             retractStinger(),
-            elevatorToLow()
-        ).withName("Return Elevator and Stinger");
+            elevatorTo(ElevatorConstants.BUFFER_SPACE_TO_INTAKE).unless(elevator::stingerCannotMove)
+        ).andThen(elevatorToLow())
+        .withName("Return Elevator and Stinger");
+        c.addRequirements(elevator, stinger);
+        return c;
+    }
+    
+    public static CommandBase elevatorStingerToConeMid()
+    {
+        CommandBase c = parallel(
+            elevatorToConeMid(),
+            Commands.sequence(
+                waitUntil(elevator::stingerCanMove),
+                extendStinger()
+            )
+        );
+        c.addRequirements(elevator, stinger);
+        return c;
+    }
+
+    public static CommandBase elevatorStingerToCubeMid()
+    {
+        CommandBase c = parallel(
+            elevatorToCubeMid(),
+            Commands.sequence(
+                waitUntil(elevator::stingerCanMove),
+                extendStinger()
+            )
+        );
         c.addRequirements(elevator, stinger);
         return c;
     }
@@ -315,8 +342,8 @@ public class Commands555
     {
         CommandBase cmd = Commands.select(
             Map.of(
-                ScoringType.PEG,   elevatorToConeMid().andThen(extendStinger()),
-                ScoringType.SHELF, elevatorToCubeMid().andThen(extendStinger())
+                ScoringType.PEG,   elevatorStingerToConeMid(),
+                ScoringType.SHELF, elevatorStingerToCubeMid()
             ),
             () -> type.get()
         ); 

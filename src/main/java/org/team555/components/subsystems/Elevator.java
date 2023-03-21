@@ -98,6 +98,15 @@ public class Elevator extends ManagerSubsystemBase
         return Math555.clamp(reducedSpeed, 0.25, 1);
     }
 
+    public boolean stingerCanMove()
+    {
+        return encoder.getPosition() > BUFFER_SPACE_TO_INTAKE;
+    }
+    public boolean stingerCannotMove()
+    {
+        return !stingerCanMove();
+    }
+
     /**
      * Modify the speed of the elevator so that when it is close to a limit switch (@top and bottom)
      * it slows down proportionally to its distance to the top (or distance to the bottom)
