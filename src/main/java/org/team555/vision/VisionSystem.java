@@ -12,9 +12,11 @@ public abstract class VisionSystem extends ManagerBase
 {
     protected static DetectionType getDefaultInternal() 
     {
-        return DriverStation.isAutonomous() 
-            ? DetectionType.APRIL_TAG 
-            : DetectionType.NONE;
+        if(DriverStation.isAutonomous())
+            return DetectionType.APRIL_TAG;
+        if(DriverStation.isDisabled())
+            return DetectionType.TAPE;
+        return DetectionType.NONE;
     }
 
     /**

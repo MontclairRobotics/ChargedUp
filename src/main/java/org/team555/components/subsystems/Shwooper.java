@@ -72,7 +72,7 @@ public class Shwooper extends ManagerSubsystemBase
         return motorTop.getOutputCurrent();
     }
 
-    public boolean intakeHasObject()
+    public boolean hasObject()
     {
         return lastFrameHasObject;
     }
