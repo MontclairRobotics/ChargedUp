@@ -379,6 +379,9 @@ public class ChargedUp extends RobotContainer
         debugTab.addDouble("PIPELINE #",vision::getPipeline)
             .withPosition(0, 4)
             .withSize(1, 1);
+        debugTab.addDouble("Current Draw", shwooper::getCurrent)
+            .withPosition(5, 5)
+            .withWidget(BuiltInWidgets.kGraph);
     }
 
     public void setupPIDTab() 
@@ -458,8 +461,9 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE).withName("SIDE TO TAPE"));
 
         tab.add(Commands555.scoreCubeLow());
+        tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
 
-
+        tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
         for(String name : Trajectories.getAllTests())
         {
             tab.add(drivetrain.commands.trajectory(drivetrain.commands.autoBuilder(HashMaps.of()), name));

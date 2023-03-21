@@ -3,6 +3,9 @@ package org.team555.components.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
+
 import static org.team555.constants.ShwooperConstants.*;
 
 import org.team555.constants.Ports;
@@ -13,6 +16,9 @@ import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Shwooper extends ManagerSubsystemBase
 {
+    private final Debouncer hasObjectDebouncer = new Debouncer(0.1, DebounceType.kRising);
+    private boolean lastFrameHasObject;
+    
     private final CANSparkMax motorTop = new CANSparkMax(Ports.SHWOOPER_LEFT_MOTOR_PORT, MotorType.kBrushless);
     // private final CANSparkMax motorBottom = new CANSparkMax(Robot.Shwooper.RIGHT_MOTOR_PORT, MotorType.kBrushless);
 
@@ -53,6 +59,22 @@ public class Shwooper extends ManagerSubsystemBase
     public void stop() 
     {
         motorTop.set(0);
+    }
+
+    public double getCurrent()
+    {
+        return motorTop.getOutputCurrent();
+    }
+
+    public boolean intakeHasObject()
+    {
+        return lastFrameHasObject;
+    }
+
+    @Override
+    public void always() 
+    {
+        lastFrameHasObject = hasObjectDebouncer.calculate(getCurrent() > CUBE_CURRENT);    
     }
 
     @Override

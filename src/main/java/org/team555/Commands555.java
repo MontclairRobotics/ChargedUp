@@ -188,7 +188,7 @@ public class Commands555
      */
     public static CommandBase elevatorHumanPlayerLevel()
     {
-        return elevatorTo(ElevatorConstants.MAX_HEIGHT * 5 / 6);
+        return elevatorTo(ElevatorConstants.MAX_HEIGHT);
     }
 
     /**
@@ -679,7 +679,7 @@ public class Commands555
      */
     public static CommandBase buildAuto(String[] list)
     {
-        Command[] commandList = new Command[list.length+1];
+        CommandBase[] commandList = new CommandBase[list.length];
         ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
         
         FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");

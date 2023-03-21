@@ -34,7 +34,7 @@ public class Stinger extends ManagerSubsystemBase
     //     );
     // }
 
-    public boolean isOut() {return solenoid.get();}
+    public boolean isOut() {return solenoid.get() == SOLENOID_OUT;}
 
     public void targetOut() {target = SOLENOID_OUT;}
     public void targetIn() {target = !SOLENOID_OUT;}
