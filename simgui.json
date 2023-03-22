@@ -89,7 +89,32 @@
           "visible": true
         }
       },
+      "/Shuffleboard/Commands/Retract Stinger": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Score MID SHELF": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Stinger Out": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Commands/Trajectory test.Line": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/humanz": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Debug/Mechanism": {
         "window": {
           "visible": true
         }
@@ -100,9 +125,6 @@
     "transitory": {
       "Shuffleboard": {
         "Commands": {
-          "Score LOW PEG": {
-            "open": true
-          },
           "open": true
         },
         "PID": {
@@ -112,10 +134,15 @@
           "open": true
         },
         "open": true
-      },
-      "limelight": {
-        "open": true
       }
+    }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Server": {
+      "open": true
     }
   }
 }

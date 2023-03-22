@@ -22,31 +22,18 @@ public class LimitSwitch implements Sendable
 
     private final boolean invert;
     public final DigitalInput dio;
-    private final SimDevice sim;
-    private final SimBoolean bool;
+    private boolean value;
 
     public LimitSwitch(int channel, boolean invert)
     {
         this.invert = invert;
         dio = new DigitalInput(channel);
-
-        if(RobotBase.isSimulation())
-        {
-            sim = SimDevice.create("Limit Switch["+channel+"]");
-            bool = sim.createBoolean("value", Direction.kOutput, false);
-            dio.setSimDevice(sim);
-        }
-        else 
-        {
-            sim = null;
-            bool = null;
-        }
     }
 
     public boolean get() 
     {
         if(RobotBase.isReal()) return dio.get() ^ invert;
-        else                   return bool.get() ^ invert;
+        else                   return value;
     }
     public int getChannel() {return dio.getChannel();}
 
@@ -62,7 +49,7 @@ public class LimitSwitch implements Sendable
             return;
         }
 
-        bool.set(value ^ invert);
+        this.value = value;
     }
 
     @Override

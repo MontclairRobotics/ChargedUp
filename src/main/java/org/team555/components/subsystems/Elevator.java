@@ -52,7 +52,7 @@ public class Elevator extends ManagerSubsystemBase
         CANSafety.monitor(motor);
 
         encoder = motor.getEncoder();
-        // encoder.setInverted(ENCODER_INVERTED);
+
         encoder.setPositionConversionFactor(ENCODER_CONVERSION_FACTOR);
         encoder.setPosition(MIN_HEIGHT);
 
@@ -202,14 +202,6 @@ public class Elevator extends ManagerSubsystemBase
         PID.setSpeed(0);
     }
 
-    /** 
-     * Resets the elevator encoder to 0
-     */
-    public void resetElevatorEncoder() 
-    {
-        encoder.setPosition(0);
-    }
-
     /**
      * returns if the limit switch for the starting position of the elevator is triggered
      * @return boolean
@@ -279,7 +271,8 @@ public class Elevator extends ManagerSubsystemBase
         }
 
         double ff = FEED_FORWARD_VOLTS.get();
-        if(getHeight() < BUFFER_SPACE_TO_INTAKE) ff = 0;
+        if(getHeight() < BUFFER_SPACE_TO_INTAKE || RobotBase.isSimulation()) 
+            ff = 0;
 
         double speed;
         if(shouldStop) speed = 0;
@@ -287,12 +280,17 @@ public class Elevator extends ManagerSubsystemBase
         
         motor.set(speed + ff / 12);
 
+        // SIMULATION //
+        ligament.setLength(getHeight());
+        
         if(RobotBase.isSimulation())
         {
-            SimulationUtility.simulateNEO(motor, encoder);
-        }
+            motor.set(motor.get() * 0.2); // Add 'load' factor
 
-        ligament.setLength(encoder.getPosition());
+            SimulationUtility.simulateNEO(motor, encoder);
+            bottomlimitSwitch.set(getHeight() <= MIN_HEIGHT);
+            toplimitSwitch   .set(getHeight() >= MAX_HEIGHT);
+        }
     }
     
     @Override
