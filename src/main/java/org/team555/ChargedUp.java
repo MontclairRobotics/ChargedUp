@@ -335,6 +335,12 @@ public class ChargedUp extends RobotContainer
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(2, 1)
             .withPosition(0, 3);
+        
+        mainTab
+            .addBoolean("Intake Manipulated Object", shwooper::manipulatedObject)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withSize(2, 1)
+            .withPosition(0, 3);
 
         info
             .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch());

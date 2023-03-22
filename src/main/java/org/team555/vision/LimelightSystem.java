@@ -16,6 +16,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 
 public class LimelightSystem extends VisionSystem
 {
@@ -89,7 +90,7 @@ public class LimelightSystem extends VisionSystem
     @Override
     public double getTimestampSeconds() 
     {
-        return (System.currentTimeMillis() - getEntry("cl").getDouble(0) - getEntry("tl").getDouble(0))/1000.0;
+        return Timer.getFPGATimestamp() - (getEntry("cl").getDouble(0) + getEntry("tl").getDouble(0))/1000.0;
     }
 
     @Override
