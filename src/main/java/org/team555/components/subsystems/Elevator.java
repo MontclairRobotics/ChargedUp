@@ -52,7 +52,7 @@ public class Elevator extends ManagerSubsystemBase
         CANSafety.monitor(motor);
 
         encoder = motor.getEncoder();
-        // encoder.setInverted(ENCODER_INVERTED);
+
         encoder.setPositionConversionFactor(ENCODER_CONVERSION_FACTOR);
         encoder.setPosition(MIN_HEIGHT);
 
@@ -63,7 +63,7 @@ public class Elevator extends ManagerSubsystemBase
         ligament.setColor(new Color8Bit(SimulationConstants.ELEVATOR_COLOR));
     }
 
-    private double getHeightNormalized()
+    public double getHeightNormalized()
     {
         return Math555.invlerp(encoder.getPosition(), MIN_HEIGHT, MAX_HEIGHT);
     }
@@ -85,7 +85,7 @@ public class Elevator extends ManagerSubsystemBase
 
         double reducedSpeed = SPEED - SPEED * (ynorm - 1 + BUFFER_UP) / BUFFER_UP;
 
-        return Math555.clamp(reducedSpeed, 0.25, 1);
+        return Math555.clamp(reducedSpeed, 0.15, 1);
     }
     private double getDownwardsMultiplier()
     {
@@ -96,7 +96,7 @@ public class Elevator extends ManagerSubsystemBase
 
         double reducedSpeed = ynorm / BUFFER_DOWN * SPEED;
 
-        return Math555.clamp(reducedSpeed, 0.25, 1);
+        return Math555.clamp(reducedSpeed, 0.15, 1);
     }
 
     public boolean stingerCanMove()
@@ -157,14 +157,6 @@ public class Elevator extends ManagerSubsystemBase
     public void stop()
     {
         PID.setSpeed(0);
-    }
-
-    /** 
-     * Resets the elevator encoder to 0
-     */
-    public void resetElevatorEncoder() 
-    {
-        encoder.setPosition(0);
     }
 
     /**
@@ -236,7 +228,8 @@ public class Elevator extends ManagerSubsystemBase
         }
 
         double ff = FEED_FORWARD_VOLTS.get();
-        if(getHeight() < BUFFER_SPACE_TO_INTAKE) ff = 0;
+        if(getHeight() < BUFFER_SPACE_TO_INTAKE || RobotBase.isSimulation()) 
+            ff = 0;
 
         double speed;
         if(shouldStop) speed = 0;
@@ -244,12 +237,17 @@ public class Elevator extends ManagerSubsystemBase
         
         motor.set(speed + ff / 12);
 
+        // SIMULATION //
+        ligament.setLength(getHeight());
+        
         if(RobotBase.isSimulation())
         {
-            SimulationUtility.simulateNEO(motor, encoder);
-        }
+            motor.set(motor.get() * 0.2); // Add 'load' factor
 
-        ligament.setLength(encoder.getPosition());
+            SimulationUtility.simulateNEO(motor, encoder);
+            bottomlimitSwitch.set(getHeight() <= MIN_HEIGHT);
+            toplimitSwitch   .set(getHeight() >= MAX_HEIGHT);
+        }
     }
     
     @Override

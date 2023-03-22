@@ -109,6 +109,7 @@ public class Commands555
     {
         return Commands.runOnce(stinger::targetIn)
             .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
+            .unless(() -> !stinger.isOut())
             .withName("Retract Stinger");
     }
     /**
@@ -119,6 +120,7 @@ public class Commands555
     {
         return Commands.runOnce(stinger::targetOut) 
             .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
+            .unless(() -> stinger.isOut())
             .withName("Stinger Out");
     }
 
@@ -212,11 +214,13 @@ public class Commands555
      */
     public static CommandBase elevatorStingerReturn()
     {
-        CommandBase c = parallel(
+        CommandBase c = deadline(
             retractStinger(),
             elevatorTo(ElevatorConstants.BUFFER_SPACE_TO_INTAKE).unless(elevator::stingerCannotMove)
-        ).andThen(elevatorToLow())
-        .withName("Return Elevator and Stinger");
+        )
+            .andThen(elevator.PID::cancel)
+            .andThen(elevatorToLow())
+            .withName("Return Elevator and Stinger");
         c.addRequirements(elevator, stinger);
         return c;
     }

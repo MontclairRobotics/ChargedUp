@@ -89,7 +89,37 @@
           "visible": true
         }
       },
+      "/Shuffleboard/Commands/Retract Stinger": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Return Elevator and Stinger": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Score MID SHELF": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Stinger Out": {
+        "window": {
+          "visible": true
+        }
+      },
       "/Shuffleboard/Commands/Trajectory test.Line": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/humanz": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Debug/Mechanism": {
         "window": {
           "visible": true
         }
@@ -99,22 +129,46 @@
   "NetworkTables": {
     "transitory": {
       "Shuffleboard": {
-        "Commands": {
-          "Score LOW PEG": {
-            "open": true
-          },
+        "Debug": {
           "open": true
         },
         "PID": {
           "ELEVATOR-PID": {
             "open": true
-          },
-          "open": true
+          }
         },
         "open": true
-      },
-      "limelight": {
-        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Server": {
+      "open": true
+    }
+  },
+  "Plot": {
+    "Plot <0>": {
+      "plots": [
+        {
+          "height": 553,
+          "series": [
+            {
+              "color": [
+                0.2980392277240753,
+                0.44705885648727417,
+                0.6901960968971252,
+                1.0
+              ],
+              "id": "NT:/Shuffleboard/Debug/Elevator Extension"
+            }
+          ]
+        }
+      ],
+      "window": {
+        "visible": false
       }
     }
   }

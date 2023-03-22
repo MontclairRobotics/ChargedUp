@@ -12,15 +12,18 @@ public class ElevatorConstants
     // PULLY SIZE  :=  4 in.
 
     public static final double GEAR_RATIO_OUT_OVER_IN = 1.0 / 40.0;
-    public static final double SPROCKET_DIAMETER = Units.inchesToMeters(8+0*1.685); //TODO: this is wrong but it works
+    public static final double SPROCKET_DIAMETER = Units.inchesToMeters(1.685);
+    public static final double STAGE_COUNT = 3;
+    public static final double MYSTERY_MULTIPLIER = 1;//1.58259149357; //TODO: this is very weird????
 
-    public static final double ENCODER_CONVERSION_FACTOR = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI;
+    public static final double ENCODER_CONVERSION_FACTOR 
+        = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI * STAGE_COUNT * MYSTERY_MULTIPLIER;
 
     public static final boolean INVERTED = true;
     // public static final boolean ENCODER_INVERTED = true;
 
-    public static final double BUFFER_UP = 0.1;
-    public static final double BUFFER_DOWN = 0.15;
+    public static final double BUFFER_UP = 0.2;
+    public static final double BUFFER_DOWN = 0.25;
 
     public static final int TOP_LIMIT_SWITCH = 0;
     public static final int BOTTOM_LIMIT_SWITCH = 1;

@@ -45,5 +45,8 @@ public class StingerConstants
 
     public static final double MAX_STINGER_VEL = 0.09;
 
-    public static boolean SOLENOID_OUT = true;
+    public static final boolean SOLENOID_OUT = true;
+
+    public static final double SEGMENT_LENGTH = 0.232;
+    public static final double SEGMENT_COUNT  = 8.5;
 }

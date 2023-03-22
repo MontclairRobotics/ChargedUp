@@ -371,7 +371,7 @@ public class ChargedUp extends RobotContainer
             .withPosition(0 + 2 + 2 + 2, 3)
             .withSize(2, 2);
 
-        debugTab.addDouble("Elevator Extension", elevator::getHeight)
+        debugTab.addDouble("Elevator Extension", elevator::getHeightNormalized)
             .withPosition(0 + 2, 3)
             .withSize(2, 1);
 
