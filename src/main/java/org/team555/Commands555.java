@@ -223,12 +223,9 @@ public class Commands555
     
     public static CommandBase elevatorStingerToConeMid()
     {
-        CommandBase c = parallel(
+        CommandBase c = sequence(
             elevatorToConeMid(),
-            Commands.sequence(
-                waitUntil(elevator::stingerCanMove),
-                extendStinger()
-            )
+            extendStinger()
         );
         c.addRequirements(elevator, stinger);
         return c;
@@ -239,7 +236,7 @@ public class Commands555
         CommandBase c = parallel(
             elevatorToCubeMid(),
             Commands.sequence(
-                waitUntil(elevator::stingerCanMove),
+                waitUntil(() -> Math.abs(elevator.getHeight() - ElevatorConstants.MID_HEIGHT_CUBE) < 0.05),
                 extendStinger()
             )
         );
@@ -394,7 +391,7 @@ public class Commands555
                 moveToObjectSideways(() -> type.get().getDetectionType()),
 
                 //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
-                runOnce(() -> drivetrain.commands.driveForTime(0.5, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
+                runOnce(() -> drivetrain.commands.driveForTime(0.25, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
             )
             .unless(() -> skipObjectAlignment),
 
@@ -552,11 +549,11 @@ public class Commands555
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;//degrees
-        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.75;
+        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.2;
 
         return ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0)))
                 .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
         ).withName("Turn to Current Object");
     }

@@ -683,7 +683,7 @@ public class Drivetrain extends ManagerSubsystemBase
          */
         public CommandBase goToAngleAbsolute(Rotation2d angle)
         {
-            return thetaPID.goToSetpoint(angle.getRadians());
+            return thetaPID.goToSetpoint(angle.getRadians()).withTimeout(2);
         }
 
         // GO TO POSITION ABSOLUTE //

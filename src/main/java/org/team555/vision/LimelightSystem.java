@@ -182,9 +182,11 @@ public class LimelightSystem extends VisionSystem
     private void enableProcessing()
     {
         getEntry("camMode").setDouble(0);
+        getEntry("ledMode").setDouble(0);
     }
     private void disableProcessing()
     {
         getEntry("camMode").setDouble(1);
+        getEntry("ledMode").setDouble(1);
     }
 }

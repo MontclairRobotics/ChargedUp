@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
@@ -100,7 +101,7 @@ public class Elevator extends ManagerSubsystemBase
 
     public boolean stingerCanMove()
     {
-        return encoder.getPosition() > BUFFER_SPACE_TO_INTAKE;
+        return encoder.getPosition() > BUFFER_SPACE_TO_INTAKE + Units.inchesToMeters(5);
     }
     public boolean stingerCannotMove()
     {

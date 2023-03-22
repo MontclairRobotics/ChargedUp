@@ -112,15 +112,16 @@ public class ChargedUp extends RobotContainer
     public static Animation getDriverAlignmentAnimation()
     {
         return new ConditionalAnimation(new SolidAnimation(Color.kRed)) //! This solid animation should not happen!
-            .addCase(() -> vision.getObjectAX() > +1, new ZoomAnimation(Color.kOrange))
-            .addCase(() -> vision.getObjectAX() < -1, new ZoomAnimation(Color.kOrange).flip());
+            .addCase(() -> vision.getObjectAX() > +1, new ZoomAnimation(Color.kOrange).flip())
+            .addCase(() -> vision.getObjectAX() < -1, new ZoomAnimation(Color.kOrange));
     }
 
     public static Animation getDisabledAnimation()
     {
+        Debouncer debouncer = new Debouncer(0.5);
         return new ConditionalAnimation(Constants.Robot.LED.DEMO_ANIMATION)
             .addCase(CANSafety::hasErrors, new ZoomAnimation(Color.kRed).mirror())
-            .addCase(() -> Math.abs(vision.getObjectAX()) > 1, getDriverAlignmentAnimation());
+            .addCase(() -> debouncer.calculate(Math.abs(vision.getObjectAX()) > 1), getDriverAlignmentAnimation());
     }
 
     public static Animation getGrabberAnimation()
@@ -203,14 +204,19 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.LEFT_BUMPER)
                 .onTrue(drivetrain.commands.decreaseSpeed());
 
+        driverController.getAxis(Axis.LEFT_TRIGGER)
+            .whenGreaterThan(0.5)
+            .whileTrue(drivetrain.commands.disableFieldRelative())
+            .whileFalse(drivetrain.commands.enableFieldRelative());
+
         // ANGLES //
         driverController.getButton(Button.Y_TRIANGLE)
             .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)));
-        driverController.getButton(Button.B_CIRCLE)
+        driverController.getButton(Button.X_SQUARE)
             .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
         driverController.getButton(Button.A_CROSS)
             .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
-        driverController.getButton(Button.X_SQUARE)
+        driverController.getButton(Button.B_CIRCLE)
             .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
 
         // AUTONS //
@@ -236,9 +242,9 @@ public class ChargedUp extends RobotContainer
             debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.commands.goToPositionRelative(0, 2));
 
             debugController.getDPad(DPad.UP)   .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)));
-            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
+            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(90)));
             debugController.getDPad(DPad.DOWN) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
-            debugController.getDPad(DPad.RIGHT).onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
+            debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
 
             debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
             debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
