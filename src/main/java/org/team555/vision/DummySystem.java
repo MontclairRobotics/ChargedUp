@@ -1,6 +1,8 @@
 package org.team555.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 import java.util.function.Supplier;
 
@@ -84,7 +86,7 @@ public class DummySystem extends VisionSystem
     }
 
     @Override
-    public Pose2d getAprilTagRobotSpace() {
-        return new Pose2d();
+    public Translation2d getAprilTagRobotSpace() {
+        return new Translation2d();
     }
 }

@@ -1,6 +1,9 @@
 package org.team555.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
+
 import org.team555.constants.PhotonConstants;
 import org.team555.structure.DetectionType;
 import edu.wpi.first.wpilibj.Timer;
@@ -170,7 +173,7 @@ public class PhotonSystem extends VisionSystem
     }
     
     @Override
-    public Pose2d getAprilTagRobotSpace() {
-        return new Pose2d();
+    public Translation2d getAprilTagRobotSpace() {
+        return new Translation2d();
     }
 }
