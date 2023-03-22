@@ -598,7 +598,7 @@ public class Commands555
 
         Command moveForward = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * Math555.siMath.abs(offset - vision.getObjectAX()) / 27.0, 0.2), 0)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * (offset - vision.getObjectAX()) / 27.0, 0.2), 0)))
                 .until(() -> hasEnded.calculate(Math.abs(offset - vision.getObjectAX()) < DEADBAND))
         ).withName("Move Forward to Object");
         
