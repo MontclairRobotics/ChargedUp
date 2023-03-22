@@ -63,7 +63,7 @@ public class Elevator extends ManagerSubsystemBase
         ligament.setColor(new Color8Bit(SimulationConstants.ELEVATOR_COLOR));
     }
 
-    private double getHeightNormalized()
+    public double getHeightNormalized()
     {
         return Math555.invlerp(encoder.getPosition(), MIN_HEIGHT, MAX_HEIGHT);
     }
@@ -85,7 +85,7 @@ public class Elevator extends ManagerSubsystemBase
 
         double reducedSpeed = SPEED - SPEED * (ynorm - 1 + BUFFER_UP) / BUFFER_UP;
 
-        return Math555.clamp(reducedSpeed, 0.25, 1);
+        return Math555.clamp(reducedSpeed, 0.15, 1);
     }
     private double getDownwardsMultiplier()
     {
@@ -96,7 +96,7 @@ public class Elevator extends ManagerSubsystemBase
 
         double reducedSpeed = ynorm / BUFFER_DOWN * SPEED;
 
-        return Math555.clamp(reducedSpeed, 0.25, 1);
+        return Math555.clamp(reducedSpeed, 0.15, 1);
     }
 
     public boolean stingerCanMove()

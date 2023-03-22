@@ -104,15 +104,15 @@ public class Stinger extends ManagerSubsystemBase
         double currentHeight = Math.sqrt(SEGMENT_LENGTH * SEGMENT_LENGTH - currentLength * currentLength);
 
         widthLigament.setLength(currentHeight);
-        double mechAngle = Math.toDegrees(Math.acos(currentLength));
+        double mechAngle = Math.toDegrees(Math.acos(currentLength / SEGMENT_LENGTH));
 
         for(int i = 0; i < ligaments.length; i++)
         {
             double angle = 0;
 
-            if(i == 0)          angle = -mechAngle;    
-            else if(i % 2 == 0) angle = -mechAngle * 2;
-            else                angle = +mechAngle * 2;
+            if(i == 0)          angle = +mechAngle;    
+            else if(i % 2 == 0) angle = +mechAngle * 2;
+            else                angle = -mechAngle * 2;
 
             ligaments[i][0].setAngle(+angle);
             ligaments[i][1].setAngle(-angle);
