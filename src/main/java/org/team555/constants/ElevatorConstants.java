@@ -14,7 +14,7 @@ public class ElevatorConstants
     public static final double GEAR_RATIO_OUT_OVER_IN = 1.0 / 40.0;
     public static final double SPROCKET_DIAMETER = Units.inchesToMeters(1.685);
     public static final double STAGE_COUNT = 3;
-    public static final double MYSTERY_MULTIPLIER = 1.58259149357; //TODO: this is very weird????
+    public static final double MYSTERY_MULTIPLIER = 1;//1.58259149357; //TODO: this is very weird????
 
     public static final double ENCODER_CONVERSION_FACTOR 
         = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI * STAGE_COUNT * MYSTERY_MULTIPLIER;
