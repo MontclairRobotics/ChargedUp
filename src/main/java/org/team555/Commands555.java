@@ -9,6 +9,7 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -330,7 +331,7 @@ public class Commands555
             moveToObjectSideways(() -> DetectionType.CONE),
             shwooperSuck(),
             drivetrain.commands.driveForTime(2,0,0.5,0)
-                .until(shwooper::hasObject),
+                .until(shwooper::manipulatedObject),
             waitSeconds(0.1),
             stopShwooper(),
 
@@ -342,14 +343,30 @@ public class Commands555
         ).withName("Pickup");
     }
 
-    public static CommandBase positionForScore(ScoreHeight height, Supplier<ScoringType> type)
+    /**
+     * Get the command responsible for aligning the drivetrain to the given score type.
+     */
+    public static CommandBase positionDrivetrainForScore(Supplier<ScoringType> type)
     {
-        CommandBase cmd = Commands.select(
-            Map.of(
-                ScoringType.PEG,   elevatorStingerToConeMid(),
-                ScoringType.SHELF, elevatorStingerToCubeMid()
-            ),
-            () -> type.get()
+        return Commands.either(
+            Commands.parallel(
+                moveToObjectSideways(() -> DetectionType.CONE),
+                moveToObjectForward(() -> DetectionType.CONE)
+            ), 
+            alignWithAprilTagForScore(), 
+            () -> type.get() == ScoringType.PEG
+        );
+    }
+
+    /**
+     * Get the command responsible for aligning the drivetrain to the given score type.
+     */
+    public static CommandBase positionElevatorAssemblyForScore(ScoreHeight height, Supplier<ScoringType> type)
+    {
+        CommandBase cmd = Commands.either(
+            elevatorStingerToConeMid(),
+            elevatorStingerToCubeMid(),
+            () -> type.get() == ScoringType.PEG
         ); 
         
         if(height == ScoreHeight.LOW)
@@ -360,6 +377,9 @@ public class Commands555
         return cmd;
     }
 
+    /**
+     * Get the command responsible for scoring in the hybrid zone with a cube.
+     */
     public static CommandBase scoreCubeLow()
     {
         return Commands.sequence(
@@ -370,10 +390,10 @@ public class Commands555
             waitSeconds(0.3),
             openGrabber(),
 
-            runOnce(led::celebrate),
-
             //wait until the cube has shot out
-            waitSeconds(1),
+            waitUntil(shwooper::manipulatedObject)
+                .andThen(led::celebrate)
+                .withTimeout(1),
             stopShwooper()
 
         ).withName("deIntake score");
@@ -389,20 +409,15 @@ public class Commands555
             log("[SCORE] Beginning score sequence . . ."),
             closeGrabber(),
 
-            //Align to score (only in teleop)
-            Commands.sequence(
-                //move sideways to the target
-                moveToObjectSideways(() -> type.get().getDetectionType()),
+            // Align to score
+            log("[SCORE] Positioning . . ."), 
+            Commands.parallel(
+                //Align drivetrain to score
+                positionDrivetrainForScore(type).unless(() -> skipObjectAlignment),
 
-                //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
-                // runOnce(() -> drivetrain.commands.driveForTime(0.25, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
-                moveForwardToScore(() -> type.get().getDetectionType())
-            )
-            .unless(() -> skipObjectAlignment),
-
-            //Prepare position
-            log("[SCORE] Positioning elevator and stinger . . ."),  
-            positionForScore(height, type), 
+                //Prepare elevator assembly
+                positionElevatorAssemblyForScore(height, type)
+            ),
 
             //Drop grabber
             log("[SCORE] Dropping . . ."),
@@ -535,7 +550,8 @@ public class Commands555
     }
 
     /**
-     * Decorate a command so that it fails immediately if 
+     * Decorate a command so that it fails immediately if the vision system currently does not have an object
+     * in its view.
      */
     public static CommandBase ifHasTarget(Command cmd)
     {
@@ -546,80 +562,24 @@ public class Commands555
      * Turns to the object.
      * @return
      */
-    public static CommandBase turnToCurrentObject() 
+    public static CommandBase turnToObject(Supplier<DetectionType> type) 
     {
-        //DON'T USE PID for turn
-        // return ifHasTarget(
-        //     drivetrain.thetaPID.goToSetpoint(drivetrain::getObjectAngle, drivetrain)
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;//degrees
         final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.2;
 
-        return ifHasTarget(
+        Command turn = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0)))
-                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
-        ).withName("Turn to Current Object");
-    }
-
-    /**
-     * Goes towards the object on the x-axis.
-     * @return
-     */
-    public static CommandBase moveToCurrentObjectSideways()
-    {
-        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
-
-        final double DEADBAND = 2;
-        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
-
-        return ifHasTarget(
-            Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2))))
-                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
-        ).withName("Move to Current Object Sideways");
-    }
-
-    /**
-     *  Goes toward object (moves forward). Useful for moving proper distance away to score
-     */
-    public static CommandBase moveForwardToScore(Supplier<DetectionType> type)
-    {
-        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
-
-        final double DEADBAND = 2;
-        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
-
-        final double TAPE_OFFSET = 10;
-        final double TAG_OFFSET = 10;
-
-        double offset = type.get() == DetectionType.TAPE ? TAPE_OFFSET : TAG_OFFSET;
-
-        Command moveForward = ifHasTarget(
-            Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * (offset - vision.getObjectAX()) / 27.0, 0.2), 0)))
-                .until(() -> hasEnded.calculate(Math.abs(offset - vision.getObjectAX()) < DEADBAND))
-        ).withName("Move Forward to Object");
+                .andThen(run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0))
+                    .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
+        );
         
         return Commands.sequence(
             waitForPipe(type),
-            moveForward,
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.DEFAULT))
-        );
-    }
-
-    /**
-     * Turns to the object.
-     * @return
-     */
-    public static CommandBase turnToObject(Supplier<DetectionType> type)
-    {
-        return Commands.sequence(
-            waitForPipe(type),
-            turnToCurrentObject(),
+            turn,
             Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
-        );
+        ).withName("Turn to Object");
     }
 
     /**
@@ -628,13 +588,94 @@ public class Commands555
      */
     public static CommandBase moveToObjectSideways(Supplier<DetectionType> type)
     {
+        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
+
+        final double DEADBAND = 2;
+        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
+
+        Command moveSideways = ifHasTarget(
+            Commands.runOnce(() -> hasEnded.calculate(false))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2)))
+                    .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
+        );
+
         return Commands.sequence(
             waitForPipe(type),
-            moveToCurrentObjectSideways(),
-            Commands.runOnce(() -> ChargedUp.vision.setTargetType(DetectionType.DEFAULT))
+            moveSideways,
+            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
+        ).withName("Move to Object Sideways");
+    }
+
+    /**
+     * Goes towards the object on the y-axis.
+     * @return
+     */
+    public static CommandBase moveToObjectForward(Supplier<DetectionType> type)
+    {
+        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
+
+        final double DEADBAND = 2;
+        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
+
+        Command moveForward = ifHasTarget(
+            Commands.runOnce(() -> hasEnded.calculate(false))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
+                    .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
+        );
+        
+        return Commands.sequence(
+            waitForPipe(type),
+            moveForward,
+            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
+        ).withName("Move Forward to Object");
+    }
+
+    /**
+     * Create a command which aligns the drivetrain with the april tag in front of it in order to score.
+     * @return
+     */
+    public static CommandBase alignWithAprilTagForScore()
+    {   
+        final double TOLERANCE = 0.1;
+        final double SPEED_MUL = DriveConstants.MAX_SPEED_MPS * 0.3;
+
+        return waitForPipe(() -> DetectionType.APRIL_TAG).andThen
+        (
+            ifHasTarget(new CommandBase() 
+            {
+                Debouncer hasEndedDebounce = new Debouncer(0.1, DebounceType.kRising);
+                boolean hasEnded;
+
+                public void initialize() 
+                {
+                    hasEndedDebounce.calculate(false);
+                    hasEnded = false;
+                }
+
+                public boolean isFinished() 
+                {
+                    return hasEnded;
+                }
+
+                public void execute()
+                {
+                    Translation2d curpose = vision.getAprilTagRobotSpace();
+                    Translation2d diff = DriveConstants.DESIRED_APRIL_TAG_SCORE_POSE.minus(curpose);
+
+                    hasEnded = hasEndedDebounce.calculate(diff.getNorm() < TOLERANCE);
+
+                    double vx = Math555.atLeast(Math555.clamp(SPEED_MUL * diff.getX(), -DriveConstants.MAX_SPEED_MPS, DriveConstants.MAX_SPEED_MPS), 0.1);
+                    double vy = Math555.atLeast(Math555.clamp(SPEED_MUL * diff.getY(), -DriveConstants.MAX_SPEED_MPS, DriveConstants.MAX_SPEED_MPS), 0.1);
+
+                    drivetrain.setChassisSpeeds(0, vx, vy);
+                }
+            })
         );
     }
 
+    /**
+     * Creates a command which waits for the given detection type to be active on the limelight.
+     */
     public static CommandBase waitForPipe(Supplier<DetectionType> type)
     {
         return Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get()))

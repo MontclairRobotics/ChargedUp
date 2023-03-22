@@ -168,4 +168,9 @@ public class PhotonSystem extends VisionSystem
             setPipeline(TAPE_PIPE);
         }
     }
+    
+    @Override
+    public Pose2d getAprilTagRobotSpace() {
+        return new Pose2d();
+    }
 }

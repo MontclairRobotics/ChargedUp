@@ -1,6 +1,8 @@
 package org.team555.vision;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 
 import java.util.function.Supplier;
@@ -29,6 +31,8 @@ public abstract class VisionSystem extends ManagerBase
      * @return the estimated pose of the robot
      */
     public abstract Pose2d getEstimatedPose();
+
+    public abstract Translation2d getAprilTagRobotSpace();
 
     /**
      * @return the estimated time the frame used to derive the robot pose was taken

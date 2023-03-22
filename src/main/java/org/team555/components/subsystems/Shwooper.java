@@ -72,7 +72,7 @@ public class Shwooper extends ManagerSubsystemBase
         return motorTop.getOutputCurrent();
     }
 
-    public boolean hasObject()
+    public boolean manipulatedObject()
     {
         return lastFrameHasObject;
     }
@@ -83,7 +83,7 @@ public class Shwooper extends ManagerSubsystemBase
         lastFrameHasObject = hasObjectRisingDebouncer.calculate(getCurrent() > CUBE_CURRENT);    
         lastFrameHasObject = hasObjectFallingDebouncer.calculate(lastFrameHasObject);
 
-        if(edgeFilter.calculate(lastFrameHasObject))
+        if(edgeFilter.calculate(lastFrameHasObject) && motorTop.get() > 0)
             ChargedUp.led.celebrate();
     }
 

@@ -4,6 +4,8 @@ import com.pathplanner.lib.auto.PIDConstants;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
@@ -141,4 +143,9 @@ public class DriveConstants
 
     public static final Tunable<Double> TIME_FULL_STOP_SEC = Tunable.of(0.25, "drive.time_full_stop");
     public static double inputRateLimit() {return 1 / TIME_FULL_STOP_SEC.get();}
+
+    public static final Translation2d DESIRED_APRIL_TAG_SCORE_POSE = new Translation2d(
+        Units.feetToMeters(1 + 11.5 / 12),  // see game manual v7 page 26
+        0
+    );
 }

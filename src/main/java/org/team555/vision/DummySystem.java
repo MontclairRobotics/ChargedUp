@@ -82,4 +82,9 @@ public class DummySystem extends VisionSystem
     {
         return true;
     }
+
+    @Override
+    public Pose2d getAprilTagRobotSpace() {
+        return new Pose2d();
+    }
 }
