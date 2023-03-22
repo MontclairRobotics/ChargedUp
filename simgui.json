@@ -55,6 +55,8 @@
       "/Shuffleboard/Commands/Trajectory test.2m Square": "Command",
       "/Shuffleboard/Commands/Trajectory test.Line": "Command",
       "/Shuffleboard/Commands/deIntake score": "Command",
+      "/Shuffleboard/Commands/humanz": "Command",
+      "/Shuffleboard/Commands/return elevator + stinger": "Command",
       "/Shuffleboard/Debug/Mechanism": "Mechanism2d",
       "/Shuffleboard/PID/ELEVATOR-PID/Elevator PID": "PIDController",
       "/Shuffleboard/PID/THETA-PID/θ-PID Controller": "PIDController",

@@ -115,16 +115,16 @@ public class Auto extends ManagerBase
             balance.getBoolean(false)
         );
         
-        if (chooseStart.getSelected().equals("Cone 6"))        startPose = new Pose2d(1.85, 3.85, Rotation2d.fromDegrees(180));
-        else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(1.85, 2.80, Rotation2d.fromDegrees(180));
-        else if (chooseStart.getSelected().equals("Cone 3"))  startPose = new Pose2d(1.85, 0.45, Rotation2d.fromDegrees(180));
+        if      (chooseStart.getSelected().equals("Cone 3")) startPose = new Pose2d(1.85, 3.85, Rotation2d.fromDegrees(180));
+        else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(1.85, 3.30, Rotation2d.fromDegrees(180));
+        else if (chooseStart.getSelected().equals("Cone 6")) startPose = new Pose2d(1.85, 0.45, Rotation2d.fromDegrees(180));
         
         if (DriverStation.getAlliance() == Alliance.Red)
         {
             // startPose = startPose.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
-            if      (chooseStart.getSelected().equals("Cone 6"))   startPose = new Pose2d(16.5-1.85, 3.85, Rotation2d.fromDegrees(180));
-            else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(16.5-1.85, 2.80, Rotation2d.fromDegrees(180));
-            else if (chooseStart.getSelected().equals("Cone 3"))  startPose = new Pose2d(16.5-1.85, 0.45, Rotation2d.fromDegrees(180));
+            if      (chooseStart.getSelected().equals("Cone 3")) startPose = new Pose2d(16.5-1.85, 3.85, Rotation2d.fromDegrees(180));
+            else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(16.5-1.85, 3.30, Rotation2d.fromDegrees(180));
+            else if (chooseStart.getSelected().equals("Cone 6")) startPose = new Pose2d(16.5-1.85, 0.45, Rotation2d.fromDegrees(180));
         }
         start.setPose(startPose);
 
