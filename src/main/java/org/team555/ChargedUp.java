@@ -204,6 +204,7 @@ public class ChargedUp extends RobotContainer
         driverController.getButton(Button.LEFT_BUMPER)
                 .onTrue(drivetrain.commands.decreaseSpeed());
 
+        // FIELD RELATIVE //
         driverController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
             .whileTrue(drivetrain.commands.disableFieldRelative())
@@ -250,6 +251,8 @@ public class ChargedUp extends RobotContainer
             debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
         }
 
+        ////////////// OPERATOR CONTROLS /////////
+
         // D-Pad Controls
         operatorController.getDPad(DPad.UP).and(pidActive)
             .toggleOnTrue(Commands555.elevatorHumanPlayerLevel());
@@ -270,7 +273,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getButton(Button.B_CIRCLE)
             .onTrue(Commands555.toggleStinger());
 
-        // Schwooper
+        // Shwooper
         // suck button
         operatorController.getAxis(Axis.LEFT_TRIGGER)
             .whenGreaterThan(0.5)
@@ -330,18 +333,18 @@ public class ChargedUp extends RobotContainer
         mainTab
             .addString("Recent Log", Logging::mostRecentLog)
             .withWidget(BuiltInWidgets.kTextView)
-            .withSize(3, 1)
-            .withPosition(2, 3);
+            .withSize(2, 1)
+            .withPosition(0, 3);
 
-        mainTab
-            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch())
-            .withSize(2, 1)
-            .withPosition(7, 3);
+        info
+            .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch());
+            // .withSize(2, 1)
+            // .withPosition(7, 3);
         
-        mainTab
-            .addString("Suck Mode", shwooper::currentMode)
-            .withSize(2, 1)
-            .withPosition(7, 2);
+        info
+            .addString("Suck Mode", shwooper::currentMode);
+            // .withSize(2, 1)
+            // .withPosition(7, 2);
         
         // GYROSCOPE VALUE //
         mainTab

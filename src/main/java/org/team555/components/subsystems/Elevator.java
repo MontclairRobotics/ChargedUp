@@ -127,49 +127,6 @@ public class Elevator extends ManagerSubsystemBase
     }
 
     /**
-     * Set elevator to a desired height
-     * @param height (double) the desired height
-     */
-    private void setHeight(double height)
-    {
-        if(height > MAX_HEIGHT || height < MIN_HEIGHT)
-        {
-            Logging.info(
-                "Invalid height [" + height + " m] provided to Elevator.setHeight, clamping to acceptable range" +
-                "[" + MIN_HEIGHT + " m, " + MAX_HEIGHT + " m]"
-            );
-        }
-
-        height = Math555.clamp(height, MIN_HEIGHT, MAX_HEIGHT);
-
-        PID.setTarget(height);
-    }
-
-    /**
-     * Set the elevator to {@link Robot#MID_HEIGHT the middle height}
-     */
-    public void setMidCube()
-    {
-        setHeight(MID_HEIGHT_CUBE);
-    }
-
-    /**
-     * Sets the elevator to {@link ElevatorConstants#MID_HEIGHT_CUBE the middle cone height}
-     */
-    public void setMidCone()
-    {
-        setHeight(MID_HEIGHT_CONE);
-    }
-
-    /**
-     * Set elevator to LOW position
-     */
-    public void setLow()
-    {
-        setHeight(0);
-    }
-
-    /**
      * Lowers elevator height manually at the negative {@link Robot#ELEVATOR_SPEED elevator speed constant}
      */
     public void delevate()
