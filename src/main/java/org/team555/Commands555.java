@@ -355,7 +355,8 @@ public class Commands555
             ), 
             alignWithAprilTagForScore(), 
             () -> type.get() == ScoringType.PEG
-        );
+        )
+        .beforeStarting(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
     }
 
     /**
@@ -637,7 +638,7 @@ public class Commands555
     public static CommandBase alignWithAprilTagForScore()
     {   
         final double TOLERANCE = 0.1;
-        final double SPEED_MUL = DriveConstants.MAX_SPEED_MPS * 0.3;
+        final double SPEED_MAX = 1;
 
         return waitForPipe(() -> DetectionType.APRIL_TAG).andThen
         (
@@ -664,8 +665,8 @@ public class Commands555
 
                     hasEnded = hasEndedDebounce.calculate(diff.getNorm() < TOLERANCE);
 
-                    double vx = Math555.atLeast(Math555.clamp(SPEED_MUL * diff.getX(), -DriveConstants.MAX_SPEED_MPS, DriveConstants.MAX_SPEED_MPS), 0.1);
-                    double vy = Math555.atLeast(Math555.clamp(SPEED_MUL * diff.getY(), -DriveConstants.MAX_SPEED_MPS, DriveConstants.MAX_SPEED_MPS), 0.1);
+                    double vx = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getX(), -SPEED_MAX, SPEED_MAX), 0.1);
+                    double vy = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getY(), -SPEED_MAX, SPEED_MAX), 0.1);
 
                     drivetrain.setChassisSpeeds(0, vx, vy);
                 }
