@@ -395,7 +395,8 @@ public class Commands555
                 moveToObjectSideways(() -> type.get().getDetectionType()),
 
                 //move forward so that bumpers slam into scoring area (makes it perfect distance away to score)
-                runOnce(() -> drivetrain.commands.driveForTime(0.25, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
+                // runOnce(() -> drivetrain.commands.driveForTime(0.25, 0, 0.5, 0).schedule()) //TODO: these numbers are completely made up
+                moveForwardToScore(() -> type.get().getDetectionType())
             )
             .unless(() -> skipObjectAlignment),
 
@@ -580,6 +581,9 @@ public class Commands555
         ).withName("Move to Current Object Sideways");
     }
 
+    /**
+     *  Goes toward object (moves forward). Useful for moving proper distance away to score
+     */
     public static CommandBase moveForwardToScore(Supplier<DetectionType> type)
     {
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
@@ -587,10 +591,15 @@ public class Commands555
         final double DEADBAND = 2;
         final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
 
+        final double TAPE_OFFSET = 10;
+        final double TAG_OFFSET = 10;
+
+        double offset = type.get() == DetectionType.TAPE ? TAPE_OFFSET : TAG_OFFSET;
+
         Command moveForward = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2), 0)))
-                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * Math555.siMath.abs(offset - vision.getObjectAX()) / 27.0, 0.2), 0)))
+                .until(() -> hasEnded.calculate(Math.abs(offset - vision.getObjectAX()) < DEADBAND))
         ).withName("Move Forward to Object");
         
         return Commands.sequence(
