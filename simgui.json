@@ -30,6 +30,7 @@
       "/Shuffleboard/Commands/Intake Stop": "Command",
       "/Shuffleboard/Commands/Intake Suck": "Command",
       "/Shuffleboard/Commands/Open Grabber": "Command",
+      "/Shuffleboard/Commands/Pickup": "Command",
       "/Shuffleboard/Commands/Retract Stinger": "Command",
       "/Shuffleboard/Commands/Return Elevator and Stinger": "Command",
       "/Shuffleboard/Commands/SIDE TO TAPE": "Command",
@@ -67,6 +68,11 @@
       "/Shuffleboard/PID/THETA-PID/θ-PID Controller": "PIDController",
       "/Shuffleboard/PID/X-PID/X-PID Controller": "PIDController",
       "/Shuffleboard/PID/Y-PID/Y-PID Controller": "PIDController",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.2m Circle": "Command",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.2m Line": "Command",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.2m S Bend": "Command",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.2m Square": "Command",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.Nm Teardrop": "Command",
       "/Shuffleboard/The Field/Field": "Field2d"
     },
     "windows": {
@@ -90,6 +96,11 @@
         }
       },
       "/Shuffleboard/Commands/Celebrate": {
+        "window": {
+          "visible": true
+        }
+      },
+      "/Shuffleboard/Commands/Pickup": {
         "window": {
           "visible": true
         }

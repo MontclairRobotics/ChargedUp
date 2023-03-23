@@ -67,6 +67,7 @@ public class Elevator extends ManagerSubsystemBase
     {
         return Math555.invlerp(encoder.getPosition(), MIN_HEIGHT, MAX_HEIGHT);
     }
+
     public boolean isWithinLowerBuffer()
     {
         return getHeightNormalized() < BUFFER_DOWN;
@@ -75,15 +76,20 @@ public class Elevator extends ManagerSubsystemBase
     {
         return getHeightNormalized() > (1 - BUFFER_UP);
     }
+    
+    public boolean isWithinGrabberBuffer()
+    {
+        return getHeightNormalized() < GRABBER_BUFFER;
+    }
 
     private double getUpwardMultiplier()
     {
         double ynorm = getHeightNormalized();
 
         //if not close to top (not with the buffer zone) return elevator max speed
-        if (!isWithinUpperBuffer()) return SPEED;
+        if (!isWithinUpperBuffer()) return 1;
 
-        double reducedSpeed = SPEED - SPEED * (ynorm - 1 + BUFFER_UP) / BUFFER_UP;
+        double reducedSpeed = 1 - 1 * (ynorm - 1 + BUFFER_UP) / BUFFER_UP;
 
         return Math555.clamp(reducedSpeed, 0.15, 1);
     }
@@ -92,9 +98,9 @@ public class Elevator extends ManagerSubsystemBase
         double ynorm = getHeightNormalized();
 
         //if not close to bottom (not with the buffer zone) return elevator max speed
-        if (!isWithinLowerBuffer()) return SPEED;
+        if (!isWithinLowerBuffer()) return 1;
 
-        double reducedSpeed = ynorm / BUFFER_DOWN * SPEED;
+        double reducedSpeed = ynorm / BUFFER_DOWN * 1;
 
         return Math555.clamp(reducedSpeed, 0.15, 1);
     }

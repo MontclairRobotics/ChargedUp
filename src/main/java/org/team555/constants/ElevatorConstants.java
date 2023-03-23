@@ -14,20 +14,19 @@ public class ElevatorConstants
     public static final double GEAR_RATIO_OUT_OVER_IN = 1.0 / 40.0;
     public static final double SPROCKET_DIAMETER = Units.inchesToMeters(1.685);
     public static final double STAGE_COUNT = 3;
-    public static final double MYSTERY_MULTIPLIER = 1;//1.58259149357; //TODO: this is very weird????
 
     public static final double ENCODER_CONVERSION_FACTOR 
-        = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI * STAGE_COUNT * MYSTERY_MULTIPLIER;
+        = GEAR_RATIO_OUT_OVER_IN * SPROCKET_DIAMETER * Math.PI * STAGE_COUNT;
 
     public static final boolean INVERTED = true;
     // public static final boolean ENCODER_INVERTED = true;
 
     public static final double BUFFER_UP = 0.2;
     public static final double BUFFER_DOWN = 0.25;
+    public static final double GRABBER_BUFFER = 0.4;
 
     public static final int TOP_LIMIT_SWITCH = 0;
     public static final int BOTTOM_LIMIT_SWITCH = 1;
-    public static final int START_LIMIT_SWITCH = 2; //not used anyomore
 
     public static final double SPEED = 1;  
     
@@ -45,7 +44,7 @@ public class ElevatorConstants
     public static final double DEADBAND = 0.05;
     public static final JoystickAdjuster JOY_ADJUSTER = new JoystickAdjuster(DEADBAND, 2.2);   
 
-    public static final Tunable<Double> FEED_FORWARD_VOLTS = Tunable.of(0.05*12, "elevator.ff_volts");
+    public static final Tunable<Double> FEED_FORWARD_VOLTS = Tunable.of(0.6, "elevator.ff_volts");
 
     public static final double 
         KP = 0.75,

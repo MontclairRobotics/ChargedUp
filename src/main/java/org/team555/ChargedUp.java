@@ -442,6 +442,7 @@ public class ChargedUp extends RobotContainer
     public void setupCommandsTab()
     {
         ShuffleboardTab tab = Shuffleboard.getTab("Commands");
+        ShuffleboardTab trj = Shuffleboard.getTab("Test Trajectories");
         
         tab.add(Commands555.celebrate());
 
@@ -473,6 +474,8 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.scoreMidPeg(false));
         tab.add(Commands555.scoreMidShelf(false));
 
+        tab.add(Commands555.pickup());
+
         tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
         tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE).withName("SIDE TO TAPE"));
 
@@ -480,9 +483,10 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
 
         tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
+        
         for(CommandBase testTraj : Trajectories.getAllTests().values())
         {
-            tab.add(testTraj);
+            trj.add(testTraj);
         }
     }
 }
