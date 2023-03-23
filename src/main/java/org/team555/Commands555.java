@@ -680,6 +680,18 @@ public class Commands555
         ));
     }
 
+    public static CommandBase alignWithAprilTagForScoreBackup()
+    {
+        return Commands.sequence(
+            waitForPipe(() -> DetectionType.APRIL_TAG),
+            Commands.sequence(
+                moveToObjectSideways(null),
+                moveToObjectForward()
+            ),
+            runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
+        );
+    }
+
     /**
      * Create a command which aligns the drivetrain with the april tag in front of it in order to score.
      * @return
