@@ -55,6 +55,17 @@ public class Commands555
     {
         return Commands.runOnce(() -> Logging.info(str.get()));
     }
+    
+    public static CommandBase logged(Command cmd, String str) 
+    {
+        return cmd
+            .beforeStarting(log("[" + str + "] starting . . ."))
+            .finallyDo(interrupted -> Logging.info("[" + str + "] " + (interrupted ? "interrupted" : "ended") + " . . ."));
+    }
+    public static CommandBase logged(Command cmd) 
+    {
+        return logged(cmd, cmd.getName());
+    }
 
     /////////////////////// LED COMMANDS /////////////////////////
     public static CommandBase celebrate() 
@@ -408,6 +419,7 @@ public class Commands555
 
         ).withName("deIntake score");
     }
+
 
     /**
      * Moves stinger/elevator to the specfied score place and opens the grabber
