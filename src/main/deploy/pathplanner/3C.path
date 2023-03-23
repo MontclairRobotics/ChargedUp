@@ -39,7 +39,7 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "startIntake"
+          "Intake On"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
