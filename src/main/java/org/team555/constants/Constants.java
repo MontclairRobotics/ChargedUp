@@ -21,12 +21,12 @@ public final class Constants
     
     public static class Auto 
     {
-        public static final Tunable<Double> MAX_VEL = Tunable.of(3, "auto.max_vel");
-        public static final Tunable<Double> MAX_ACC = Tunable.of(1.2, "auto.max_acc");
+        public static final double MAX_VEL = 3;
+        public static final double MAX_ACC = 1.2;
 
         public static PathConstraints constraints()
         {
-            return new PathConstraints(MAX_VEL.get(), MAX_ACC.get());
+            return new PathConstraints(MAX_VEL, MAX_ACC);
         }
     }
     public static class Robot 
