@@ -44,7 +44,6 @@ public class Grabber extends ManagerSubsystemBase
     public void release() 
     {
         outputSolenoid.set(SOLENOID_DEFAULT_STATE);
-        heldObject = GamePiece.NONE;
     }
 
     /**
