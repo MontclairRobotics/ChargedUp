@@ -596,6 +596,8 @@ public class Commands555
 
     /**
      * Goes towards the object on the x-axis.
+     * 
+     * @param type DetectionType to move to. {@code null} can be passed in if vision is already using the correct pipeline
      * @return
      */
     public static CommandBase moveToObjectSideways(Supplier<DetectionType> type)
@@ -622,6 +624,8 @@ public class Commands555
 
     /**
      * Goes towards the object on the y-axis.
+     * 
+     * @param type DetectionType to move to. {@code null} can be passed in if vision is already using the correct pipeline
      * @return
      */
     public static CommandBase moveToObjectForward(Supplier<DetectionType> type)

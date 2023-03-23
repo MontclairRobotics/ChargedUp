@@ -12,6 +12,16 @@ import org.team555.util.frc.commandrobot.ManagerBase;
 
 public abstract class VisionSystem extends ManagerBase
 {
+    /**
+     * Currently, this returns...
+     * <ul>
+     *    <li> AUTONOMOUS - APRIL TAG </li>
+     *    <li> DISABLED   - TAPE </li>
+     *    <li> ELSE       - NONE </li>
+     * </ul>
+     * 
+     * @return
+     */
     protected static DetectionType getDefaultInternal() 
     {
         if(DriverStation.isAutonomous())

@@ -175,6 +175,7 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void setPipeline(double value) 
     {
+        enableProcessing();
         getEntry("pipeline").setDouble(value);
         // LimelightHelpers.setPipelineIndex("", (int)value);
     }
