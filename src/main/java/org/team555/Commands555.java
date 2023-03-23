@@ -368,7 +368,7 @@ public class Commands555
         return Commands.either(
             Commands.sequence(
                 waitForPipe(() -> DetectionType.TAPE),
-                Commands.parallel(
+                Commands.sequence(
                     moveToObjectSideways(null),
                     moveToObjectForward()
                 ),
@@ -653,11 +653,14 @@ public class Commands555
     public static CommandBase moveToObjectForward()
     {
         final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
+        final double DEADBAND = 2;
 
         return logged(ifHasTarget(
-            Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
-                .until(() -> vision.getObjectAY() >= 0)
-                .withName("MOVE FORWARD TO TAPE")
+            Commands.race(
+                Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
+                    .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND),
+                waitSeconds(2))
+            .withName("MOVE FORWARD TO TAPE")
         ));
     }
 
@@ -859,6 +862,9 @@ public class Commands555
         }
         
         // Return the sum command (with a navx set-180)
+
+        // Logging.info(Arrays.toString)
+
         return Commands.runOnce(gyroscope::setSouth)
             .andThen(Commands.sequence(commandList));
     }
