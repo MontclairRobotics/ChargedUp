@@ -661,8 +661,19 @@ public class Commands555
                     .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND),
                 waitSeconds(3))
             .andThen(drivetrain.commands.driveForTime(1.3, 0, 0.2, 0))
-            .withName("MOVE FORWARD TO TAPE")
-        ));
+        ).withName("MOVE FORWARD TO OBJECT"));
+    }
+
+    public static CommandBase alignWithAprilTagForScoreBackup()
+    {
+        return Commands.sequence(
+            waitForPipe(() -> DetectionType.APRIL_TAG),
+            Commands.sequence(
+                moveToObjectSideways(null),
+                moveToObjectForward()
+            ),
+            runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
+        );
     }
 
     /**
