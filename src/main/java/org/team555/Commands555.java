@@ -653,13 +653,14 @@ public class Commands555
     public static CommandBase moveToObjectForward()
     {
         final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
-        final double DEADBAND = 2;
+        final double DEADBAND = 1;
 
         return logged(ifHasTarget(
             Commands.race(
                 Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
                     .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND),
-                waitSeconds(2))
+                waitSeconds(3))
+            .andThen(drivetrain.commands.driveForTime(1.3, 0, 0.2, 0))
             .withName("MOVE FORWARD TO TAPE")
         ));
     }
@@ -785,8 +786,13 @@ public class Commands555
             {
                 cmd = autoBuilder.resetPose(nextTrajectory).andThen(cmd);
             }
+            if (str.equals("1A")) cmd = cmd.withTimeout(4.07);
 
-            return cmd;
+            return Commands.sequence(
+                log("started Drive"),
+                Commands.race(cmd,waitSeconds(1)),
+                log("ended driving path")
+            ).withName(str);
         }
         // Error
         else 
@@ -817,6 +823,7 @@ public class Commands555
             "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
         );
 
+        String debugAuto = "";
         SwerveAutoBuilder builder = drivetrain.commands.autoBuilder(markers);
 
         // Iterate all of the string segments
@@ -831,6 +838,8 @@ public class Commands555
                 Logging.info("SOMEHTING NULLL JGINSJGSNGJIFNGJ");
                 return null;
             }
+
+            debugAuto = debugAuto + commandList[i].getName() + ",";
         }
 
         // Calculate the sum trajectory
@@ -863,7 +872,7 @@ public class Commands555
         
         // Return the sum command (with a navx set-180)
 
-        // Logging.info(Arrays.toString)
+        Logging.info("[AUTO BUILD]" + debugAuto);
 
         return Commands.runOnce(gyroscope::setSouth)
             .andThen(Commands.sequence(commandList));

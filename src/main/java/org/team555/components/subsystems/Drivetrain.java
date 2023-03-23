@@ -165,7 +165,9 @@ public class Drivetrain extends ManagerSubsystemBase
             ThetaPID.consts().kD
         );
 
-        thetaController.setTolerance(Math.toRadians(3), Math.toRadians(0.5));
+        
+
+        thetaController.setTolerance(Math.toRadians(1.5), Math.toRadians(0.5));
         thetaController.enableContinuousInput(0, 2*Math.PI);
         
         PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
