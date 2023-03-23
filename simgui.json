@@ -45,6 +45,11 @@
       "/Shuffleboard/Commands/Signal Cube": "Command",
       "/Shuffleboard/Commands/Stinger Out": "Command",
       "/Shuffleboard/Commands/TURN TO TAPE": "Command",
+      "/Shuffleboard/Commands/Test Trajectory test.2m Circle": "Command",
+      "/Shuffleboard/Commands/Test Trajectory test.2m Line": "Command",
+      "/Shuffleboard/Commands/Test Trajectory test.2m S Bend": "Command",
+      "/Shuffleboard/Commands/Test Trajectory test.2m Square": "Command",
+      "/Shuffleboard/Commands/Test Trajectory test.Nm Teardrop": "Command",
       "/Shuffleboard/Commands/Toggle Grabber": "Command",
       "/Shuffleboard/Commands/Toggle Grabber has Cone": "Command",
       "/Shuffleboard/Commands/Toggle Stinger": "Command",
@@ -148,6 +153,9 @@
     "Server": {
       "open": true
     }
+  },
+  "NetworkTables View": {
+    "visible": false
   },
   "Plot": {
     "Plot <0>": {

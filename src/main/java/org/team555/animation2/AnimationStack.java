@@ -57,7 +57,9 @@ public class AnimationStack extends SimpleAnimationBase
         }
 
         transitioning = true;
-        if(animationOut == null) animationOut = animations.pop();
+        Animation top = animations.pop();
+        
+        if(animationOut == null) animationOut = top;
     }
 
     @Override
