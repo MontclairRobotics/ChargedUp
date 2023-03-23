@@ -53,6 +53,7 @@ public class LimelightSystem extends VisionSystem
 
     public LimelightSystem()
     {
+        target = DetectionType.DEFAULT;
         getEntry("camerapose_robotspace").setDoubleArray(new double[] {
             FORWARD_OFFSET, 
             SIDE_OFFSET, 
@@ -200,7 +201,8 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public void reset() {
-        ChargedUp.vision.setTargetType(DetectionType.NONE);
+    public void reset() 
+    {
+        ChargedUp.vision.setTargetType(DetectionType.DEFAULT);
     }
 }

@@ -323,23 +323,28 @@ public class Commands555
         return Commands.sequence(
             // Ensure grabber released
             openGrabber(),
+            log("[PICK UP] grabber opened"),
 
             // Lower grabber in place
             elevatorStingerReturn(),
+            log("[PICK UP] elevator stinger returned.."),
 
             // Suck it
             moveToObjectSideways(() -> DetectionType.CONE),
+            log("[PICK UP] object sideways"),
             shwooperSuck(),
             drivetrain.commands.driveForTime(2,0,0.5,0)
                 .until(shwooper::manipulatedObject),
             waitSeconds(0.1),
             stopShwooper(),
+            log("[PICK UP] shwooper stop"),
 
             // Grab it
-            closeGrabber()
+            closeGrabber(),
 
             // Prepare to leave
             // elevatorToMid(),
+            log("[PICK UP] pick up over")
         ).withName("Pickup");
     }
 

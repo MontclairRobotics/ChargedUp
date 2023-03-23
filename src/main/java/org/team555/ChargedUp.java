@@ -164,7 +164,7 @@ public class ChargedUp extends RobotContainer
         pneu.enableCompressorDigital();
         CANSafety.monitor(pneu);
 
-        CameraServer.startAutomaticCapture();
+        // CameraServer.startAutomaticCapture();
         PathPlannerServer.startServer(5820);
 
         for(int port = 5800; port <= 5805; port++)
