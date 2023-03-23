@@ -38,6 +38,7 @@ import org.team555.vision.VisionSystem;
 import static org.team555.ChargedUp.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -331,7 +332,7 @@ public class Commands555
     // picks up objects and raises the elevator to the middle after picking the object up
     public static CommandBase pickup() 
     {
-        return Commands.sequence(
+        return logged(Commands.sequence(
             // Ensure grabber released
             openGrabber(),
             log("[PICK UP] grabber opened"),
@@ -346,17 +347,17 @@ public class Commands555
             shwooperSuck(),
             drivetrain.commands.driveForTime(2,0,0.5,0)
                 .until(shwooper::manipulatedObject),
-            waitSeconds(0.1),
+            waitSeconds(0.3),
             stopShwooper(),
             log("[PICK UP] shwooper stop"),
 
             // Grab it
-            closeGrabber(),
+            closeGrabber()
 
             // Prepare to leave
             // elevatorToMid(),
-            log("[PICK UP] pick up over")
-        ).withName("Pickup");
+            // log("[PICK UP] pick up over")
+        )).withName("Pickup");
     }
 
     /**
@@ -566,6 +567,7 @@ public class Commands555
             public void end(boolean interrupted) 
             {
                 drivetrain.enableFieldRelative();
+                Logging.info("[Balance] over");
             }
         }
         .withName("Balance");
@@ -600,9 +602,12 @@ public class Commands555
         if(type == null) return turn;
         
         return Commands.sequence(
+            log("[TURN TO OBJECT] starting"),
             waitForPipe(type),
+            log("[TURN TO OBJECT] reached correct pipeline"),
             turn,
-            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
+            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT)), 
+            log("[TURN TO OBJECT] did the turn :D")
         ).withName("Turn to Object");
     }
 
@@ -628,14 +633,19 @@ public class Commands555
         if(type == null) return moveSideways;
 
         return Commands.sequence(
+            log("[MOVE SIDEWAYS TO OBJECT] starting"),
             waitForPipe(type),
+            log("[MOVE SIDEWAYS TO OBJECT] reached correct pipe"),
             moveSideways,
-            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
+            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT)),
+            log("[MOVE SIDEWAYS TO OBJECT] finished the movement :D")
         ).withName("Move to Object Sideways");
     }
 
     /**
      * Goes towards the object on the y-axis.
+     * <p>
+     * <b> This should really only be used to align with tape when scoring </b>
      * 
      * @param type DetectionType to move to. {@code null} can be passed in if vision is already using the correct pipeline
      * @return
@@ -644,10 +654,11 @@ public class Commands555
     {
         final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
 
-        return ifHasTarget(
+        return logged(ifHasTarget(
             Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
                 .until(() -> vision.getObjectAY() >= 0)
-        );
+                .withName("MOVE FORWARD TO TAPE")
+        ));
     }
 
     /**
@@ -656,14 +667,14 @@ public class Commands555
      */
     public static CommandBase alignWithAprilTagForScore()
     {   
-        final double TOLERANCE = 0.05;
+        final double TOLERANCE = 0.1;
         final double SPEED_MAX = 1;
         
         Debouncer hasTargetDebounce = new Debouncer(0.1, DebounceType.kFalling);
 
-        return waitForPipe(() -> DetectionType.APRIL_TAG).andThen
+        return logged(waitForPipe(() -> DetectionType.APRIL_TAG).andThen
         (
-            Commands.runOnce(() -> hasTargetDebounce.calculate(vision.hasObject()))
+            Commands.runOnce(() -> hasTargetDebounce.calculate(!vision.hasObject()))
                 .andThen(
                     new CommandBase() 
                     {
@@ -688,11 +699,13 @@ public class Commands555
                         {
                             Translation2d curpose = vision.getAprilTagRobotSpace();
                             Translation2d diff = DriveConstants.DESIRED_APRIL_TAG_SCORE_POSE.minus(curpose);
+                            Logging.info("[ALIGN TO APRIL TAG] Difference X: " + diff.getX());
+                            Logging.info("[ALIGN TO APRIL TAG] Difference Y: " + diff.getY());
 
                             hasEnded = hasEndedDebounce.calculate(diff.getNorm() < TOLERANCE);
 
                             double vx = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getX(), -SPEED_MAX, SPEED_MAX), 0.2);
-                            double vy = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getY(), -SPEED_MAX, SPEED_MAX), 0.2);
+                            double vy = Math555.atLeast(Math555.clamp(SPEED_MAX * -diff.getY(), -SPEED_MAX, SPEED_MAX), 0.3);
 
                             drivetrain.setChassisSpeeds(0, vx, vy);
                         }
@@ -703,8 +716,8 @@ public class Commands555
                             Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT));
                         }
                     }
-                ).until(() -> hasTargetDebounce.calculate(vision.hasObject()))
-        );
+                ).until(() -> hasTargetDebounce.calculate(!vision.hasObject()))
+        ).withName("ALIGN TO APRIL TAG"));
     }
 
     /**
@@ -731,7 +744,7 @@ public class Commands555
         {
             switch(str)
             {
-                case "A": 
+                case "A": return pickup();
                 case "C": return pickup();
 
                 case "1": return scoreMidPeg(true); 
@@ -812,6 +825,7 @@ public class Commands555
             if(commandList[i] == null)
             {
                 trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
+                Logging.info("SOMEHTING NULLL JGINSJGSNGJIFNGJ");
                 return null;
             }
         }
@@ -863,6 +877,7 @@ public class Commands555
         {
             return null;
         }
+        Logging.info(Arrays.toString(parts));
 
         return buildAuto(parts);
     }
