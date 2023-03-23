@@ -93,7 +93,7 @@ public class DriveConstants
     public static class ThetaPID
     {
         public static final Tunable<Double> KP = Tunable.of(0.55, "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.theta.ki");
+        public static final Tunable<Double> KI = Tunable.of(0.01, "drive.theta.ki");
         public static final Tunable<Double> KD = Tunable.of(0.06, "drive.theta.kd");
         
         public static PIDConstants consts()
@@ -159,7 +159,7 @@ public class DriveConstants
     public static double inputRateLimit() {return 1 / TIME_FULL_STOP_SEC.get();}
 
     public static final Translation2d DESIRED_APRIL_TAG_SCORE_POSE = new Translation2d(
-        Units.feetToMeters(1 + 11.5 / 12),  // see game manual v7 page 26
+        Units.feetToMeters(1.5 + 11.5 / 12),  // see game manual v7 page 26
         0
     );
 }

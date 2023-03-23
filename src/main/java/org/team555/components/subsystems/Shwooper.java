@@ -80,8 +80,10 @@ public class Shwooper extends ManagerSubsystemBase
     @Override
     public void always() 
     {
-        lastFrameHasObject = hasObjectRisingDebouncer.calculate(getCurrent() > CUBE_CURRENT);    
-        lastFrameHasObject = hasObjectFallingDebouncer.calculate(lastFrameHasObject);
+        lastFrameHasObject = hasObjectRisingDebouncer.calculate(getCurrent() > CUBE_CURRENT);
+        
+        // prevents lastFrameHasObject from becoming false again until a second after the current spike finished
+        lastFrameHasObject = hasObjectFallingDebouncer.calculate(lastFrameHasObject); 
 
         if(edgeFilter.calculate(lastFrameHasObject) && motorTop.get() > 0)
             ChargedUp.led.celebrate();

@@ -349,9 +349,13 @@ public class Commands555
     public static CommandBase positionDrivetrainForScore(Supplier<ScoringType> type)
     {
         return Commands.either(
-            Commands.parallel(
-                moveToObjectSideways(() -> DetectionType.CONE),
-                moveToObjectForward(() -> DetectionType.CONE)
+            Commands.sequence(
+                waitForPipe(() -> DetectionType.TAPE),
+                Commands.parallel(
+                    moveToObjectSideways(null),
+                    moveToObjectForward(null)
+                ),
+                runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
             ), 
             alignWithAprilTagForScore(), 
             () -> type.get() == ScoringType.PEG
@@ -412,7 +416,7 @@ public class Commands555
 
             // Align to score
             log("[SCORE] Positioning . . ."), 
-            Commands.parallel(
+            Commands.sequence(
                 //Align drivetrain to score
                 positionDrivetrainForScore(type).unless(() -> skipObjectAlignment),
 
@@ -570,11 +574,13 @@ public class Commands555
         final double DEADBAND = 2;//degrees
         final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.2;
 
-        Command turn = ifHasTarget(
+        CommandBase turn = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
                 .andThen(run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0))
                     .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
         );
+        
+        if(type == null) return turn;
         
         return Commands.sequence(
             waitForPipe(type),
@@ -592,13 +598,15 @@ public class Commands555
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;
-        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
+        final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.4;
 
-        Command moveSideways = ifHasTarget(
+        CommandBase moveSideways = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
                 .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2)))
                     .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
         );
+
+        if(type == null) return moveSideways;
 
         return Commands.sequence(
             waitForPipe(type),
@@ -615,14 +623,16 @@ public class Commands555
     {
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
-        final double DEADBAND = 2;
+        final double DEADBAND = 1;
         final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
 
-        Command moveForward = ifHasTarget(
+        CommandBase moveForward = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
                 .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
-                    .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
+                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAY()) < DEADBAND)))
         );
+        
+        if(type == null) return moveForward;
         
         return Commands.sequence(
             waitForPipe(type),
@@ -679,9 +689,9 @@ public class Commands555
      */
     public static CommandBase waitForPipe(Supplier<DetectionType> type)
     {
-        return Commands.runOnce(() -> ChargedUp.vision.setTargetType(type.get()))
+        return Commands.runOnce(() -> vision.setTargetType(type.get()))
             .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
-            .andThen(waitSeconds(0.1)); //TODO: this is very dumb
+            .andThen(waitSeconds(0.2)); //TODO: this is very dumb
     }
 
     

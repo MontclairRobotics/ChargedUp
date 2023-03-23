@@ -114,7 +114,7 @@ public class ChargedUp extends RobotContainer
     {
         return new ConditionalAnimation(new SolidAnimation(Color.kRed)) //! This solid animation should not happen!
             .addCase(() -> vision.getObjectAX() > +1, new ZoomAnimation(Color.kOrange).flip())
-            .addCase(() -> vision.getObjectAX() < -1, new ZoomAnimation(Color.kOrange));
+            .addCase(() -> vision.getObjectAX() < -1, new ZoomAnimation(Color.kTurquoise));
     }
 
     public static Animation getDisabledAnimation()

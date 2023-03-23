@@ -4,6 +4,7 @@ import static org.team555.constants.LimelightConstants.*;
 
 import java.util.function.Supplier;
 
+import org.team555.ChargedUp;
 import org.team555.structure.DetectionType;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -196,5 +197,10 @@ public class LimelightSystem extends VisionSystem
     public Translation2d getAprilTagRobotSpace() 
     {
         return toPose2D(getEntry("targetpose_robotspace").getDoubleArray(new double[6])).getTranslation();
+    }
+
+    @Override
+    public void reset() {
+        ChargedUp.vision.setTargetType(DetectionType.NONE);
     }
 }
