@@ -40,7 +40,7 @@ public final class Constants
 
             public static final double COLOR_CONFIDENCE = 0.7;
         }
-
+        
         public static class LED
         {
             public static final double DEMO_TIME = 10;

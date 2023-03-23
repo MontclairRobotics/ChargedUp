@@ -19,8 +19,6 @@ public abstract class VisionSystem extends ManagerBase
      *    <li> DISABLED   - TAPE </li>
      *    <li> ELSE       - NONE </li>
      * </ul>
-     * 
-     * @return
      */
     protected static DetectionType getDefaultInternal() 
     {

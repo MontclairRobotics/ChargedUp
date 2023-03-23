@@ -358,7 +358,7 @@ public class Commands555
                 waitForPipe(() -> DetectionType.TAPE),
                 Commands.parallel(
                     moveToObjectSideways(null),
-                    moveToObjectForward(null)
+                    moveToObjectForward()
                 ),
                 runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
             ), 
@@ -628,26 +628,14 @@ public class Commands555
      * @param type DetectionType to move to. {@code null} can be passed in if vision is already using the correct pipeline
      * @return
      */
-    public static CommandBase moveToObjectForward(Supplier<DetectionType> type)
+    public static CommandBase moveToObjectForward()
     {
-        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
-
-        final double DEADBAND = 1;
         final double SPEED_MUL = -DriveConstants.MAX_SPEED_MPS * 0.5;
 
-        CommandBase moveForward = ifHasTarget(
-            Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
-                .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAY()) < DEADBAND)))
+        return ifHasTarget(
+            Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
+                .until(() -> vision.getObjectAY() >= 0)
         );
-        
-        if(type == null) return moveForward;
-        
-        return Commands.sequence(
-            waitForPipe(type),
-            moveForward,
-            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
-        ).withName("Move Forward to Object");
     }
 
     /**

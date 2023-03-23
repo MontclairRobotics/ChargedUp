@@ -180,7 +180,7 @@ public class LimelightSystem extends VisionSystem
 
     @Override
     public void resetPose(Pose2d pose) 
-    {}    
+    {}
     
     private void enableProcessing()
     {
