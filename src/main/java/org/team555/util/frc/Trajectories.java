@@ -15,6 +15,9 @@ import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
+
 import org.team555.ChargedUp;
 /**
  * Class which holds the trajectories which may be used by the robot
@@ -44,11 +47,11 @@ public class Trajectories
      * Get an enumeration of all the test trajectories in this project.
      * @return The enumeration as a set
      */
-    public static Set<String> getAllTests()
+    public static Map<String, CommandBase> getAllTests()
     {
         Path ppDir = pathPlannerDir();
 
-        Set<String> result = new HashSet<>();
+        Map<String, CommandBase> result = new HashMap<>();
 
         for(File pathFile : ppDir.toFile().listFiles())
         {
@@ -58,7 +61,7 @@ public class Trajectories
 
             if(name.startsWith(TEST_PREFIX))
             {
-                result.add(name);
+                result.put(name, new ProxyCommand(() -> ChargedUp.drivetrain.commands.testTrajectory(name)).withName("Test Trajectory " + name));
             }
         }
 

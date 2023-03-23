@@ -33,6 +33,8 @@ import org.team555.util.frc.Trajectories;
 import org.team555.util.frc.can.CANSafety;
 import org.team555.util.frc.commandrobot.CommandRobot;
 import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
+
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.revrobotics.CANSparkMax;
@@ -638,7 +640,7 @@ public class Drivetrain extends ManagerSubsystemBase
                 Drivetrain.this::getRobotPose,
                 Drivetrain.this::setRobotPose,
                 PosPID.consts(), 
-                ThetaPID.consts(),
+                ThetaPID.autoconsts(),
                 Drivetrain.this::setChassisSpeeds,
                 markers,
                 true,
@@ -675,6 +677,19 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             return trajectory(autoBuilder, () -> Trajectories.get(trajectoryName, Auto.constraints()))
                 .withName("Trajectory " + trajectoryName);
+        }
+        
+        /**
+         * Create a full autonomous command using the given path planner trajectory name.
+         * @param trajectoryName The trajectory name
+         * @return The command
+         */
+        public CommandBase testTrajectory(String trajectoryName)
+        {
+            SwerveAutoBuilder autoBuilder = autoBuilder(HashMaps.of());
+            return trajectory(autoBuilder, trajectoryName)
+                .beforeStarting(autoBuilder.resetPose(Trajectories.get(trajectoryName, new PathConstraints(1, 1))))
+                .withName("Test Trajectory " + trajectoryName);
         }
 
         /**

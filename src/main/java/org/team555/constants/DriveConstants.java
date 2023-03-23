@@ -77,9 +77,9 @@ public class DriveConstants
 
     public static class PosPID
     {
-        public static final Tunable<Double> KP = Tunable.of(1.2, "drive.pos.kp");
+        public static final Tunable<Double> KP = Tunable.of(3.1, "drive.pos.kp");
         public static final Tunable<Double> KI = Tunable.of(0.0, "drive.pos.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.2, "drive.pos.kd");
+        public static final Tunable<Double> KD = Tunable.of(0.25, "drive.pos.kd");
 
         public static PIDConstants consts()
         {
@@ -99,9 +99,23 @@ public class DriveConstants
         public static PIDConstants consts()
         {
             return new PIDConstants(
-                KP.get(), 
+                KP.get(),  
                 KI.get(), 
                 KD.get()
+            );
+        }
+
+        
+        public static final Tunable<Double> KAutoP = Tunable.of(3.5, "drive.auto.theta.kp");
+        public static final Tunable<Double> KAutoI = Tunable.of(0.0, "drive.auto.theta.ki");
+        public static final Tunable<Double> KAutoD = Tunable.of(0.22, "drive.auto.theta.kd");
+
+        public static PIDConstants autoconsts()
+        {
+            return new PIDConstants(
+                KAutoP.get(), 
+                KAutoI.get(), 
+                KAutoD.get()
             );
         }
     }

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 import org.team555.animation2.AllianceAnimation;
@@ -479,9 +480,9 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
 
         tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
-        for(String name : Trajectories.getAllTests())
+        for(CommandBase testTraj : Trajectories.getAllTests().values())
         {
-            tab.add(drivetrain.commands.trajectory(drivetrain.commands.autoBuilder(HashMaps.of()), name));
+            tab.add(testTraj);
         }
     }
 }
