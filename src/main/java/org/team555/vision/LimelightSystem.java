@@ -72,10 +72,6 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void always() 
     {
-        if(target == DetectionType.DEFAULT)
-        {
-            setPipelineTo(getDefaultInternal());
-        }
     }
 
     @Override
@@ -138,7 +134,11 @@ public class LimelightSystem extends VisionSystem
     {
         target = type;
 
-        if(type == DetectionType.DEFAULT) return;
+        if(type == DetectionType.DEFAULT) 
+        {
+            setPipelineTo(getDefaultInternal());
+            return;
+        }
 
         setPipelineTo(type);
     }
@@ -203,6 +203,6 @@ public class LimelightSystem extends VisionSystem
     @Override
     public void reset() 
     {
-        ChargedUp.vision.setTargetType(DetectionType.DEFAULT);
+        setTargetType(DetectionType.DEFAULT);
     }
 }
