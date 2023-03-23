@@ -483,6 +483,8 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
 
         tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
+
+        tab.add(Commands555.alignWithAprilTagForScore().withName("Align to april tag!!!!"));
         
         for(CommandBase testTraj : Trajectories.getAllTests().values())
         {

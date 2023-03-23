@@ -70,9 +70,7 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public void always() 
-    {
-    }
+    public void always() {}
 
     @Override
     public void updateEstimatedPose(Pose2d prev) {}

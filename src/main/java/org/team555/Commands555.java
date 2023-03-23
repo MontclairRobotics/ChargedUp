@@ -656,40 +656,54 @@ public class Commands555
      */
     public static CommandBase alignWithAprilTagForScore()
     {   
-        final double TOLERANCE = 0.1;
+        final double TOLERANCE = 0.05;
         final double SPEED_MAX = 1;
+        
+        Debouncer hasTargetDebounce = new Debouncer(0.1, DebounceType.kFalling);
 
         return waitForPipe(() -> DetectionType.APRIL_TAG).andThen
         (
-            ifHasTarget(new CommandBase() 
-            {
-                Debouncer hasEndedDebounce = new Debouncer(0.1, DebounceType.kRising);
-                boolean hasEnded;
+            Commands.runOnce(() -> hasTargetDebounce.calculate(vision.hasObject()))
+                .andThen(
+                    new CommandBase() 
+                    {
+                        Debouncer hasEndedDebounce = new Debouncer(0.1, DebounceType.kRising);
+                        boolean hasEnded;
 
-                public void initialize() 
-                {
-                    hasEndedDebounce.calculate(false);
-                    hasEnded = false;
-                }
+                        @Override
+                        public void initialize() 
+                        {
+                            hasEndedDebounce.calculate(false);
+                            hasEnded = false;
+                        }
 
-                public boolean isFinished() 
-                {
-                    return hasEnded;
-                }
+                        @Override
+                        public boolean isFinished() 
+                        {
+                            return hasEnded;
+                        }
 
-                public void execute()
-                {
-                    Translation2d curpose = vision.getAprilTagRobotSpace();
-                    Translation2d diff = DriveConstants.DESIRED_APRIL_TAG_SCORE_POSE.minus(curpose);
+                        @Override
+                        public void execute()
+                        {
+                            Translation2d curpose = vision.getAprilTagRobotSpace();
+                            Translation2d diff = DriveConstants.DESIRED_APRIL_TAG_SCORE_POSE.minus(curpose);
 
-                    hasEnded = hasEndedDebounce.calculate(diff.getNorm() < TOLERANCE);
+                            hasEnded = hasEndedDebounce.calculate(diff.getNorm() < TOLERANCE);
 
-                    double vx = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getX(), -SPEED_MAX, SPEED_MAX), 0.1);
-                    double vy = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getY(), -SPEED_MAX, SPEED_MAX), 0.1);
+                            double vx = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getX(), -SPEED_MAX, SPEED_MAX), 0.2);
+                            double vy = Math555.atLeast(Math555.clamp(SPEED_MAX * diff.getY(), -SPEED_MAX, SPEED_MAX), 0.2);
 
-                    drivetrain.setChassisSpeeds(0, vx, vy);
-                }
-            })
+                            drivetrain.setChassisSpeeds(0, vx, vy);
+                        }
+
+                        @Override
+                        public void end(boolean interrupt)
+                        {
+                            Commands.runOnce(() -> vision.setTargetType(DetectionType.DEFAULT));
+                        }
+                    }
+                ).until(() -> hasTargetDebounce.calculate(vision.hasObject()))
         );
     }
 
