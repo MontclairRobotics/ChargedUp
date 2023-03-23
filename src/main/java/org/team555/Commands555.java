@@ -357,7 +357,8 @@ public class Commands555
             log("[PICK UP] elevator stinger returned.."),
 
             // Suck it
-            moveToObjectSideways(() -> DetectionType.CONE),
+            // moveToObjectSideways(() -> DetectionType.CONE), //TODO: alignment here?
+
             log("[PICK UP] object sideways"),
             shwooperSuck(),
             drivetrain.commands.driveForTime(2,0,0.5,0)
@@ -671,12 +672,11 @@ public class Commands555
         final double DEADBAND = 1;
 
         return logged(ifHasTarget(
-            Commands.race(
-                Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
-                    .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND),
-                waitSeconds(3))
-            .andThen(drivetrain.commands.driveForTime(1.3, 0, 0.2, 0))
-            .withName("MOVE FORWARD TO TAPE")
+            Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
+                .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND)
+                .withTimeout(3)
+                .andThen(drivetrain.commands.driveForTime(1.3/2, 0, 0.2*2, 0))
+                .withName("MOVE FORWARD TO TAPE")
         ));
     }
 
@@ -770,8 +770,8 @@ public class Commands555
                 case "1": return scoreMidPeg(true); 
                 case "3": return scoreMidPeg(true); 
                 case "2": return scoreMidPeg(true); 
-                case "4": return scoreMidShelf(false);
-                case "5": return scoreMidShelf(false);
+                case "4": return scoreMidShelf(true);
+                case "5": return scoreMidShelf(true);
 
                 case "B": return balance();
 
