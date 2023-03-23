@@ -651,16 +651,6 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
         /**
-         * Create a full autonomous command using the given path planner supplier.
-         * @param trajectory The trajectory supplier
-         * @param markers The autonomous markers
-         * @return The command
-         */
-        public CommandBase trajectory(SwerveAutoBuilder autoBuilder, Supplier<PathPlannerTrajectory> trajectory)
-        {
-            return new ProxyCommand(() -> autoBuilder.followPathWithEvents(trajectory.get()));
-        }
-        /**
          * Create a full autonomous command using the given path planner trajectory.
          * @param trajectory The trajectory
          * @param markers The autonomous markers
@@ -668,7 +658,7 @@ public class Drivetrain extends ManagerSubsystemBase
          */
         public CommandBase trajectory(SwerveAutoBuilder autoBuilder, PathPlannerTrajectory trajectory)
         {
-            return trajectory(autoBuilder, () -> trajectory);
+            return autoBuilder.followPathWithEvents(trajectory);
         }
         /**
          * Create a full autonomous command using the given path planner trajectory name.
@@ -677,7 +667,7 @@ public class Drivetrain extends ManagerSubsystemBase
          */
         public CommandBase trajectory(SwerveAutoBuilder autoBuilder, String trajectoryName)
         {
-            return trajectory(autoBuilder, () -> Trajectories.get(trajectoryName, Auto.constraints()))
+            return trajectory(autoBuilder, Trajectories.get(trajectoryName, Auto.constraints()))
                 .withName("Trajectory " + trajectoryName);
         }
         

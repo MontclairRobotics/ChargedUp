@@ -11,8 +11,11 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.util.Color;
@@ -40,10 +43,14 @@ import static org.team555.ChargedUp.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.PathPlannerTrajectory.EventMarker;
 import com.pathplanner.lib.auto.SwerveAutoBuilder;
 
 public class Commands555 
@@ -66,6 +73,14 @@ public class Commands555
     public static CommandBase logged(Command cmd) 
     {
         return logged(cmd, cmd.getName());
+    }
+
+    public static CommandBase timed(Command cmd)
+    {
+        double[] time = {0};
+        return cmd
+            .beforeStarting(() -> time[0] = Timer.getFPGATimestamp())
+            .andThen(log(() -> "Finished " + cmd.getName() + " in " + (Timer.getFPGATimestamp() - time[0]) + " seconds!"));
     }
 
     /////////////////////// LED COMMANDS /////////////////////////
@@ -687,7 +702,7 @@ public class Commands555
         
         Debouncer hasTargetDebounce = new Debouncer(0.1, DebounceType.kFalling);
 
-        return logged(waitForPipe(() -> DetectionType.APRIL_TAG).andThen
+        return logged(logged(waitForPipe(() -> DetectionType.APRIL_TAG).withName("Wait for april tag")).andThen
         (
             Commands.runOnce(() -> hasTargetDebounce.calculate(!vision.hasObject()))
                 .andThen(
@@ -742,7 +757,8 @@ public class Commands555
     {
         return Commands.runOnce(() -> vision.setTargetType(type.get()))
             .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
-            .andThen(waitSeconds(0.2)); //TODO: this is very dumb
+            .andThen(waitSeconds(0.2)) //TODO: this is very dumb
+            .unless(RobotBase::isSimulation); 
     }
 
     
@@ -818,7 +834,7 @@ public class Commands555
      * 
      * @return The command, with none() inserted into places in the sequence where an error occured.
      */
-    public static CommandBase buildAuto(String[] list)
+    public static CommandBase buildAuto(String name, String[] list)
     {
         CommandBase[] commandList = new CommandBase[list.length];
         ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
@@ -885,8 +901,9 @@ public class Commands555
 
         Logging.info("[AUTO BUILD]" + debugAuto);
 
-        return Commands.runOnce(gyroscope::setSouth)
-            .andThen(Commands.sequence(commandList));
+        return timed(Commands.runOnce(gyroscope::setSouth)
+            .andThen(Commands.sequence(commandList))
+            .withName("Auto " + name));
     }
     
     /**
@@ -905,7 +922,7 @@ public class Commands555
         }
         Logging.info(Arrays.toString(parts));
 
-        return buildAuto(parts);
+        return buildAuto(p, parts);
     }
 
     public static CommandBase backupAuto()
