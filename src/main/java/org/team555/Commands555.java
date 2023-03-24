@@ -365,10 +365,10 @@ public class Commands555
                 .until(shwooper::manipulatedObject),
             waitSeconds(0.3),
             stopShwooper(),
-            log("[PICK UP] shwooper stop"),
+            log("[PICK UP] shwooper stop")
 
             // Grab it
-            closeGrabber()
+            // closeGrabber()
 
             // Prepare to leave
             // elevatorToMid(),
@@ -425,13 +425,14 @@ public class Commands555
             // closeGrabber(),
             // waitSeconds(0.3),
             shwooperSpit(),
-            // waitSeconds(0.3),
-            // openGrabber(),
+            waitSeconds(0.3),
+            openGrabber(),
 
             //wait until the cube has shot out
             waitUntil(shwooper::manipulatedObject)
                 .andThen(led::celebrate)
-                .withTimeout(1),
+                .withTimeout(1.2),
+            waitSeconds(0.2),
             stopShwooper()
 
         ).withName("deIntake score");
