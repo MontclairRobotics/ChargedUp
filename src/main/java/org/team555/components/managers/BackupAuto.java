@@ -52,20 +52,19 @@ public class BackupAuto extends ManagerBase
         chooser.setDefaultOption("Score Cone", "Score Mid Peg");
         chooser.addOption("Score Cube", "Score Mid Shelf");
 
-        chooser.addOption("[WALL] Mobility", "backup.1A");
-        // chooser.addOption("[WALL] Mobility + Score Cube", "backup.1A4"); //BAD
-        // chooser.addOption("[WALL] Mobility + Score Cube + Balance", "backup.1A4B"); //BAD
-        chooser.addOption("[WALL] Mobility + Balance", "backup.1AB");
-        chooser.addOption("[WALL] Balance", "backup.1B");
-
-
-        chooser.addOption("[JUDGE] Mobility", "backup.3C");
-        // chooser.addOption("[JUDGE] Mobility + Score Cube", "backup.3C5");
-        // chooser.addOption("[JUDGE] Mobility + Score Cube + Balance", "backup.3C5B");
-        chooser.addOption("[JUDGE] Mobility + Balance", "backup.3CB");
-        chooser.addOption("[JUDGE] Balance", "backup.3B");
-
+        chooser.addOption("[COMMUNITY] Mobility", "backup.1A");
+        chooser.addOption("[COMMUNITY] Mobility + Score Cube", "backup.1A4"); 
+        chooser.addOption("[COMMUNITY] Mobility + Score Cube + Balance", "backup.1A4B"); 
+        chooser.addOption("[COMMUNITY] Mobility + Balance", "backup.1AB");
+        chooser.addOption("[COMMUNITY] Balance", "backup.1B");
+        
         chooser.addOption("[MIDDLE] Balance", "backup.2B");
+
+        chooser.addOption("[WALL] Mobility", "backup.3C");
+        chooser.addOption("[WALL] Mobility + Score Cube", "backup.3C5");
+        chooser.addOption("[WALL] Mobility + Score Cube + Balance", "backup.3C5B"); 
+        chooser.addOption("[WALL] Mobility + Balance", "backup.3CB");
+        chooser.addOption("[WALL] Balance", "backup.3B");
 
         refresh = autoTab.add("Refresh", false)
             .withWidget(BuiltInWidgets.kToggleButton)
@@ -90,6 +89,7 @@ public class BackupAuto extends ManagerBase
         if (refresh.getBoolean(false))
         {
             updateCommand();
+            refresh.setBoolean(false);
         }
     }
 
@@ -97,27 +97,28 @@ public class BackupAuto extends ManagerBase
     {
         String selected = chooser.getSelected();
         if (selected == null) return;
-
-        String str = command == null ? "NOTHING YET!!" : command.getName();
-        commandView.setString(str);
         
         if (selected.equals("Score Mid Peg"))
         {
             command = scoreMidPeg(true, true);
+            commandView.setString(command.getName());
+            drawnTrajectory.setPose(new Pose2d());
             return;
         }   
         if (selected.equals("Score Mid Shelf")) 
         {
             command = scoreMidShelf(true, true);
+            commandView.setString(command.getName());
+            drawnTrajectory.setPose(new Pose2d());
             return;
         }
 
         PathPlannerTrajectory trajectory = Trajectories.get(selected, Constants.Auto.constraints());
        
         HashMap<String, Command> markers = HashMaps.of(
-            "Score Cube", scoreMidShelf(false, true),
+            "Score Cube", scoreCubeLow(), //TODO: scoreLow? scoreMid?
             "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
-            "Intake On", stopShwooper(),
+            "Intake On",shwooperSuck(),
             "Balance", balance()
         );
         SwerveAutoBuilder builder = ChargedUp.drivetrain.commands.autoBuilder(markers);
@@ -131,6 +132,8 @@ public class BackupAuto extends ManagerBase
         drawnTrajectory.setTrajectory(drawing);
 
         command = scoreMidPeg(true, true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
+        // String str = command == null ? "NOTHING YET!!" : command.getName();
+        commandView.setString(command.getName());
     }
 
     public Command get() 

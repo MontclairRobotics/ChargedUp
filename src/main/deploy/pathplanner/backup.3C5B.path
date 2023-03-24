@@ -132,11 +132,11 @@
         "y": 2.082115511093468
       },
       "nextControl": {
-        "x": 2.207212384430123,
-        "y": 2.082115511093468
+        "x": 2.2668246350414853,
+        "y": 2.2283164421814625
       },
       "holonomicAngle": 0.0,
-      "isReversal": true,
+      "isReversal": false,
       "velOverride": null,
       "isLocked": false,
       "isStopPoint": false,
@@ -165,19 +165,21 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "parallel",
+        "names": [
+          "Balance"
+        ],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
     }
   ],
   "maxVelocity": null,
-  "maxAcceleration": 1.2,
+  "maxAcceleration": 1.5,
   "isReversed": null,
   "markers": [
     {
-      "position": 4.0,
+      "position": 3.9,
       "names": [
         "Score Cube"
       ]
