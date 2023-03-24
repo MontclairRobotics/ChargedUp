@@ -46,6 +46,8 @@ public class Auto extends ManagerBase
     private final GenericEntry pointless;
     private final GenericEntry field;
     private final GenericEntry autoStringEntry;
+    private final GenericEntry scoresLowForStartEntry;
+
     private String autoString = "";
     private Pose2d startPose = new Pose2d();
     private final FieldObject2d start;
@@ -75,18 +77,26 @@ public class Auto extends ManagerBase
             .withSize(2, 1).getEntry();
         pointless = autoTab.add("Pointless", false)
             .withWidget(BuiltInWidgets.kToggleButton)
-            .withPosition(9, 0)
-            .withSize(1, 1).getEntry();
+            .withPosition(8, 0)
+            .withSize(2, 1).getEntry();
 
         autoTab
             .addString("Recent Log", Logging::mostRecentLog)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(3, 1)
             .withPosition(0, 4);
+
+        
         field = autoStringEntry = autoTab.add("Command String", autoString)
             .withWidget(BuiltInWidgets.kTextView)
-            .withPosition(9, 1)
-            .withSize(1, 1)
+            .withPosition(8, 1)
+            .withSize(2, 1)
+            .getEntry();
+        scoresLowForStartEntry = autoTab
+            .add("First Score is Cone Mid", false)
+            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withPosition(8, 2)
+            .withSize(2, 1)
             .getEntry();
 
         // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);
@@ -129,6 +139,7 @@ public class Auto extends ManagerBase
         start.setPose(startPose);
 
         command = Commands555.buildAuto(str);
+        scoresLowForStartEntry.setBoolean(Commands555.firstScoreIsMid(str));
 
         if(command != null)
         {
