@@ -470,7 +470,7 @@ public class Commands555
 
             either(
                 elevatorStingerReturn(),
-                retractStinger(),
+                retractStinger().deadlineWith(elevatorToCubeMid().unless(elevator::isWithinGrabberBuffer)),
                 () -> resetAfterScore
             ),
             
