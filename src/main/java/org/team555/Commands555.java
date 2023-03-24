@@ -361,7 +361,7 @@ public class Commands555
 
             log("[PICK UP] object sideways"),
             shwooperSuck(),
-            drivetrain.commands.driveForTime(2,0,0.5,0)
+            drivetrain.commands.driveForTime(1,0,1,0)
                 .until(shwooper::manipulatedObject),
             waitSeconds(0.3),
             stopShwooper(),
@@ -422,11 +422,11 @@ public class Commands555
     {
         return Commands.sequence(
             //close grabber to position the cube closer to the intake
-            closeGrabber(),
-            waitSeconds(0.3),
+            // closeGrabber(),
+            // waitSeconds(0.3),
             shwooperSpit(),
-            waitSeconds(0.3),
-            openGrabber(),
+            // waitSeconds(0.3),
+            // openGrabber(),
 
             //wait until the cube has shot out
             waitUntil(shwooper::manipulatedObject)
@@ -774,7 +774,7 @@ public class Commands555
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static CommandBase fromStringToCommand(String str, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
+    public static CommandBase fromStringToCommand(String[] list, int index, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
     {
         // Single actions
         if(str.length() == 1)
@@ -784,11 +784,12 @@ public class Commands555
                 case "A": return pickup();
                 case "C": return pickup();
 
-                case "1": return scoreMidPeg(true, false); 
-                case "3": return scoreMidPeg(true, false); 
-                case "2": return scoreMidPeg(true, false); 
-                case "4": return scoreMidShelf(true, false);
-                case "5": return scoreMidShelf(true, false);
+                case "1": return scoreCubeLow(); //scoreMidPeg(true, false); 
+                case "3": return scoreCubeLow(); //scoreMidPeg(true, false); 
+                case "2": return scoreCubeLow(); //scoreMidPeg(true, false); 
+
+                case "4": return scoreCubeLow();
+                case "5": return scoreCubeLow();
 
                 case "B": return balance();
 
