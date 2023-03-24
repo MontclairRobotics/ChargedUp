@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.85,
-        "y": 0.45
+        "x": 1.8358103941167516,
+        "y": 0.500318662796404
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.223735641915728,
-        "y": 0.4970284235002055
+        "x": 2.209546036032479,
+        "y": 0.5473470862966093
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -127,13 +127,13 @@
     {
       "position": 1.796502130681818,
       "names": [
-        "event"
+        "Intake On"
       ]
     },
     {
       "position": 2.426140802556819,
       "names": [
-        "event"
+        "Intake Off"
       ]
     }
   ]
