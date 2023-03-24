@@ -113,16 +113,17 @@ public class BackupAuto extends ManagerBase
         }
 
         PathPlannerTrajectory trajectory = Trajectories.get(selected, Constants.Auto.constraints());
-        Trajectory drawing = trajectory;
+       
         HashMap<String, Command> markers = HashMaps.of(
-            "Score Cube", scoreMidShelf(false),
+            "Score Cube", scoreMidShelf(false, true),
             "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
             "Intake On", stopShwooper(),
             "Balance", balance()
         );
         SwerveAutoBuilder builder = ChargedUp.drivetrain.commands.autoBuilder(markers);
         
-        
+        //handle drawing trajectory
+        Trajectory drawing = trajectory;
         if (DriverStation.getAlliance() == Alliance.Red)
         {
             drawing = drawing.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
