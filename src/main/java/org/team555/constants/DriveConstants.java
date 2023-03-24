@@ -106,9 +106,9 @@ public class DriveConstants
         }
 
         
-        public static final Tunable<Double> KAutoP = Tunable.of(3.5, "drive.auto.theta.kp");
-        public static final Tunable<Double> KAutoI = Tunable.of(0.0, "drive.auto.theta.ki");
-        public static final Tunable<Double> KAutoD = Tunable.of(0.22, "drive.auto.theta.kd");
+        public static final Tunable<Double> KAutoP = Tunable.of(5, "drive.auto.theta.kp"); //3.5
+        public static final Tunable<Double> KAutoI = Tunable.of(0.02, "drive.auto.theta.ki");
+        public static final Tunable<Double> KAutoD = Tunable.of(0.4, "drive.auto.theta.kd"); //0.22
 
         public static PIDConstants autoconsts()
         {
