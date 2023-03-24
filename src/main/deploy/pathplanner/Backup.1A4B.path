@@ -7,8 +7,33 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.865377561477601,
-        "y": 4.966109206279085
+        "x": 1.8653632193569905,
+        "y": 4.965068249761297
+      },
+      "holonomicAngle": 180.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": true,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 4.383626898086045,
+        "y": 4.742598121752233
+      },
+      "prevControl": {
+        "x": 3.9100280794539426,
+        "y": 4.725244373986993
+      },
+      "nextControl": {
+        "x": 5.058580966947633,
+        "y": 4.767329988056243
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -24,18 +49,18 @@
     },
     {
       "anchorPoint": {
-        "x": 6.3,
-        "y": 4.6
+        "x": 5.453130615516874,
+        "y": 4.814982049845285
       },
       "prevControl": {
-        "x": 7.07478787063909,
-        "y": 4.554828838142659
+        "x": 4.94059754228034,
+        "y": 4.7792895140198635
       },
       "nextControl": {
-        "x": 5.754073532184327,
-        "y": 4.631828238120928
+        "x": 5.75767977398585,
+        "y": 4.836190694354045
       },
-      "holonomicAngle": 0,
+      "holonomicAngle": 0.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -49,16 +74,66 @@
     },
     {
       "anchorPoint": {
-        "x": 2.0,
+        "x": 6.789339096934488,
+        "y": 4.627513760290107
+      },
+      "prevControl": {
+        "x": 7.559859594301438,
+        "y": 4.688016951391975
+      },
+      "nextControl": {
+        "x": 6.070981713971097,
+        "y": 4.571106547024016
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 3.05,
+        "y": 4.65
+      },
+      "prevControl": {
+        "x": 3.1066201611175686,
+        "y": 4.665947202833252
+      },
+      "nextControl": {
+        "x": 2.993379838882431,
+        "y": 4.634052797166749
+      },
+      "holonomicAngle": 90.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "stopEvent": {
+        "names": [],
+        "executionBehavior": "parallel",
+        "waitBehavior": "none",
+        "waitTime": 0
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.87,
         "y": 4.43
       },
       "prevControl": {
-        "x": 2.4888697647574913,
-        "y": 4.58802044608495
+        "x": 2.3588416354615336,
+        "y": 4.851510318687199
       },
       "nextControl": {
-        "x": 1.5708044701603034,
-        "y": 4.291268431856122
+        "x": 1.3811583645384673,
+        "y": 4.008489681312802
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -74,15 +149,15 @@
     },
     {
       "anchorPoint": {
-        "x": 3.8593883993717446,
-        "y": 3.287623090166628
+        "x": 3.86,
+        "y": 3.29
       },
       "prevControl": {
-        "x": 1.9861919897502305,
-        "y": 3.284960337036877
+        "x": 2.5058485570855358,
+        "y": 3.29
       },
       "nextControl": null,
-      "holonomicAngle": 180.0,
+      "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -95,6 +170,9 @@
       }
     }
   ],
+  "maxVelocity": null,
+  "maxAcceleration": 1.2,
+  "isReversed": null,
   "markers": [
     {
       "position": 0.6247458718039773,
@@ -112,18 +190,6 @@
       "position": 1.821882768110795,
       "names": [
         "Extend"
-      ]
-    },
-    {
-      "position": 2.4768676757812482,
-      "names": [
-        "Retract"
-      ]
-    },
-    {
-      "position": 0.13861416903409113,
-      "names": [
-        "Retract"
       ]
     }
   ]
