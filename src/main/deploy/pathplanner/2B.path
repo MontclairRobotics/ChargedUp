@@ -16,7 +16,9 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
+        "names": [
+          "Retract"
+        ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
@@ -73,12 +75,5 @@
   "maxVelocity": 1.0,
   "maxAcceleration": null,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.20280539772727274,
-      "names": [
-        "Retract"
-      ]
-    }
-  ]
+  "markers": []
 }

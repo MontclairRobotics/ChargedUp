@@ -16,8 +16,10 @@
       "isLocked": false,
       "isStopPoint": false,
       "stopEvent": {
-        "names": [],
-        "executionBehavior": "sequential",
+        "names": [
+          "Retract"
+        ],
+        "executionBehavior": "parallel",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -73,12 +75,5 @@
   "maxVelocity": 3.0,
   "maxAcceleration": 1.2,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.19563210227272743,
-      "names": [
-        "Retract"
-      ]
-    }
-  ]
+  "markers": []
 }

@@ -103,19 +103,19 @@ public class BackupAuto extends ManagerBase
         
         if (selected.equals("Score Mid Peg"))
         {
-            command = scoreMidPeg(true);
+            command = scoreMidPeg(true, true);
             return;
         }   
         if (selected.equals("Score Mid Shelf")) 
         {
-            command = scoreMidShelf(true);
+            command = scoreMidShelf(true, true);
             return;
         }
 
         PathPlannerTrajectory trajectory = Trajectories.get(selected, Constants.Auto.constraints());
         Trajectory drawing = trajectory;
         HashMap<String, Command> markers = HashMaps.of(
-            "Score Cube", scoreMidShelf(false),
+            "Score Cube", scoreMidShelf(false, true),
             "Pick Up", pickup(),
             "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
             "Balance", balance()
@@ -129,7 +129,7 @@ public class BackupAuto extends ManagerBase
         }
         drawnTrajectory.setTrajectory(drawing);
 
-        command = scoreMidPeg(true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
+        command = scoreMidPeg(true, true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
     }
 
     public Command get() 
