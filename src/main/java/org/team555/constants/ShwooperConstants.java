@@ -5,7 +5,7 @@ public class ShwooperConstants
     public static final boolean SOLENOID_DEFAULT_STATE = false;
 
     public static final double SUCK_SPEED = 0.25;
-    public static final double SPIT_SPEED = -0.75;
+    public static final double SPIT_SPEED = -1;
 
     public static final double CUBE_CURRENT = 6.5;
 
