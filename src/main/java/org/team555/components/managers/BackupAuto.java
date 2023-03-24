@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class BackupAuto extends ManagerBase
 {
     public static final ShuffleboardTab autoTab = Shuffleboard.getTab("Backup Auto");
-    public ShuffleboardTab getAutoTab() {return autoTab;}
+    public static ShuffleboardTab getAutoTab() {return autoTab;}
 
     private final GenericEntry refresh;
     private final GenericEntry commandView;
@@ -53,15 +53,15 @@ public class BackupAuto extends ManagerBase
         chooser.addOption("Score Cube", "Score Mid Shelf");
 
         chooser.addOption("[WALL] Mobility", "backup.1A");
-        chooser.addOption("[WALL] Mobility + Score Cube", "backup.1A4");
-        chooser.addOption("[WALL] Mobility + Score Cube + Balance", "backup.1A4B");
+        // chooser.addOption("[WALL] Mobility + Score Cube", "backup.1A4"); //BAD
+        // chooser.addOption("[WALL] Mobility + Score Cube + Balance", "backup.1A4B"); //BAD
         chooser.addOption("[WALL] Mobility + Balance", "backup.1AB");
         chooser.addOption("[WALL] Balance", "backup.1B");
 
 
         chooser.addOption("[JUDGE] Mobility", "backup.3C");
-        chooser.addOption("[JUDGE] Mobility + Score Cube", "backup.3C5");
-        chooser.addOption("[JUDGE] Mobility + Score Cube + Balance", "backup.3C5B");
+        // chooser.addOption("[JUDGE] Mobility + Score Cube", "backup.3C5");
+        // chooser.addOption("[JUDGE] Mobility + Score Cube + Balance", "backup.3C5B");
         chooser.addOption("[JUDGE] Mobility + Balance", "backup.3CB");
         chooser.addOption("[JUDGE] Balance", "backup.3B");
 
@@ -113,16 +113,17 @@ public class BackupAuto extends ManagerBase
         }
 
         PathPlannerTrajectory trajectory = Trajectories.get(selected, Constants.Auto.constraints());
-        Trajectory drawing = trajectory;
+       
         HashMap<String, Command> markers = HashMaps.of(
             "Score Cube", scoreMidShelf(false, true),
-            "Pick Up", pickup(),
             "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
+            "Intake On", stopShwooper(),
             "Balance", balance()
         );
         SwerveAutoBuilder builder = ChargedUp.drivetrain.commands.autoBuilder(markers);
         
-        
+        //handle drawing trajectory
+        Trajectory drawing = trajectory;
         if (DriverStation.getAlliance() == Alliance.Red)
         {
             drawing = drawing.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
