@@ -79,6 +79,7 @@ public class Elevator extends ManagerSubsystemBase
     
     public boolean isWithinGrabberBuffer()
     {
+        System.out.println(getHeightNormalized());
         return getHeightNormalized() < GRABBER_BUFFER;
     }
 

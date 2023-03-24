@@ -21,7 +21,7 @@ public class ElevatorConstants
     public static final boolean INVERTED = true;
     // public static final boolean ENCODER_INVERTED = true;
 
-    public static final double BUFFER_UP = 0.2;
+    public static final double BUFFER_UP = 0.1;
     public static final double BUFFER_DOWN = 0.25;
     public static final double GRABBER_BUFFER = 0.4;
 
