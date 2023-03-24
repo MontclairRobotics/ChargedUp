@@ -78,6 +78,8 @@ public class Drivetrain extends ManagerSubsystemBase
 
     private int speedIndex = SPEEDS.length - 1;
     private Rotation2d currentStraightAngle;
+
+    private boolean isXMode = false;
     
     // Simulation information //
     private static class SimulationData
@@ -249,6 +251,11 @@ public class Drivetrain extends ManagerSubsystemBase
         // double turnRL = thetaInputRateLimiter.calculate(turn.getX());
         // double xRL    = xInputRateLimiter.calculate(drive.getX());
         // double yRL    = yInputRateLimiter.calculate(drive.getY());
+
+        if (turn.getX() != 0 || drive.getX() != 0 || drive.getY() != 0)
+        {
+            disableXMode();
+        }
 
         setChassisSpeeds(getSpeedsFromMode(
             turn.getX()     / SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
@@ -458,6 +465,15 @@ public class Drivetrain extends ManagerSubsystemBase
         double xRL = xInputRateLimiter.calculate(xPID.getSpeed());
         double yRL = yInputRateLimiter.calculate(yPID.getSpeed());
         double thetaRL = thetaInputRateLimiter.calculate(thetaPID.getSpeed());
+
+        if (isXMode && xRL == 0 && yRL == 0 && thetaRL == 0)
+        {
+            modules[0].set(0, 1*Math.PI/4);
+            modules[1].set(0, 3*Math.PI/4);
+            modules[2].set(0, 5*Math.PI/4);
+            modules[3].set(0, 7*Math.PI/4);
+            return;            
+        }
         
         // Construct chassis speeds
         ChassisSpeeds chassisSpeeds = new ChassisSpeeds(
@@ -569,10 +585,20 @@ public class Drivetrain extends ManagerSubsystemBase
         return getRobotPose().getY() + ChargedUp.vision.getObjectAX() * 1; 
     }
 
+    public void enableXMode()
+    {
+        isXMode = true;
+    }
+    public void disableXMode()
+    {
+        isXMode = false;
+    }
+
     @Override
     public void reset() 
     {
         stopStraightPidding();
+        disableXMode();
     }
 
     public final DriveCommands commands = this.new DriveCommands();

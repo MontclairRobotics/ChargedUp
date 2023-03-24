@@ -589,6 +589,7 @@ public class Commands555
             public void end(boolean interrupted) 
             {
                 drivetrain.enableFieldRelative();
+                drivetrain.enableXMode();
                 Logging.info("[Balance] over");
             }
         }

@@ -179,6 +179,12 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
+    public void initialize() 
+    {
+        setTargetType(DetectionType.DEFAULT);
+    }
+
+    @Override
     public void resetPose(Pose2d pose) 
     {}
     
