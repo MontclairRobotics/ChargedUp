@@ -818,7 +818,7 @@ public class Commands555
 
             return Commands.sequence(
                 log("started Drive"),
-                Commands.race(cmd,waitSeconds(1)),
+                Commands.race(cmd, waitSeconds(1)),
                 log("ended driving path")
             ).withName(str);
         }
@@ -867,7 +867,7 @@ public class Commands555
                 return null;
             }
 
-            debugAuto = debugAuto + commandList[i].getName() + ",";
+            debugAuto = debugAuto + commandList[i].getName() + ", ";
         }
 
         // Calculate the sum trajectory

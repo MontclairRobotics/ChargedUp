@@ -33,6 +33,7 @@ import org.team555.animation2.ZoomAnimation;
 import org.team555.animation2.api.Animation;
 import org.team555.animation2.api.ConditionalAnimation;
 import org.team555.components.managers.Auto;
+import org.team555.components.managers.BackupAuto;
 import org.team555.components.managers.GyroscopeNavX;
 import org.team555.components.managers.LED;
 import org.team555.components.managers.MiscData;
@@ -159,7 +160,7 @@ public class ChargedUp extends RobotContainer
     public void initialize() 
     {
         field.setRobotPose(2, 2, Rotation2d.fromDegrees(0));
-        Shuffleboard.getTab("Auto").add(field).withSize(7, 4).withPosition(2, 0);
+        Shuffleboard.getTab("Backup Auto").add(field).withSize(7, 4).withPosition(3, 0);
 
         pneu.enableCompressorDigital();
         CANSafety.monitor(pneu);
@@ -303,7 +304,7 @@ public class ChargedUp extends RobotContainer
     }
 
     // AUTO //
-    public static final Auto auto = new Auto();
+    public static final BackupAuto auto = new BackupAuto(); //TODO:
 
     @Override
     public Command getAuto() 
