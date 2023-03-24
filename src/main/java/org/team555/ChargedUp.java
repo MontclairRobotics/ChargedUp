@@ -160,7 +160,7 @@ public class ChargedUp extends RobotContainer
     public void initialize() 
     {
         field.setRobotPose(2, 2, Rotation2d.fromDegrees(0));
-        Shuffleboard.getTab("Auto").add(field).withSize(6, 4).withPosition(3, 0);
+        Shuffleboard.getTab("Auto").add(field).withSize(6, 4).withPosition(2, 0);
 
         pneu.enableCompressorDigital();
         CANSafety.monitor(pneu);

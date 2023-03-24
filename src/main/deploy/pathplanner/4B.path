@@ -73,12 +73,5 @@
   "maxVelocity": 3.0,
   "maxAcceleration": 2.0,
   "isReversed": null,
-  "markers": [
-    {
-      "position": 0.0,
-      "names": [
-        "Retract"
-      ]
-    }
-  ]
+  "markers": []
 }

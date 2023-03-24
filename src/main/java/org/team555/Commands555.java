@@ -767,6 +767,14 @@ public class Commands555
             .unless(RobotBase::isSimulation); 
     }
 
+    /**
+     * Check if the first score is mid for the given autonomous command
+     */
+    public static boolean firstScoreIsMid(String full)
+    {
+        return full.length() <= 3;
+    }
+
     
     /**
      * Get the action command which corresponds to the given auto sequence string segment. 
@@ -774,7 +782,7 @@ public class Commands555
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static CommandBase fromStringToCommand(String[] list, int index, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
+    public static CommandBase fromStringToCommand(String str, String full, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
     {
         // Single actions
         if(str.length() == 1)
@@ -784,9 +792,9 @@ public class Commands555
                 case "A": return pickup();
                 case "C": return pickup();
 
-                case "1": return scoreCubeLow(); //scoreMidPeg(true, false); 
-                case "3": return scoreCubeLow(); //scoreMidPeg(true, false); 
-                case "2": return scoreCubeLow(); //scoreMidPeg(true, false); 
+                case "1": return firstScoreIsMid(full) ? scoreMidPeg(true, full.length() == 1) : scoreCubeLow(); 
+                case "3": return firstScoreIsMid(full) ? scoreMidPeg(true, full.length() == 1) : scoreCubeLow(); 
+                case "2": return firstScoreIsMid(full) ? scoreMidPeg(true, full.length() == 1) : scoreCubeLow(); 
 
                 case "4": return scoreCubeLow();
                 case "5": return scoreCubeLow();
@@ -836,7 +844,7 @@ public class Commands555
      * 
      * @return The command, with none() inserted into places in the sequence where an error occured.
      */
-    public static CommandBase buildAuto(String name, String[] list)
+    public static CommandBase buildAuto(String full, String[] list)
     {
         CommandBase[] commandList = new CommandBase[list.length];
         ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
@@ -858,7 +866,7 @@ public class Commands555
         // Iterate all of the string segments
         for (int i = 0; i < list.length; i++)
         {
-            commandList[i] = fromStringToCommand(list[i], builder, allTrajectories);
+            commandList[i] = fromStringToCommand(list[i], full, builder, allTrajectories);
 
             // Error out here if necessary
             if(commandList[i] == null)
@@ -898,14 +906,21 @@ public class Commands555
         {
             trajectoryObject.setTrajectory(sumTrajectory);
         }
+
+        // Parallelize the first score
+        if(!firstScoreIsMid(full) && commandList.length > 1)
+        {
+            CommandBase first = commandList[0];
+            commandList[0] = Commands.none();
+            commandList[1] = commandList[1].alongWith(first);
+        }
         
         // Return the sum command (with a navx set-180)
-
         Logging.info("[AUTO BUILD]" + debugAuto);
 
         return timed(Commands.runOnce(gyroscope::setSouth)
             .andThen(Commands.sequence(commandList))
-            .withName("Auto " + name));
+            .withName("Auto " + full));
     }
     
     /**
@@ -914,9 +929,9 @@ public class Commands555
      * @return The command, with none() inserted into places in the sequence where an error occured,
      * or none() itself if parsing or lexing fails.
      */
-    public static CommandBase buildAuto(String p) 
+    public static CommandBase buildAuto(String full) 
     {
-        String[] parts = Auto.parse(p);
+        String[] parts = Auto.parse(full);
 
         if(parts == null) 
         {
@@ -924,7 +939,7 @@ public class Commands555
         }
         Logging.info(Arrays.toString(parts));
 
-        return buildAuto(p, parts);
+        return buildAuto(full, parts);
     }
 
     public static CommandBase backupAuto()
