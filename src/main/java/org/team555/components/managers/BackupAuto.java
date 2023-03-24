@@ -103,12 +103,12 @@ public class BackupAuto extends ManagerBase
         
         if (selected.equals("Score Mid Peg"))
         {
-            command = scoreMidPeg(true);
+            command = scoreMidPeg(true, true);
             return;
         }   
         if (selected.equals("Score Mid Shelf")) 
         {
-            command = scoreMidShelf(true);
+            command = scoreMidShelf(true, true);
             return;
         }
 
@@ -129,7 +129,7 @@ public class BackupAuto extends ManagerBase
         }
         drawnTrajectory.setTrajectory(drawing);
 
-        command = scoreMidPeg(true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
+        command = scoreMidPeg(true, true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
     }
 
     public Command get() 

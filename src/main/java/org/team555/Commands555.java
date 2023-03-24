@@ -442,9 +442,9 @@ public class Commands555
      * Moves stinger/elevator to the specfied score place and opens the grabber
      * Retracts the stinger and bring the elevator to mid
      */
-    public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type, boolean skipObjectAlignment)
+    public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type, boolean skipObjectAlignment, boolean resetAfterScore)
     {
-        return Commands.sequence(
+        return timed(Commands.sequence(
             log("[SCORE] Beginning score sequence . . ."),
             closeGrabber(),
 
@@ -460,43 +460,48 @@ public class Commands555
 
             //Drop grabber
             log("[SCORE] Dropping . . ."),
-            waitSeconds(0.9),
+            waitSeconds(0.45),
             openGrabber(), 
             runOnce(led::celebrate),
-            waitSeconds(0.7),
+            waitSeconds(0.1),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
-            elevatorStingerReturn(),
+
+            either(
+                elevatorStingerReturn(),
+                retractStinger(),
+                () -> resetAfterScore
+            ),
             
             log("[SCORE] Done!")
-        );
+        ));
     }
 
     /**
      * Equivalent to {@link #scoreFromHeightAndDynamicType(ScoreHeight, Supplier)} but for
      * known scoring types. Names command appropriately.
      */
-    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type, boolean skipObjectAlignment)
+    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type, boolean skipObjectAlignment, boolean resetAfterScore)
     {
-        return scoreFromHeightAndDynamicType(height, () -> type, skipObjectAlignment)
+        return scoreFromHeightAndDynamicType(height, () -> type, skipObjectAlignment, resetAfterScore)
             .withName("Score " + height.toString() + " " + type.toString());
     }
 
-    public static CommandBase scoreLowPeg(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG, skipObjectAlignment);}
-    public static CommandBase scoreLowShelf(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF, skipObjectAlignment);}
-    public static CommandBase scoreLow(boolean skipObjectAlignment)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment)
+    public static CommandBase scoreLowPeg(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
+    public static CommandBase scoreLowShelf(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
+    public static CommandBase scoreLow(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
         .withName("Score Low (General)");}
 
-    public static CommandBase scoreMidPeg(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG, skipObjectAlignment);}
-    public static CommandBase scoreMidShelf(boolean skipObjectAlignment)
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF, skipObjectAlignment);}
-    public static CommandBase scoreMid(boolean skipObjectAlignment)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment)
+    public static CommandBase scoreMidPeg(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
+    public static CommandBase scoreMidShelf(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
+    public static CommandBase scoreMid(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
         .withName("Score Mid (General)");}
 
     /**
@@ -779,11 +784,11 @@ public class Commands555
                 case "A": return pickup();
                 case "C": return pickup();
 
-                case "1": return scoreMidPeg(true); 
-                case "3": return scoreMidPeg(true); 
-                case "2": return scoreMidPeg(true); 
-                case "4": return scoreMidShelf(true);
-                case "5": return scoreMidShelf(true);
+                case "1": return scoreMidPeg(true, false); 
+                case "3": return scoreMidPeg(true, false); 
+                case "2": return scoreMidPeg(true, false); 
+                case "4": return scoreMidShelf(true, false);
+                case "5": return scoreMidShelf(true, false);
 
                 case "B": return balance();
 
@@ -814,13 +819,8 @@ public class Commands555
             {
                 cmd = autoBuilder.resetPose(nextTrajectory).andThen(cmd);
             }
-            if (str.equals("1A")) cmd = cmd.withTimeout(4.07);
 
-            return Commands.sequence(
-                log("started Drive"),
-                Commands.race(cmd, waitSeconds(1)),
-                log("ended driving path")
-            ).withName(str);
+            return cmd.withName(str);
         }
         // Error
         else 
@@ -937,7 +937,7 @@ public class Commands555
             }),
 
             log("STARTING THE AUTO!!"),
-            scoreMid(true),
+            scoreMid(true, false),
             log("SCORED!!!!!"),
             
             Commands.sequence(
