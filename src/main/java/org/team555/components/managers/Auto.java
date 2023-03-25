@@ -55,8 +55,8 @@ public class Auto extends ManagerBase
     public Auto()
     {
         chooseStart = new SendableChooser<String>();
-        chooseStart.setDefaultOption("Cone 3", "Cone 3"); //TODO: ask drive team the most logical way of naming these
-        chooseStart.addOption("Cone 4", "Cone 4");
+        chooseStart.setDefaultOption("Cone 2", "Cone 3"); //TODO: ask drive team the most logical way of naming these
+        chooseStart.addOption("Cone 3", "Cone 4");
         chooseStart.addOption("Cone 6", "Cone 6");
 
         autoTab.add("Starting Position", chooseStart)

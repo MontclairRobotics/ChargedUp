@@ -77,75 +77,17 @@
       "/Shuffleboard/Test Trajectories/Test Trajectory test.2m Line": "Command",
       "/Shuffleboard/Test Trajectories/Test Trajectory test.2m S Bend": "Command",
       "/Shuffleboard/Test Trajectories/Test Trajectory test.2m Square": "Command",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.Hershey's Kiss": "Command",
       "/Shuffleboard/Test Trajectories/Test Trajectory test.Nm Teardrop": "Command",
+      "/Shuffleboard/Test Trajectories/Test Trajectory test.Rapid Fire": "Command",
       "/Shuffleboard/The Field/Field": "Field2d"
     },
     "windows": {
-      "/FMSInfo": {
-        "window": {
-          "visible": true
-        }
-      },
       "/Shuffleboard/Auto/Field": {
         "Start": {
           "arrows": false,
           "style": "Box/Image"
         },
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Auto/Starting Position": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Celebrate": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Pickup": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Retract Stinger": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Return Elevator and Stinger": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Score MID SHELF": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Stinger Out": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/Trajectory test.Line": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/humanz": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Commands/sus": {
-        "window": {
-          "visible": true
-        }
-      },
-      "/Shuffleboard/Debug/Mechanism": {
         "window": {
           "visible": true
         }

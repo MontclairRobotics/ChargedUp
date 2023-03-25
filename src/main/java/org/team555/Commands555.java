@@ -505,6 +505,18 @@ public class Commands555
     {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
         .withName("Score Mid (General)");}
 
+    
+    public static CommandBase newBalance()
+    {
+        return Commands.run(() -> {
+            double velocity = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get();
+            velocity = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -velocity : velocity;
+
+            velocity *= Math.signum(gyroscope.getRoll());
+            drivetrain.setChassisSpeeds(0, velocity, 0);
+        }).until(() -> Math.abs(gyroscope.getRollRate()) > DriveConstants.CHARGER_SLOW_ENOUGH_CHANGE.get());
+    }
+
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 
      * 'Charging Station'.

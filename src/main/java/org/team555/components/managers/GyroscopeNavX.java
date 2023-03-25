@@ -2,11 +2,13 @@ package org.team555.components.managers;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import org.team555.util.frc.Logging;
+import org.team555.util.frc.commandrobot.ManagerBase;
 
-public class GyroscopeNavX
+public class GyroscopeNavX extends ManagerBase
 {
     final AHRS navx = new AHRS();
     double zeroOffset = 0;
@@ -51,4 +53,20 @@ public class GyroscopeNavX
 
     public double getPitch() {return navx.getPitch();}
     public double getRoll()  {return navx.getRoll();}
+
+    LinearFilter rollChange = LinearFilter.backwardFiniteDifference(1, 4, 0.02);
+    double rollRate = 0;
+
+    public double getRollRate()
+    {
+        return rollRate;
+    }
+
+    @Override
+    public void always() 
+    {
+        rollRate = rollChange.calculate(getRoll());
+    }
+
+    
 }
