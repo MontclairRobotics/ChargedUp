@@ -390,7 +390,7 @@ public class Commands555
                 ),
                 runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
             ), 
-            alignWithAprilTagForScore(), 
+            none(),//alignWithAprilTagForScore(), 
             () -> type.get() == ScoringType.PEG
         )
         .beforeStarting(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
@@ -506,7 +506,7 @@ public class Commands555
         .withName("Score Mid (General)");}
 
     
-    public static CommandBase newBalance()
+    public static CommandBase balance() //the sneakers :(
     {
         return Commands.run(() -> {
             double velocity = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get();
@@ -514,7 +514,12 @@ public class Commands555
 
             velocity *= Math.signum(gyroscope.getRoll());
             drivetrain.setChassisSpeeds(0, velocity, 0);
-        }).until(() -> Math.abs(gyroscope.getRollRate()) > DriveConstants.CHARGER_SLOW_ENOUGH_CHANGE.get());
+        }).until(() -> Math.abs(gyroscope.getRollRate()) > DriveConstants.CHARGER_SLOW_ENOUGH_CHANGE.get())
+        .beforeStarting(drivetrain.commands.disableFieldRelative())
+        .finallyDo(inter -> {
+            drivetrain.enableFieldRelative();
+            drivetrain.enableXMode();
+        });
     }
 
     /**
@@ -525,7 +530,7 @@ public class Commands555
      * and inverts the direction of motion (relative to the angle) using 
      * {@link Robot#CHARGER_STATION_INCLINE_INVERT}.
      */
-    public static CommandBase balance()
+    public static CommandBase balanceOLD()
     {
         return new CommandBase() 
         { 
