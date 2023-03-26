@@ -261,7 +261,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.LEFT).and(pidActive)
             .toggleOnTrue(Commands555.scoreMid(false, true));
         operatorController.getDPad(DPad.DOWN).and(pidActive)
-            .toggleOnTrue(Commands555.scoreCubeLow());
+            .toggleOnTrue(Commands555.scoreCubeLow(false));
         operatorController.getDPad(DPad.RIGHT).and(pidActive)
             .toggleOnTrue(Commands555.elevatorStingerReturn());
 
@@ -397,8 +397,18 @@ public class ChargedUp extends RobotContainer
             .withPosition(0, 4)
             .withSize(1, 1);
         debugTab.addDouble("Current Draw", shwooper::getCurrent)
-            .withPosition(5, 5)
+            .withPosition(5, 4)
             .withWidget(BuiltInWidgets.kGraph);
+
+        debugTab.addDouble("PITCH", gyroscope::getPitch)
+            .withPosition(8, 0)
+            .withWidget(BuiltInWidgets.kGyro);
+        debugTab.addDouble("ROLL", gyroscope::getRoll)
+            .withPosition(8, 2)
+            .withWidget(BuiltInWidgets.kGyro);
+        debugTab.addDouble("Roll Change", gyroscope::getRollRate)
+            .withPosition(8, 4);
+
     }
 
     public void setupPIDTab() 
@@ -480,12 +490,17 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
         tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE).withName("SIDE TO TAPE"));
 
-        tab.add(Commands555.scoreCubeLow());
+        tab.add(Commands555.scoreCubeLow(false));
         tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
 
         tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
 
         tab.add(Commands555.alignWithAprilTagForScore().withName("Align to april tag!!!!"));
+
+        tab.add(Commands555.balance().withName("balance"));
+        tab.add(Commands555.balanceOLD().withName("OLD balance"));
+        tab.add(Commands555.balanceOriginal().withName("OG balance"));
+        
         
         for(CommandBase testTraj : Trajectories.getAllTests().values())
         {

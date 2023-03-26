@@ -116,7 +116,7 @@ public class BackupAuto extends ManagerBase
         PathPlannerTrajectory trajectory = Trajectories.get(selected, Constants.Auto.constraints());
        
         HashMap<String, Command> markers = HashMaps.of(
-            "Score Cube", scoreCubeLow(), //TODO: scoreLow? scoreMid?
+            "Score Cube", scoreCubeLow(false), //TODO: scoreLow? scoreMid?
             "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
             "Intake On",shwooperSuck(),
             "Balance", balance()

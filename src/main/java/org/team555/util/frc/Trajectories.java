@@ -77,9 +77,6 @@ public class Trajectories
      */
     public static PathPlannerTrajectory get(String name, PathConstraints constraints)
     {
-        return PathPlannerTrajectory.transformTrajectoryForAlliance(
-            PathPlanner.loadPath(name, constraints), 
-            DriverStation.getAlliance()
-        );
+        return PathPlanner.loadPath(name, constraints);
     }
 }

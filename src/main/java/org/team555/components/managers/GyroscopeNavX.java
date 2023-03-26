@@ -1,7 +1,9 @@
 package org.team555.components.managers;
 
+import com.fasterxml.jackson.databind.util.RootNameLookup;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
@@ -51,11 +53,14 @@ public class GyroscopeNavX extends ManagerBase
         return Rotation2d.fromDegrees(getRotation2d().getDegrees() % 360); //TODO: this is dumb
     }
 
-    public double getPitch() {return navx.getPitch();}
-    public double getRoll()  {return navx.getRoll();}
+    public double getPitch() {return navx.getPitch() - 1.7;}
+    public double getRoll()  {return navx.getRoll() - 2;}
 
-    LinearFilter rollChange = LinearFilter.backwardFiniteDifference(1, 4, 0.02);
+    LinearFilter avg = LinearFilter.movingAverage(20);
     double rollRate = 0;
+
+    double prevRoll = 0;
+    double currRoll = 0;
 
     public double getRollRate()
     {
@@ -65,7 +70,12 @@ public class GyroscopeNavX extends ManagerBase
     @Override
     public void always() 
     {
-        rollRate = rollChange.calculate(getRoll());
+        prevRoll = currRoll;
+        currRoll = getRoll();
+
+        double change = 180 - Math.abs(Math.abs(currRoll%360 - prevRoll%360) - 180);
+
+        rollRate = avg.calculate(change / 0.02);
     }
 
     

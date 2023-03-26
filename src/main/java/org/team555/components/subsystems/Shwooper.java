@@ -58,6 +58,14 @@ public class Shwooper extends ManagerSubsystemBase
         motorTop.set(SPIT_SPEED);
         // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * Robot.Shwooper.SPEED);
     }
+    /**
+     * Expel game pieces from intake (but fatty)
+     */
+    public void spitAuto() 
+    {
+        motorTop.set(SPIT_SPEED_AUTO);
+        // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * Robot.Shwooper.SPEED);
+    }
 
     /**
      * Stops intake motors

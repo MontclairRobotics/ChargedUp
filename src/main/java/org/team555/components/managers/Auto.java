@@ -6,6 +6,7 @@ import org.team555.util.frc.commandrobot.ManagerBase;
 import java.sql.Driver;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.Map;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import org.team555.ChargedUp;
@@ -55,9 +57,9 @@ public class Auto extends ManagerBase
     public Auto()
     {
         chooseStart = new SendableChooser<String>();
-        chooseStart.setDefaultOption("Cone 2", "Cone 3"); //TODO: ask drive team the most logical way of naming these
-        chooseStart.addOption("Cone 3", "Cone 4");
-        chooseStart.addOption("Cone 6", "Cone 6");
+        chooseStart.setDefaultOption("Cube 1", "Cone 3"); //TODO: ask drive team the most logical way of naming these
+        chooseStart.addOption("Cube 2", "Cone 4");
+        chooseStart.addOption("Cube 3", "Cone 6");
 
         autoTab.add("Starting Position", chooseStart)
             .withPosition(0,0)
@@ -97,6 +99,10 @@ public class Auto extends ManagerBase
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(8, 2)
             .withSize(2, 1)
+            .withProperties(Map.of(
+                "Color when true",  Color.kGold.toHexString(),
+                "Color when false", Color.kDarkViolet.toHexString()
+            ))
             .getEntry();
 
         // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);

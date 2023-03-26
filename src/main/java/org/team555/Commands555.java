@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.PathPoint;
@@ -181,8 +182,21 @@ public class Commands555
                 .andThen(() -> elevator.PID.setSpeed(0))
                 .withName("Elevator to Top");
 
-        return elevator.PID.goToSetpoint(height, elevator) 
-            .withName("Elevator to " + height + "m");
+        return either( 
+            run(() -> elevator.PID.setSpeed(1))
+                .until(() -> elevator.getHeight() >= height)
+                .andThen(() -> elevator.PID.setSpeed(0)),
+            
+            run(() -> elevator.PID.setSpeed(-1))
+                .until(() -> elevator.getHeight() <= height)
+                .andThen(() -> elevator.PID.setSpeed(0)),
+
+            () -> elevator.getHeight() < height
+        )
+        .withName("Elevator to " + height + "m");
+
+        // return elevator.PID.goToSetpoint(height, elevator) 
+        //     .withName("Elevator to " + height + "m");
     }
 
     /**
@@ -242,11 +256,8 @@ public class Commands555
      */
     public static CommandBase elevatorStingerReturn()
     {
-        CommandBase c = deadline(
-            retractStinger(),
-            elevatorTo(ElevatorConstants.BUFFER_SPACE_TO_INTAKE).unless(elevator::stingerCannotMove)
-        )
-            .andThen(elevator.PID::cancel)
+        CommandBase c =
+            retractStinger()
             .andThen(elevatorToLow())
             .withName("Return Elevator and Stinger");
         c.addRequirements(elevator, stinger);
@@ -266,7 +277,7 @@ public class Commands555
     public static CommandBase elevatorStingerToCubeMid()
     {
         CommandBase c = parallel(
-            elevatorToCubeMid(),
+            elevatorToCubeMid(), //BANANAS SOUP SHIT
             Commands.sequence(
                 waitUntil(() -> Math.abs(elevator.getHeight() - ElevatorConstants.MID_HEIGHT_CUBE) < 0.05),
                 extendStinger()
@@ -329,6 +340,15 @@ public class Commands555
     public static CommandBase shwooperSpit() 
     {
         return Commands.runOnce(ChargedUp.shwooper::spit)
+            .withName("Intake Spit");
+    }
+    /**
+     * intake spit
+     * @return Command
+     */
+    public static CommandBase shwooperSpitAuto() 
+    {
+        return Commands.runOnce(ChargedUp.shwooper::spitAuto)
             .withName("Intake Spit");
     }
 
@@ -418,14 +438,22 @@ public class Commands555
     /**
      * Get the command responsible for scoring in the hybrid zone with a cube.
      */
-    public static CommandBase scoreCubeLow()
+    public static CommandBase scoreCubeLow(boolean isAuto)
     {
         return Commands.sequence(
             //close grabber to position the cube closer to the intake
-            // closeGrabber(),
+            
             // waitSeconds(0.3),
-            shwooperSpit(),
-            waitSeconds(0.3),
+            either(
+                shwooperSpitAuto(), 
+                shwooperSpit(), 
+                () -> isAuto
+            ),
+            
+
+            waitSeconds(0.1),
+            closeGrabber(),
+            waitSeconds(0.1),
             openGrabber(),
 
             //wait until the cube has shot out
@@ -465,6 +493,7 @@ public class Commands555
             openGrabber(), 
             runOnce(led::celebrate),
             waitSeconds(0.1),
+            waitSeconds(0.5).unless(() -> type.get() == ScoringType.PEG),
 
             //Return to position 
             log("[SCORE] Returning elevator and stinger to internal state . . ."),
@@ -508,19 +537,42 @@ public class Commands555
     
     public static CommandBase balance() //the sneakers :(
     {
-        return Commands.run(() -> {
+        return drivetrain.commands.disableFieldRelative().andThen(Commands.run(() -> {
             double velocity = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get();
             velocity = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -velocity : velocity;
 
             velocity *= Math.signum(gyroscope.getRoll());
+
             drivetrain.setChassisSpeeds(0, velocity, 0);
-        }).until(() -> Math.abs(gyroscope.getRollRate()) > DriveConstants.CHARGER_SLOW_ENOUGH_CHANGE.get())
-        .beforeStarting(drivetrain.commands.disableFieldRelative())
+        }))
+        .until(() -> 
+            Math.abs(gyroscope.getRollRate()) > DriveConstants.CHARGER_STATION_TILT_SPEED_THRESHOLD.get()
+            && Math.abs(gyroscope.getRoll()) < 12)
         .finallyDo(inter -> {
+            Logging.info("ended balance: " + gyroscope.getRollRate());
             drivetrain.enableFieldRelative();
             drivetrain.enableXMode();
         });
     }
+    
+    public static Command balanceOriginal()
+    {
+        return Commands.runOnce(drivetrain::disableFieldRelative)
+            .andThen(Commands.run(() -> 
+            {
+                double angle = drivetrain.getChargeStationAngle();
+                double speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get() * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
+                if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND) 
+                {
+                    speed = 0;
+                }
+                speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
+                drivetrain.setChassisSpeeds(0, speed, 0);
+            }))
+            .finallyDo(interupted -> drivetrain.enableFieldRelative())
+            .withName("Balance");
+    }
+    /**
 
     /**
      * Automatically compensates for angle offset caused by oscillatory motion of the 
@@ -666,9 +718,10 @@ public class Commands555
 
         CommandBase moveSideways = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.2)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.15)))
                     .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
         );
+
 
         if(type == null) return moveSideways;
 
@@ -699,7 +752,7 @@ public class Commands555
             Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
                 .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND)
                 .withTimeout(3)
-                .andThen(drivetrain.commands.driveForTime(1.3/2, 0, 0.2*2, 0))
+                .andThen(drivetrain.commands.driveForTime(1.7/2, 0, 0.2*3, 0))
                 .withName("MOVE FORWARD TO TAPE")
         ));
     }
@@ -782,7 +835,10 @@ public class Commands555
     {
         return Commands.runOnce(() -> vision.setTargetType(type.get()))
             .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
-            .andThen(waitSeconds(0.2)) //TODO: this is very dumb
+            .andThen(either(
+                waitSeconds(0.2),
+                waitSeconds(0.4),
+                () -> type.get() == DetectionType.CONE || type.get() == DetectionType.CONE)) //TODO: this is very dumb
             .unless(RobotBase::isSimulation); 
     }
 
@@ -810,15 +866,16 @@ public class Commands555
             {
                 case "A": return pickup();
                 case "C": return pickup();
+                case "1": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
+                case "3": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
+                case "2": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
 
-                case "1": return firstScoreIsMid(full) ? scoreMidPeg(true, full.length() == 1) : scoreCubeLow(); 
-                case "3": return firstScoreIsMid(full) ? scoreMidPeg(true, full.length() == 1) : scoreCubeLow(); 
-                case "2": return firstScoreIsMid(full) ? scoreMidPeg(true, full.length() == 1) : scoreCubeLow(); 
+                case "4": return scoreCubeLow(true);
+                case "5": return scoreCubeLow(true);
 
-                case "4": return scoreCubeLow();
-                case "5": return scoreCubeLow();
-
-                case "B": return balance();
+                case "B": return drivetrain.commands.driveForTime(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
+                    .until(() -> Math.abs(drivetrain.getChargeStationAngle()) > 10)
+                    .andThen(balance());
 
                 default: 
                 {
@@ -836,7 +893,14 @@ public class Commands555
                 return null;
             }
 
-            PathPlannerTrajectory nextTrajectory = Trajectories.get(str, Constants.Auto.constraints());
+            PathConstraints constraints = Constants.Auto.constraints();
+
+            if(str.charAt(1) == 'B')
+            {
+                constraints = new PathConstraints(4, 2);
+            }
+
+            PathPlannerTrajectory nextTrajectory = Trajectories.get(str, constraints);
 
             trajectories.add(nextTrajectory);
 
@@ -857,6 +921,7 @@ public class Commands555
             return null;
         }
     }
+
 
     /**
      * Create the autonomous command from the given parsed autonomous sequence string.

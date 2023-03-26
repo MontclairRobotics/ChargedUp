@@ -15,12 +15,12 @@ import org.team555.util.frc.Tunable;
 
 public class DriveConstants
 {
-    public static final boolean CHARGER_STATION_INCLINE_INVERT = false;
+    public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
     public static final Tunable<Double> CHARGER_STATION_MUL = Tunable.of(0.2, "drive.charge_mul");
     public static final Tunable<Double> CHARGER_STATION_TILT_SPEED_THRESHOLD = Tunable.of(6.0, "drive.charge_tilt_speed_thresh");
     public static final Tunable<Double> CHARGER_STATION_AT_REST_DEBOUNCE_TIME = Tunable.of(0.5, "drive.charge_rest_debounce_time");
     
-    public static final Tunable<Double> CHARGER_SLOW_ENOUGH_CHANGE = Tunable.of(0.2, "drive.cahrge.stopping_minimum");
+    public static final Tunable<Double> CHARGER_SLOW_ENOUGH_CHANGE = Tunable.of(6, "drive.cahrge.stopping_minimum");
 
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;
