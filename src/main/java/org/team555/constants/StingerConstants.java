@@ -6,7 +6,7 @@ import org.team555.inputs.JoystickAdjuster;
 
 public class StingerConstants
 {
-    //TODO: Get actual digital inputs
+    //NOT USINNG LIMIT SWITCHES LOL
     public static final int OUTER_LIMIT_SWITCH = 3;
     public static final int INNER_LIMIT_SWITCH = 4;
 

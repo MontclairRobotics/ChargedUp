@@ -304,7 +304,7 @@ public class ChargedUp extends RobotContainer
     }
 
     // AUTO //
-    public static final Auto auto = new Auto(); //TODO:
+    public static final Auto auto = new Auto();
 
     @Override
     public Command getAuto() 

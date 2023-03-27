@@ -16,7 +16,7 @@ public abstract class VisionSystem extends ManagerBase
      * Currently, this returns...
      * <ul>
      *    <li> AUTONOMOUS - APRIL TAG </li>
-     *    <li> DISABLED   - TAPE </li>
+     *    <li> DISABLED   - NONE </li>
      *    <li> ELSE       - NONE </li>
      * </ul>
      */
@@ -24,8 +24,8 @@ public abstract class VisionSystem extends ManagerBase
     {
         if(DriverStation.isAutonomous())
             return DetectionType.APRIL_TAG;
-        if(DriverStation.isDisabled())
-            return DetectionType.TAPE;
+        // if(DriverStation.isDisabled())
+        //     return DetectionType.APRIL_TAG;
         return DetectionType.NONE;
     }
 

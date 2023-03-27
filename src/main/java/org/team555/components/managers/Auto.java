@@ -57,7 +57,7 @@ public class Auto extends ManagerBase
     public Auto()
     {
         chooseStart = new SendableChooser<String>();
-        chooseStart.setDefaultOption("Cube 1", "Cone 3"); //TODO: ask drive team the most logical way of naming these
+        chooseStart.setDefaultOption("Cube 1", "Cone 3"); 
         chooseStart.addOption("Cube 2", "Cone 4");
         chooseStart.addOption("Cube 3", "Cone 6");
 
@@ -95,14 +95,10 @@ public class Auto extends ManagerBase
             .withSize(2, 1)
             .getEntry();
         scoresLowForStartEntry = autoTab
-            .add("First Score is Cone Mid", false)
+            .add("First Score is Mid", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(8, 2)
             .withSize(2, 1)
-            .withProperties(Map.of(
-                "Color when true",  Color.kGold.toHexString(),
-                "Color when false", Color.kDarkViolet.toHexString()
-            ))
             .getEntry();
 
         // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);

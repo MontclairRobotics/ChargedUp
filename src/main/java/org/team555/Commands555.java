@@ -449,18 +449,14 @@ public class Commands555
                 shwooperSpit(), 
                 () -> isAuto
             ),
-            
-
-            waitSeconds(0.1),
-            closeGrabber(),
-            waitSeconds(0.1),
             openGrabber(),
+            
 
             //wait until the cube has shot out
             waitUntil(shwooper::manipulatedObject)
                 .andThen(led::celebrate)
                 .withTimeout(1.2),
-            waitSeconds(0.2),
+            waitSeconds(0.3),
             stopShwooper()
 
         ).withName("deIntake score");
@@ -569,7 +565,11 @@ public class Commands555
                 speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
                 drivetrain.setChassisSpeeds(0, speed, 0);
             }))
-            .finallyDo(interupted -> drivetrain.enableFieldRelative())
+            .finallyDo(interupted -> 
+            {
+                drivetrain.enableFieldRelative();
+                drivetrain.enableXMode();
+            })
             .withName("Balance");
     }
     /**
@@ -680,15 +680,14 @@ public class Commands555
      */
     public static CommandBase turnToObject(Supplier<DetectionType> type) 
     {
-        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
+        // Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;//degrees
-        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.2;
+        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.25;
 
         CommandBase turn = ifHasTarget(
-            Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.4), 0, 0))
-                    .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
+            Commands.run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.3), 0, 0))
+                    .until(() -> Math.abs(vision.getObjectAX()) < DEADBAND)
         );
         
         if(type == null) return turn;
@@ -835,10 +834,7 @@ public class Commands555
     {
         return Commands.runOnce(() -> vision.setTargetType(type.get()))
             .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
-            .andThen(either(
-                waitSeconds(0.2),
-                waitSeconds(0.4),
-                () -> type.get() == DetectionType.CONE || type.get() == DetectionType.CONE)) //TODO: this is very dumb
+            .andThen(waitSeconds(0.2)) //TODO: this is very dumb
             .unless(RobotBase::isSimulation); 
     }
 
@@ -870,12 +866,12 @@ public class Commands555
                 case "3": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
                 case "2": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
 
-                case "4": return scoreCubeLow(true);
-                case "5": return scoreCubeLow(true);
+                case "4": return scoreCubeLow(false); //lmao
+                case "5": return scoreCubeLow(false); //lmao
 
                 case "B": return drivetrain.commands.driveForTime(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
                     .until(() -> Math.abs(drivetrain.getChargeStationAngle()) > 10)
-                    .andThen(balance());
+                    .andThen(balanceOriginal());
 
                 default: 
                 {
@@ -976,7 +972,7 @@ public class Commands555
 
             if (DriverStation.getAlliance() == Alliance.Red)
             {
-                sumTrajectory = sumTrajectory.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
+                // sumTrajectory = sumTrajectory.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
             }
         }
         
