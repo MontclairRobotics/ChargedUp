@@ -1027,29 +1027,4 @@ public class Commands555
 
         return buildAuto(full, parts);
     }
-
-    public static CommandBase backupAuto()
-    {
-        return Commands.sequence
-        (
-            Commands.runOnce(() -> 
-            {
-                ChargedUp.gyroscope.setNorth(); 
-                ChargedUp.gyroscope.setAddition(Rotation2d.fromDegrees(180));
-            }),
-
-            log("STARTING THE AUTO!!"),
-            scoreMid(true, false),
-            log("SCORED!!!!!"),
-            
-            Commands.sequence(
-                log("Starting auton drive . . ."),
-                drivetrain.commands.driveForTime(2.5, 0, -1.25, 0),
-                log("DROVE IT"),
-                balance(),
-                log("balance!!")
-            )
-            .unless(ChargedUp::skipDriveAuto)
-        );
-    }
 }
