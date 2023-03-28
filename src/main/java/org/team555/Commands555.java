@@ -384,7 +384,7 @@ public class Commands555
             shwooperSuck(),
             Commands.sequence(
                 moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP ),
-                drivetrain.commands.driveForTime(1,0,1,0)
+                drivetrain.commands.driveForTime(1.6,0,1.5,0)
             ).until(shwooper::manipulatedObject),
             waitSeconds(0.3),
             stopShwooper(),
@@ -686,7 +686,7 @@ public class Commands555
         // Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;//degrees
-        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.25;
+        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.20;
 
         CommandBase turn = ifHasTarget(
             Commands.run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.3), 0, 0))

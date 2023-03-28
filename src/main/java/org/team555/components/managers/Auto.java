@@ -267,7 +267,7 @@ public class Auto extends ManagerBase
                 continue;
             }
             // If we have a valid position, add it
-            else if(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == 'A' || c == 'B' || c == 'C' || c == 'a' || c == 'b' || c == 'c')
+            else if(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == 'A' || c == 'B' || c == 'C' || c == 'a' || c == 'b' || c == 'c' || c == 'D' || c == 'd')
             {
                 c = Character.toUpperCase(c);//test
 
