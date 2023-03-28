@@ -298,11 +298,6 @@ public class ChargedUp extends RobotContainer
         }, elevator));
     }
 
-    public static boolean skipDriveAuto()
-    {
-        return false;
-    }
-
     // AUTO //
     public static final Auto auto = new Auto();
 
