@@ -37,6 +37,7 @@ import org.team555.util.frc.Logging;
 import org.team555.util.frc.Trajectories;
 import org.team555.util.frc.EdgeDetectFilter.EdgeType;
 import org.team555.vision.VisionSystem;
+import org.team555.constants.DriveConstants;
 
 import static org.team555.ChargedUp.*;
 
@@ -381,8 +382,10 @@ public class Commands555
 
             log("[PICK UP] object sideways"),
             shwooperSuck(),
-            drivetrain.commands.driveForTime(1,0,1,0)
-                .until(shwooper::manipulatedObject),
+            Commands.sequence(
+                moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP ),
+                drivetrain.commands.driveForTime(1,0,1,0)
+            ).until(shwooper::manipulatedObject),
             waitSeconds(0.3),
             stopShwooper(),
             log("[PICK UP] shwooper stop")
@@ -405,7 +408,7 @@ public class Commands555
             Commands.sequence(
                 waitForPipe(() -> DetectionType.TAPE),
                 Commands.sequence(
-                    moveToObjectSideways(null),
+                    moveToObjectSideways(null, 0),
                     moveToObjectForward()
                 ),
                 runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
@@ -708,8 +711,9 @@ public class Commands555
      * @param type DetectionType to move to. {@code null} can be passed in if vision is already using the correct pipeline
      * @return
      */
-    public static CommandBase moveToObjectSideways(Supplier<DetectionType> type)
+    public static CommandBase moveToObjectSideways(Supplier<DetectionType> type, double forwardVelocity)
     {
+        final double forwardVelocityClamped = Math555.clamp(forwardVelocity, 0, DriveConstants.MAX_SPEED_MPS);
         Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;
@@ -717,7 +721,7 @@ public class Commands555
 
         CommandBase moveSideways = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, 0, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.15)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, forwardVelocityClamped, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.15)))
                     .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
         );
 
@@ -761,7 +765,7 @@ public class Commands555
         return Commands.sequence(
             waitForPipe(() -> DetectionType.APRIL_TAG),
             Commands.sequence(
-                moveToObjectSideways(null),
+                moveToObjectSideways(null, 0),
                 moveToObjectForward()
             ),
             runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))

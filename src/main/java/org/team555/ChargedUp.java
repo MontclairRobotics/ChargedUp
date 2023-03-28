@@ -228,7 +228,7 @@ public class ChargedUp extends RobotContainer
         driverController.getDPad(DPad.LEFT)
             .onTrue(Commands555.turnToObject(() -> DetectionType.CONE));
         driverController.getDPad(DPad.RIGHT)
-            .onTrue(Commands555.moveToObjectSideways(() -> DetectionType.CONE));
+            .onTrue(Commands555.moveToObjectSideways(() -> DetectionType.CONE, 0));
 
         // Button to Zero NavX //
         driverController.getButton(Button.START_TOUCHPAD)
@@ -488,7 +488,7 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.pickup());
 
         tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
-        tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE).withName("SIDE TO TAPE"));
+        tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE, 0).withName("SIDE TO TAPE"));
 
         tab.add(Commands555.scoreCubeLow(false));
         tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
