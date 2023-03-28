@@ -229,6 +229,8 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands555.turnToObject(() -> DetectionType.CONE));
         driverController.getDPad(DPad.RIGHT)
             .onTrue(Commands555.moveToObjectSideways(() -> DetectionType.CONE));
+        driverController.getDPad(DPad.DOWN)
+            .onTrue(Commands.runOnce(drivetrain::enableXMode));
 
         // Button to Zero NavX //
         driverController.getButton(Button.START_TOUCHPAD)
@@ -237,9 +239,7 @@ public class ChargedUp extends RobotContainer
                 gyroscope.setNorth();
             }).ignoringDisable(true));
 
-        // Cancel PID
-        Trigger pidActive = operatorController.getButton(Button.START_TOUCHPAD).negate();
-
+        // Debug controller //
         if(useDebugController)
         {
             debugController.getButton(Button.X_SQUARE).onTrue(drivetrain.commands.goToPositionRelative(0, 2));
@@ -250,19 +250,19 @@ public class ChargedUp extends RobotContainer
             debugController.getDPad(DPad.LEFT) .onTrue(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(270)));
 
             debugController.getButton(Button.B_CIRCLE).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.TAPE)).ignoringDisable(true));
-            debugController.getButton(Button.A_CROSS).onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
+            debugController.getButton(Button.A_CROSS) .onTrue(Commands.runOnce(() -> vision.setTargetType(DetectionType.APRIL_TAG)).ignoringDisable(true));
         }
 
-        ////////////// OPERATOR CONTROLS /////////
+        ////////////// OPERATOR CONTROLS /////////////
 
         // D-Pad Controls
-        operatorController.getDPad(DPad.UP).and(pidActive)
+        operatorController.getDPad(DPad.UP)
             .toggleOnTrue(Commands555.elevatorHumanPlayerLevel());
-        operatorController.getDPad(DPad.LEFT).and(pidActive)
+        operatorController.getDPad(DPad.LEFT)
             .toggleOnTrue(Commands555.scoreMid(false, true));
-        operatorController.getDPad(DPad.DOWN).and(pidActive)
+        operatorController.getDPad(DPad.DOWN)
             .toggleOnTrue(Commands555.scoreCubeLow(false));
-        operatorController.getDPad(DPad.RIGHT).and(pidActive)
+        operatorController.getDPad(DPad.RIGHT)
             .toggleOnTrue(Commands555.elevatorStingerReturn());
 
         // Grabber
