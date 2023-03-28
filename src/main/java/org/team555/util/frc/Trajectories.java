@@ -2,6 +2,7 @@ package org.team555.util.frc;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,8 +13,13 @@ import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.server.PathPlannerServer;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
@@ -78,5 +84,30 @@ public class Trajectories
     public static PathPlannerTrajectory get(String name, PathConstraints constraints)
     {
         return PathPlanner.loadPath(name, constraints);
+    }
+
+
+    public static void displayAll(ArrayList<PathPlannerTrajectory> ppTrajectories)
+    {
+        for (int i = 0; i < ppTrajectories.size(); i++)
+        {
+            FieldObject2d obj = ChargedUp.field.getObject("Trajectory " + i);
+            Trajectory traj = ppTrajectories.get(i);
+            if (DriverStation.getAlliance() == Alliance.Red)
+            {
+                PathPlannerTrajectory pp = ppTrajectories.get(i);
+                ppTrajectories.set(i, PathPlannerTrajectory.transformTrajectoryForAlliance(pp, Alliance.Red));
+                traj = ppTrajectories.get(i).relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
+            }
+            obj.setTrajectory(traj);
+        }
+    }
+    public static void clearAll()
+    {
+        for (int i  = 0; i < 10; i++)
+        {
+            FieldObject2d obj = ChargedUp.field.getObject("Trajectory " + i);
+            obj.setPose(new Pose2d(-100, -100, Rotation2d.fromDegrees(0)));
+        }
     }
 }

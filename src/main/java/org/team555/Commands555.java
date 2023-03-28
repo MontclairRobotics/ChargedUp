@@ -926,10 +926,10 @@ public class Commands555
      */
     public static CommandBase buildAuto(String full, String[] list)
     {
+        Trajectories.clearAll();
         CommandBase[] commandList = new CommandBase[list.length];
         ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
         
-        FieldObject2d trajectoryObject = ChargedUp.field.getObject("Trajectories");
 
         // Get the auto builder //
         HashMap<String, Command> markers = HashMaps.of(
@@ -951,7 +951,6 @@ public class Commands555
             // Error out here if necessary
             if(commandList[i] == null)
             {
-                trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
                 Logging.info("SOMEHTING NULLL JGINSJGSNGJIFNGJ");
                 return null;
             }
@@ -961,31 +960,35 @@ public class Commands555
 
         // Calculate the sum trajectory
         Trajectory sumTrajectory = null;
+        
         if(allTrajectories.size() > 0)
         {
-            sumTrajectory = allTrajectories.get(0);
+            // sumTrajectory = allTrajectories.get(0);
 
-            for(int i = 1; i < allTrajectories.size(); i++)
-            {
-                sumTrajectory = sumTrajectory.concatenate(allTrajectories.get(i));
-            }
+            // for(int i = 1; i < allTrajectories.size(); i++)
+            // {
+            //     sumTrajectory = sumTrajectory.concatenate(allTrajectories.get(i));
+            // }
 
-            if (DriverStation.getAlliance() == Alliance.Red)
-            {
-                // sumTrajectory = sumTrajectory.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
-            }
+            Trajectories.displayAll(allTrajectories);
+
+            // if (DriverStation.getAlliance() == Alliance.Red)
+            // {
+            //     // sumTrajectory = sumTrajectory.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
+            //     PathPlannerTrajectory.transformTrajectoryForAlliance(ppTrajectory, Alliance.Red);
+            // }
         }
         
 
         // Display the sum trajectory
-        if(sumTrajectory == null)
-        {
-            trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
-        } 
-        else
-        {
-            trajectoryObject.setTrajectory(sumTrajectory);
-        }
+        // if(sumTrajectory == null)
+        // {
+        //     trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
+        // } 
+        // else
+        // {
+        //     trajectoryObject.setTrajectory(sumTrajectory);
+        // }
 
         // Parallelize the first score
         if(!firstScoreIsMid(full) && commandList.length > 1)
