@@ -25,6 +25,7 @@ public class DriveConstants
     public static final MotorType DRIVE_TYPE = MotorType.FALCON;
     public static final MotorType STEER_TYPE = MotorType.NEO;
     public static final double VISION_ESTIMATE_MAX_DISPLACEMENT = 1;
+    public static final double FORWARD_VELOCITY_DURING_PICKUP = 0.5;
 
     public static final Tunable<Boolean> DRIVE_INVERT = Tunable.of(true, "drive.drive_invert");
     public static final Tunable<Boolean> STEER_INVERT = Tunable.of(false, "drive.steer_invert");
