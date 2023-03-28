@@ -46,6 +46,7 @@ public class Auto extends ManagerBase
     private final GenericEntry scoreTwice;
     private final GenericEntry balance;
     private final GenericEntry pointless;
+    private final GenericEntry pickupTwice;
     private final GenericEntry field;
     private final GenericEntry autoStringEntry;
     private final GenericEntry scoresLowForStartEntry;
@@ -80,6 +81,10 @@ public class Auto extends ManagerBase
         pointless = autoTab.add("Pointless", false)
             .withWidget(BuiltInWidgets.kToggleButton)
             .withPosition(8, 0)
+            .withSize(2, 1).getEntry();
+        pickupTwice = autoTab.add("Pickup Twice", false)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
+            .withPosition(0, 4)
             .withSize(2, 1).getEntry();
 
         autoTab
@@ -124,7 +129,8 @@ public class Auto extends ManagerBase
             chooseStart.getSelected(), 
             leaveCommunity.getBoolean(false), 
             scoreTwice.getBoolean(false), 
-            balance.getBoolean(false)
+            balance.getBoolean(false),
+            pickupTwice.getBoolean(false)
         );
         
         if      (chooseStart.getSelected().equals("Cone 3")) startPose = new Pose2d(1.85, 3.85, Rotation2d.fromDegrees(180));
@@ -162,7 +168,8 @@ public class Auto extends ManagerBase
             chooseStart.getSelected(), 
             leaveCommunity.getBoolean(false), 
             scoreTwice.getBoolean(false), 
-            balance.getBoolean(false)
+            balance.getBoolean(false),
+            pickupTwice.getBoolean(false)
         );
 
         if(!current.equals(previous))
@@ -190,10 +197,11 @@ public class Auto extends ManagerBase
      * @param exitComm if the robot exits the community during auto
      * @param scoreTwice if the robot scores twice
      * @param balance if the robot balances
+     * @param pickupTwice if the robot tries to pickup a second cube after scoring twice
      * @return the parseable auto string
      */
      
-    private static String getAutoString(String start, boolean exitComm, boolean scoreTwice, boolean balance)
+    private static String getAutoString(String start, boolean exitComm, boolean scoreTwice, boolean balance, boolean pickupTwice)
     {
         String str = "";
 
@@ -205,6 +213,7 @@ public class Auto extends ManagerBase
 
                 str += "A";
                 if(scoreTwice) str += "4";
+                if(pickupTwice) str += "D";
                 break;
 
             case "Cone 4": 
@@ -224,7 +233,7 @@ public class Auto extends ManagerBase
                 return null;
         } 
 
-        if(balance) str += "B";
+        if(balance && !(pickupTwice && start.equals("Cone 3"))) str += "B";
 
         return str;
     }
