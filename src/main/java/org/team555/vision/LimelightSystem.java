@@ -54,13 +54,24 @@ public class LimelightSystem extends VisionSystem
     public LimelightSystem()
     {
         target = DetectionType.DEFAULT;
-        getEntry("camerapose_robotspace").setDoubleArray(new double[] {
+        getEntry("camerapose_robotspace").setDoubleArray(new double[] 
+        {
             FORWARD_OFFSET, 
             SIDE_OFFSET, 
             UP_OFFSET, 
             0.0, 
             0.0, 
             0.0
+        });
+
+        NetworkTableInstance.getDefault().addConnectionListener(true, nte -> 
+        {
+            String remoteIp = nte.connInfo.remote_ip;
+
+            if(remoteIp.startsWith("10.5.55.11"))
+            {
+                setPipelineTo(DetectionType.DEFAULT);
+            }
         });
     }
 

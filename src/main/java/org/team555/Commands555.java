@@ -862,6 +862,8 @@ public class Commands555
             {
                 case "A": return pickup();
                 case "C": return pickup();
+                case "D": return pickup();
+            
                 case "1": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
                 case "3": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
                 case "2": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 

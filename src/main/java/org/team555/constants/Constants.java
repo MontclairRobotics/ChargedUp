@@ -29,7 +29,7 @@ public final class Constants
             return new PathConstraints(MAX_VEL, MAX_ACC);
         }
 
-        public static Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(2.5, "auto.drive_time");
+        public static final Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(2.5, "auto.drive_time");
     }
     public static class Robot 
     {
