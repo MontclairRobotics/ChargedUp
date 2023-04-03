@@ -888,6 +888,8 @@ public class Commands555
 
                 case "B": return drivetrain.commands.driveForTime(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
                     .until(() -> Math.abs(drivetrain.getChargeStationAngle()) > 10)
+                    .andThen(waitSeconds(1))
+                    .andThen(drivetrain.commands.driveForTime(0.3, 0, DriveConstants.MAX_SPEED_MPS, 0))
                     .andThen(balanceOriginal());
 
                 default: 
