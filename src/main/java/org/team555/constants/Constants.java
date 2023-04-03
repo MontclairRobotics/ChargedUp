@@ -22,14 +22,14 @@ public final class Constants
     public static class Auto 
     {
         public static final double MAX_VEL = 4;
-        public static final double MAX_ACC = 1.8;
+        public static final double MAX_ACC = 2;
 
         public static PathConstraints constraints()
         {
             return new PathConstraints(MAX_VEL, MAX_ACC);
         }
 
-        public static final Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(2.5, "auto.drive_time");
+        public static final Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(3.1, "auto.drive_time");
     }
     public static class Robot 
     {

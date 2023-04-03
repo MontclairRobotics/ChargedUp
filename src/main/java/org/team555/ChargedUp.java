@@ -482,8 +482,8 @@ public class ChargedUp extends RobotContainer
 
         tab.add(Commands555.pickup(1.6));
 
-        tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
-        tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE, 0).withName("SIDE TO TAPE"));
+        tab.add(Commands555.turnToObject(() -> DetectionType.CONE).withName("TURN TO CONE"));
+        tab.add(Commands555.moveToObjectSideways(() -> DetectionType.CONE, 0).withName("SIDE TO CONE"));
 
         tab.add(Commands555.scoreCubeLow(false));
         tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));

@@ -502,7 +502,7 @@ public class Commands555
 
             either(
                 elevatorStingerReturn(),
-                retractStinger().deadlineWith(elevatorToCubeMid().unless(elevator::isWithinGrabberBuffer)),
+                retractStinger(),
                 () -> resetAfterScore
             ),
             
@@ -679,6 +679,15 @@ public class Commands555
     {
         return cmd.until(() -> !vision.hasObject()).unless(() -> !vision.hasObject());
     }
+    public static CommandBase ifHasTargetDebounce(Command cmd)
+    {
+        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kFalling);
+
+        return Commands.sequence(
+            Commands.runOnce(() -> hasEnded.calculate(vision.hasObject())),
+            cmd.until(() -> hasEnded.calculate(vision.hasObject()))
+        );
+    }
 
     /**
      * Turns to the object.
@@ -686,13 +695,12 @@ public class Commands555
      */
     public static CommandBase turnToObject(Supplier<DetectionType> type) 
     {
-        // Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
         final double DEADBAND = 2;//degrees
-        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.20;
+        final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.15;
 
-        CommandBase turn = ifHasTarget(
-            Commands.run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.3), 0, 0))
+        CommandBase turn = ifHasTargetDebounce(
+            Commands.run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.275), 0, 0))
                     .until(() -> Math.abs(vision.getObjectAX()) < DEADBAND)
         );
         
@@ -724,7 +732,7 @@ public class Commands555
 
         CommandBase moveSideways = ifHasTarget(
             Commands.runOnce(() -> hasEnded.calculate(false))
-                .andThen(run(() -> drivetrain.setChassisSpeeds(0, forwardVelocityClamped, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.15)))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(0, forwardVelocityClamped, Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.11)))
                     .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND)))
         );
 
