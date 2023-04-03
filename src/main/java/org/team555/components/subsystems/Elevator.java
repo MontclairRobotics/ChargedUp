@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
@@ -39,6 +40,7 @@ public class Elevator extends ManagerSubsystemBase
     private LimitSwitch bottomlimitSwitch = new LimitSwitch(BOTTOM_LIMIT_SWITCH, true);
 
     public final PIDMechanism PID = new PIDMechanism(updown());
+    private final SlewRateLimiter speedRateLimiter = new SlewRateLimiter(1.0/0.5);
 
     MechanismLigament2d ligament;
 
@@ -239,8 +241,16 @@ public class Elevator extends ManagerSubsystemBase
             ff = 0;
 
         double speed;
-        if(shouldStop) speed = 0;
-        else           speed = getModifiedSpeed(PID.getSpeed());
+        if(shouldStop) 
+        {
+            speed = 0;
+            reset();
+        }
+        else 
+        {
+            speed = getModifiedSpeed(PID.getSpeed());
+            speed = speedRateLimiter.calculate(speed);
+        }
         
         motor.set(speed + ff / 12);
 
@@ -261,5 +271,6 @@ public class Elevator extends ManagerSubsystemBase
     public void reset() 
     {
         stop();
+        speedRateLimiter.reset(0);
     }
 }
