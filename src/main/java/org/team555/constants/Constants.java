@@ -21,7 +21,7 @@ public final class Constants
     
     public static class Auto 
     {
-        public static final double MAX_VEL = 4;
+        public static final double MAX_VEL = 0.5;//4;
         public static final double MAX_ACC = 1.5;
 
         public static PathConstraints constraints()
