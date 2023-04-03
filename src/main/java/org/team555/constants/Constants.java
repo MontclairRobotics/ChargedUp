@@ -22,7 +22,7 @@ public final class Constants
     public static class Auto 
     {
         public static final double MAX_VEL = 4;
-        public static final double MAX_ACC = 1.5;
+        public static final double MAX_ACC = 1.8;
 
         public static PathConstraints constraints()
         {
@@ -64,6 +64,6 @@ public final class Constants
     public static class Field
     {
         public static final double CHARGE_ANGLE_RANGE_DEG = 15;
-        public static final double CHARGE_ANGLE_DEADBAND = 2.5;
+        public static final Tunable<Double> CHARGE_ANGLE_DEADBAND = Tunable.of(5, "drive.charge_angle_deadband"); //field is 2.5
     }
 }

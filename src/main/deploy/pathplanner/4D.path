@@ -2,12 +2,12 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.85,
+        "x": 2.0,
         "y": 4.9
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.496508392450214,
+        "x": 2.646508392450214,
         "y": 4.791586467025626
       },
       "holonomicAngle": 180.0,
@@ -73,5 +73,12 @@
   "maxVelocity": null,
   "maxAcceleration": 1.5,
   "isReversed": null,
-  "markers": []
+  "markers": [
+    {
+      "position": 1.6218181818181505,
+      "names": [
+        "Pickup Pipeline"
+      ]
+    }
+  ]
 }

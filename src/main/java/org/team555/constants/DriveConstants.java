@@ -16,7 +16,7 @@ import org.team555.util.frc.Tunable;
 public class DriveConstants
 {
     public static final boolean CHARGER_STATION_INCLINE_INVERT = true;
-    public static final Tunable<Double> CHARGER_STATION_MUL = Tunable.of(0.2, "drive.charge_mul");
+    public static final Tunable<Double> CHARGER_STATION_MUL = Tunable.of(0.09, "drive.charge_mul");
     public static final Tunable<Double> CHARGER_STATION_TILT_SPEED_THRESHOLD = Tunable.of(6.0, "drive.charge_tilt_speed_thresh");
     public static final Tunable<Double> CHARGER_STATION_AT_REST_DEBOUNCE_TIME = Tunable.of(0.5, "drive.charge_rest_debounce_time");
     

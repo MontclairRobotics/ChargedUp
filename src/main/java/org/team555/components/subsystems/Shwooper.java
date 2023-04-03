@@ -19,7 +19,7 @@ import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Shwooper extends ManagerSubsystemBase
 {
-    private final Debouncer hasObjectRisingDebouncer = new Debouncer(0.1, DebounceType.kRising);
+    private final Debouncer hasObjectRisingDebouncer = new Debouncer(0.3, DebounceType.kRising);
     private final Debouncer hasObjectFallingDebouncer = new Debouncer(1.0, DebounceType.kFalling);
     private final EdgeDetectFilter edgeFilter = new EdgeDetectFilter(EdgeType.RISING);
 

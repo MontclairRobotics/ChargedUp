@@ -4,6 +4,7 @@ import static edu.wpi.first.wpilibj2.command.Commands.*;
 
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import edu.wpi.first.wpilibj2.command.ProxyScheduleCommand;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
@@ -366,7 +367,7 @@ public class Commands555
     ////////////////////// AUTO COMMANDS //////////////////////////
     
     // picks up objects and raises the elevator to the middle after picking the object up
-    public static CommandBase pickup() 
+    public static CommandBase pickup(double driveTime) 
     {
         return logged(Commands.sequence(
             // Ensure grabber released
@@ -378,14 +379,16 @@ public class Commands555
             log("[PICK UP] elevator stinger returned.."),
 
             // Suck it
-            // moveToObjectSideways(() -> DetectionType.CONE), //TODO: alignment here?
+            // moveToObjectSideways(() -> DetectionType.CONE),
 
             log("[PICK UP] object sideways"),
             shwooperSuck(),
             Commands.sequence(
-                moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP ),
-                drivetrain.commands.driveForTime(1.6,0,1.5,0)
-            ).until(shwooper::manipulatedObject),
+                moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP),
+                drivetrain.commands.driveForTime(driveTime,0,1.5,0)
+            )
+                .until(shwooper::manipulatedObject)
+                .withTimeout(2),
             waitSeconds(0.3),
             stopShwooper(),
             log("[PICK UP] shwooper stop")
@@ -561,7 +564,7 @@ public class Commands555
             {
                 double angle = drivetrain.getChargeStationAngle();
                 double speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get() * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
-                if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND) 
+                if (angle <= Constants.Field.CHARGE_ANGLE_DEADBAND.get() && angle >= -Constants.Field.CHARGE_ANGLE_DEADBAND.get()) 
                 {
                     speed = 0;
                 }
@@ -651,7 +654,7 @@ public class Commands555
             @Override
             public boolean isFinished() 
             {
-                boolean atRest = atRestDebouncer.calculate(!isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND);
+                boolean atRest = atRestDebouncer.calculate(!isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND.get());
                 if(atRest) led.celebrate();
 
                 return atRest;
@@ -864,13 +867,13 @@ public class Commands555
         {
             switch(str)
             {
-                case "A": return pickup();
-                case "C": return pickup();
-                case "D": return pickup();
+                case "A": return pickup(1);
+                case "C": return pickup(1);
+                case "D": return pickup(1.6);
             
-                case "1": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
-                case "3": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
-                case "2": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : scoreCubeLow(true); 
+                case "1": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : runOnce(scoreCubeLow(true)::schedule); 
+                case "3": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : runOnce(scoreCubeLow(true)::schedule); 
+                case "2": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : runOnce(scoreCubeLow(true)::schedule); 
 
                 case "4": return scoreCubeLow(false); //lmao
                 case "5": return scoreCubeLow(false); //lmao
@@ -943,7 +946,8 @@ public class Commands555
             "Elevator Mid Shelf", elevatorToCubeMid(),
             "Intake On", shwooperSuck(),
             "Retract", elevatorStingerReturn(),
-            "Intake Off", Commands.sequence(stopShwooper(), closeGrabber())
+            "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
+            "Pickup Pipeline", waitForPipe(() -> DetectionType.CONE)
         );
 
         String debugAuto = "";
@@ -996,13 +1000,14 @@ public class Commands555
         //     trajectoryObject.setTrajectory(sumTrajectory);
         // }
 
-        // Parallelize the first score
-        if(!firstScoreIsMid(full) && commandList.length > 1)
-        {
-            CommandBase first = commandList[0];
-            commandList[0] = Commands.none();
-            commandList[1] = commandList[1].alongWith(first);
-        }
+        // Parallelize the first score 
+        // TODO: (now obsolet)
+        // if(!firstScoreIsMid(full) && commandList.length > 1)
+        // {
+        //     CommandBase first = commandList[0];
+        //     commandList[0] = Commands.none();
+        //     commandList[1] = commandList[1].alongWith(first);
+        // }
         
         // Return the sum command (with a navx set-180)
         Logging.info("[AUTO BUILD]" + debugAuto);

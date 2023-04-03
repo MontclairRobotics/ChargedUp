@@ -224,7 +224,7 @@ public class ChargedUp extends RobotContainer
 
         // AUTONS //
         driverController.getDPad(DPad.UP)
-            .onTrue(Commands555.balance());
+            .onTrue(Commands555.balanceOriginal());
         driverController.getDPad(DPad.LEFT)
             .onTrue(Commands555.turnToObject(() -> DetectionType.CONE));
         driverController.getDPad(DPad.RIGHT)
@@ -480,7 +480,7 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.scoreMidPeg(false, true));
         tab.add(Commands555.scoreMidShelf(false, true));
 
-        tab.add(Commands555.pickup());
+        tab.add(Commands555.pickup(1.6));
 
         tab.add(Commands555.turnToObject(() -> DetectionType.TAPE).withName("TURN TO TAPE"));
         tab.add(Commands555.moveToObjectSideways(() -> DetectionType.TAPE, 0).withName("SIDE TO TAPE"));

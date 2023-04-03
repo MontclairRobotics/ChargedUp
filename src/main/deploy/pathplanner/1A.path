@@ -49,11 +49,11 @@
     },
     {
       "anchorPoint": {
-        "x": 6.15,
+        "x": 5.9,
         "y": 4.6
       },
       "prevControl": {
-        "x": 5.289506433120517,
+        "x": 5.039506433120517,
         "y": 5.169770989400336
       },
       "nextControl": null,
@@ -78,6 +78,12 @@
       "position": 0.0,
       "names": [
         "Retract"
+      ]
+    },
+    {
+      "position": 1.7018181818182008,
+      "names": [
+        "Pickup Pipeline"
       ]
     }
   ]

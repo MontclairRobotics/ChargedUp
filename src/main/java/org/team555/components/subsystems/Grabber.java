@@ -31,11 +31,14 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void grab() 
     {
-        outputSolenoid.set(!SOLENOID_DEFAULT_STATE);
-        // updatePressure();
-        
-        if (holdingCone) heldObject = GamePiece.CONE;
-        else             heldObject = GamePiece.CUBE;
+        if(false)
+        {
+            outputSolenoid.set(!SOLENOID_DEFAULT_STATE);
+            // updatePressure();
+            
+            if (holdingCone) heldObject = GamePiece.CONE;
+            else             heldObject = GamePiece.CUBE;
+        }
     }
 
     /**
@@ -43,6 +46,7 @@ public class Grabber extends ManagerSubsystemBase
      */
     public void release() 
     {
+        if(false)
         outputSolenoid.set(SOLENOID_DEFAULT_STATE);
     }
 
@@ -56,6 +60,7 @@ public class Grabber extends ManagerSubsystemBase
     public void toggle()
     {
         // if (!outputSolenoid.get()) updatePressure();
+        if(false)
         outputSolenoid.toggle();
     }
 
@@ -87,6 +92,8 @@ public class Grabber extends ManagerSubsystemBase
         //     case CUBE: DefaultAnimation.setViolet();  break;
         //     case NONE: DefaultAnimation.setDefault(); break;
         // }
+
+        if(true) outputSolenoid.set(SOLENOID_DEFAULT_STATE);
     }
 
     
