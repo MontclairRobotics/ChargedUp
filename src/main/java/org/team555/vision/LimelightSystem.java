@@ -190,12 +190,6 @@ public class LimelightSystem extends VisionSystem
     }
 
     @Override
-    public void initialize() 
-    {
-        setTargetType(DetectionType.DEFAULT);
-    }
-
-    @Override
     public void resetPose(Pose2d pose) 
     {}
     
@@ -214,11 +208,5 @@ public class LimelightSystem extends VisionSystem
     public Translation2d getAprilTagRobotSpace() 
     {
         return toPose2D(getEntry("targetpose_robotspace").getDoubleArray(new double[6])).getTranslation();
-    }
-
-    @Override
-    public void reset() 
-    {
-        setTargetType(DetectionType.DEFAULT);
     }
 }

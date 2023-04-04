@@ -100,14 +100,14 @@ public class BackupAuto extends ManagerBase
         
         if (selected.equals("Score Mid Peg"))
         {
-            command = scoreMidPeg(true, true);
+            command = scoreHighPeg(true, true);
             commandView.setString(command.getName());
             drawnTrajectory.setPose(new Pose2d());
             return;
         }   
         if (selected.equals("Score Mid Shelf")) 
         {
-            command = scoreMidShelf(true, true);
+            command = scoreHighShelf(true, true);
             commandView.setString(command.getName());
             drawnTrajectory.setPose(new Pose2d());
             return;
@@ -131,7 +131,7 @@ public class BackupAuto extends ManagerBase
         }
         drawnTrajectory.setTrajectory(drawing);
 
-        command = scoreMidPeg(true, true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
+        command = scoreHighPeg(true, true).andThen(ChargedUp.drivetrain.commands.trajectory(builder, trajectory)).withName(selected);
         // String str = command == null ? "NOTHING YET!!" : command.getName();
         commandView.setString(command.getName());
     }

@@ -230,7 +230,7 @@ public class Drivetrain extends ManagerSubsystemBase
      * @param adjusted_vy y direction velocity
      * @return Chassis speeds
      */
-    private ChassisSpeeds getSpeedsFromMode(double omega, double x, double y)
+    public ChassisSpeeds getSpeedsFromMode(double omega, double x, double y)
     {
         if(useFieldRelative) return ChassisSpeeds.fromFieldRelativeSpeeds(x, y, omega, getRobotRotation());
         return new ChassisSpeeds(x, y, omega);
@@ -619,15 +619,24 @@ public class Drivetrain extends ManagerSubsystemBase
         {
             return Commands.runOnce(() -> Drivetrain.this.setChassisSpeeds(omega_rad_per_second, vx_meter_per_second, -vy_meter_per_second), Drivetrain.this);
         }
+
+        public CommandBase driveForTimeRelative(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        {
+            return disableFieldRelative()
+                .andThen(driveForTime(time, omega_rad_per_second, vx_meter_per_second, vy_meter_per_second))
+                .finallyDo(__ -> Drivetrain.this.enableFieldRelative());
+        }
+        public CommandBase driveForTimeAbsolute(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
+        {
+            return enableFieldRelative()
+                .andThen(driveForTime(time, omega_rad_per_second, vx_meter_per_second, vy_meter_per_second));
+        }
+
         public CommandBase driveForTime(double time, double omega_rad_per_second, double vx_meter_per_second, double vy_meter_per_second)
         {
-            return Commands.sequence
-            (
-                disableFieldRelative(),
-                Commands.run(() -> Drivetrain.this.setChassisSpeeds(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
-                    .raceWith(Commands.waitSeconds(time))
-            ).finallyDo(__ -> ChargedUp.drivetrain.enableFieldRelative())
-            .finallyDo(__ -> Drivetrain.this.setChassisSpeeds(0, 0, 0));
+            return Commands.run(() -> Drivetrain.this.setChassisSpeeds(omega_rad_per_second, vx_meter_per_second, vy_meter_per_second), Drivetrain.this)
+                .raceWith(Commands.waitSeconds(time))
+                .finallyDo(__ -> Drivetrain.this.setChassisSpeeds(0, 0, 0));
 
         }
 

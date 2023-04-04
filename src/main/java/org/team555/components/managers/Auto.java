@@ -3,35 +3,26 @@ package org.team555.components.managers;
 import org.team555.util.frc.Logging;
 import org.team555.util.frc.commandrobot.ManagerBase;
 
-import java.sql.Driver;
 import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.Map;
+import java.util.function.Consumer;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.NetworkTableEvent.Kind;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+
 import org.team555.ChargedUp;
 import org.team555.Commands555;
+import org.team555.constants.Constants;
+import org.team555.constants.DriveConstants;
 
 /**
  * AutoCommandsManager
@@ -47,11 +38,11 @@ public class Auto extends ManagerBase
     private final GenericEntry balance;
     private final GenericEntry pointless;
     private final GenericEntry pickupTwice;
-    private final GenericEntry field;
     private final GenericEntry autoStringEntry;
-    private final GenericEntry scoresLowForStartEntry;
+    private final GenericEntry firstIsHigh;
 
     private String autoString = "";
+    private boolean lastIsHigh;
     private Pose2d startPose = new Pose2d();
     private final FieldObject2d start;
     
@@ -94,13 +85,13 @@ public class Auto extends ManagerBase
             .withPosition(0, 4);
 
         
-        field = autoStringEntry = autoTab.add("Command String", autoString)
+        autoStringEntry = autoTab.add("Command String", autoString)
             .withWidget(BuiltInWidgets.kTextView)
             .withPosition(8, 1)
             .withSize(2, 1)
             .getEntry();
-        scoresLowForStartEntry = autoTab
-            .add("First Score is Mid", false)
+        firstIsHigh = autoTab
+            .add("First Score is High", false)
             .withWidget(BuiltInWidgets.kBooleanBox)
             .withPosition(8, 2)
             .withSize(2, 1)
@@ -108,6 +99,18 @@ public class Auto extends ManagerBase
 
         // autoTab.add(ChargedUp.getField()).withSize(7, 4).withPosition(2, 0);
         start = ChargedUp.field.getObject("Start");
+
+        // Hook tunables
+        final Consumer<Double> whenUpdate = x -> updateAutoCommand();
+
+        Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.whenUpdate(whenUpdate);
+        Constants.Auto.DRIVE_TIME_AFTER_BALANCE_CLIP.whenUpdate(whenUpdate);
+
+        Constants.Auto.MAX_VEL.whenUpdate(whenUpdate);
+        Constants.Auto.MAX_ACC.whenUpdate(whenUpdate);
+
+        DriveConstants.CHARGER_STATION_MUL.whenUpdate(whenUpdate);
+        DriveConstants.CHARGER_STATION_AT_REST_DEBOUNCE_TIME.whenUpdate(whenUpdate);
     }
 
     private Command command = null;
@@ -146,8 +149,7 @@ public class Auto extends ManagerBase
         }
         start.setPose(startPose);
 
-        command = Commands555.buildAuto(str);
-        scoresLowForStartEntry.setBoolean(Commands555.firstScoreIsMid(str));
+        command = Commands555.buildAuto(str, firstIsHigh.getBoolean(false));
 
         if(command != null)
         {
@@ -172,13 +174,17 @@ public class Auto extends ManagerBase
             pickupTwice.getBoolean(false)
         );
 
-        if(!current.equals(previous))
+        boolean currentIsHigh = firstIsHigh.getBoolean(false);
+
+        if(!current.equals(previous) || lastIsHigh != currentIsHigh)
         {
             updateAutoCommand();
         }
 
         previous = current;
         autoString = current;
+
+        lastIsHigh = currentIsHigh;
 
         pointless.setBoolean(false);
         if (autoString != null) autoStringEntry.setString(autoString);

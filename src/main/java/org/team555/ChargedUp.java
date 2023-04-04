@@ -259,7 +259,7 @@ public class ChargedUp extends RobotContainer
         operatorController.getDPad(DPad.UP)
             .toggleOnTrue(Commands555.elevatorHumanPlayerLevel());
         operatorController.getDPad(DPad.LEFT)
-            .toggleOnTrue(Commands555.scoreMid(false, true));
+            .toggleOnTrue(Commands555.scoreHigh(false, true));
         operatorController.getDPad(DPad.DOWN)
             .toggleOnTrue(Commands555.scoreCubeLow(false));
         operatorController.getDPad(DPad.RIGHT)
@@ -476,9 +476,9 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.scoreLow(false, true));
         tab.add(Commands555.scoreLowPeg(false, true));
         tab.add(Commands555.scoreLowShelf(false, true));
-        tab.add(Commands555.scoreMid(false, true));
-        tab.add(Commands555.scoreMidPeg(false, true));
-        tab.add(Commands555.scoreMidShelf(false, true));
+        tab.add(Commands555.scoreHigh(false, true));
+        tab.add(Commands555.scoreHighPeg(false, true));
+        tab.add(Commands555.scoreHighShelf(false, true));
 
         tab.add(Commands555.pickup(1.6));
 

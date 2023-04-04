@@ -7,7 +7,7 @@ import org.team555.ChargedUp;
 
 public enum ScoreHeight 
 {
-    MID, LOW; 
+    HIGH, LOW; 
 
     // public Command getPositioner()
     // {

@@ -104,4 +104,16 @@ public abstract class VisionSystem extends ManagerBase
      * Gets the URL for the camera streams
      */
     public abstract String getCameraStreamURL();
+    
+    @Override
+    public void reset() 
+    {
+        setTargetType(DetectionType.DEFAULT);
+    }
+    
+    @Override
+    public void initialize() 
+    {
+        setTargetType(DetectionType.DEFAULT);
+    }
 }

@@ -1,12 +1,11 @@
 package org.team555.components.managers;
 
-import com.fasterxml.jackson.databind.util.RootNameLookup;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
+
 import org.team555.util.frc.Logging;
 import org.team555.util.frc.commandrobot.ManagerBase;
 
@@ -77,6 +76,4 @@ public class GyroscopeNavX extends ManagerBase
 
         rollRate = avg.calculate(change / 0.02);
     }
-
-    
 }

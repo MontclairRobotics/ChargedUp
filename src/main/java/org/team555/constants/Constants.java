@@ -21,15 +21,19 @@ public final class Constants
     
     public static class Auto 
     {
-        public static final double MAX_VEL = 4;
-        public static final double MAX_ACC = 2;
+        public static final Tunable<Double> MAX_VEL = Tunable.of(4, "auto.max_vel");
+        public static final Tunable<Double> MAX_ACC = Tunable.of(2, "auto.max_acc");
 
         public static PathConstraints constraints()
         {
-            return new PathConstraints(MAX_VEL, MAX_ACC);
+            return new PathConstraints(
+                MAX_VEL.get(), 
+                MAX_ACC.get()
+            );
         }
 
-        public static final Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(3.1, "auto.drive_time");
+        public static final Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(3.1, "drive.auto_before_balance");
+        public static final Tunable<Double> DRIVE_TIME_AFTER_BALANCE_CLIP = Tunable.of(1, "drive.auto_after_balance_clip");
     }
     public static class Robot 
     {

@@ -214,18 +214,18 @@ public class Commands555
      * Sets the elevator to the height of the middle cone peg
      * @return the command
      */
-    public static CommandBase elevatorToConeMid()
+    public static CommandBase elevatorToConeHigh()
     {
-        return elevatorTo(ElevatorConstants.MID_HEIGHT_CONE);
+        return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CONE);
     }
 
     /**
      * Sets the elevator to the height of the middle cube shelf
      * @return Command
      */
-    public static CommandBase elevatorToCubeMid()
+    public static CommandBase elevatorToCubeHigh()
     {
-        return elevatorTo(ElevatorConstants.MID_HEIGHT_CUBE);
+        return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CUBE);
     }
 
     /**
@@ -266,22 +266,22 @@ public class Commands555
         return c;
     }
     
-    public static CommandBase elevatorStingerToConeMid()
+    public static CommandBase elevatorStingerToConeHigh()
     {
         CommandBase c = sequence(
-            elevatorToConeMid(),
+            elevatorToConeHigh(),
             extendStinger()
         );
         c.addRequirements(elevator, stinger);
         return c;
     }
 
-    public static CommandBase elevatorStingerToCubeMid()
+    public static CommandBase elevatorStingerToCubeHigh()
     {
         CommandBase c = parallel(
-            elevatorToCubeMid(), //BANANAS SOUP SHIT
+            elevatorToCubeHigh(), //BANANAS SOUP SHIT
             Commands.sequence(
-                waitUntil(() -> Math.abs(elevator.getHeight() - ElevatorConstants.MID_HEIGHT_CUBE) < 0.05),
+                waitUntil(() -> Math.abs(elevator.getHeight() - ElevatorConstants.HIGH_HEIGHT_CUBE) < 0.05),
                 extendStinger()
             )
         );
@@ -385,7 +385,7 @@ public class Commands555
             shwooperSuck(),
             Commands.sequence(
                 moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP),
-                drivetrain.commands.driveForTime(driveTime,0,1.5,0)
+                drivetrain.commands.driveForTimeRelative(driveTime,0,1.5,0)
             )
                 .until(shwooper::manipulatedObject)
                 .withTimeout(2),
@@ -407,19 +407,7 @@ public class Commands555
      */
     public static CommandBase positionDrivetrainForScore(Supplier<ScoringType> type)
     {
-        return Commands.either(
-            Commands.sequence(
-                waitForPipe(() -> DetectionType.TAPE),
-                Commands.sequence(
-                    moveToObjectSideways(null, 0),
-                    moveToObjectForward()
-                ),
-                runOnce(() -> vision.setTargetType(DetectionType.DEFAULT))
-            ), 
-            none(),//alignWithAprilTagForScore(), 
-            () -> type.get() == ScoringType.PEG
-        )
-        .beforeStarting(drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180)));
+        return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180));
     }
 
     /**
@@ -428,15 +416,10 @@ public class Commands555
     public static CommandBase positionElevatorAssemblyForScore(ScoreHeight height, Supplier<ScoringType> type)
     {
         CommandBase cmd = Commands.either(
-            elevatorStingerToConeMid(),
-            elevatorStingerToCubeMid(),
+            elevatorStingerToConeHigh(),
+            elevatorStingerToCubeHigh(),
             () -> type.get() == ScoringType.PEG
-        ); 
-        
-        if(height == ScoreHeight.LOW)
-        {
-            cmd = cmd.andThen(drivetrain.commands.goToPositionRelative(-2, 0));
-        }
+        );
 
         return cmd;
     }
@@ -528,13 +511,13 @@ public class Commands555
     {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
         .withName("Score Low (General)");}
 
-    public static CommandBase scoreMidPeg(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
-    public static CommandBase scoreMidShelf(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndType(ScoreHeight.MID, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
-    public static CommandBase scoreMid(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.MID, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
-        .withName("Score Mid (General)");}
+    public static CommandBase scoreHighPeg(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
+    public static CommandBase scoreHighShelf(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
+    public static CommandBase scoreHigh(boolean skipObjectAlignment, boolean resetAfterScore)
+    {return scoreFromHeightAndDynamicType(ScoreHeight.HIGH, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
+        .withName("Score High (General)");}
 
     
     public static CommandBase balance() //the sneakers :(
@@ -559,8 +542,7 @@ public class Commands555
     
     public static Command balanceOriginal()
     {
-        return Commands.runOnce(drivetrain::disableFieldRelative)
-            .andThen(Commands.run(() -> 
+        return Commands.run(() -> 
             {
                 double angle = drivetrain.getChargeStationAngle();
                 double speed = DriveConstants.MAX_SPEED_MPS * DriveConstants.CHARGER_STATION_MUL.get() * angle / Constants.Field.CHARGE_ANGLE_RANGE_DEG;
@@ -569,11 +551,11 @@ public class Commands555
                     speed = 0;
                 }
                 speed = DriveConstants.CHARGER_STATION_INCLINE_INVERT ? -speed : speed;
-                drivetrain.setChassisSpeeds(0, speed, 0);
-            }))
+                
+                drivetrain.setChassisSpeeds(drivetrain.getSpeedsFromMode(0, speed, 0));
+            })
             .finallyDo(interupted -> 
             {
-                drivetrain.enableFieldRelative();
                 drivetrain.enableXMode();
             })
             .withName("Balance");
@@ -766,7 +748,7 @@ public class Commands555
             Commands.run(() -> drivetrain.setChassisSpeeds(0, Math555.atLeast(SPEED_MUL * vision.getObjectAY() / 27.0, 0.2), 0))
                 .until(() -> Math.abs(vision.getObjectAY()) <= DEADBAND)
                 .withTimeout(3)
-                .andThen(drivetrain.commands.driveForTime(1.7/2, 0, 0.2*3, 0))
+                .andThen(drivetrain.commands.driveForTimeRelative(1.7/2, 0, 0.2*3, 0))
                 .withName("MOVE FORWARD TO TAPE")
         ));
     }
@@ -850,7 +832,8 @@ public class Commands555
         return Commands.runOnce(() -> vision.setTargetType(type.get()))
             .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
             .andThen(waitSeconds(0.2)) //TODO: this is very dumb
-            .unless(RobotBase::isSimulation); 
+            .unless(RobotBase::isSimulation)
+            .unless(() -> vision.currentPipelineMatches(type.get())); 
     }
 
     /**
@@ -868,28 +851,51 @@ public class Commands555
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static CommandBase fromStringToCommand(String str, String full, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
+    public static CommandBase fromStringToCommand(String str, String full, boolean firstIsHigh, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
     {
         // Single actions
         if(str.length() == 1)
         {
             switch(str)
             {
-                case "A": return pickup(1);
+                case "A": 
                 case "C": return pickup(1);
+
                 case "D": return pickup(1.6);
             
-                case "1": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : runOnce(scoreCubeLow(true)::schedule); 
-                case "3": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : runOnce(scoreCubeLow(true)::schedule); 
-                case "2": return firstScoreIsMid(full) ? scoreMidShelf(true, full.length() == 1 || (full.length() == 2 && full.charAt(1) == 'B')) : runOnce(scoreCubeLow(true)::schedule); 
+                case "1":
+                case "2":
+                case "3": 
+                {
+                    if(firstIsHigh)
+                    {
+                        boolean resetAfterScoring = full.length() == 2 && full.charAt(1) == 'B';
+                        return scoreHighShelf(true, resetAfterScoring);
+                    }
+                    else 
+                    {
+                        return scoreCubeLow(true);
+                    } 
+                }
 
-                case "4": return scoreCubeLow(false); //lmao
-                case "5": return scoreCubeLow(false); //lmao
+                case "4":
+                case "5": 
+                {
+                    // Parallelization may occur here
+                    if(full.endsWith(str)) 
+                    {
+                        return scoreCubeLow(false);
+                    }
+                    else 
+                    {
+                        return Commands.none();
+                    }
+                }
 
-                case "B": return drivetrain.commands.driveForTime(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
+                case "B": return drivetrain.commands.driveForTimeRelative(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
                     .until(() -> Math.abs(drivetrain.getChargeStationAngle()) > 10)
                     .andThen(waitSeconds(1))
-                    .andThen(drivetrain.commands.driveForTime(0.3, 0, DriveConstants.MAX_SPEED_MPS, 0))
+                    .andThen(drivetrain.commands.driveForTimeRelative(Constants.Auto.DRIVE_TIME_AFTER_BALANCE_CLIP.get(), 0, DriveConstants.MAX_SPEED_MPS, 0))
                     .andThen(balanceOriginal());
 
                 default: 
@@ -943,7 +949,7 @@ public class Commands555
      * 
      * @return The command, with none() inserted into places in the sequence where an error occured.
      */
-    public static CommandBase buildAuto(String full, String[] list)
+    public static CommandBase buildAuto(String full, boolean firstIsHigh, String[] list)
     {
         Trajectories.clearAll();
         CommandBase[] commandList = new CommandBase[list.length];
@@ -952,12 +958,13 @@ public class Commands555
 
         // Get the auto builder //
         HashMap<String, Command> markers = HashMaps.of(
-            "Elevator Mid Peg", elevatorToConeMid(),
-            "Elevator Mid Shelf", elevatorToCubeMid(),
-            "Intake On", shwooperSuck(),
-            "Retract", elevatorStingerReturn(),
-            "Intake Off", Commands.sequence(stopShwooper(), closeGrabber()),
-            "Pickup Pipeline", waitForPipe(() -> DetectionType.CONE)
+            "Elevator Mid Peg"   , elevatorToConeHigh(),
+            "Elevator Mid Shelf" , elevatorToCubeHigh(),
+            "Score Low"          , scoreCubeLow(true), 
+            "Intake On"          , shwooperSuck(),
+            "Retract"            , elevatorStingerReturn(),
+            "Intake Off"         , Commands.sequence(stopShwooper(), closeGrabber()),
+            "Pickup Pipeline"    , waitForPipe(() -> DetectionType.CONE)
         );
 
         String debugAuto = "";
@@ -966,7 +973,7 @@ public class Commands555
         // Iterate all of the string segments
         for (int i = 0; i < list.length; i++)
         {
-            commandList[i] = fromStringToCommand(list[i], full, builder, allTrajectories);
+            commandList[i] = fromStringToCommand(list[i], full, firstIsHigh, builder, allTrajectories);
 
             // Error out here if necessary
             if(commandList[i] == null)
@@ -979,45 +986,18 @@ public class Commands555
         }
 
         // Calculate the sum trajectory
-        Trajectory sumTrajectory = null;
-        
         if(allTrajectories.size() > 0)
         {
-            // sumTrajectory = allTrajectories.get(0);
-
-            // for(int i = 1; i < allTrajectories.size(); i++)
-            // {
-            //     sumTrajectory = sumTrajectory.concatenate(allTrajectories.get(i));
-            // }
-
             Trajectories.displayAll(allTrajectories);
-
-            // if (DriverStation.getAlliance() == Alliance.Red)
-            // {
-            //     // sumTrajectory = sumTrajectory.relativeTo(new Pose2d(16.5, 8, Rotation2d.fromDegrees(180)));
-            //     PathPlannerTrajectory.transformTrajectoryForAlliance(ppTrajectory, Alliance.Red);
-            // }
         }
-        
 
-        // Display the sum trajectory
-        // if(sumTrajectory == null)
-        // {
-        //     trajectoryObject.setPose(-10, -10, Rotation2d.fromDegrees(0));
-        // } 
-        // else
-        // {
-        //     trajectoryObject.setTrajectory(sumTrajectory);
-        // }
-
-        // Parallelize the first score 
-        // TODO: (now obsolet)
-        // if(!firstScoreIsMid(full) && commandList.length > 1)
-        // {
-        //     CommandBase first = commandList[0];
-        //     commandList[0] = Commands.none();
-        //     commandList[1] = commandList[1].alongWith(first);
-        // }
+        // Parallelize the first score
+        if(!firstIsHigh && commandList.length > 1)
+        {
+            CommandBase first = commandList[0];
+            commandList[0] = Commands.none();
+            commandList[1] = commandList[1].alongWith(first);
+        }
         
         // Return the sum command (with a navx set-180)
         Logging.info("[AUTO BUILD]" + debugAuto);
@@ -1033,7 +1013,7 @@ public class Commands555
      * @return The command, with none() inserted into places in the sequence where an error occured,
      * or none() itself if parsing or lexing fails.
      */
-    public static CommandBase buildAuto(String full) 
+    public static CommandBase buildAuto(String full, boolean firstIsHigh) 
     {
         String[] parts = Auto.parse(full);
 
@@ -1043,6 +1023,6 @@ public class Commands555
         }
         Logging.info(Arrays.toString(parts));
 
-        return buildAuto(full, parts);
+        return buildAuto(full, firstIsHigh, parts);
     }
 }
