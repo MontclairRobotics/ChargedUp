@@ -79,6 +79,12 @@
       "names": [
         "Intake Off"
       ]
+    },
+    {
+      "position": 1.9,
+      "names": [
+        "Score Low"
+      ]
     }
   ]
 }

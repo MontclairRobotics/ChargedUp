@@ -82,7 +82,7 @@ public class Auto extends ManagerBase
             .addString("Recent Log", Logging::mostRecentLog)
             .withWidget(BuiltInWidgets.kTextView)
             .withSize(3, 1)
-            .withPosition(0, 4);
+            .withPosition(3, 4);
 
         
         autoStringEntry = autoTab.add("Command String", autoString)
@@ -92,7 +92,7 @@ public class Auto extends ManagerBase
             .getEntry();
         firstIsHigh = autoTab
             .add("First Score is High", false)
-            .withWidget(BuiltInWidgets.kBooleanBox)
+            .withWidget(BuiltInWidgets.kToggleSwitch)
             .withPosition(8, 2)
             .withSize(2, 1)
             .getEntry();
@@ -147,7 +147,7 @@ public class Auto extends ManagerBase
             else if (chooseStart.getSelected().equals("Cone 4")) startPose = new Pose2d(16.5-1.85, 3.30, Rotation2d.fromDegrees(180));
             else if (chooseStart.getSelected().equals("Cone 6")) startPose = new Pose2d(16.5-1.85, 0.45, Rotation2d.fromDegrees(180));
         }
-        start.setPose(startPose);
+        // start.setPose(startPose);
 
         command = Commands555.buildAuto(str, firstIsHigh.getBoolean(false));
 
@@ -232,6 +232,7 @@ public class Auto extends ManagerBase
                
                 str += "C";
                 if (scoreTwice) str += "5";
+                if (pickupTwice) str += "E";
                 break;
 
             default:
@@ -273,7 +274,7 @@ public class Auto extends ManagerBase
                 continue;
             }
             // If we have a valid position, add it
-            else if(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == 'A' || c == 'B' || c == 'C' || c == 'a' || c == 'b' || c == 'c' || c == 'D' || c == 'd')
+            else if(c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == 'A' || c == 'B' || c == 'C' || c == 'a' || c == 'b' || c == 'c' || c == 'D' || c == 'd' || c == 'E' || c == 'e')
             {
                 c = Character.toUpperCase(c);//test
 

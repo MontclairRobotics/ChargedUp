@@ -39,6 +39,8 @@ public class ElevatorConstants
     public static final double HIGH_HEIGHT_CONE  = MAX_HEIGHT;//Units.feetToMeters(2.0 + 10.0/12) - ELEVATOR_MIN_TO_FLOOR + GRABBER_HEIGHT_NO_OBJECT;
     public static final double HIGH_HEIGHT_CUBE = MAX_HEIGHT;
 
+    public static final double MID_HEIGHT = MAX_HEIGHT - Units.inchesToMeters(2);
+
     public static final double BUFFER_SPACE_TO_INTAKE = MIN_HEIGHT + Units.feetToMeters(20.0/12);
 
     public static final double DEADBAND = 0.05;

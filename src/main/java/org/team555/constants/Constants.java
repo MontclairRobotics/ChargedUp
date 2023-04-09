@@ -22,7 +22,7 @@ public final class Constants
     public static class Auto 
     {
         public static final Tunable<Double> MAX_VEL = Tunable.of(4, "auto.max_vel");
-        public static final Tunable<Double> MAX_ACC = Tunable.of(2, "auto.max_acc");
+        public static final Tunable<Double> MAX_ACC = Tunable.of(1.8, "auto.max_acc");
 
         public static PathConstraints constraints()
         {

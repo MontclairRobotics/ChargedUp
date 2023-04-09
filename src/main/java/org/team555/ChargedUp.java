@@ -173,10 +173,10 @@ public class ChargedUp extends RobotContainer
             PortForwarder.add(port, "limelight.local", port);
         }
 
-        setupDebugTab();
+        setupDebugTab(); //TODO:
         setupMainTab();
-        setupPIDTab();
-        setupCommandsTab();
+        // setupPIDTab();
+        // setupCommandsTab();
 
         vision.setTargetType(DetectionType.DEFAULT);
 
@@ -257,12 +257,12 @@ public class ChargedUp extends RobotContainer
 
         // D-Pad Controls
         operatorController.getDPad(DPad.UP)
-            .toggleOnTrue(Commands555.elevatorHumanPlayerLevel());
-        operatorController.getDPad(DPad.LEFT)
-            .toggleOnTrue(Commands555.scoreHigh(false, true));
+            .toggleOnTrue(Commands555.elevatorToTop());
+        // operatorController.getDPad(DPad.LEFT)
+        //     .toggleOnTrue(Commands555.scoreHigh(false, true));
+        operatorController.getDPad(DPad.LEFT).or(operatorController.getDPad(DPad.RIGHT))
+            .toggleOnTrue(Commands555.elevatorToMid());
         operatorController.getDPad(DPad.DOWN)
-            .toggleOnTrue(Commands555.scoreCubeLow(false));
-        operatorController.getDPad(DPad.RIGHT)
             .toggleOnTrue(Commands555.elevatorStingerReturn());
 
         // Grabber
@@ -274,6 +274,9 @@ public class ChargedUp extends RobotContainer
             .onTrue(Commands555.setGrabberHasCube());
         operatorController.getButton(Button.B_CIRCLE)
             .onTrue(Commands555.toggleStinger());
+
+        operatorController.getButton(Button.START_TOUCHPAD)
+            .onTrue(Commands555.shwooperSpitFast());
 
         // Shwooper
         // suck button
@@ -486,7 +489,7 @@ public class ChargedUp extends RobotContainer
         tab.add(Commands555.moveToObjectSideways(() -> DetectionType.CONE, 0).withName("SIDE TO CONE"));
 
         tab.add(Commands555.scoreCubeLow(false));
-        tab.add(Commands555.elevatorHumanPlayerLevel().withName("humanz"));
+        tab.add(Commands555.elevatorToTop().withName("humanz"));
 
         tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
 

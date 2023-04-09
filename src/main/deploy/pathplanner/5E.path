@@ -2,13 +2,13 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.8892709968016221,
-        "y": 4.436957689892555
+        "x": 1.85,
+        "y": 0.5
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.3659319839886153,
-        "y": 4.763200291273104
+        "x": 2.335253857383606,
+        "y": 0.7776111415275606
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -24,16 +24,16 @@
     },
     {
       "anchorPoint": {
-        "x": 3.4446066625844316,
-        "y": 4.791586467025626
+        "x": 5.731584872584866,
+        "y": 0.8919657211639663
       },
       "prevControl": {
-        "x": 2.7860196834597697,
-        "y": 4.7819720585712515
+        "x": 5.4675768244485345,
+        "y": 0.8919657211639663
       },
       "nextControl": {
-        "x": 4.22238787820352,
-        "y": 4.8029409373266345
+        "x": 5.972001608455066,
+        "y": 0.8919657211639663
       },
       "holonomicAngle": 180.0,
       "isReversal": false,
@@ -49,15 +49,15 @@
     },
     {
       "anchorPoint": {
-        "x": 5.9,
-        "y": 4.6
+        "x": 7.069533454330818,
+        "y": 0.9034011791276062
       },
       "prevControl": {
-        "x": 5.374866613755892,
-        "y": 4.865390523982181
+        "x": 6.53206693003971,
+        "y": 0.8919657211639663
       },
       "nextControl": null,
-      "holonomicAngle": 0,
+      "holonomicAngle": 90.0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
@@ -70,18 +70,15 @@
       }
     }
   ],
-  "maxVelocity": 4.0,
-  "maxAcceleration": 2.0,
-  "isReversed": null,
   "markers": [
     {
-      "position": 0.0,
+      "position": 0.05,
       "names": [
-        "Retract"
+        "Score Low"
       ]
     },
     {
-      "position": 1.45,
+      "position": 1.1,
       "names": [
         "Pickup Pipeline"
       ]

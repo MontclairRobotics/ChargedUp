@@ -19,7 +19,7 @@ import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
 public class Shwooper extends ManagerSubsystemBase
 {
-    private final Debouncer hasObjectRisingDebouncer = new Debouncer(0.3, DebounceType.kRising);
+    private final Debouncer hasObjectRisingDebouncer = new Debouncer(0.2, DebounceType.kRising);
     private final Debouncer hasObjectFallingDebouncer = new Debouncer(1.0, DebounceType.kFalling);
     private final EdgeDetectFilter edgeFilter = new EdgeDetectFilter(EdgeType.RISING);
 
@@ -61,9 +61,9 @@ public class Shwooper extends ManagerSubsystemBase
     /**
      * Expel game pieces from intake (but fatty)
      */
-    public void spitAuto() 
+    public void spitFast() 
     {
-        motorTop.set(SPIT_SPEED_AUTO);
+        motorTop.set(SPIT_SPEED_FAST);
         // motorBottom.set(Robot.Shwooper.INVERT_SIMPLE_SCHWOOPER * Robot.Shwooper.SPEED);
     }
 

@@ -53,7 +53,7 @@ public class GyroscopeNavX extends ManagerBase
     }
 
     public double getPitch() {return navx.getPitch() - 1.7;}
-    public double getRoll()  {return navx.getRoll() - 2;}
+    public double getRoll()  {return navx.getRoll();}
 
     LinearFilter avg = LinearFilter.movingAverage(20);
     double rollRate = 0;

@@ -228,11 +228,16 @@ public class Commands555
         return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CUBE);
     }
 
+    public static CommandBase elevatorToMid()
+    {
+        return elevatorTo(ElevatorConstants.MID_HEIGHT);
+    }
+
     /**
      * Sets the elevator high enough so that the human player can feed it a cone. Currently 5/6 max height.
      * @return Command
      */
-    public static CommandBase elevatorHumanPlayerLevel()
+    public static CommandBase elevatorToTop()
     {
         return elevatorTo(ElevatorConstants.MAX_HEIGHT);
     }
@@ -348,9 +353,9 @@ public class Commands555
      * intake spit
      * @return Command
      */
-    public static CommandBase shwooperSpitAuto() 
+    public static CommandBase shwooperSpitFast() 
     {
-        return Commands.runOnce(ChargedUp.shwooper::spitAuto)
+        return Commands.runOnce(ChargedUp.shwooper::spitFast)
             .withName("Intake Spit");
     }
 
@@ -429,12 +434,12 @@ public class Commands555
      */
     public static CommandBase scoreCubeLow(boolean isAuto)
     {
-        return Commands.sequence(
+        return logged(Commands.sequence(
             //close grabber to position the cube closer to the intake
-            
+            openGrabber(),
             // waitSeconds(0.3),
             either(
-                shwooperSpitAuto(), 
+                shwooperSpitFast(), 
                 shwooperSpit(), 
                 () -> isAuto
             ),
@@ -448,7 +453,8 @@ public class Commands555
             waitSeconds(0.3),
             stopShwooper()
 
-        ).withName("deIntake score");
+
+        ).withName("deIntake score"));
     }
 
 
@@ -486,7 +492,7 @@ public class Commands555
             either(
                 elevatorStingerReturn(),
                 retractStinger(),
-                () -> resetAfterScore
+                () -> resetAfterScore || true //bc this should always be true and our previous code is stupid
             ),
             
             log("[SCORE] Done!")
@@ -854,27 +860,33 @@ public class Commands555
     public static CommandBase fromStringToCommand(String str, String full, boolean firstIsHigh, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
     {
         // Single actions
-        if(str.length() == 1)
+        if(str.length() == 1) //DEPLOY CODE PLSSSSS
         {
             switch(str)
             {
                 case "A": 
-                case "C": return pickup(1);
+                case "C": return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)).withTimeout(0.3).andThen(pickup(0.75));
 
-                case "D": return pickup(1.6);
-            
+                case "D": {
+                    double angle = DriverStation.getAlliance() == Alliance.Blue ? 270 : 90;
+                    return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(angle)).withTimeout(0.3).andThen(pickup(1.1));
+                }
+                case "E": {
+                    double angle = DriverStation.getAlliance() == Alliance.Blue ? 90 : 270;
+                    return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(angle)).withTimeout(0.3).andThen(pickup(1.1));
+                }
                 case "1":
                 case "2":
                 case "3": 
                 {
                     if(firstIsHigh)
                     {
-                        boolean resetAfterScoring = full.length() == 2 && full.charAt(1) == 'B';
+                        boolean resetAfterScoring = (full.length() == 2 && full.charAt(1) == 'B');
                         return scoreHighShelf(true, resetAfterScoring);
                     }
                     else 
                     {
-                        return scoreCubeLow(true);
+                        return scoreCubeLow(false);
                     } 
                 }
 
@@ -960,7 +972,7 @@ public class Commands555
         HashMap<String, Command> markers = HashMaps.of(
             "Elevator Mid Peg"   , elevatorToConeHigh(),
             "Elevator Mid Shelf" , elevatorToCubeHigh(),
-            "Score Low"          , scoreCubeLow(true), 
+            "Score Low"          , scoreCubeLow(false), 
             "Intake On"          , shwooperSuck(),
             "Retract"            , elevatorStingerReturn(),
             "Intake Off"         , Commands.sequence(stopShwooper(), closeGrabber()),
