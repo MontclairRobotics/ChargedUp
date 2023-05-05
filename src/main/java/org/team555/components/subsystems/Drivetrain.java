@@ -258,9 +258,9 @@ public class Drivetrain extends ManagerSubsystemBase
         }
 
         setChassisSpeeds(getSpeedsFromMode(
-            turn.getX()  / SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
-            drive.getY() / SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
-            drive.getX() / SPEEDS[speedIndex][0] * MAX_SPEED_MPS
+            turn.getX()  * SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
+            drive.getY() * SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
+            drive.getX() * SPEEDS[speedIndex][0] * MAX_SPEED_MPS
         ));
     }
 
