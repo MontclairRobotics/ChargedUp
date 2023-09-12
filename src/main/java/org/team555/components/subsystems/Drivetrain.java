@@ -13,6 +13,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
@@ -261,6 +262,42 @@ public class Drivetrain extends ManagerSubsystemBase
             turn.getX()  * SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
             drive.getY() * SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
             drive.getX() * SPEEDS[speedIndex][0] * MAX_SPEED_MPS
+        ));
+    }
+
+    /**
+     * Takes joystick inputs for turning and driving and converts them to velocities for the robot.
+     * Should be called in order to manually control the robot.
+     * Sets the speeds of the motors directly
+     * @param turn the turn axis of the joystick
+     * @param drive the driving axis of the joystick
+     */
+    public void setFlightStickInput(Joystick turn, Joystick drive)
+    {
+        double driveY = drive.getY();
+        double driveX = drive.getX();
+
+        double turnX = turn.getX();
+
+        
+        driveX = ControlScheme.DRIVE_STICK_ADJUSTER.adjustXInput(driveX);
+        driveY = ControlScheme.DRIVE_STICK_ADJUSTER.adjustYInput(driveY);
+
+        turnX = ControlScheme.STEER_STICK_ADJUSTER.adjustXInput(turnX);
+
+        // double turnRL = thetaInputRateLimiter.calculate(turn.getX());
+        // double xRL    = xInputRateLimiter.calculate(drive.getX());
+        // double yRL    = yInputRateLimiter.calculate(drive.getY());
+
+        if (turnX != 0 || driveX != 0 || driveY != 0)
+        {
+            disableXMode();
+        }
+
+        setChassisSpeeds(getSpeedsFromMode(
+            turnX  * SPEEDS[speedIndex][1] * MAX_TURN_SPEED_RAD_PER_S,
+            driveY * SPEEDS[speedIndex][0] * MAX_SPEED_MPS,
+            driveX * SPEEDS[speedIndex][0] * MAX_SPEED_MPS
         ));
     }
 

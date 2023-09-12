@@ -12,6 +12,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -42,6 +43,7 @@ import org.team555.components.subsystems.Elevator;
 import org.team555.components.subsystems.Grabber;
 import org.team555.components.subsystems.Shwooper;
 import org.team555.components.subsystems.Stinger;
+import org.team555.inputs.FlightStickAdjuster;
 import org.team555.inputs.JoystickInput;
 import org.team555.structure.DetectionType;
 import org.team555.util.HashMaps;
@@ -87,6 +89,13 @@ public class ChargedUp extends RobotContainer
         ControlScheme.DEBUG_CONTROLLER_TYPE,
         ControlScheme.DEBUG_CONTROLLER_PORT)
         : null;
+
+    public static final Joystick steerJoystick = 
+        new Joystick(ControlScheme.DRIVER_STEER_JOYSTICK);
+
+    public static final Joystick driveJoystick = 
+        new Joystick(ControlScheme.DRIVER_DRIVE_JOYSTICK);
+
 
     // SHUFFLEBOARD //
     private static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
@@ -191,9 +200,8 @@ public class ChargedUp extends RobotContainer
                         return;
                     }
 
-                    drivetrain.setInput(
-                        JoystickInput.getRight(driverController, true, true),
-                        JoystickInput.getLeft(driverController, true, true)
+                    drivetrain.setFlightStickInput(
+                        steerJoystick, driveJoystick
                     );
                 },
                 drivetrain
