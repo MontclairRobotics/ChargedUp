@@ -277,6 +277,8 @@ public class Drivetrain extends ManagerSubsystemBase
         double driveY = drive.getY();
         double driveX = drive.getX();
 
+        // Logging.info("DriveY: " + driveY);
+
         double turnX = turn.getX();
 
         
@@ -284,6 +286,8 @@ public class Drivetrain extends ManagerSubsystemBase
         driveY = ControlScheme.DRIVE_STICK_ADJUSTER.adjustYInput(driveY);
 
         turnX = ControlScheme.STEER_STICK_ADJUSTER.adjustXInput(turnX);
+
+        // Logging.info("Adjusted DriveY: " + driveY);
 
         // double turnRL = thetaInputRateLimiter.calculate(turn.getX());
         // double xRL    = xInputRateLimiter.calculate(drive.getX());

@@ -27,19 +27,24 @@ public class FlightStickAdjuster {
             return 0;
         }
 
+        input /*[0, 1]*/ = (Math.abs(input) - deadband) / (1 - deadband);
+
         double invertedInput = invertX ? -input : input; //TODO make an enum to select between x and y inputs
 
-        return Math.abs(Math.pow(invertedInput, power)) * Math.signum(invertedInput);
+        return (Math.pow(Math.abs(invertedInput), power)) * Math.signum(invertedInput);
     }
 
     public double adjustYInput(double input) {
+        // If the value is within the deadband, return 0
+        if(Math.abs(input) < deadband) return 0;
 
-        if (Math.abs(input) <= deadband) {
-            return 0;
-        }
+        // Otherwise remap the rest of the values from [0, 1]
+        double input_remap /*[0, 1]*/ = (Math.abs(input) - deadband) / (1 - deadband);
 
-        double invertedInput = invertY ? -input : input; //TODO make an enum to select between x and y inputs
+        // Raise input to a given power, to allow for more room in the lower band range
+        double input_raised /*[0, 1]*/ = Math.pow(Math.abs(input_remap), power);
 
-        return Math.abs(Math.pow(invertedInput, power)) * Math.signum(invertedInput);
+        // Re-introduce signed-ness
+        return input_raised * Math.signum(input);
     }
 }
