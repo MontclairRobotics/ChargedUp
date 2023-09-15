@@ -27,6 +27,8 @@ public class FlightStickAdjuster {
             return 0;
         }
 
+        input /*[0, 1]*/ = (Math.abs(input) - deadband) / (1 - deadband);
+
         double invertedInput = invertX ? -input : input; //TODO make an enum to select between x and y inputs
 
         return Math.abs(Math.pow(invertedInput, power)) * Math.signum(invertedInput);
@@ -37,6 +39,8 @@ public class FlightStickAdjuster {
         if (Math.abs(input) <= deadband) {
             return 0;
         }
+
+        input /*[0, 1]*/ = (Math.abs(input) - deadband) / (1 - deadband);
 
         double invertedInput = invertY ? -input : input; //TODO make an enum to select between x and y inputs
 
