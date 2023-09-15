@@ -31,21 +31,19 @@ public class FlightStickAdjuster {
 
         double invertedInput = invertX ? -input : input; //TODO make an enum to select between x and y inputs
 
-        return (Math.pow(Math.abs(invertedInput), power)) * Math.signum(invertedInput);
+        return Math.abs(Math.pow(invertedInput, power)) * Math.signum(invertedInput);
     }
 
     public double adjustYInput(double input) {
-        // If the value is within the deadband, return 0
-        if(Math.abs(input) < deadband) return 0;
 
-        // Otherwise remap the rest of the values from [0, 1]
-        input /*[0, 1]*/ = (Math.abs(input) - deadband) / (1 - deadband);
+        if (Math.abs(input) <= deadband) {
+            return 0;
+        }
 
         input /*[0, 1]*/ = (Math.abs(input) - deadband) / (1 - deadband);
 
         double invertedInput = invertY ? -input : input; //TODO make an enum to select between x and y inputs
 
-        // Re-introduce signed-ness
-        return invertedInput * Math.signum(invertedInput);
+        return Math.abs(Math.pow(invertedInput, power)) * Math.signum(invertedInput);
     }
 }
