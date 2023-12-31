@@ -686,11 +686,18 @@ public class Commands555
 
         final double DEADBAND = 2;//degrees
         final double SPEED_MUL = DriveConstants.MAX_TURN_SPEED_RAD_PER_S * 0.15;
+        Debouncer hasEnded = new Debouncer(0.1, DebounceType.kRising);
 
-        CommandBase turn = ifHasTargetDebounce(
-            Commands.run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.275), 0, 0))
-                    .until(() -> Math.abs(vision.getObjectAX()) < DEADBAND)
+        CommandBase turn = ifHasTarget(
+            Commands.runOnce(() -> hasEnded.calculate(false))
+                .andThen(run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.275), 0, 0)))
+                    .until(() -> hasEnded.calculate(Math.abs(vision.getObjectAX()) < DEADBAND))
         );
+        
+        // ifHasTargetDebounce(
+        //     Commands.run(() -> drivetrain.setChassisSpeeds(-Math555.atLeast(SPEED_MUL * vision.getObjectAX() / 27.0, 0.275), 0, 0))
+        //             .until(() -> Math.abs(vision.getObjectAX()) < DEADBAND)
+        // );
         
         if(type == null) return turn;
         
@@ -838,8 +845,8 @@ public class Commands555
         return Commands.runOnce(() -> vision.setTargetType(type.get()))
             .andThen(waitUntil(() -> vision.currentPipelineMatches(type.get())))
             .andThen(waitSeconds(0.2)) //TODO: this is very dumb
-            .unless(RobotBase::isSimulation)
-            .unless(() -> vision.currentPipelineMatches(type.get())); 
+            .unless(RobotBase::isSimulation);
+            // .unless(() -> vision.currentPipelineMatches(type.get())); 
     }
 
     /**

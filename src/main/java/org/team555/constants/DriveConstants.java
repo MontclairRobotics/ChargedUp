@@ -153,7 +153,7 @@ public class DriveConstants
         BRPosition  //BR
     );
 
-    public static final double[][] SPEEDS  = {{0.25, 0.25}};  
+    public static final double[][] SPEEDS  = {{1, 1}};  
     // 1st element is drive speed, 2nd is angular speed
 
     public static final String[] MODULE_NAMES = {"FL", "FR", "BR", "BL"};

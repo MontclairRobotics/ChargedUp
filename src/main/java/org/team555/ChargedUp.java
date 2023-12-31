@@ -141,7 +141,7 @@ public class ChargedUp extends RobotContainer
     // COMPONENTS //
     public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
     public static final PneumaticHub pneu = new PneumaticHub(PneuConstants.PH_PORT);
-    public static final VisionSystem vision = new DummySystem();
+    public static final VisionSystem vision = new LimelightSystem();
 
     public static final Drivetrain drivetrain = new Drivetrain();
     public static final Elevator elevator = new Elevator();
