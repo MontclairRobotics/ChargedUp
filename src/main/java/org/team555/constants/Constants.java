@@ -1,6 +1,5 @@
 package org.team555.constants;
 
-import com.pathplanner.lib.PathConstraints;
 
 import edu.wpi.first.wpilibj.util.Color;
 import org.team555.animation2.AnimationReel;
@@ -24,13 +23,13 @@ public final class Constants
         public static final Tunable<Double> MAX_VEL = Tunable.of(4, "auto.max_vel");
         public static final Tunable<Double> MAX_ACC = Tunable.of(1.8, "auto.max_acc");
 
-        public static PathConstraints constraints()
-        {
-            return new PathConstraints(
-                MAX_VEL.get(), 
-                MAX_ACC.get()
-            );
-        }
+        // public static PathConstraints constraints()
+        // {
+        //     return new PathConstraints(
+        //         MAX_VEL.get(), 
+        //         MAX_ACC.get()
+        //     );
+        
 
         public static final Tunable<Double> DRIVE_TIME_BEFORE_BALANCE = Tunable.of(3.1, "drive.auto_before_balance");
         public static final Tunable<Double> DRIVE_TIME_AFTER_BALANCE_CLIP = Tunable.of(1, "drive.auto_after_balance_clip");

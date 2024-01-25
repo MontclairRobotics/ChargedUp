@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import org.team555.animation2.QuickSlowFlash;
-import org.team555.components.managers.Auto;
+
 import org.team555.components.subsystems.Drivetrain;
 import org.team555.constants.*;
 import org.team555.math.Math555;
@@ -35,7 +35,7 @@ import org.team555.structure.ScoringType;
 import org.team555.util.HashMaps;
 import org.team555.util.frc.EdgeDetectFilter;
 import org.team555.util.frc.Logging;
-import org.team555.util.frc.Trajectories;
+
 import org.team555.util.frc.EdgeDetectFilter.EdgeType;
 import org.team555.vision.VisionSystem;
 import org.team555.constants.DriveConstants;
@@ -49,12 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.PathPoint;
-import com.pathplanner.lib.PathPlannerTrajectory.EventMarker;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
+
 
 public class Commands555 
 {   
@@ -87,47 +82,47 @@ public class Commands555
     }
 
     /////////////////////// LED COMMANDS /////////////////////////
-    public static CommandBase celebrate() 
-    {
-        return Commands.runOnce(led::celebrate)
-            .withName("Celebrate");
-    }
+    // public static CommandBase celebrate() 
+    // {
+    //     return Commands.runOnce(led::celebrate)
+    //         .withName("Celebrate");
+    // }
 
     /**
      * Flashes twice quickly and twice slowly in yellow: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cone into play
      */
-    public static CommandBase signalCone() 
-    {
-        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)))
-            .withName("Signal Cone");
-    }
+    // public static CommandBase signalCone() 
+    // {
+    //     return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kYellow)))
+    //         .withName("Signal Cone");
+    // }
 
     /**
      * Flashes twice quickly and twice slowly in purple: * * -- --
      * Signals to the HUMAN PLAYER that they need to enter a cube into play
      */
-    public static CommandBase signalCube()
-    {
-        return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)))
-            .withName("Signal Cube");
-    }
+    // public static CommandBase signalCube()
+    // {
+    //     return Commands.runOnce(() -> ChargedUp.led.add(new QuickSlowFlash(Color.kPurple)))
+    //         .withName("Signal Cube");
+    // }
     
-    public static CommandBase toggleGrabberHasCone() 
-    {
-        return Commands.runOnce(ChargedUp.grabber::toggleHoldingCone)
-            .withName("Toggle Grabber has Cone");
-    }
-    public static CommandBase setGrabberHasCone()
-    {
-        return Commands.runOnce(() -> grabber.setHoldingCone(true))
-            .withName("Set Grabber has Cone");
-    }
-    public static CommandBase setGrabberHasCube()
-    {
-        return Commands.runOnce(() -> grabber.setHoldingCone(false))
-            .withName("Set Grabber has Cube");
-    }
+    // public static CommandBase toggleGrabberHasCone() 
+    // {
+    //     return Commands.runOnce(ChargedUp.grabber::toggleHoldingCone)
+    //         .withName("Toggle Grabber has Cone");
+    // }
+    // public static CommandBase setGrabberHasCone()
+    // {
+    //     return Commands.runOnce(() -> grabber.setHoldingCone(true))
+    //         .withName("Set Grabber has Cone");
+    // }
+    // public static CommandBase setGrabberHasCube()
+    // {
+    //     return Commands.runOnce(() -> grabber.setHoldingCone(false))
+    //         .withName("Set Grabber has Cube");
+    // }
    
 
     /////////////////// STINGER COMMMANDS //////////////////////
@@ -136,111 +131,111 @@ public class Commands555
      * fully retracts the stinger 
      * @return Command
      */
-    public static CommandBase retractStinger()
-    {
-        return Commands.runOnce(stinger::targetIn)
-            .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
-            .unless(() -> !stinger.isOut())
-            .withName("Retract Stinger");
-    }
-    /**
-     * extends the stinger to the length of the middle pole
-     * @return Command
-     */
-    public static CommandBase extendStinger()
-    {
-        return Commands.runOnce(stinger::targetOut) 
-            .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
-            .unless(() -> stinger.isOut())
-            .withName("Stinger Out");
-    }
+    // public static CommandBase retractStinger()
+    // {
+    //     return Commands.runOnce(stinger::targetIn)
+    //         .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
+    //         .unless(() -> !stinger.isOut())
+    //         .withName("Retract Stinger");
+    // }
+    // // /**
+    //  * extends the stinger to the length of the middle pole
+    //  * @return Command
+    //  */
+    // public static CommandBase extendStinger()
+    // {
+    //     return Commands.runOnce(stinger::targetOut) 
+    //         .andThen(Commands.waitSeconds(StingerConstants.PNEU_TIME))
+    //         .unless(() -> stinger.isOut())
+    //         .withName("Stinger Out");
+    // }
 
     /**
      * toggle the stinger
      * @return Command
      */
-    public static CommandBase toggleStinger()
-    {
-        return Commands.either(
-            retractStinger(), 
-            extendStinger(), 
-            stinger::isOut
-        ).withName("Toggle Stinger");
-    }
+    // public static CommandBase toggleStinger()
+    // {
+    //     return Commands.either(
+    //         retractStinger(), 
+    //         extendStinger(), 
+    //         stinger::isOut
+    //     ).withName("Toggle Stinger");
+    // }
 
     //////////////////////////////// ELEVATOR COMMANDS ////////////////////////////////
 
-    public static CommandBase elevatorTo(double height)
-    {
-        if(height <= ElevatorConstants.MIN_HEIGHT) 
-            return Commands.run(() -> elevator.PID.setSpeed(-1))
-                .until(elevator::isAtBottom)
-                .andThen(() -> elevator.PID.setSpeed(0))
-                .withName("Elevator to Bottom");
+    // public static CommandBase elevatorTo(double height)
+    // {
+    //     if(height <= ElevatorConstants.MIN_HEIGHT) 
+    //         return Commands.run(() -> elevator.PID.setSpeed(-1))
+    //             .until(elevator::isAtBottom)
+    //             .andThen(() -> elevator.PID.setSpeed(0))
+    //             .withName("Elevator to Bottom");
             
-        if(height >= ElevatorConstants.MAX_HEIGHT) 
-            return Commands.run(() -> elevator.PID.setSpeed(1))
-                .until(elevator::isAtTop)
-                .andThen(() -> elevator.PID.setSpeed(0))
-                .withName("Elevator to Top");
+    //     if(height >= ElevatorConstants.MAX_HEIGHT) 
+    //         return Commands.run(() -> elevator.PID.setSpeed(1))
+    //             .until(elevator::isAtTop)
+    //             .andThen(() -> elevator.PID.setSpeed(0))
+    //             .withName("Elevator to Top");
 
-        return either( 
-            run(() -> elevator.PID.setSpeed(1))
-                .until(() -> elevator.getHeight() >= height)
-                .andThen(() -> elevator.PID.setSpeed(0)),
+    //     return either( 
+    //         run(() -> elevator.PID.setSpeed(1))
+    //             .until(() -> elevator.getHeight() >= height)
+    //             .andThen(() -> elevator.PID.setSpeed(0)),
             
-            run(() -> elevator.PID.setSpeed(-1))
-                .until(() -> elevator.getHeight() <= height)
-                .andThen(() -> elevator.PID.setSpeed(0)),
+    //         run(() -> elevator.PID.setSpeed(-1))
+    //             .until(() -> elevator.getHeight() <= height)
+    //             .andThen(() -> elevator.PID.setSpeed(0)),
 
-            () -> elevator.getHeight() < height
-        )
-        .withName("Elevator to " + height + "m");
+    //         () -> elevator.getHeight() < height
+    //     )
+    //     .withName("Elevator to " + height + "m");
 
-        // return elevator.PID.goToSetpoint(height, elevator) 
-        //     .withName("Elevator to " + height + "m");
-    }
+    //     // return elevator.PID.goToSetpoint(height, elevator) 
+    //     //     .withName("Elevator to " + height + "m");
+    // }
 
     /**
      * Sets the elevator its lowest height
      * @return Command
      */
-    public static CommandBase elevatorToLow()
-    {
-        return elevatorTo(ElevatorConstants.MIN_HEIGHT);
-    }
+    // public static CommandBase elevatorToLow()
+    // {
+    //     return elevatorTo(ElevatorConstants.MIN_HEIGHT);
+    // }
 
-    /**
-     * Sets the elevator to the height of the middle cone peg
-     * @return the command
-     */
-    public static CommandBase elevatorToConeHigh()
-    {
-        return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CONE);
-    }
+    // /**
+    //  * Sets the elevator to the height of the middle cone peg
+    //  * @return the command
+    //  */
+    // public static CommandBase elevatorToConeHigh()
+    // {
+    //     return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CONE);
+    // }
 
-    /**
-     * Sets the elevator to the height of the middle cube shelf
-     * @return Command
-     */
-    public static CommandBase elevatorToCubeHigh()
-    {
-        return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CUBE);
-    }
+    // /**
+    //  * Sets the elevator to the height of the middle cube shelf
+    //  * @return Command
+    //  */
+    // public static CommandBase elevatorToCubeHigh()
+    // {
+    //     return elevatorTo(ElevatorConstants.HIGH_HEIGHT_CUBE);
+    // }
 
-    public static CommandBase elevatorToMid()
-    {
-        return elevatorTo(ElevatorConstants.MID_HEIGHT);
-    }
+    // public static CommandBase elevatorToMid()
+    // {
+    //     return elevatorTo(ElevatorConstants.MID_HEIGHT);
+    // }
 
-    /**
-     * Sets the elevator high enough so that the human player can feed it a cone. Currently 5/6 max height.
-     * @return Command
-     */
-    public static CommandBase elevatorToTop()
-    {
-        return elevatorTo(ElevatorConstants.MAX_HEIGHT);
-    }
+    // /**
+    //  * Sets the elevator high enough so that the human player can feed it a cone. Currently 5/6 max height.
+    //  * @return Command
+    //  */
+    // public static CommandBase elevatorToTop()
+    // {
+    //     return elevatorTo(ElevatorConstants.MAX_HEIGHT);
+    // }
 
     /**
      * Sets the elevator to the height of the high section
@@ -261,59 +256,59 @@ public class Commands555
      * Stinger goes to 0
      * @return Command
      */
-    public static CommandBase elevatorStingerReturn()
-    {
-        CommandBase c =
-            retractStinger()
-            .andThen(elevatorToLow())
-            .withName("Return Elevator and Stinger");
-        c.addRequirements(elevator, stinger);
-        return c;
-    }
+    // public static CommandBase elevatorStingerReturn()
+    // {
+    //     CommandBase c =
+    //         retractStinger()
+    //         .andThen(elevatorToLow())
+    //         .withName("Return Elevator and Stinger");
+    //     c.addRequirements(elevator, stinger);
+    //     return c;
+    // }
     
-    public static CommandBase elevatorStingerToConeHigh()
-    {
-        CommandBase c = sequence(
-            elevatorToConeHigh(),
-            extendStinger()
-        );
-        c.addRequirements(elevator, stinger);
-        return c;
-    }
+    // public static CommandBase elevatorStingerToConeHigh()
+    // {
+    //     CommandBase c = sequence(
+    //         elevatorToConeHigh(),
+    //         extendStinger()
+    //     );
+    //     c.addRequirements(elevator, stinger);
+    //     return c;
+    // }
 
-    public static CommandBase elevatorStingerToCubeHigh()
-    {
-        CommandBase c = parallel(
-            elevatorToCubeHigh(), //BANANAS SOUP SHIT
-            Commands.sequence(
-                waitUntil(() -> Math.abs(elevator.getHeight() - ElevatorConstants.HIGH_HEIGHT_CUBE) < 0.05),
-                extendStinger()
-            )
-        );
-        c.addRequirements(elevator, stinger);
-        return c;
-    }
+    // public static CommandBase elevatorStingerToCubeHigh()
+    // {
+    //     CommandBase c = parallel(
+    //         elevatorToCubeHigh(), //BANANAS SOUP SHIT
+    //         Commands.sequence(
+    //             waitUntil(() -> Math.abs(elevator.getHeight() - ElevatorConstants.HIGH_HEIGHT_CUBE) < 0.05),
+    //             extendStinger()
+    //         )
+    //     );
+    //     c.addRequirements(elevator, stinger);
+    //     return c;
+    // }
     
 
     /////////////////////// GRABBER COMMANDS ////////////////////////////////////////////
     
     /**
      * Closes the Grabber
-     */ 
-    public static CommandBase closeGrabber() 
-    {
-        return Commands.runOnce(ChargedUp.grabber::grab)
-            .withName("Close Grabber");
-    }
+    //  */ 
+    // public static CommandBase closeGrabber() 
+    // {
+    //     return Commands.runOnce(ChargedUp.grabber::grab)
+    //         .withName("Close Grabber");
+    // }
 
-    /**
-     * Opens the grabber
-     */
-    public static CommandBase openGrabber() 
-    {
-        return Commands.runOnce(ChargedUp.grabber::release)
-            .withName("Open Grabber");
-    }
+    // /**
+    //  * Opens the grabber
+    //  */
+    // public static CommandBase openGrabber() 
+    // {
+    //     return Commands.runOnce(ChargedUp.grabber::release)
+    //         .withName("Open Grabber");
+    // }
 
     /**
      * Toggle the Grabber
@@ -323,207 +318,207 @@ public class Commands555
      * - if it is released, grab
      * @return Command
      */
-    public static CommandBase toggleGrabber()
-    {
-        return Commands.runOnce(ChargedUp.grabber::toggle)
-            .withName("Toggle Grabber");
-    }
+    // public static CommandBase toggleGrabber()
+    // {
+    //     return Commands.runOnce(ChargedUp.grabber::toggle)
+    //         .withName("Toggle Grabber");
+    // }
 
-    /////////////////////////////// SHWOOPER COMMMANDS ///////////////////////////
-    /**
-     * intake suck
-     * @return Command
-     */
-    public static CommandBase shwooperSuck() 
-    {
-        return Commands.runOnce(ChargedUp.shwooper::suck)
-            .withName("Intake Suck");
-    }
+    // /////////////////////////////// SHWOOPER COMMMANDS ///////////////////////////
+    // /**
+    //  * intake suck
+    //  * @return Command
+    //  */
+    // public static CommandBase shwooperSuck() 
+    // {
+    //     return Commands.runOnce(ChargedUp.shwooper::suck)
+    //         .withName("Intake Suck");
+    // }
  
-    /**
-     * intake spit
-     * @return Command
-     */
-    public static CommandBase shwooperSpit() 
-    {
-        return Commands.runOnce(ChargedUp.shwooper::spit)
-            .withName("Intake Spit");
-    }
-    /**
-     * intake spit
-     * @return Command
-     */
-    public static CommandBase shwooperSpitFast() 
-    {
-        return Commands.runOnce(ChargedUp.shwooper::spitFast)
-            .withName("Intake Spit");
-    }
+    // /**
+    //  * intake spit
+    //  * @return Command
+    //  */
+    // public static CommandBase shwooperSpit() 
+    // {
+    //     return Commands.runOnce(ChargedUp.shwooper::spit)
+    //         .withName("Intake Spit");
+    // }
+    // /**
+    //  * intake spit
+    //  * @return Command
+    //  */
+    // public static CommandBase shwooperSpitFast() 
+    // {
+    //     return Commands.runOnce(ChargedUp.shwooper::spitFast)
+    //         .withName("Intake Spit");
+    // }
 
-    /**
-     * Stop intake
-     * @return Command
-     */
-    public static CommandBase stopShwooper() 
-    {
-        return Commands.runOnce(ChargedUp.shwooper::stop)
-            .withName("Intake Stop");
-    }
+    // /**
+    //  * Stop intake
+    //  * @return Command
+    //  */
+    // public static CommandBase stopShwooper() 
+    // {
+    //     return Commands.runOnce(ChargedUp.shwooper::stop)
+    //         .withName("Intake Stop");
+    // }
 
-    ////////////////////// AUTO COMMANDS //////////////////////////
+    // ////////////////////// AUTO COMMANDS //////////////////////////
     
-    // picks up objects and raises the elevator to the middle after picking the object up
-    public static CommandBase pickup(double driveTime) 
-    {
-        return logged(Commands.sequence(
-            // Ensure grabber released
-            openGrabber(),
-            log("[PICK UP] grabber opened"),
+    // // picks up objects and raises the elevator to the middle after picking the object up
+    // public static CommandBase pickup(double driveTime) 
+    // {
+    //     return logged(Commands.sequence(
+    //         // Ensure grabber released
+    //         openGrabber(),
+    //         log("[PICK UP] grabber opened"),
 
-            // Lower grabber in place
-            elevatorStingerReturn(),
-            log("[PICK UP] elevator stinger returned.."),
+    //         // Lower grabber in place
+    //         elevatorStingerReturn(),
+    //         log("[PICK UP] elevator stinger returned.."),
 
-            // Suck it
-            // moveToObjectSideways(() -> DetectionType.CONE),
+    //         // Suck it
+    //         // moveToObjectSideways(() -> DetectionType.CONE),
 
-            log("[PICK UP] object sideways"),
-            shwooperSuck(),
-            Commands.sequence(
-                moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP),
-                drivetrain.commands.driveForTimeRelative(driveTime,0,1.5,0)
-            )
-                .until(shwooper::manipulatedObject)
-                .withTimeout(2),
-            waitSeconds(0.3),
-            stopShwooper(),
-            log("[PICK UP] shwooper stop")
+    //         log("[PICK UP] object sideways"),
+    //         shwooperSuck(),
+    //         Commands.sequence(
+    //             moveToObjectSideways(() -> DetectionType.CONE, DriveConstants.FORWARD_VELOCITY_DURING_PICKUP),
+    //             drivetrain.commands.driveForTimeRelative(driveTime,0,1.5,0)
+    //         )
+    //             .until(shwooper::manipulatedObject)
+    //             .withTimeout(2),
+    //         waitSeconds(0.3),
+    //         stopShwooper(),
+    //         log("[PICK UP] shwooper stop")
 
-            // Grab it
-            // closeGrabber()
+    //         // Grab it
+    //         // closeGrabber()
 
-            // Prepare to leave
-            // elevatorToMid(),
-            // log("[PICK UP] pick up over")
-        )).withName("Pickup");
-    }
+    //         // Prepare to leave
+    //         // elevatorToMid(),
+    //         // log("[PICK UP] pick up over")
+    //     )).withName("Pickup");
+    // }
 
-    /**
-     * Get the command responsible for aligning the drivetrain to the given score type.
-     */
-    public static CommandBase positionDrivetrainForScore(Supplier<ScoringType> type)
-    {
-        return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180));
-    }
+    // /**
+    //  * Get the command responsible for aligning the drivetrain to the given score type.
+    //  */
+    // public static CommandBase positionDrivetrainForScore(Supplier<ScoringType> type)
+    // {
+    //     return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(180));
+    // }
 
-    /**
-     * Get the command responsible for aligning the drivetrain to the given score type.
-     */
-    public static CommandBase positionElevatorAssemblyForScore(ScoreHeight height, Supplier<ScoringType> type)
-    {
-        CommandBase cmd = Commands.either(
-            elevatorStingerToConeHigh(),
-            elevatorStingerToCubeHigh(),
-            () -> type.get() == ScoringType.PEG
-        );
+    // /**
+    //  * Get the command responsible for aligning the drivetrain to the given score type.
+    //  */
+    // public static CommandBase positionElevatorAssemblyForScore(ScoreHeight height, Supplier<ScoringType> type)
+    // {
+    //     CommandBase cmd = Commands.either(
+    //         elevatorStingerToConeHigh(),
+    //         elevatorStingerToCubeHigh(),
+    //         () -> type.get() == ScoringType.PEG
+    //     );
 
-        return cmd;
-    }
+    //     return cmd;
+    // }
 
-    /**
-     * Get the command responsible for scoring in the hybrid zone with a cube.
-     */
-    public static CommandBase scoreCubeLow(boolean isAuto)
-    {
-        return logged(Commands.sequence(
-            //close grabber to position the cube closer to the intake
-            openGrabber(),
-            // waitSeconds(0.3),
-            either(
-                shwooperSpitFast(), 
-                shwooperSpit(), 
-                () -> isAuto
-            ),
-            openGrabber(),
+    // /**
+    //  * Get the command responsible for scoring in the hybrid zone with a cube.
+    //  */
+    // public static CommandBase scoreCubeLow(boolean isAuto)
+    // {
+    //     return logged(Commands.sequence(
+    //         //close grabber to position the cube closer to the intake
+    //         openGrabber(),
+    //         // waitSeconds(0.3),
+    //         either(
+    //             shwooperSpitFast(), 
+    //             shwooperSpit(), 
+    //             () -> isAuto
+    //         ),
+    //         openGrabber(),
             
 
-            //wait until the cube has shot out
-            waitUntil(shwooper::manipulatedObject)
-                .andThen(led::celebrate)
-                .withTimeout(1.2),
-            waitSeconds(0.3),
-            stopShwooper()
+    //         //wait until the cube has shot out
+    //         waitUntil(shwooper::manipulatedObject)
+    //             .andThen(led::celebrate)
+    //             .withTimeout(1.2),
+    //         waitSeconds(0.3),
+    //         stopShwooper()
 
 
-        ).withName("deIntake score"));
-    }
+    //     ).withName("deIntake score"));
+    // }
 
 
-    /**
-     * Moves stinger/elevator to the specfied score place and opens the grabber
-     * Retracts the stinger and bring the elevator to mid
-     */
-    public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type, boolean skipObjectAlignment, boolean resetAfterScore)
-    {
-        return timed(Commands.sequence(
-            log("[SCORE] Beginning score sequence . . ."),
-            closeGrabber(),
+    // /**
+    //  * Moves stinger/elevator to the specfied score place and opens the grabber
+    //  * Retracts the stinger and bring the elevator to mid
+    //  */
+    // public static CommandBase scoreFromHeightAndDynamicType(ScoreHeight height, Supplier<ScoringType> type, boolean skipObjectAlignment, boolean resetAfterScore)
+    // {
+    //     return timed(Commands.sequence(
+    //         log("[SCORE] Beginning score sequence . . ."),
+    //         closeGrabber(),
 
-            // Align to score
-            log("[SCORE] Positioning . . ."), 
-            Commands.sequence(
-                //Align drivetrain to score
-                positionDrivetrainForScore(type).unless(() -> skipObjectAlignment),
+    //         // Align to score
+    //         log("[SCORE] Positioning . . ."), 
+    //         Commands.sequence(
+    //             //Align drivetrain to score
+    //             positionDrivetrainForScore(type).unless(() -> skipObjectAlignment),
 
-                //Prepare elevator assembly
-                positionElevatorAssemblyForScore(height, type)
-            ),
+    //             //Prepare elevator assembly
+    //             positionElevatorAssemblyForScore(height, type)
+    //         ),
 
-            //Drop grabber
-            log("[SCORE] Dropping . . ."),
-            waitSeconds(0.45),
-            openGrabber(), 
-            runOnce(led::celebrate),
-            waitSeconds(0.1),
-            waitSeconds(0.5).unless(() -> type.get() == ScoringType.PEG),
+    //         //Drop grabber
+    //         log("[SCORE] Dropping . . ."),
+    //         waitSeconds(0.45),
+    //         openGrabber(), 
+    //         runOnce(led::celebrate),
+    //         waitSeconds(0.1),
+    //         waitSeconds(0.5).unless(() -> type.get() == ScoringType.PEG),
 
-            //Return to position 
-            log("[SCORE] Returning elevator and stinger to internal state . . ."),
+    //         //Return to position 
+    //         log("[SCORE] Returning elevator and stinger to internal state . . ."),
 
-            either(
-                elevatorStingerReturn(),
-                retractStinger(),
-                () -> resetAfterScore || true //bc this should always be true and our previous code is stupid
-            ),
+    //         either(
+    //             elevatorStingerReturn(),
+    //             retractStinger(),
+    //             () -> resetAfterScore || true //bc this should always be true and our previous code is stupid
+    //         ),
             
-            log("[SCORE] Done!")
-        ));
-    }
+    //         log("[SCORE] Done!")
+    //     ));
+    // }
 
     /**
      * Equivalent to {@link #scoreFromHeightAndDynamicType(ScoreHeight, Supplier)} but for
      * known scoring types. Names command appropriately.
      */
-    public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type, boolean skipObjectAlignment, boolean resetAfterScore)
-    {
-        return scoreFromHeightAndDynamicType(height, () -> type, skipObjectAlignment, resetAfterScore)
-            .withName("Score " + height.toString() + " " + type.toString());
-    }
+    // public static CommandBase scoreFromHeightAndType(ScoreHeight height, ScoringType type, boolean skipObjectAlignment, boolean resetAfterScore)
+    // {
+    //     return scoreFromHeightAndDynamicType(height, () -> type, skipObjectAlignment, resetAfterScore)
+    //         .withName("Score " + height.toString() + " " + type.toString());
+    // }
 
-    public static CommandBase scoreLowPeg(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
-    public static CommandBase scoreLowShelf(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
-    public static CommandBase scoreLow(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
-        .withName("Score Low (General)");}
+    // public static CommandBase scoreLowPeg(boolean skipObjectAlignment, boolean resetAfterScore)
+    // {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
+    // public static CommandBase scoreLowShelf(boolean skipObjectAlignment, boolean resetAfterScore)
+    // {return scoreFromHeightAndType(ScoreHeight.LOW, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
+    // public static CommandBase scoreLow(boolean skipObjectAlignment, boolean resetAfterScore)
+    // {return scoreFromHeightAndDynamicType(ScoreHeight.LOW, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
+    //     .withName("Score Low (General)");}
 
-    public static CommandBase scoreHighPeg(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
-    public static CommandBase scoreHighShelf(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
-    public static CommandBase scoreHigh(boolean skipObjectAlignment, boolean resetAfterScore)
-    {return scoreFromHeightAndDynamicType(ScoreHeight.HIGH, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
-        .withName("Score High (General)");}
+    // public static CommandBase scoreHighPeg(boolean skipObjectAlignment, boolean resetAfterScore)
+    // {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.PEG, skipObjectAlignment, resetAfterScore);}
+    // public static CommandBase scoreHighShelf(boolean skipObjectAlignment, boolean resetAfterScore)
+    // {return scoreFromHeightAndType(ScoreHeight.HIGH, ScoringType.SHELF, skipObjectAlignment, resetAfterScore);}
+    // public static CommandBase scoreHigh(boolean skipObjectAlignment, boolean resetAfterScore)
+    // {return scoreFromHeightAndDynamicType(ScoreHeight.HIGH, () -> ScoringType.from(ChargedUp.grabber.getHeldObject()), skipObjectAlignment, resetAfterScore)
+    //     .withName("Score High (General)");}
 
     
     public static CommandBase balance() //the sneakers :(
@@ -643,7 +638,7 @@ public class Commands555
             public boolean isFinished() 
             {
                 boolean atRest = atRestDebouncer.calculate(!isTilting && Math.abs(tilt) <= Constants.Field.CHARGE_ANGLE_DEADBAND.get());
-                if(atRest) led.celebrate();
+                // if(atRest) led.celebrate();
 
                 return atRest;
             }
@@ -864,103 +859,103 @@ public class Commands555
      * 
      * @return The command, or none() with a log if an error occurs
      */
-    public static CommandBase fromStringToCommand(String str, String full, boolean firstIsHigh, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
-    {
-        // Single actions
-        if(str.length() == 1) //DEPLOY CODE PLSSSSS
-        {
-            switch(str)
-            {
-                case "A": 
-                case "C": return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)).withTimeout(0.3).andThen(pickup(0.75));
+    // public static CommandBase fromStringToCommand(String str, String full, boolean firstIsHigh, SwerveAutoBuilder autoBuilder, ArrayList<PathPlannerTrajectory> trajectories)
+    // {
+    //     // Single actions
+    //     if(str.length() == 1) //DEPLOY CODE PLSSSSS
+    //     {
+    //         switch(str)
+    //         {
+    //             case "A": 
+    //             case "C": return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(0)).withTimeout(0.3).andThen(pickup(0.75));
 
-                case "D": {
-                    double angle = DriverStation.getAlliance() == Alliance.Blue ? 270 : 90;
-                    return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(angle)).withTimeout(0.3).andThen(pickup(1.1));
-                }
-                case "E": {
-                    double angle = DriverStation.getAlliance() == Alliance.Blue ? 90 : 270;
-                    return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(angle)).withTimeout(0.3).andThen(pickup(1.1));
-                }
-                case "1":
-                case "2":
-                case "3": 
-                {
-                    if(firstIsHigh)
-                    {
-                        boolean resetAfterScoring = (full.length() == 2 && full.charAt(1) == 'B');
-                        return scoreHighShelf(true, resetAfterScoring);
-                    }
-                    else 
-                    {
-                        return scoreCubeLow(false);
-                    } 
-                }
+    //             case "D": {
+    //                 double angle = DriverStation.getAlliance() == Alliance.Blue ? 270 : 90;
+    //                 return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(angle)).withTimeout(0.3).andThen(pickup(1.1));
+    //             }
+    //             case "E": {
+    //                 double angle = DriverStation.getAlliance() == Alliance.Blue ? 90 : 270;
+    //                 return drivetrain.commands.goToAngleAbsolute(Rotation2d.fromDegrees(angle)).withTimeout(0.3).andThen(pickup(1.1));
+    //             }
+    //             case "1":
+    //             case "2":
+    //             case "3": 
+    //             {
+    //                 if(firstIsHigh)
+    //                 {
+    //                     boolean resetAfterScoring = (full.length() == 2 && full.charAt(1) == 'B');
+    //                     return scoreHighShelf(true, resetAfterScoring);
+    //                 }
+    //                 else 
+    //                 {
+    //                     return scoreCubeLow(false);
+    //                 } 
+    //             }
 
-                case "4":
-                case "5": 
-                {
-                    // Parallelization may occur here
-                    if(full.endsWith(str)) 
-                    {
-                        return scoreCubeLow(false);
-                    }
-                    else 
-                    {
-                        return Commands.none();
-                    }
-                }
+    //             case "4":
+    //             case "5": 
+    //             {
+    //                 // Parallelization may occur here
+    //                 if(full.endsWith(str)) 
+    //                 {
+    //                     return scoreCubeLow(false);
+    //                 }
+    //                 else 
+    //                 {
+    //                     return Commands.none();
+    //                 }
+    //             }
 
-                case "B": return drivetrain.commands.driveForTimeRelative(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
-                    .until(() -> Math.abs(drivetrain.getChargeStationAngle()) > 10)
-                    .andThen(waitSeconds(1))
-                    .andThen(drivetrain.commands.driveForTimeRelative(Constants.Auto.DRIVE_TIME_AFTER_BALANCE_CLIP.get(), 0, DriveConstants.MAX_SPEED_MPS, 0))
-                    .andThen(balanceOriginal());
+    //             case "B": return drivetrain.commands.driveForTimeRelative(Constants.Auto.DRIVE_TIME_BEFORE_BALANCE.get(), 0, DriveConstants.MAX_SPEED_MPS, 0)
+    //                 .until(() -> Math.abs(drivetrain.getChargeStationAngle()) > 10)
+    //                 .andThen(waitSeconds(1))
+    //                 .andThen(drivetrain.commands.driveForTimeRelative(Constants.Auto.DRIVE_TIME_AFTER_BALANCE_CLIP.get(), 0, DriveConstants.MAX_SPEED_MPS, 0))
+    //                 .andThen(balanceOriginal());
 
-                default: 
-                {
-                    Logging.error("Invalid path point! Please be better.");
-                    return null;
-                }
-            }
-        }
-        // Transition
-        else if(str.length() == 2)
-        {
-            if(!Trajectories.exists(str))  
-            {
-                Logging.errorNoTrace("No transition '" + str + "' found!");
-                return null;
-            }
+    //             default: 
+    //             {
+    //                 Logging.error("Invalid path point! Please be better.");
+    //                 return null;
+    //             }
+    //         }
+    //     }
+    //     // Transition
+    //     else if(str.length() == 2)
+    //     {
+    //         if(!Trajectories.exists(str))  
+    //         {
+    //             Logging.errorNoTrace("No transition '" + str + "' found!");
+    //             return null;
+    //         }
 
-            PathConstraints constraints = Constants.Auto.constraints();
+    //         PathConstraints constraints = Constants.Auto.constraints();
 
-            if(str.charAt(1) == 'B')
-            {
-                constraints = new PathConstraints(4, 2);
-            }
+    //         if(str.charAt(1) == 'B')
+    //         {
+    //             constraints = new PathConstraints(4, 2);
+    //         }
 
-            PathPlannerTrajectory nextTrajectory = Trajectories.get(str, constraints);
+    //         PathPlannerTrajectory nextTrajectory = Trajectories.get(str, constraints);
 
-            trajectories.add(nextTrajectory);
+    //         trajectories.add(nextTrajectory);
 
-            CommandBase cmd = ChargedUp.drivetrain.commands.trajectory(autoBuilder, nextTrajectory);
+    //         CommandBase cmd = ChargedUp.drivetrain.commands.trajectory(autoBuilder, nextTrajectory);
 
-            // Check for first path and add a reset if it is
-            if(trajectories.size() == 1)
-            {
-                cmd = autoBuilder.resetPose(nextTrajectory).andThen(cmd);
-            }
+    //         // Check for first path and add a reset if it is
+    //         if(trajectories.size() == 1)
+    //         {
+    //             cmd = autoBuilder.resetPose(nextTrajectory).andThen(cmd);
+    //         }
 
-            return cmd.withName(str);
-        }
-        // Error
-        else 
-        {
-            Logging.errorNoTrace("More than two or zero characters in received string!");
-            return null;
-        }
-    }
+    //         return cmd.withName(str);
+    //     }
+    //     // Error
+    //     else 
+    //     {
+    //         Logging.errorNoTrace("More than two or zero characters in received string!");
+    //         return null;
+    //     }
+    // }
 
 
     /**
@@ -968,63 +963,63 @@ public class Commands555
      * 
      * @return The command, with none() inserted into places in the sequence where an error occured.
      */
-    public static CommandBase buildAuto(String full, boolean firstIsHigh, String[] list)
-    {
-        Trajectories.clearAll();
-        CommandBase[] commandList = new CommandBase[list.length];
-        ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
+    // public static CommandBase buildAuto(String full, boolean firstIsHigh, String[] list)
+    // {
+    //     Trajectories.clearAll();
+    //     CommandBase[] commandList = new CommandBase[list.length];
+    //     ArrayList<PathPlannerTrajectory> allTrajectories = new ArrayList<>();
         
 
-        // Get the auto builder //
-        HashMap<String, Command> markers = HashMaps.of(
-            "Elevator Mid Peg"   , elevatorToConeHigh(),
-            "Elevator Mid Shelf" , elevatorToCubeHigh(),
-            "Score Low"          , scoreCubeLow(false), 
-            "Intake On"          , shwooperSuck(),
-            "Retract"            , elevatorStingerReturn(),
-            "Intake Off"         , Commands.sequence(stopShwooper(), closeGrabber()),
-            "Pickup Pipeline"    , waitForPipe(() -> DetectionType.CONE)
-        );
+    //     // Get the auto builder //
+    //     HashMap<String, Command> markers = HashMaps.of(
+    //         "Elevator Mid Peg"   , elevatorToConeHigh(),
+    //         "Elevator Mid Shelf" , elevatorToCubeHigh(),
+    //         "Score Low"          , scoreCubeLow(false), 
+    //         "Intake On"          , shwooperSuck(),
+    //         "Retract"            , elevatorStingerReturn(),
+    //         "Intake Off"         , Commands.sequence(stopShwooper(), closeGrabber()),
+    //         "Pickup Pipeline"    , waitForPipe(() -> DetectionType.CONE)
+    //     );
 
-        String debugAuto = "";
-        SwerveAutoBuilder builder = drivetrain.commands.autoBuilder(markers);
+    //     String debugAuto = "";
+    //     SwerveAutoBuilder builder = drivetrain.commands.autoBuilder(markers);
 
-        // Iterate all of the string segments
-        for (int i = 0; i < list.length; i++)
-        {
-            commandList[i] = fromStringToCommand(list[i], full, firstIsHigh, builder, allTrajectories);
+    //     // Iterate all of the string segments
+    //     for (int i = 0; i < list.length; i++)
+    //     {
+    //         commandList[i] = fromStringToCommand(list[i], full, firstIsHigh, builder, allTrajectories);
 
-            // Error out here if necessary
-            if(commandList[i] == null)
-            {
-                Logging.info("SOMEHTING NULLL JGINSJGSNGJIFNGJ");
-                return null;
-            }
+    //         // Error out here if necessary
+    //         if(commandList[i] == null)
+    //         {
+    //             Logging.info("SOMEHTING NULLL JGINSJGSNGJIFNGJ");
+    //             return null;
+    //         }
 
-            debugAuto = debugAuto + commandList[i].getName() + ", ";
-        }
+    //         debugAuto = debugAuto + commandList[i].getName() + ", ";
+    //     }
 
-        // Calculate the sum trajectory
-        if(allTrajectories.size() > 0)
-        {
-            Trajectories.displayAll(allTrajectories);
-        }
+    //     // Calculate the sum trajectory
+    //     if(allTrajectories.size() > 0)
+    //     {
+    //         Trajectories.displayAll(allTrajectories);
+    //     }
 
-        // Parallelize the first score
-        if(!firstIsHigh && commandList.length > 1)
-        {
-            CommandBase first = commandList[0];
-            commandList[0] = Commands.none();
-            commandList[1] = commandList[1].alongWith(first);
-        }
+    //     // Parallelize the first score
+    //     if(!firstIsHigh && commandList.length > 1)
+    //     {
+    //         CommandBase first = commandList[0];
+    //         commandList[0] = Commands.none();
+    //         commandList[1] = commandList[1].alongWith(first);
+    //     }
         
-        // Return the sum command (with a navx set-180)
-        Logging.info("[AUTO BUILD]" + debugAuto);
+    //     // Return the sum command (with a navx set-180)
+    //     Logging.info("[AUTO BUILD]" + debugAuto);
 
-        return timed(Commands.runOnce(gyroscope::setSouth)
-            .andThen(Commands.sequence(commandList))
-            .withName("Auto " + full));
-    }
+    //     return timed(Commands.runOnce(gyroscope::setSouth)
+    //         .andThen(Commands.sequence(commandList))
+    //         .withName("Auto " + full));
+    // }
     
     /**
      * Create the autonomous command from the given parsed autonomous sequence string.
@@ -1032,16 +1027,16 @@ public class Commands555
      * @return The command, with none() inserted into places in the sequence where an error occured,
      * or none() itself if parsing or lexing fails.
      */
-    public static CommandBase buildAuto(String full, boolean firstIsHigh) 
-    {
-        String[] parts = Auto.parse(full);
+    // public static CommandBase buildAuto(String full, boolean firstIsHigh) 
+    // {
+    //     String[] parts = Auto.parse(full);
 
-        if(parts == null) 
-        {
-            return null;
-        }
-        Logging.info(Arrays.toString(parts));
+    //     if(parts == null) 
+    //     {
+    //         return null;
+    //     }
+    //     Logging.info(Arrays.toString(parts));
 
-        return buildAuto(full, firstIsHigh, parts);
-    }
+    //     //return buildAuto(full, firstIsHigh, parts);
+    // }
 }

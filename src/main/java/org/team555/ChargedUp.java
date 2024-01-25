@@ -32,23 +32,19 @@ import org.team555.animation2.WipeTransition;
 import org.team555.animation2.ZoomAnimation;
 import org.team555.animation2.api.Animation;
 import org.team555.animation2.api.ConditionalAnimation;
-import org.team555.components.managers.Auto;
-import org.team555.components.managers.BackupAuto;
+
 import org.team555.components.managers.GyroscopeNavX;
 import org.team555.components.managers.LED;
 import org.team555.components.managers.MiscData;
 import org.team555.components.subsystems.Drivetrain;
-import org.team555.components.subsystems.Elevator;
-import org.team555.components.subsystems.Grabber;
-import org.team555.components.subsystems.Shwooper;
-import org.team555.components.subsystems.Stinger;
+
 import org.team555.inputs.JoystickInput;
 import org.team555.structure.DetectionType;
 import org.team555.util.HashMaps;
 import org.team555.util.LazyDouble;
 import org.team555.util.frc.GameController;
 import org.team555.util.frc.Logging;
-import org.team555.util.frc.Trajectories;
+
 import org.team555.util.frc.GameController.Axis;
 import org.team555.util.frc.GameController.Button;
 import org.team555.util.frc.GameController.DPad;
@@ -64,7 +60,7 @@ import org.team555.constants.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.pathplanner.lib.server.PathPlannerServer;
+// import com.pathplanner.lib.server.PathPlannerServer;
 
 public class ChargedUp extends RobotContainer 
 {
@@ -126,17 +122,17 @@ public class ChargedUp extends RobotContainer
             .addCase(() -> debouncer.calculate(Math.abs(vision.getObjectAX()) > 1), getDriverAlignmentAnimation());
     }
 
-    public static Animation getGrabberAnimation()
-    {
-        return new ConditionalAnimation(new ZoomAnimation(Color.kPurple).mirror())
-            .addCase(grabber::getHoldingCone, new ZoomAnimation(Color.kYellow).mirror());
-    }
+    // public static Animation getGrabberAnimation()
+    // {
+    //     // return new ConditionalAnimation(new ZoomAnimation(Color.kPurple).mirror())
+    //     //     .addCase(grabber::getHoldingCone, new ZoomAnimation(Color.kYellow).mirror());
+    // }
     
-    public static Animation getDefaultAnimation()
-    {
-        return new ConditionalAnimation(getGrabberAnimation())
-            .addCase(DriverStation::isDisabled, getDisabledAnimation());
-    }
+    // public static Animation getDefaultAnimation()
+    // {
+    //     return new ConditionalAnimation(getGrabberAnimation())
+    //         .addCase(DriverStation::isDisabled, getDisabledAnimation());
+    // }
 
     // COMPONENTS //
     public static final GyroscopeNavX gyroscope = new GyroscopeNavX();
@@ -144,29 +140,26 @@ public class ChargedUp extends RobotContainer
     public static final VisionSystem vision = new LimelightSystem();
 
     public static final Drivetrain drivetrain = new Drivetrain();
-    public static final Elevator elevator = new Elevator();
-    public static final Shwooper shwooper = new Shwooper();
-    public static final Grabber grabber = new Grabber();
-    public static final Stinger stinger = new Stinger();
+    // public static final Elevator elevator = new Elevator();
+    // public static final Shwooper shwooper = new Shwooper();
+    // public static final Grabber grabber = new Grabber();
+    // public static final Stinger stinger = new Stinger();
     public static final MiscData misc = new MiscData();
     
-    public static final LED led = new LED(
-        getDefaultAnimation(),
-        new FadeTransition()
-    );
+
 
     // INITIALIZER //
     @Override 
     public void initialize() 
     {
         field.setRobotPose(2, 2, Rotation2d.fromDegrees(0));
-        Auto.getAutoTab().add(field).withSize(6, 4).withPosition(2, 0);
+        // Auto.getAutoTab().add(field).withSize(6, 4).withPosition(2, 0);
 
         pneu.enableCompressorDigital();
         CANSafety.monitor(pneu);
 
         // CameraServer.startAutomaticCapture();
-        PathPlannerServer.startServer(5820);
+        // PathPlannerServer.startServer(5820);
 
         for(int port = 5800; port <= 5805; port++)
         {
@@ -255,60 +248,27 @@ public class ChargedUp extends RobotContainer
 
         ////////////// OPERATOR CONTROLS /////////////
 
-        // D-Pad Controls
-        operatorController.getDPad(DPad.UP)
-            .toggleOnTrue(Commands555.elevatorToTop());
-        // operatorController.getDPad(DPad.LEFT)
-        //     .toggleOnTrue(Commands555.scoreHigh(false, true));
-        operatorController.getDPad(DPad.LEFT).or(operatorController.getDPad(DPad.RIGHT))
-            .toggleOnTrue(Commands555.elevatorToMid());
-        operatorController.getDPad(DPad.DOWN)
-            .toggleOnTrue(Commands555.elevatorStingerReturn());
-
-        // Grabber
-        operatorController.getButton(Button.A_CROSS)
-            .onTrue(Commands555.toggleGrabber());
-        operatorController.getButton(Button.Y_TRIANGLE)
-            .onTrue(Commands555.setGrabberHasCone());
-        operatorController.getButton(Button.X_SQUARE)
-            .onTrue(Commands555.setGrabberHasCube());
-        operatorController.getButton(Button.B_CIRCLE)
-            .onTrue(Commands555.toggleStinger());
-
-        operatorController.getButton(Button.START_TOUCHPAD)
-            .onTrue(Commands555.shwooperSpitFast());
-
-        // Shwooper
-        // suck button
-        operatorController.getAxis(Axis.LEFT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .onTrue(Commands555.shwooperSpit())
-            .onFalse(Commands555.stopShwooper());
-        // button to spit schwooper
-        operatorController.getAxis(Axis.RIGHT_TRIGGER)
-            .whenGreaterThan(0.5)
-            .onTrue(Commands555.shwooperSuck())
-            .onFalse(Commands555.stopShwooper());
+        
 
         // Elevator
-        elevator.setDefaultCommand(Commands.run(() -> {
-            JoystickInput left = JoystickInput.getLeft(
-                operatorController, false, true);
+        // elevator.setDefaultCommand(Commands.run(() -> {
+        //     JoystickInput left = JoystickInput.getLeft(
+        //         operatorController, false, true);
 
-            ElevatorConstants.JOY_ADJUSTER.adjustY(left);
+        //     ElevatorConstants.JOY_ADJUSTER.adjustY(left);
 
-            elevator.setSpeed(left.getY());
-        }, elevator));
+        //     elevator.setSpeed(left.getY());
+        // }, elevator));
     }
 
     // AUTO //
-    public static final Auto auto = new Auto();
+    // public static final Auto auto = new Auto();
 
-    @Override
-    public Command getAuto() 
-    {
-        return auto.get();
-    }
+    // @Override
+    // public Command getAuto() 
+    // {
+    //     return auto.get();
+    // }
 
     // SHUFFLEBOARD //
     public void setupMainTab() 
@@ -336,20 +296,20 @@ public class ChargedUp extends RobotContainer
             .withSize(2, 1)
             .withPosition(0, 3);
         
-        mainTab
-            .addBoolean("Intake Manipulated Object", shwooper::manipulatedObject)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 3);
+        // mainTab
+        //     .addBoolean("Intake Manipulated Object", shwooper::manipulatedObject)
+        //     .withWidget(BuiltInWidgets.kBooleanBox)
+        //     .withSize(2, 1)
+        //     .withPosition(0, 3);
 
         info
             .addBoolean("Pressure Maxxed?", () -> !pneu.getPressureSwitch());
             // .withSize(2, 1)
             // .withPosition(7, 3);
         
-        info
-            .addString("Suck Mode", shwooper::currentMode);
-            // .withSize(2, 1)
+        // info
+        //     .addString("Suck Mode", shwooper::currentMode);
+        //     // .withSize(2, 1)
             // .withPosition(7, 2);
         
         // GYROSCOPE VALUE //
@@ -360,15 +320,15 @@ public class ChargedUp extends RobotContainer
             .withPosition(0, 0);
 
         // OBJECT MANIPULATION //
-        mainTab
-            .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
-            .withWidget(BuiltInWidgets.kBooleanBox)
-            .withSize(2, 1)
-            .withPosition(0, 2)
-            .withProperties(Map.of(
-                "Color when true",  Color.kGold.toHexString(),
-                "Color when false", Color.kDarkViolet.toHexString()
-            ));
+        // mainTab
+        //     .addBoolean("Current Held Object", ChargedUp.grabber::getHoldingCone)
+        //     .withWidget(BuiltInWidgets.kBooleanBox)
+        //     .withSize(2, 1)
+        //     .withPosition(0, 2)
+        //     .withProperties(Map.of(
+        //         "Color when true",  Color.kGold.toHexString(),
+        //         "Color when false", Color.kDarkViolet.toHexString()
+        //     ));
     }
 
     public void setupDebugTab() 
@@ -377,9 +337,9 @@ public class ChargedUp extends RobotContainer
             .withPosition(0 + 2 + 2 + 2, 3)
             .withSize(2, 2);
 
-        debugTab.addDouble("Elevator Extension", elevator::getHeightNormalized)
-            .withPosition(0 + 2, 3)
-            .withSize(2, 1);
+        // debugTab.addDouble("Elevator Extension", elevator::getHeightNormalized)
+        //     .withPosition(0 + 2, 3)
+        //     .withSize(2, 1);
 
         debugTab.addDouble("FPS", misc::fps)
             .withPosition(0 + 2 + 2, 3)
@@ -394,9 +354,9 @@ public class ChargedUp extends RobotContainer
         debugTab.addDouble("PIPELINE #",vision::getPipeline)
             .withPosition(0, 4)
             .withSize(1, 1);
-        debugTab.addDouble("Current Draw", shwooper::getCurrent)
-            .withPosition(5, 4)
-            .withWidget(BuiltInWidgets.kGraph);
+        // debugTab.addDouble("Current Draw", shwooper::getCurrent)
+        //     .withPosition(5, 4)
+        //     .withWidget(BuiltInWidgets.kGraph);
 
         debugTab.addDouble("PITCH", gyroscope::getPitch)
             .withPosition(8, 0)
@@ -442,10 +402,10 @@ public class ChargedUp extends RobotContainer
             .withPosition(3, 0)
             .withSize(1, 5)
             .withProperties(Map.of("Number of columns", 1, "Number of rows", 6));
-        elevatorPID.add("Elevator PID", elevator.PID.getPIDController()).withPosition(0, 0);
-        elevatorPID.addBoolean("At SetPoint?", elevator.PID::free).withPosition(0, 1);
-        elevatorPID.addDouble("Speed", elevator.PID::getSpeed).withPosition(0, 2);
-        elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
+        // elevatorPID.add("Elevator PID", elevator.PID.getPIDController()).withPosition(0, 0);
+        // elevatorPID.addBoolean("At SetPoint?", elevator.PID::free).withPosition(0, 1);
+        // elevatorPID.addDouble("Speed", elevator.PID::getSpeed).withPosition(0, 2);
+        // elevatorPID.addDouble("Measurement", elevator.PID::getMeasurement).withPosition(0, 3);
     }
 
     public void setupCommandsTab()
@@ -453,56 +413,8 @@ public class ChargedUp extends RobotContainer
         ShuffleboardTab tab = Shuffleboard.getTab("Commands");
         ShuffleboardTab trj = Shuffleboard.getTab("Test Trajectories");
         
-        tab.add(Commands555.celebrate());
-
-        tab.add(Commands555.signalCube());
-        tab.add(Commands555.signalCone());
-
-        tab.add(Commands555.openGrabber());
-        tab.add(Commands555.closeGrabber());
-        tab.add(Commands555.toggleGrabber());
-        
-        tab.add(Commands555.setGrabberHasCone());
-        tab.add(Commands555.setGrabberHasCube());
-        tab.add(Commands555.toggleGrabberHasCone());
-        
-        tab.add(Commands555.extendStinger());
-        tab.add(Commands555.retractStinger());
-        tab.add(Commands555.toggleStinger());
-
-        tab.add(Commands555.shwooperSuck());
-        tab.add(Commands555.shwooperSpit());
-        tab.add(Commands555.stopShwooper());
-        
-        tab.add(Commands555.elevatorStingerReturn());
-
-        tab.add(Commands555.scoreLow(false, true));
-        tab.add(Commands555.scoreLowPeg(false, true));
-        tab.add(Commands555.scoreLowShelf(false, true));
-        tab.add(Commands555.scoreHigh(false, true));
-        tab.add(Commands555.scoreHighPeg(false, true));
-        tab.add(Commands555.scoreHighShelf(false, true));
-
-        tab.add(Commands555.pickup(1.6));
-
-        tab.add(Commands555.turnToObject(() -> DetectionType.CONE).withName("TURN TO CONE"));
-        tab.add(Commands555.moveToObjectSideways(() -> DetectionType.CONE, 0).withName("SIDE TO CONE"));
-
-        tab.add(Commands555.scoreCubeLow(false));
-        tab.add(Commands555.elevatorToTop().withName("humanz"));
-
-        tab.add(Commands555.elevatorStingerReturn().withName("return elevator + stinger"));
-
-        tab.add(Commands555.alignWithAprilTagForScore().withName("Align to april tag!!!!"));
-
-        tab.add(Commands555.balance().withName("balance"));
-        tab.add(Commands555.balanceOLD().withName("OLD balance"));
-        tab.add(Commands555.balanceOriginal().withName("OG balance"));
         
         
-        for(CommandBase testTraj : Trajectories.getAllTests().values())
-        {
-            trj.add(testTraj);
-        }
+        
     }
 }

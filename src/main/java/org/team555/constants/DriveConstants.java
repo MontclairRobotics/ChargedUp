@@ -1,6 +1,6 @@
 package org.team555.constants;
 
-import com.pathplanner.lib.auto.PIDConstants;
+
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
 
@@ -78,50 +78,49 @@ public class DriveConstants
         BACK_RIGHT
     };
 
-    public static class PosPID
-    {
-        public static final Tunable<Double> KP = Tunable.of(3.1, "drive.pos.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.0, "drive.pos.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.25, "drive.pos.kd");
+    // public static class PosPID
+    // {
+    //     public static final Tunable<Double> KP = Tunable.of(3.1, "drive.pos.kp");
+    //     public static final Tunable<Double> KI = Tunable.of(0.0, "drive.pos.ki");
+    //     public static final Tunable<Double> KD = Tunable.of(0.25, "drive.pos.kd");
 
-        public static PIDConstants consts()
-        {
-            return new PIDConstants(
-                KP.get(), 
-                KI.get(), 
-                KD.get()
-            );
-        }
-    }
-    public static class ThetaPID
-    {
-        public static final Tunable<Double> KP = Tunable.of(0.54, "drive.theta.kp");
-        public static final Tunable<Double> KI = Tunable.of(0.02, "drive.theta.ki");
-        public static final Tunable<Double> KD = Tunable.of(0.08, "drive.theta.kd");
+    //     public static PIDConstants consts()
+    //     {
+    //         return new PIDConstants(
+    //             // TODO wack values
+    //             0,0,0
+    //         );
+    //     }
+    // }
+    // public static class ThetaPID
+    // {
+    //     public static final Tunable<Double> KP = Tunable.of(0.54, "drive.theta.kp");
+    //     public static final Tunable<Double> KI = Tunable.of(0.02, "drive.theta.ki");
+    //     public static final Tunable<Double> KD = Tunable.of(0.08, "drive.theta.kd");
         
-        public static PIDConstants consts()
-        {
-            return new PIDConstants(
-                KP.get(),  
-                KI.get(), 
-                KD.get()
-            );
-        }
+    //     public static PIDConstants consts()
+    //     {
+    //         return new PIDConstants(
+    //             KP.get(),  
+    //             KI.get(), 
+    //             KD.get()
+    //         );
+    //     }
 
         
-        public static final Tunable<Double> KAutoP = Tunable.of(5, "drive.auto.theta.kp"); //3.5
-        public static final Tunable<Double> KAutoI = Tunable.of(0.02, "drive.auto.theta.ki");
-        public static final Tunable<Double> KAutoD = Tunable.of(0.4, "drive.auto.theta.kd"); //0.22
+    //     public static final Tunable<Double> KAutoP = Tunable.of(5, "drive.auto.theta.kp"); //3.5
+    //     public static final Tunable<Double> KAutoI = Tunable.of(0.02, "drive.auto.theta.ki");
+    //     public static final Tunable<Double> KAutoD = Tunable.of(0.4, "drive.auto.theta.kd"); //0.22
 
-        public static PIDConstants autoconsts()
-        {
-            return new PIDConstants(
-                KAutoP.get(), 
-                KAutoI.get(), 
-                KAutoD.get()
-            );
-        }
-    }
+    //     public static PIDConstants autoconsts()
+    //     {
+    //         return new PIDConstants(
+    //             KAutoP.get(), 
+    //             KAutoI.get(), 
+    //             KAutoD.get()
+    //         );
+    //     }
+    // }
 
 
     public static final int MODULE_COUNT = MODULES.length;

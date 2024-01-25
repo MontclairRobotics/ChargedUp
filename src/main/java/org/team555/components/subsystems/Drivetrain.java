@@ -29,14 +29,14 @@ import org.team555.util.Lazy;
 import org.team555.util.LazyDouble;
 import org.team555.util.frc.Logging;
 import org.team555.util.frc.PIDMechanism;
-import org.team555.util.frc.Trajectories;
+
 import org.team555.util.frc.can.CANSafety;
 import org.team555.util.frc.commandrobot.CommandRobot;
 import org.team555.util.frc.commandrobot.ManagerSubsystemBase;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.SwerveAutoBuilder;
+// import com.pathplanner.lib.PathConstraints;
+// import com.pathplanner.lib.PathPlannerTrajectory;
+// import com.pathplanner.lib.auto.SwerveAutoBuilder;
 import com.revrobotics.CANSparkMax;
 import com.swervedrivespecialties.swervelib.MotorType;
 import com.swervedrivespecialties.swervelib.SdsModuleConfigurations;
@@ -150,21 +150,15 @@ public class Drivetrain extends ManagerSubsystemBase
 
         // Build PID Controllers //
         PIDController xController = new PIDController(
-            PosPID.consts().kP,
-            PosPID.consts().kI, 
-            PosPID.consts().kD
+            0,0,0
         );
 
         PIDController yController = new PIDController(
-            PosPID.consts().kP,
-            PosPID.consts().kI, 
-            PosPID.consts().kD
+            0,0,0
         );
 
         PIDController thetaController = new PIDController(
-            ThetaPID.consts().kP,
-            ThetaPID.consts().kI, 
-            ThetaPID.consts().kD
+            0,0,0
         );
 
         
@@ -172,13 +166,13 @@ public class Drivetrain extends ManagerSubsystemBase
         thetaController.setTolerance(Math.toRadians(1.5), Math.toRadians(0.5));
         thetaController.enableContinuousInput(0, 2*Math.PI);
         
-        PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
-        PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
-        PosPID.KD.whenUpdate(xController::setD).whenUpdate(yController::setD);
+        // PosPID.KP.whenUpdate(xController::setP).whenUpdate(yController::setP);
+        // PosPID.KI.whenUpdate(xController::setI).whenUpdate(yController::setI);
+        // PosPID.KD.whenUpdate(xController::setD).whenUpdate(yController::setD);
 
-        ThetaPID.KP.whenUpdate(thetaController::setP);
-        ThetaPID.KI.whenUpdate(thetaController::setI);
-        ThetaPID.KD.whenUpdate(thetaController::setD);
+        // ThetaPID.KP.whenUpdate(thetaController::setP);
+        // ThetaPID.KI.whenUpdate(thetaController::setI);
+        // ThetaPID.KD.whenUpdate(thetaController::setD);
 
         // Build Slew Rate Limiters //
         xInputRateLimiter     = new SlewRateLimiter(inputRateLimit());
@@ -671,19 +665,19 @@ public class Drivetrain extends ManagerSubsystemBase
             return Commands.runOnce(() -> useFieldRelative = !useFieldRelative, Drivetrain.this);
         }
 
-        public SwerveAutoBuilder autoBuilder(HashMap<String, Command> markers)
-        {
-            return new SwerveAutoBuilder(
-                Drivetrain.this::getRobotPose,
-                Drivetrain.this::setRobotPose,
-                PosPID.consts(), 
-                ThetaPID.autoconsts(),
-                Drivetrain.this::setChassisSpeeds,
-                markers,
-                true,
-                Drivetrain.this
-            );
-        }
+        // public SwerveAutoBuilder autoBuilder(HashMap<String, Command> markers)
+        // {
+        //     return new SwerveAutoBuilder(
+        //         Drivetrain.this::getRobotPose,
+        //         Drivetrain.this::setRobotPose,
+        //         PosPID.consts(), 
+        //         ThetaPID.autoconsts(),
+        //         Drivetrain.this::setChassisSpeeds,
+        //         markers,
+        //         true,
+        //         Drivetrain.this
+        //     );
+        // }
 
         /**
          * Create a full autonomous command using the given path planner trajectory.
@@ -691,33 +685,33 @@ public class Drivetrain extends ManagerSubsystemBase
          * @param markers The autonomous markers
          * @return The command
          */
-        public CommandBase trajectory(SwerveAutoBuilder autoBuilder, PathPlannerTrajectory trajectory)
-        {
-            return autoBuilder.followPathWithEvents(trajectory);
-        }
+        // public CommandBase trajectory(SwerveAutoBuilder autoBuilder, PathPlannerTrajectory trajectory)
+        // {
+        //     return autoBuilder.followPathWithEvents(trajectory);
+        // }
         /**
          * Create a full autonomous command using the given path planner trajectory name.
          * @param trajectoryName The trajectory name
          * @return The command
          */
-        public CommandBase trajectory(SwerveAutoBuilder autoBuilder, String trajectoryName)
-        {
-            return trajectory(autoBuilder, Trajectories.get(trajectoryName, Auto.constraints()))
-                .withName("Trajectory " + trajectoryName);
-        }
+        // public CommandBase trajectory(SwerveAutoBuilder autoBuilder, String trajectoryName)
+        // {
+        //     return trajectory(autoBuilder, Trajectories.get(trajectoryName, Auto.constraints()))
+        //         .withName("Trajectory " + trajectoryName);
+        // }
         
-        /**
-         * Create a full autonomous command using the given path planner trajectory name.
-         * @param trajectoryName The trajectory name
-         * @return The command
-         */
-        public CommandBase testTrajectory(String trajectoryName)
-        {
-            SwerveAutoBuilder autoBuilder = autoBuilder(HashMaps.of());
-            return trajectory(autoBuilder, trajectoryName)
-                .beforeStarting(autoBuilder.resetPose(Trajectories.get(trajectoryName, new PathConstraints(1, 1))))
-                .withName("Test Trajectory " + trajectoryName);
-        }
+        // /**
+        //  * Create a full autonomous command using the given path planner trajectory name.
+        //  * @param trajectoryName The trajectory name
+        //  * @return The command
+        //  */
+        // public CommandBase testTrajectory(String trajectoryName)
+        // {
+        //     SwerveAutoBuilder autoBuilder = autoBuilder(HashMaps.of());
+        //     return trajectory(autoBuilder, trajectoryName)
+        //         .beforeStarting(autoBuilder.resetPose(Trajectories.get(trajectoryName, new PathConstraints(1, 1))))
+        //         .withName("Test Trajectory " + trajectoryName);
+        // }
 
         /**
          * Creates a command which goes to the given angle in absolute coordinates.
